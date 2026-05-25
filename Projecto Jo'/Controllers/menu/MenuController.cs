@@ -3,12 +3,12 @@ using Proyecto_Jo_.Models;
 using Proyecto_Jo_.Data;   
 namespace Proyecto_Jo_.Controllers
 {
-	public class CatalogoController : Controller
+	public class MenuController : Controller
 	{
 		private readonly JsonProductService _productService;
 
 		
-		public CatalogoController(JsonProductService productService)
+		public MenuController(JsonProductService productService)
 		{
 			_productService = productService;
 		}

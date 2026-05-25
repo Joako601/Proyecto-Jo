@@ -1,0 +1,56 @@
+﻿@model Proyecto_Jo_.Models.Item
+
+@{
+    ViewData["Title"] = "Nuevo Platillo | Antojitos de la Tía Caro";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/agregar.css" asp-append-version="true" />
+}
+
+<div class="container py-5 module-reveal">
+    <div class="form-container-premium shadow-lg">
+        <h2 class="form-title-premium">Integrar a la Carta</h2>
+        
+        <form asp-action="Agregar" method="post">
+            <div class="input-group-premium">
+                <label class="label-premium">Nombre del Platillo</label>
+                <input asp-for="Platillo" class="input-premium" placeholder="Ej. Panuchos de Cochinita" required />
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group-premium">
+                        <label class="label-premium">Categoría</label>
+                        <input asp-for="Categoria" class="input-premium" placeholder="Cena, Especialidad..." required />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group-premium">
+                        <label class="label-premium">Precio ($)</label>
+                        <input asp-for="Precio" type="number" step="0.01" class="input-premium" required />
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group-premium">
+                <label class="label-premium">Ingredientes Principales</label>
+                <input asp-for="Ingredientes" class="input-premium" placeholder="Ingredientes base" required />
+            </div>
+
+            <div class="input-group-premium">
+                <label class="label-premium">Descripción de Autor</label>
+                <textarea asp-for="Descripcion" class="input-premium" rows="3" placeholder="Describe la experiencia del sabor..."></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit-yerba">
+                Guardar en la Colección
+            </button>
+            
+            <div class="text-center mt-4">
+                <a asp-action="Index" class="btn-cancelar-yerba">
+                    <i class="bi bi-x-lg" style="font-size: 0.6rem;"></i> Cancelar y volver
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

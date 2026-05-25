@@ -25,7 +25,7 @@
         </p>
 
         <div class="d-flex justify-content-center align-items-center gap-3 fade-in-up">
-            <a asp-controller="Catalogo" asp-action="Index" class="btn btn-hero-primary">
+            <a asp-controller="Menu" asp-action="Index" class="btn btn-hero-primary">
                 Explorar el Menú
             </a>
             <a asp-controller="Info" asp-action="Historia" class="btn btn-hero-secondary">
@@ -80,7 +80,7 @@
                                 @item.Descripcion
                             </p>
 
-                            <a asp-controller="Catalogo" asp-action="Detalle" asp-route-id="@item.Id"
+                            <a asp-controller="Menu" asp-action="Detalle" asp-route-id="@item.Id"
                                class="btn btn-ver-detalle rounded-0 px-4 py-2 text-uppercase">
                                 Ver Detalle
                             </a>

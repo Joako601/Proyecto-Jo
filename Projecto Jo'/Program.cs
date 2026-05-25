@@ -1,16 +1,25 @@
 using Proyecto_Jo_.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication; // ¡Esencial para el SignInAsync!
+using System.Security.Claims; // ¡Esencial para los Claims!
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Agregamos el soporte para MVC (Controladores y Vistas)
+// --- 1. CONFIGURACIÓN DE SERVICIOS (ANTES DE BUILD) ---
 builder.Services.AddControllersWithViews();
-
-// 2. Inyectamos nuestro servicio JSON de los platillos
 builder.Services.AddSingleton<JsonProductService>();
 
+// Configuración de Autenticación
+builder.Services.AddAuthentication("JoCookieAuth")
+	.AddCookie("JoCookieAuth", options => {
+		options.LoginPath = "/Admin/Login";
+		options.AccessDeniedPath = "/Admin/AccesoDenegado";
+	});
+
+// Construimos la aplicación
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// --- 2. PIPELINE DE SOLICITUDES (MIDDLEWARE) ---
 if (!app.Environment.IsDevelopment())
 {
 	app.UseExceptionHandler("/Home/Error");
@@ -18,16 +27,27 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles(); // O app.MapStaticAssets() si usas .NET 9
 app.UseRouting();
+
+// El orden aquí es vital: Primero Autenticar, luego Autorizar
+app.UseAuthentication();
 app.UseAuthorization();
 
-// 3. Manejo de archivos estáticos (CSS, JS) estilo .NET 9
-app.MapStaticAssets();
+// --- 3. RUTAS ---
+// Ruta específica para Áreas (debe ir antes de la ruta default)
+app.MapControllerRoute(
+	name: "areas",
+	pattern: "{area:exists}/{controller=Gestion}/{action=Index}/{id?}");
 
-// 4. Ruteo de los controladores
+
+app.MapControllerRoute(
+	name: "areas",
+	pattern: "{area:exists}/{controller=Login}/{action=Login}/{id?}");
+
+// Ruta por defecto
 app.MapControllerRoute(
 	name: "default",
-	pattern: "{controller=Home}/{action=Index}/{id?}")
-	.WithStaticAssets();
+	pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

@@ -1,0 +1,50 @@
+﻿@{
+    ViewData["Title"] = "Panel de Control";
+    Layout = "_Layout"; // Asegúrate de tener un _ViewStart.cshtml en Areas/Admin/Views
+}
+
+<div class="container-fluid py-4">
+    <h2 class="mb-4">Dashboard Administrativo</h2>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-3"><div class="card p-3 shadow-sm border-0 bg-primary text-white"><h5>Platillos Activos</h5><h2 class="mt-2">24</h2></div></div>
+        <div class="col-md-3"><div class="card p-3 shadow-sm border-0 bg-success text-white"><h5>Ventas Hoy</h5><h2 class="mt-2">$4,500</h2></div></div>
+        <div class="col-md-3"><div class="card p-3 shadow-sm border-0 bg-warning"><h5>Pendientes</h5><h2 class="mt-2">3</h2></div></div>
+        <div class="col-md-3"><div class="card p-3 shadow-sm border-0 bg-info text-white"><h5>Opiniones</h5><h2 class="mt-2">12</h2></div></div>
+    </div>
+
+    <div class="row g-4">
+        @{
+            var funciones = new List<(string T, string D)> {
+                ("Switch Inventario", "Pausar platillos agotados."),
+                ("Calendario Promos", "Gestión de ofertas por fecha."),
+                ("Mapa de Calor", "Analítica de horas pico."),
+                ("Semáforo Feedback", "Gestión de opiniones."),
+                ("Recetario Digital", "Cálculo de costos y rendimientos."),
+                ("Alerta de Stock", "Insumos críticos."),
+                ("Historial Auditoría", "Registro de cambios."),
+                ("Cierre de Caja", "Reporte de ventas.")
+            };
+        }
+
+        @foreach (var f in funciones)
+        {
+            <div class="col-md-3">
+                <div class="card h-100 shadow-sm border-0 hover-shadow" style="transition: 0.3s;">
+                    <div class="card-body">
+                        <h6 class="card-title text-primary">@f.T</h6>
+                        <p class="card-text small text-muted">@f.D</p>
+                        <button class="btn btn-sm btn-outline-secondary w-100">Administrar</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .hover-shadow:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+</style>

@@ -10,9 +10,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Folder Include="Controllers\historia\" />
 		<Folder Include="Controllers\nosotros\" />
-		<Folder Include="Views\historia\" />
 		<Folder Include="Views\nosotros\" />
 		<Folder Include="wwwroot\css\index\" />
 	</ItemGroup>

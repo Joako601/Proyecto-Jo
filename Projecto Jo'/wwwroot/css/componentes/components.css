@@ -1,0 +1,16 @@
+﻿.btn-yerba-base {
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	font-size: 0.75rem;
+	transition: var(--transition);
+	display: inline-block;
+	text-decoration: none;
+	border-radius: 0;
+}
+
+.divider-base {
+	width: 40px;
+	height: 1px;
+	background: var(--yerba-gold-light);
+	margin: 20px auto;
+}

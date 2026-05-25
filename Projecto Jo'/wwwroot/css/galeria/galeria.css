@@ -1,0 +1,98 @@
+﻿/* --- SECCIÓN DE GALERÍA --- */
+.gallery-section {
+	padding: 100px 0;
+	background-color: var(--yerba-cream); /* Mantenemos el fondo crema unificado */
+}
+
+.gallery-header {
+	text-align: center;
+	margin-bottom: 80px;
+}
+
+.gallery-title {
+	font-family: 'Playfair Display', serif !important;
+	font-size: 5rem;
+	font-weight: 200;
+	font-style: italic;
+	letter-spacing: -1px;
+	color: var(--yerba-dark);
+	margin-bottom: 15px;
+}
+
+.gallery-subtitle {
+	font-family: 'Inter', sans-serif;
+	font-size: 0.75rem;
+	text-transform: uppercase;
+	letter-spacing: 0.3rem;
+	color: var(--yerba-gray);
+}
+
+/* --- GRID EDITORIAL (CSS GRID) --- */
+.gallery-grid {
+	display: grid;
+	/* Crea columnas automáticas que no midan menos de 300px */
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	gap: 30px; /* Espacio elegante entre fotos */
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0 20px;
+}
+
+/* --- MÓDULO DE FOTOGRAFÍA --- */
+.gallery-item {
+	position: relative;
+	overflow: hidden; /* Clave para que el zoom no se salga de la caja */
+	aspect-ratio: 4 / 5; /* Formato retrato (estilo revista) */
+	cursor: pointer;
+	background-color: rgba(0,0,0,0.05); /* Fondo temporal mientras carga la foto */
+}
+
+	/* La Imagen */
+	.gallery-item img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		/* Zoom súper lento y fluido al estilo luxury */
+		transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+		will-change: transform;
+	}
+
+/* --- OVERLAY Y TEXTO AL PASAR EL MOUSE --- */
+.gallery-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	/* Gradiente oscuro abajo para que el texto sea legible */
+	background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 40%);
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+	padding-bottom: 40px;
+	opacity: 0;
+	transition: opacity 0.8s ease;
+}
+
+.overlay-text {
+	font-family: 'Playfair Display', serif;
+	color: #ffffff; /* Blanco puro para contrastar la foto */
+	font-size: 1.8rem;
+	font-style: italic;
+	letter-spacing: 1px;
+	transform: translateY(20px);
+	transition: transform 0.8s cubic-bezier(0.2, 1, 0.2, 1);
+}
+
+/* --- INTERACCIONES DE HOVER --- */
+.gallery-item:hover img {
+	transform: scale(1.06); /* El zoom en sí */
+}
+
+.gallery-item:hover .gallery-overlay {
+	opacity: 1; /* Aparece la sombra */
+}
+
+.gallery-item:hover .overlay-text {
+	transform: translateY(0); /* El texto sube suavemente */
+}

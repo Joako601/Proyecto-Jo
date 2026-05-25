@@ -1,0 +1,193 @@
+﻿.hero-section {
+	padding: 100px 0;
+}
+
+.welcome-title {
+	font-family: 'Playfair Display', serif !important;
+	font-style: italic;
+	font-size: 5rem;
+	color: var(--yerba-dark);
+}
+
+/* BOTÓN PRINCIPAL: Fondo Negro -> Dorado */
+.btn-hero-primary {
+	background-color: var(--yerba-dark);
+	color: white !important;
+	border-radius: 0;
+	padding: 15px 35px;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	font-size: 0.75rem;
+	border: none;
+	transition: var(--transition);
+	display: inline-block;
+	text-decoration: none;
+	/* ELIMINAR EL MARCO AL CLICKEAR */
+	outline: none !important;
+	box-shadow: none !important;
+}
+
+	.btn-hero-primary:hover {
+		background-color: var(--yerba-gold) !important;
+		transform: translateY(-3px);
+	}
+
+	/* MATAR EL BORDE DE BOOTSTRAP EN FOCUS/ACTIVE */
+	.btn-hero-primary:focus,
+	.btn-hero-primary:active {
+		outline: none !important;
+		box-shadow: none !important;
+		background-color: var(--yerba-dark) !important;
+	}
+
+	.btn-hero-primary:hover:focus {
+		background-color: var(--yerba-gold) !important;
+	}
+
+/* BOTÓN SECUNDARIO: Nuestra Historia (Sin fondo + Línea) */
+.btn-hero-secondary {
+	text-decoration: none;
+	text-transform: uppercase;
+	padding: 15px 25px;
+	letter-spacing: 2px;
+	font-size: 0.75rem;
+	color: #666;
+	position: relative;
+	display: inline-block;
+	transition: color 0.3s ease;
+	/* ELIMINAR EL MARCO AL CLICKEAR */
+	outline: none !important;
+	box-shadow: none !important;
+	background: transparent !important;
+}
+
+	.btn-hero-secondary::after {
+		content: '';
+		position: absolute;
+		width: 0;
+		height: 1px;
+		bottom: 10px;
+		left: 25px;
+		background-color: var(--yerba-gold);
+		transition: width 0.3s ease;
+	}
+
+	.btn-hero-secondary:hover {
+		color: var(--yerba-gold) !important;
+	}
+
+		.btn-hero-secondary:hover::after {
+			width: calc(100% - 50px);
+		}
+
+	/* MATAR EL BORDE DE BOOTSTRAP EN EL SEGUNDO BOTÓN */
+	.btn-hero-secondary:focus,
+	.btn-hero-secondary:active {
+		outline: none !important;
+		box-shadow: none !important;
+		background: transparent !important;
+		color: #666 !important;
+	}
+
+	.btn-hero-secondary:hover:focus {
+		color: var(--yerba-gold) !important;
+	}
+
+/* TARJETAS Y ANIMACIONES (Se mantienen igual) */
+.img-container {
+	width: 100%;
+	height: 280px;
+	overflow: hidden;
+	position: relative;
+}
+
+	.img-container img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+	}
+
+.item-card:hover .img-container img {
+	transform: scale(1.1);
+}
+
+.card-animate {
+	opacity: 0;
+	animation: fadeInUp 0.8s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+	from {
+		opacity: 0;
+		transform: translateY(30px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* --- NUEVO HERO SECTION --- */
+.hero-container {
+	/* Altura del hero, ajusta si tienes un navbar muy alto */
+	min-height: 85vh;
+	/* IMAGEN DE FONDO (Reemplaza la URL por una foto de tus antojitos) */
+	background-image: url('https://images.unsplash.com/photo-1551183053-bf91a1d81141?q=80&w=1920&auto=format&fit=crop');
+	background-size: cover;
+	background-position: center;
+	/* El attachment fixed crea un efecto parallax sutil y elegante al hacer scroll */
+	background-attachment: fixed;
+	/* Centrado del recuadro usando Flexbox */
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 2rem;
+}
+
+/* --- EL RECUADRO CENTRAL (Efecto Cristal Claro) --- */
+.hero-overlay-box {
+	/* Fondo blanco al 85% de opacidad para que deje ver la imagen sutilmente */
+	background-color: rgba(255, 255, 255, 0.85);
+	/* Efecto de desenfoque en lo que queda detrás del cuadro */
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	/* Espaciado y estructura */
+	padding: 4rem 5rem;
+	max-width: 800px;
+	width: 100%;
+	/* Sombra suave para despegarlo del fondo */
+	box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+	/* Borde súper sutil (opcional) */
+	border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* --- AJUSTE DEL DIVIDER DORADO --- */
+.divider-gold {
+	width: 60px;
+	height: 2px;
+	background-color: #b5a478; /* Tu color dorado */
+}
+
+/* --- BOTÓN PERSONALIZADO "VER DETALLE" --- */
+.btn-ver-detalle {
+	/* Estado Normal: Texto negro, borde negro, fondo transparente */
+	background-color: transparent;
+	color: #222 !important; /* Forzamos el color negro inicial */
+	border: 1px solid #222;
+	font-family: 'Inter', sans-serif;
+	letter-spacing: 1px;
+	font-size: 0.8rem;
+	transition: all 0.3s ease; /* Transición suave */
+	display: inline-block;
+	text-decoration: none;
+}
+
+	.btn-ver-detalle:hover {
+		/* Estado Hover: Fondo negro, texto blanco */
+		background-color: #222;
+		color: #ffffff !important; /* Forzamos el texto blanco para que sea legible */
+		border-color: #222;
+		transform: translateY(-2px); /* Pequeño efecto de levantamiento */
+	}

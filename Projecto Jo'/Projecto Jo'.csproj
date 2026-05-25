@@ -15,12 +15,7 @@
 		<Folder Include="Views\historia\" />
 		<Folder Include="Views\menu\" />
 		<Folder Include="Views\nosotros\" />
-		<Folder Include="wwwroot\css\home\" />
-		<Folder Include="wwwroot\css\menu\" />
-		<Folder Include="wwwroot\css\historia\" />
-		<Folder Include="wwwroot\css\layout\" />
 		<Folder Include="wwwroot\css\index\" />
-		<Folder Include="wwwroot\css\nosotros\" />
 	</ItemGroup>
 
 </Project>

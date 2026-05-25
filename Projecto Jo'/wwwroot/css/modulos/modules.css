@@ -1,0 +1,53 @@
+﻿/* Títulos y Precios */
+.platillo-name, .titulo-premium, h2, h4 {
+	font-family: 'Playfair Display', serif !important;
+	color: var(--yerba-dark) !important;
+}
+
+.item-price, .precio-premium {
+	font-family: 'Inter', sans-serif !important;
+	color: var(--yerba-gold) !important;
+	font-size: 1.4rem;
+}
+
+/* Descripciones */
+.item-description, .descripcion-premium, .text-muted {
+	font-family: 'Inter', sans-serif !important;
+	color: var(--yerba-gray) !important;
+	line-height: 1.8 !important;
+}
+
+/* El link "Ver Detalle" dorado */
+.btn-detalle-gold, a[href*="Detalle"] {
+	color: var(--yerba-dark) !important;
+	text-transform: uppercase;
+	font-size: 0.75rem;
+	letter-spacing: 1px;
+	border-bottom: 2px solid var(--yerba-gold) !important;
+	text-decoration: none !important;
+	padding-bottom: 4px;
+	transition: 0.3s;
+}
+
+	.btn-detalle-gold:hover {
+		color: var(--yerba-gold) !important;
+	}
+
+/* Wrapper de Detalle */
+.platillo-wrapper {
+	display: grid;
+	grid-template-columns: 1fr 1.2fr;
+	background: white;
+}
+
+.platillo-visual {
+	background-color: var(--yerba-gold);
+	min-height: 450px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.platillo-info {
+	padding: 4rem;
+}

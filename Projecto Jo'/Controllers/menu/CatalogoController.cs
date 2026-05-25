@@ -1,23 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Proyecto_Jo_.Models; // Importa tu modelo Item corregido
-using Proyecto_Jo_.Data;   // Importa tu JsonProductService
-
+using Proyecto_Jo_.Models; 
+using Proyecto_Jo_.Data;   
 namespace Proyecto_Jo_.Controllers
 {
 	public class CatalogoController : Controller
 	{
 		private readonly JsonProductService _productService;
 
-		// El constructor recibe el servicio de JSON gracias a la línea que pusimos en Program.cs
+		
 		public CatalogoController(JsonProductService productService)
 		{
 			_productService = productService;
 		}
 
-		// GET: /Catalogo/Index
+		
 		public IActionResult Index(string? categoria)
 		{
-			// Leemos los platillos directamente desde el archivo JSON
+			
 			var menu = _productService.ObtenerMenu();
 
 			var resultado = string.IsNullOrEmpty(categoria)
@@ -30,7 +29,7 @@ namespace Proyecto_Jo_.Controllers
 			return View(resultado);
 		}
 
-		// GET: /Catalogo/Detalle/{id}
+		
 		public IActionResult Detalle(int id)
 		{
 			var menu = _productService.ObtenerMenu();

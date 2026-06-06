@@ -159,7 +159,7 @@ Proyecto Jo'
 
 ### Vista de despligue
 
-![Vista de despliegue](./Vistas-Arquitectonicas/vista-despliegue.drawio.svg)
+![Vista de despliegue](./Vistas-Arquitectonicas/vista-despliegue-img.drawio.svg)
 
 ---
 

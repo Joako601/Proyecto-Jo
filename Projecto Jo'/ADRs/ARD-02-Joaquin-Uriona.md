@@ -1,4 +1,4 @@
-﻿# ADR-01: Estructura base del sistema usando el patrón MVC
+﻿# ADR-02: Estructura base del sistema usando el patrón MVC
 Campo	     Valor <br>
 Autor	Joaquin Uriona <br>
 Fecha	15/05/2026 <br>

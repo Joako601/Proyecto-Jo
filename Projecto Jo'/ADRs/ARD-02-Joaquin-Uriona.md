@@ -225,3 +225,14 @@ flowchart LR
     VP4 -. "lee" .-> PA1
     PA1 -. "protege" .-> AU1
 ```
+
+---
+
+## Uso de IA
+
+Se utilizó IA únicamente para:
+
+- Corregir redacción y ortografía del documento
+- Generar la sintaxis Mermaid del diagrama de Bounded Contexts
+
+No se utilizó para tomar decisiones arquitectónicas ni para diseñar la solución.

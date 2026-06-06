@@ -480,3 +480,4 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+/Projecto Jo'/ADRs/Vistas-Arquitectonicas/vista-despliegue.drawio.svg

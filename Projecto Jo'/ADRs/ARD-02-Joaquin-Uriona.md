@@ -2,7 +2,7 @@
 Campo	     Valor <br>
 Autor	Joaquin Uriona <br>
 Fecha	15/05/2026 <br>
-Estado `Aceptado`  <br>
+Estado `Aceptado` · `Reemplaza ADR-01`  <br>
 ---
 ## Contexto
 

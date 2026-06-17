@@ -1,4 +1,4 @@
-﻿namespace Proyecto_Jo_.Models
+﻿namespace ProyectoJo.Domain.Entities
 {
 	public class Item
 	{

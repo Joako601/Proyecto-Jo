@@ -32,17 +32,18 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 				new Claim(ClaimTypes.Name, usuario)
 			};
 
-			var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+			var identity = new ClaimsIdentity(claims, "JoCookieAuth");
+
 			var principal = new ClaimsPrincipal(identity);
 
-			await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+			await HttpContext.SignInAsync("JoCookieAuth", principal);
 
 			return RedirectToAction("Index", "Gestion", new { area = "Admin" });
 		}
 
 		public async Task<IActionResult> Salir()
 		{
-			await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+			await HttpContext.SignOutAsync("JoCookieAuth");
 			return RedirectToAction("Index");
 		}
 	}

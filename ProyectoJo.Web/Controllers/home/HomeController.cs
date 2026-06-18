@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using ProyectoJo.Domain.Entities;
 using ProyectoJo.Application.Ports.In;
+using ProyectoJo.Web.Models;
 
 namespace ProyectoJo.Web.Controllers;
 	public class HomeController : Controller

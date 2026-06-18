@@ -1,0 +1,114 @@
+﻿.historia-section {
+	padding: 60px 0;
+	background-color: var(--yerba-cream);
+}
+
+.historia-title {
+	font-family: 'Playfair Display', serif !important;
+	font-size: 3.5rem;
+	font-weight: 700;
+	color: var(--yerba-dark);
+	margin-bottom: 5px;
+}
+
+.lead-custom {
+	font-family: 'Playfair Display', serif;
+	font-size: 1.3rem;
+	font-style: italic;
+	line-height: 1.6;
+	color: var(--yerba-dark);
+	margin: 30px 0;
+	border-left: 2px solid var(--yerba-gold);
+	padding-left: 20px;
+}
+
+.historia-text {
+	font-family: 'Inter', sans-serif;
+	font-size: 1rem;
+	line-height: 1.8;
+	color: var(--yerba-gray);
+	text-align: justify;
+	margin-bottom: 20px;
+}
+
+.img-historia-wrapper {
+	width: 100%;
+	height: auto;
+	overflow: hidden;
+	box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+}
+
+	.img-historia-wrapper img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+		transition: transform 1s ease;
+	}
+
+/* --- SECCIÓN FINAL CTA (Estilo Index) --- */
+.historia-footer-cta {
+	padding: 60px 0;
+	text-align: center;
+	background-color: white;
+}
+
+.cta-question {
+	font-family: 'Playfair Display', serif;
+	font-size: 1.6rem;
+	color: var(--yerba-dark);
+	margin-bottom: 25px;
+}
+
+/* Botón Negro -> Dorado (Como el "Explorar Menú" del Index) */
+.btn-cta-primary {
+	background-color: var(--yerba-dark);
+	color: white !important;
+	border-radius: 0;
+	padding: 15px 35px;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	font-size: 0.75rem;
+	border: none;
+	transition: var(--transition);
+	display: inline-block;
+	text-decoration: none;
+}
+
+	.btn-cta-primary:hover {
+		background-color: var(--yerba-gold) !important;
+		transform: translateY(-3px);
+		color: white !important;
+	}
+
+/* Botón con Línea Suave (Como el "Nuestra Historia" del Index) */
+.btn-cta-secondary {
+	text-decoration: none;
+	text-transform: uppercase;
+	padding: 15px 25px;
+	letter-spacing: 2px;
+	font-size: 0.75rem;
+	color: var(--yerba-gray);
+	position: relative;
+	display: inline-block;
+	transition: color 0.3s ease;
+}
+
+	.btn-cta-secondary::after {
+		content: '';
+		position: absolute;
+		width: 0;
+		height: 1px;
+		bottom: 10px;
+		left: 25px;
+		background-color: var(--yerba-gold);
+		transition: width 0.3s ease;
+	}
+
+	.btn-cta-secondary:hover {
+		color: var(--yerba-gold) !important;
+	}
+
+		.btn-cta-secondary:hover::after {
+			width: calc(100% - 50px);
+		}

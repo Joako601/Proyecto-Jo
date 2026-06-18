@@ -1,0 +1,8 @@
+﻿:root {
+	--yerba-dark: #1a1a1a;
+	--yerba-gold: #c5a059;
+	--yerba-gold-light: #b5a478;
+	--yerba-cream: #f9f7f2;
+	--yerba-gray: #757575;
+	--transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}

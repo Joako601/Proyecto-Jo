@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProyectoJo.Domain.Entities;
-using ProyectoJo.Web.Data;
 using ProyectoJo.Application.Ports.In;
 
 namespace ProyectoJo.Web.Controllers

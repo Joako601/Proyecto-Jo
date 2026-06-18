@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using ProyectoJo.Web.Data;
 using ProyectoJo.Domain.Entities;
 using ProyectoJo.Application.Ports.In;
 

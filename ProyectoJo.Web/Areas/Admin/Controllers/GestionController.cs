@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Projecto_Jo_.Areas.Admin.Controllers
+namespace ProyectoJo.Web.Areas.Admin.Controllers
 {
 	[Area("Admin")]
 	[Authorize(AuthenticationSchemes = "JoCookieAuth")] 

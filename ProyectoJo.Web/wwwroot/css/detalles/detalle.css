@@ -1,0 +1,143 @@
+﻿.detalle-container {
+	padding: 80px 0;
+	max-width: 1100px;
+}
+
+/* Contenedor principal asimétrico */
+.platillo-wrapper {
+	display: grid;
+	grid-template-columns: 1fr 1.2fr;
+	background: white;
+	border: none;
+	box-shadow: 0 40px 100px rgba(0,0,0,0.08) !important;
+}
+
+/* Bloque Izquierdo (Visual) */
+.platillo-visual {
+	background-color: var(--yerba-gold) !important;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 500px;
+	position: relative;
+	overflow: hidden;
+}
+
+	.platillo-visual span {
+		font-size: 10rem;
+		filter: drop-shadow(0 20px 30px rgba(0,0,0,0.2));
+		transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+	}
+
+.platillo-wrapper:hover .platillo-visual span {
+	transform: scale(1.1) rotate(5deg);
+}
+
+/* Bloque Derecho (Información) */
+.platillo-info {
+	padding: 5rem !important;
+	background-color: white;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.platillo-info-header {
+	border-bottom: 1px solid rgba(0,0,0,0.05);
+	padding-bottom: 2rem;
+	margin-bottom: 2rem;
+}
+
+.tag-categoria {
+	font-family: 'Inter', sans-serif !important;
+	text-transform: uppercase;
+	font-size: 0.7rem;
+	letter-spacing: 0.4rem;
+	color: var(--yerba-gold);
+	display: block;
+	margin-bottom: 1rem;
+}
+
+.titulo-premium {
+	font-family: 'Playfair Display', serif !important;
+	font-size: 4rem !important;
+	font-weight: 200 !important;
+	line-height: 1;
+	color: var(--yerba-dark);
+}
+
+.precio-premium {
+	font-family: 'Inter', sans-serif !important;
+	font-size: 1.8rem;
+	font-weight: 300;
+	color: var(--yerba-gold-light);
+	margin-top: 1rem;
+	display: block;
+}
+
+.descripcion-premium {
+	font-family: 'Inter', sans-serif !important;
+	font-size: 1.1rem;
+	line-height: 2;
+	color: var(--yerba-gray);
+	font-style: italic;
+	margin-bottom: 3rem;
+}
+
+/* Ficha Técnica */
+.ficha-tecnica {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 2.5rem;
+	margin-bottom: 4rem;
+}
+
+.ficha-item label {
+	display: block;
+	font-family: 'Inter', sans-serif;
+	font-size: 0.6rem;
+	text-transform: uppercase;
+	letter-spacing: 0.2rem;
+	color: var(--yerba-gold);
+	margin-bottom: 0.5rem;
+	font-weight: 700;
+}
+
+.ficha-item span {
+	font-family: 'Inter', sans-serif;
+	font-weight: 400;
+	font-size: 0.9rem;
+	color: var(--yerba-dark);
+}
+
+/* Botón Regresar (Mismo estilo que el secundario del Home) */
+.btn-regresar-yerba {
+	align-self: flex-start;
+	text-decoration: none !important;
+	text-transform: uppercase;
+	padding: 12px 0;
+	letter-spacing: 2px;
+	font-size: 0.7rem;
+	color: var(--yerba-dark) !important;
+	position: relative;
+	transition: color 0.3s ease;
+}
+
+	.btn-regresar-yerba::after {
+		content: '';
+		position: absolute;
+		width: 30px;
+		height: 1px;
+		bottom: 0;
+		left: 0;
+		background-color: var(--yerba-gold);
+		transition: width 0.3s ease;
+	}
+
+	.btn-regresar-yerba:hover {
+		color: var(--yerba-gold) !important;
+	}
+
+		.btn-regresar-yerba:hover::after {
+			width: 100%;
+		}

@@ -1,0 +1,56 @@
+﻿@{
+    ViewData["Title"] = "Ubicación - Tía Caro";
+}
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <p class="text-uppercase mb-2" style="letter-spacing: 5px; color: #b5a478; font-size: 0.9rem;">Visítanos</p>
+        <h1 class="display-4 welcome-title" style="font-family: 'Playfair Display', serif;">Antojitos de la Tía Caro</h1>
+        <div class="divider-gold" style="width: 40px; height: 1px; background: #b5a478; margin: 20px auto;"></div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Columna del Mapa -->
+        <div class="col-lg-8">
+            
+            <div class="ratio ratio-16x9 shadow-sm border p-1 bg-white">
+                <iframe src="https://www.google.com/maps?q=Antojitos+de+la+Tia+Caro+San+Pedro+Uxmal+Merida&output=embed"
+                        style="border:0;"
+                        allowfullscreen=""
+                        loading="lazy">
+                </iframe>
+            </div>
+            <div class="mt-3 p-3 bg-light border-start border-3 border-warning">
+                <p class="mb-0 small">
+                    <i class="bi bi-geo-alt-fill text-danger"></i>
+                    <strong>Dirección:</strong> Calle 36 x 5 y 7, San Pedro Uxmal, Mérida, Yuc.
+                </p>
+            </div>
+        </div>
+
+        <!-- Columna de Información -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <h3 class="h5 mb-4" style="font-family: 'Playfair Display', serif;">Horarios de Servicio</h3>
+                    <ul class="list-unstyled small">
+                        <li class="d-flex justify-content-between mb-3 border-bottom pb-2">
+                            <span>Lun - Sáb</span>
+                            <strong>18:30 - 23:30</strong>
+                        </li>
+                        <li class="d-flex justify-content-between mb-3 border-bottom pb-2" style="color: #b5a478;">
+                            <span>Domingos</span>
+                            <strong>07:00 - 13:00</strong>
+                        </li>
+                    </ul>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <a href="https://wa.me/529990000000" class="btn btn-dark rounded-0 py-2">
+                            PEDIR POR WHATSAPP
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

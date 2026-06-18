@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <Folder Include="Areas\Admin\Models\" />
+    <Folder Include="Controllers\nosotros\" />
+    <Folder Include="Views\nosotros\" />
   </ItemGroup>
 
   <PropertyGroup>

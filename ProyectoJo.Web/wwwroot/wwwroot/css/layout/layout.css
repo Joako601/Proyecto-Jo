@@ -1,0 +1,116 @@
+﻿/* --- TUS ESTILOS ORIGINALES (NO TOCAR) --- */
+body {
+	background-color: var(--yerba-cream) !important;
+	color: var(--yerba-dark);
+	font-family: 'Playfair Display', serif;
+	letter-spacing: 0.02em;
+}
+
+/* Efecto dorado en el Header */
+.navbar-brand:hover,
+.nav-link:hover {
+	color: var(--yerba-gold) !important;
+	transition: var(--transition-smooth);
+}
+
+/* Limpieza de enlaces en el Footer */
+footer a {
+	text-decoration: none !important;
+	color: rgba(255, 255, 255, 0.6) !important;
+	transition: var(--transition-smooth);
+}
+
+	footer a:hover {
+		color: var(--yerba-gold) !important;
+	}
+
+footer h3, footer h5 {
+	color: var(--yerba-gold);
+}
+
+/* --- LÓGICA DE REVELADO PARA JS (LO NUEVO) --- */
+
+/* Solo ocultamos si el navegador soporta animaciones */
+@supports (opacity: 0) {
+	.module-reveal {
+		opacity: 0;
+		transform: translateY(30px);
+		transition: opacity 1.2s cubic-bezier(0.2, 1, 0.3, 1), transform 1.2s cubic-bezier(0.2, 1, 0.3, 1);
+		visibility: hidden; /* Evita clics en elementos invisibles */
+	}
+
+		.module-reveal.active {
+			opacity: 1 !important;
+			transform: translateY(0) !important;
+			visibility: visible !important;
+		}
+}
+
+/* Estilo para el Navbar al bajar scroll (Glassmorphism) */
+.navbar.navbar-scrolled {
+	background-color: rgba(255, 255, 255, 0.95) !important;
+	backdrop-filter: blur(10px);
+	box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+	padding: 10px 0;
+}
+
+/* --- Estilos unificados del Footer --- */
+.main-footer {
+	background-color: #1a1d20;
+	padding: 4rem 0;
+}
+
+/* Títulos: Tía Caro, Explora y Redes */
+.footer-title {
+	color: #b5a478;
+	font-family: 'Playfair Display', serif;
+	font-size: 1.1rem;
+	letter-spacing: 2px;
+	font-weight: 700;
+	text-transform: uppercase;
+	margin-bottom: 1.5rem;
+}
+
+/* Frase descriptiva (Mantiene su color sutil) */
+.footer-text {
+	font-family: 'Inter', sans-serif;
+	font-size: 0.9rem;
+	color: #a0a0a0;
+	margin-bottom: 0.5rem;
+	display: block;
+}
+
+/* Enlaces (Menú y Ubicación): Dorado y con el mismo hover que las redes */
+.footer-link {
+	font-family: 'Inter', sans-serif;
+	font-size: 0.9rem;
+	color: #b5a478; /* Color dorado */
+	text-decoration: none;
+	margin-bottom: 0.5rem;
+	display: block;
+	transition: opacity 0.3s ease; /* Transición para la opacidad */
+}
+
+	.footer-link:hover {
+		color: #b5a478; /* Mantiene el dorado */
+		opacity: 0.7; /* Efecto desvanecido idéntico a las redes */
+	}
+
+/* Iconos de Redes */
+.footer-socials a {
+	color: #ffffff;
+	font-size: 1.1rem;
+	margin-left: 1.5rem;
+	transition: opacity 0.3s ease;
+}
+
+	.footer-socials a:hover {
+		opacity: 0.7;
+	}
+
+/* Ajuste para móviles */
+@media (max-width: 768px) {
+	.footer-socials a {
+		margin: 0 0.75rem;
+	}
+}

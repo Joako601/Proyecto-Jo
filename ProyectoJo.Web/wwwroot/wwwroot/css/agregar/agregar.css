@@ -1,0 +1,99 @@
+﻿/* Contenedor Principal (El cuadro blanco) */
+.form-container-premium {
+	max-width: 800px;
+	margin: 40px auto;
+	background: white;
+	padding: 5rem !important;
+	box-shadow: 0 40px 100px rgba(0,0,0,0.05) !important;
+	border: none !important;
+}
+
+/* Título */
+.form-title-premium {
+	font-family: 'Playfair Display', serif !important;
+	font-size: 3rem;
+	font-weight: 200;
+	margin-bottom: 4rem;
+	color: var(--yerba-dark);
+	text-align: center;
+}
+
+/* Grupos de Input */
+.input-group-premium {
+	margin-bottom: 3rem;
+	display: flex;
+	flex-direction: column;
+}
+
+/* Labels (Dorado y pequeño) */
+.label-premium {
+	font-family: 'Inter', sans-serif !important;
+	font-size: 0.65rem;
+	text-transform: uppercase;
+	letter-spacing: 0.2rem;
+	color: var(--yerba-gold);
+	margin-bottom: 0.8rem;
+	font-weight: 700;
+}
+
+/* Inputs (Solo la línea inferior) */
+.input-premium {
+	width: 100%;
+	border: none !important;
+	border-bottom: 1px solid rgba(0,0,0,0.1) !important;
+	padding: 0.8rem 0;
+	font-family: 'Inter', sans-serif !important;
+	font-size: 1.1rem;
+	background: transparent !important;
+	transition: border-color 0.4s;
+	outline: none !important;
+	border-radius: 0 !important;
+}
+
+	.input-premium:focus {
+		border-bottom: 1px solid var(--yerba-gold) !important;
+	}
+
+/* Botón Guardar (Negro -> Dorado) */
+.btn-submit-yerba {
+	width: 100%;
+	background-color: var(--yerba-dark) !important;
+	color: white !important;
+	padding: 1.2rem;
+	border: none !important;
+	text-transform: uppercase;
+	letter-spacing: 0.3rem;
+	font-size: 0.8rem;
+	transition: var(--transition);
+	cursor: pointer;
+	margin-top: 2rem;
+	border-radius: 0 !important;
+}
+
+	.btn-submit-yerba:hover {
+		background-color: var(--yerba-gold) !important;
+		transform: translateY(-3px);
+	}
+
+/* Enlace Cancelar */
+.btn-cancelar-yerba {
+	text-decoration: none !important;
+	text-transform: uppercase;
+	font-size: 0.65rem;
+	letter-spacing: 0.2rem;
+	color: var(--yerba-gray) !important;
+	display: inline-block;
+	transition: 0.3s;
+	border: none !important;
+	background: transparent !important;
+}
+
+	.btn-cancelar-yerba:hover {
+		color: var(--yerba-dark) !important;
+	}
+
+/* Soporte para Textarea */
+textarea.input-premium {
+	min-height: 100px;
+	resize: none;
+}

@@ -1,7 +1,6 @@
 using System.Security.Claims; // ¡Esencial para los Claims!
 using Microsoft.AspNetCore.Authentication; // ¡Esencial para el SignInAsync!
 using Microsoft.AspNetCore.Authentication.Cookies;
-using ProyectoJo.Web.Data;
 using ProyectoJo.Application.Ports.In;
 using ProyectoJo.Application.UseCases;
 using ProyectoJo.Application.Ports.Out;
@@ -18,7 +17,6 @@ builder.Services.AddScoped<IAuthService, EnvAuthService>();
 
 // --- 1. CONFIGURACIÓN DE SERVICIOS (ANTES DE BUILD) ---
 builder.Services.AddControllersWithViews();
-builder.Services.AddSingleton<JsonProductService>();
 
 // Configuración de Autenticación
 builder.Services.AddAuthentication("JoCookieAuth")
@@ -50,11 +48,6 @@ app.UseAuthorization();
 app.MapControllerRoute(
 	name: "areas",
 	pattern: "{area:exists}/{controller=Gestion}/{action=Index}/{id?}");
-
-
-app.MapControllerRoute(
-	name: "areas",
-	pattern: "{area:exists}/{controller=Login}/{action=Login}/{id?}");
 
 // Ruta por defecto
 app.MapControllerRoute(

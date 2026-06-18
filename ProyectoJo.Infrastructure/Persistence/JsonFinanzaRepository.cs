@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using Microsoft.AspNetCore.Hosting;
 using ProyectoJo.Application.Ports.Out;
 using ProyectoJo.Domain.Entities;
 
@@ -7,20 +6,17 @@ namespace ProyectoJo.Infrastructure.Persistence
 {
 	public class JsonFinanzaRepository : IFinanzaRepository
 	{
-		private readonly IWebHostEnvironment _env;
+		private readonly string _rutaArchivo;
 
-		public JsonFinanzaRepository(IWebHostEnvironment env)
+		public JsonFinanzaRepository(string rutaArchivo)
 		{
-			_env = env;
+			_rutaArchivo = rutaArchivo;
 		}
-
-		private string GetPath() =>
-			Path.Combine(_env.ContentRootPath, "Persistencia", "finanzas.json");
 
 		public List<Finanza> ObtenerTodos()
 		{
-			if (!File.Exists(GetPath())) return new List<Finanza>();
-			var json = File.ReadAllText(GetPath());
+			if (!File.Exists(_rutaArchivo)) return new List<Finanza>();
+			var json = File.ReadAllText(_rutaArchivo);
 			return JsonSerializer.Deserialize<List<Finanza>>(json) ?? new List<Finanza>();
 		}
 
@@ -52,7 +48,7 @@ namespace ProyectoJo.Infrastructure.Persistence
 		private void Persistir(List<Finanza> lista)
 		{
 			var json = JsonSerializer.Serialize(lista, new JsonSerializerOptions { WriteIndented = true });
-			File.WriteAllText(GetPath(), json);
+			File.WriteAllText(_rutaArchivo, json);
 		}
 	}
 }

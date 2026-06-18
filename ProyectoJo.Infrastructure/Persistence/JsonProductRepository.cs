@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using Microsoft.AspNetCore.Hosting;
 using ProyectoJo.Application.Ports.Out;
 using ProyectoJo.Domain.Entities;
 
@@ -7,15 +6,12 @@ namespace ProyectoJo.Infrastructure.Persistence
 {
 	public class JsonProductRepository : IProductoRepository
 	{
-		private readonly IWebHostEnvironment _env;
+		private readonly string _rutaArchivo;
 
-		public JsonProductRepository(IWebHostEnvironment env)
+		public JsonProductRepository(string rutaArchivo)
 		{
-			_env = env;
+			_rutaArchivo = rutaArchivo;
 		}
-
-		private string GetPath() =>
-			Path.Combine(_env.ContentRootPath, "Persistencia", "menu.json");
 
 		public IEnumerable<Item> ObtenerTodos() => LeerJson();
 
@@ -27,7 +23,7 @@ namespace ProyectoJo.Infrastructure.Persistence
 		public void GuardarMenu(List<Item> menu)
 		{
 			var json = JsonSerializer.Serialize(menu, new JsonSerializerOptions { WriteIndented = true });
-			File.WriteAllText(GetPath(), json);
+			File.WriteAllText(_rutaArchivo, json);
 		}
 
 		public void AgregarItem(Item item)
@@ -35,12 +31,12 @@ namespace ProyectoJo.Infrastructure.Persistence
 			var menu = LeerJson();
 			menu.Add(item);
 			var json = JsonSerializer.Serialize(menu, new JsonSerializerOptions { WriteIndented = true });
-			File.WriteAllText(GetPath(), json);
+			File.WriteAllText(_rutaArchivo, json);
 		}
 
 		private List<Item> LeerJson()
 		{
-			var json = File.ReadAllText(GetPath());
+			var json = File.ReadAllText(_rutaArchivo);
 			return JsonSerializer.Deserialize<List<Item>>(json) ?? new List<Item>();
 		}
 	}

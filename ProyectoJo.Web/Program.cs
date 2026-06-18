@@ -10,10 +10,17 @@ using ProyectoJo.Infrastructure.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddScoped<IProductoRepository, JsonProductRepository>();
+var rutaPersistencia = Path.Combine(builder.Environment.ContentRootPath, "Persistencia");
+var rutaMenu = Path.Combine(rutaPersistencia, "menu.json");
+var rutaFinanzas = Path.Combine(rutaPersistencia, "finanzas.json");
+
+builder.Services.AddScoped<IProductoRepository>(_ => new JsonProductRepository(rutaMenu));
+builder.Services.AddScoped<IFinanzaRepository>(_ => new JsonFinanzaRepository(rutaFinanzas));
+
+
 builder.Services.AddScoped<IProductoService, ProductoUseCase>();
 
-builder.Services.AddScoped<IFinanzaRepository, JsonFinanzaRepository>();
+
 builder.Services.AddScoped<IFinanzaService, FinanzaUseCase>();
 
 builder.Services.AddScoped<IAuthService, EnvAuthService>();

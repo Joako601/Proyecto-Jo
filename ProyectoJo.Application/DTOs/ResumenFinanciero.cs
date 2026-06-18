@@ -1,4 +1,4 @@
-﻿namespace ProyectoJo.Application
+﻿namespace ProyectoJo.Application.DTOs
 {
 	public class ResumenFinanciero
 	{

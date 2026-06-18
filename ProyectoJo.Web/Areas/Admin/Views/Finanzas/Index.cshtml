@@ -1,0 +1,242 @@
+﻿@model IEnumerable<ProyectoJo.Domain.Entities.Finanza>
+@using ProyectoJo.Application
+@{
+	ViewData["Title"] = "Finanzas";
+	Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+	var resumen = ViewBag.Resumen as ProyectoJo.Application.DTOs.ResumenFinanciero;
+}
+
+<div class="admin-page">
+
+    <div class="page-header">
+        <h1>Finanzas</h1>
+        <a asp-action="Registrar" class="btn-primary">+ Registrar movimiento</a>
+    </div>
+
+    @if (resumen != null)
+    {
+        <div class="resumen-bar">
+            <div class="resumen-item resumen-item--ingreso">
+                <span class="resumen-label">Ingresos hoy</span>
+                <span class="resumen-valor">$@resumen.TotalIngresos.ToString("N2")</span>
+            </div>
+            <div class="resumen-item resumen-item--egreso">
+                <span class="resumen-label">Egresos hoy</span>
+                <span class="resumen-valor">$@resumen.TotalEgresos.ToString("N2")</span>
+            </div>
+            <div class="resumen-item resumen-item--neto">
+                <span class="resumen-label">Saldo neto</span>
+                <span class="resumen-valor">$@resumen.SaldoNeto.ToString("N2")</span>
+            </div>
+            <a asp-action="Resumen" class="btn-secondary">Ver resumen por período</a>
+        </div>
+    }
+
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Tipo</th>
+                <th>Categoría</th>
+                <th>Descripción</th>
+                <th>Monto</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Fecha.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        <span class="tag tag--@item.Tipo.ToString().ToLower()">
+                            @item.Tipo
+                        </span>
+                    </td>
+                    <td>@item.Categoria</td>
+                    <td>@item.Descripcion</td>
+                    <td>$@item.Monto.ToString("N2")</td>
+                    <td class="acciones">
+                        <a asp-action="Editar" asp-route-id="@item.Id" class="link-edit">Editar</a>
+                        <form asp-action="Eliminar" asp-route-id="@item.Id" method="post"
+                              onsubmit="return confirm('¿Eliminar este movimiento?')">
+                            <button type="submit" class="link-delete">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (!Model.Any())
+    {
+        <p class="empty-state">No hay movimientos registrados aún.</p>
+    }
+
+</div>
+
+<style>
+    .admin-page {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+        .page-header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #111;
+        }
+
+    .btn-primary {
+        background: #111;
+        color: #fff;
+        padding: 0.5rem 1.25rem;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 0.875rem;
+    }
+
+        .btn-primary:hover {
+            background: #333;
+        }
+
+    .btn-secondary {
+        background: transparent;
+        border: 1px solid #ccc;
+        color: #333;
+        padding: 0.4rem 1rem;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 0.8rem;
+        white-space: nowrap;
+    }
+
+    .resumen-bar {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        background: #f9f9f9;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .resumen-item {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .resumen-label {
+        font-size: 0.75rem;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .resumen-valor {
+        font-size: 1.25rem;
+        font-weight: 700;
+    }
+
+    .resumen-item--ingreso .resumen-valor {
+        color: #2a7a2a;
+    }
+
+    .resumen-item--egreso .resumen-valor {
+        color: #c0392b;
+    }
+
+    .resumen-item--neto .resumen-valor {
+        color: #111;
+    }
+
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
+
+        .admin-table th {
+            text-align: left;
+            padding: 0.6rem 0.75rem;
+            border-bottom: 2px solid #e0e0e0;
+            color: #555;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .admin-table td {
+            padding: 0.65rem 0.75rem;
+            border-bottom: 1px solid #f0f0f0;
+            color: #333;
+        }
+
+        .admin-table tr:hover td {
+            background: #fafafa;
+        }
+
+    .tag {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 3px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .tag--ingreso {
+        background: #e8f5e9;
+        color: #2a7a2a;
+    }
+
+    .tag--egreso {
+        background: #fdecea;
+        color: #c0392b;
+    }
+
+    .acciones {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+    }
+
+    .link-edit {
+        color: #b5a478;
+        text-decoration: none;
+        font-size: 0.85rem;
+    }
+
+        .link-edit:hover {
+            text-decoration: underline;
+        }
+
+    .link-delete {
+        background: none;
+        border: none;
+        color: #c0392b;
+        cursor: pointer;
+        font-size: 0.85rem;
+        padding: 0;
+    }
+
+        .link-delete:hover {
+            text-decoration: underline;
+        }
+
+    .empty-state {
+        text-align: center;
+        color: #999;
+        padding: 2rem;
+    }
+</style>

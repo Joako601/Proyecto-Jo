@@ -1,0 +1,52 @@
+﻿@using ProyectoJo.Application.DTOs
+@model ResumenFinanciero
+@{
+    ViewData["Title"] = "Resumen Financiero";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    var desde = (DateTime)ViewBag.Desde;
+    var hasta = (DateTime)ViewBag.Hasta;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin/finanzas.css" asp-append-version="true" />
+}
+
+<div class="admin-page">
+
+    <div class="page-header">
+        <h1>Resumen Financiero</h1>
+        <a asp-action="Index" class="btn-secondary">← Volver</a>
+    </div>
+
+    <form asp-action="Resumen" method="get" class="filter-bar">
+        <div class="filter-group">
+            <label>Desde</label>
+            <input type="date" name="desde" value="@desde.ToString("yyyy-MM-dd")" class="form-control" />
+        </div>
+        <div class="filter-group">
+            <label>Hasta</label>
+            <input type="date" name="hasta" value="@hasta.ToString("yyyy-MM-dd")" class="form-control" />
+        </div>
+        <button type="submit" class="btn-primary">Filtrar</button>
+    </form>
+
+    <div class="resumen-cards">
+        <div class="resumen-card resumen-card--ingreso">
+            <span class="card-label">Total Ingresos</span>
+            <span class="card-valor">$@Model.TotalIngresos.ToString("N2")</span>
+        </div>
+        <div class="resumen-card resumen-card--egreso">
+            <span class="card-label">Total Egresos</span>
+            <span class="card-valor">$@Model.TotalEgresos.ToString("N2")</span>
+        </div>
+        <div class="resumen-card resumen-card--neto">
+            <span class="card-label">Saldo Neto</span>
+            <span class="card-valor">$@Model.SaldoNeto.ToString("N2")</span>
+        </div>
+    </div>
+
+    <p class="period-label">
+        Período: @desde.ToString("dd/MM/yyyy") — @hasta.ToString("dd/MM/yyyy")
+    </p>
+
+</div>

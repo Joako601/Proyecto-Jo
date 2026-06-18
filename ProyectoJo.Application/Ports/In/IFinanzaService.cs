@@ -1,4 +1,5 @@
-﻿using ProyectoJo.Domain.Entities;
+﻿using ProyectoJo.Application.DTOs;
+using ProyectoJo.Domain.Entities;
 
 namespace ProyectoJo.Application.Ports.In
 {

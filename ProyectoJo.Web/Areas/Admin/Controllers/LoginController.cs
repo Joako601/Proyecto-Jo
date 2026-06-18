@@ -1,50 +1,50 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Mvc;
-using ProyectoJo.Application.Ports.In;
-using System.Security.Claims;
+﻿	using Microsoft.AspNetCore.Authentication;
+	using Microsoft.AspNetCore.Authentication.Cookies;
+	using Microsoft.AspNetCore.Mvc;
+	using ProyectoJo.Application.Ports.In;
+	using System.Security.Claims;
 
-namespace ProyectoJo.Web.Areas.Admin.Controllers
-{
-	[Area("Admin")]
-	public class LoginController : Controller
+	namespace ProyectoJo.Web.Areas.Admin.Controllers
 	{
-		private readonly IAuthService _authService;
-
-		public LoginController(IAuthService authService)
+		[Area("Admin")]
+		public class LoginController : Controller
 		{
-			_authService = authService;
-		}
+			private readonly IAuthService _authService;
 
-		public IActionResult Index() => View();
-
-		[HttpPost]
-		public async Task<IActionResult> Index(string usuario, string contrasena)
-		{
-			if (!_authService.ValidarCredenciales(usuario, contrasena))
+			public LoginController(IAuthService authService)
 			{
-				ViewBag.Error = "Credenciales incorrectas";
-				return View();
+				_authService = authService;
 			}
 
-			var claims = new List<Claim>
+			public IActionResult Index() => View();
+
+			[HttpPost]
+			public async Task<IActionResult> Index(string usuario, string contrasena)
 			{
-				new Claim(ClaimTypes.Name, usuario)
-			};
+				if (!_authService.ValidarCredenciales(usuario, contrasena))
+				{
+					ViewBag.Error = "Credenciales incorrectas";
+					return View();
+				}
 
-			var identity = new ClaimsIdentity(claims, "JoCookieAuth");
+				var claims = new List<Claim>
+				{
+					new Claim(ClaimTypes.Name, usuario)
+				};
 
-			var principal = new ClaimsPrincipal(identity);
+				var identity = new ClaimsIdentity(claims, "JoCookieAuth");
 
-			await HttpContext.SignInAsync("JoCookieAuth", principal);
+				var principal = new ClaimsPrincipal(identity);
 
-			return RedirectToAction("Index", "Gestion", new { area = "Admin" });
-		}
+				await HttpContext.SignInAsync("JoCookieAuth", principal);
 
-		public async Task<IActionResult> Salir()
-		{
-			await HttpContext.SignOutAsync("JoCookieAuth");
-			return RedirectToAction("Index");
+				return RedirectToAction("Index", "Gestion", new { area = "Admin" });
+			}
+
+			public async Task<IActionResult> Salir()
+			{
+				await HttpContext.SignOutAsync("JoCookieAuth");
+				return RedirectToAction("Index");
+			}
 		}
 	}
-}

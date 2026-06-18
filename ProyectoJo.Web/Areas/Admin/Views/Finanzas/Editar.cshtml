@@ -1,0 +1,49 @@
+﻿@model ProyectoJo.Domain.Entities.Finanza
+@{
+    ViewData["Title"] = "Editar Movimiento";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin/finanzas.css" asp-append-version="true" />
+}
+
+<div class="admin-form">
+    <div class="form-header">
+        <a asp-action="Index" class="back-link">← Volver</a>
+        <h1>Editar Movimiento</h1>
+    </div>
+
+    <form asp-action="Editar" method="post">
+        <input asp-for="Id" type="hidden" />
+        <div class="form-group">
+            <label asp-for="Tipo">Tipo</label>
+            <select asp-for="Tipo" class="form-control">
+                <option value="Ingreso">Ingreso</option>
+                <option value="Egreso">Egreso</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label asp-for="Monto">Monto</label>
+            <input asp-for="Monto" type="number" step="0.01" class="form-control" />
+            <span asp-validation-for="Monto" class="field-error"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Categoria">Categoría</label>
+            <input asp-for="Categoria" type="text" class="form-control" />
+            <span asp-validation-for="Categoria" class="field-error"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Descripcion">Descripción</label>
+            <input asp-for="Descripcion" type="text" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Fecha">Fecha</label>
+            <input asp-for="Fecha" type="date" class="form-control" />
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Guardar cambios</button>
+            <a asp-action="Index" class="btn-cancel">Cancelar</a>
+        </div>
+    </form>
+</div>

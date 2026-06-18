@@ -32,6 +32,7 @@
                     background: #343a40;
                 }
     </style>
+    @await RenderSectionAsync("Styles", required: false) 
 </head>
 <body>
     <div class="sidebar p-3">
@@ -47,5 +48,7 @@
     <div class="main-content">
         @RenderBody()
     </div>
+
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

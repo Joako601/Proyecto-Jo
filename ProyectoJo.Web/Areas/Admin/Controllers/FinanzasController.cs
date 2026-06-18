@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ProyectoJo.Application.Ports.In;
 using ProyectoJo.Domain.Entities;
+using ProyectoJo.Application.DTOs;
 
 namespace ProyectoJo.Web.Areas.Admin.Controllers
 {

@@ -21,9 +21,11 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+        "environmentVariables": {
+            "ASPNETCORE_ENVIRONMENT": "Development",
+            "JO_ADMIN_USER": "Joaquin",
+            "JO_ADMIN_PASSWORD": "Secreto123"
+        }
     }
   },
   "$schema": "https://json.schemastore.org/launchsettings.json",

@@ -1,4 +1,5 @@
-﻿using ProyectoJo.Application.Ports.In;
+﻿using ProyectoJo.Application.DTOs;
+using ProyectoJo.Application.Ports.In;
 using ProyectoJo.Application.Ports.Out;
 using ProyectoJo.Domain.Entities;
 

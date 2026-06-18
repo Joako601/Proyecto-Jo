@@ -13,6 +13,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IProductoRepository, JsonProductRepository>();
 builder.Services.AddScoped<IProductoService, ProductoUseCase>();
 
+builder.Services.AddScoped<IFinanzaRepository, JsonFinanzaRepository>();
+builder.Services.AddScoped<IFinanzaService, FinanzaUseCase>();
+
 builder.Services.AddScoped<IAuthService, EnvAuthService>();
 
 // --- 1. CONFIGURACIÓN DE SERVICIOS (ANTES DE BUILD) ---

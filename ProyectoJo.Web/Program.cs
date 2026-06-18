@@ -6,11 +6,15 @@ using ProyectoJo.Application.Ports.In;
 using ProyectoJo.Application.UseCases;
 using ProyectoJo.Application.Ports.Out;
 using ProyectoJo.Infrastructure.Persistence;
+using ProyectoJo.Infrastructure.Auth;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IProductoRepository, JsonProductRepository>();
 builder.Services.AddScoped<IProductoService, ProductoUseCase>();
+
+builder.Services.AddScoped<IAuthService, EnvAuthService>();
 
 // --- 1. CONFIGURACIÓN DE SERVICIOS (ANTES DE BUILD) ---
 builder.Services.AddControllersWithViews();

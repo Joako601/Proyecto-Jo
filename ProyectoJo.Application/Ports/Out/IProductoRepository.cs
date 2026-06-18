@@ -8,5 +8,6 @@ namespace ProyectoJo.Application.Ports.Out
 		IEnumerable<Item> ObtenerPorCategoria(string categoria);
 		List<Item> ObtenerMenu();
 		void GuardarMenu(List<Item> menu);
+		void AgregarItem(Item item);
 	}
 }

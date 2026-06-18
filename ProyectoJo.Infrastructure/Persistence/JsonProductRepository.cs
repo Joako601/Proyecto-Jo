@@ -30,6 +30,14 @@ namespace ProyectoJo.Infrastructure.Persistence
 			File.WriteAllText(GetPath(), json);
 		}
 
+		public void AgregarItem(Item item)
+		{
+			var menu = LeerJson();
+			menu.Add(item);
+			var json = JsonSerializer.Serialize(menu, new JsonSerializerOptions { WriteIndented = true });
+			File.WriteAllText(GetPath(), json);
+		}
+
 		private List<Item> LeerJson()
 		{
 			var json = File.ReadAllText(GetPath());

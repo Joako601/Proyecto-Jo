@@ -26,5 +26,12 @@ namespace ProyectoJo.Application.UseCases
 		public List<Item> ObtenerMenu() => _repository.ObtenerMenu();
 
 		public void GuardarMenu(List<Item> menu) => _repository.GuardarMenu(menu);
+
+		public void AgregarItem(Item item)
+		{
+			var menu = _repository.ObtenerMenu();
+			item.Id = menu.Count > 0 ? menu.Max(i => i.Id) + 1 : 1;
+			_repository.AgregarItem(item);
+		}
 	}
 }

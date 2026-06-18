@@ -8,16 +8,13 @@ namespace ProyectoJo.Web.Controllers
 	{
 		private readonly IProductoService _productoService;
 
-
 		public MenuController(IProductoService productoService)
 		{
 			_productoService = productoService;
 		}
 
-
 		public IActionResult Index(string? categoria)
 		{
-			
 			var menu = _productoService.ObtenerMenu();
 
 			var resultado = string.IsNullOrEmpty(categoria)
@@ -30,7 +27,6 @@ namespace ProyectoJo.Web.Controllers
 			return View(resultado);
 		}
 
-		
 		public IActionResult Detalle(int id)
 		{
 			var menu = _productoService.ObtenerMenu();
@@ -51,13 +47,7 @@ namespace ProyectoJo.Web.Controllers
 				return View(nuevo);
 			}
 
-			var menu = _productoService.ObtenerMenu();
-
-			
-			nuevo.Id = menu.Count > 0 ? menu.Max(i => i.Id) + 1 : 1;
-
-			menu.Add(nuevo);
-			_productoService.GuardarMenu(menu); // Guarda el nuevo platillo en el JSON
+			_productoService.AgregarItem(nuevo);
 
 			return RedirectToAction("Index");
 		}

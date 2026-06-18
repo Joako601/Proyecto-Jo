@@ -1,29 +1,60 @@
+using System.Security.Claims; // ¡Esencial para los Claims!
+using Microsoft.AspNetCore.Authentication; // ¡Esencial para el SignInAsync!
+using Microsoft.AspNetCore.Authentication.Cookies;
+using ProyectoJo.Web.Data;
+using ProyectoJo.Application.Ports.In;
+using ProyectoJo.Application.UseCases;
+using ProyectoJo.Application.Ports.Out;
+using ProyectoJo.Infrastructure.Persistence;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IProductoRepository, JsonProductRepository>();
+builder.Services.AddScoped<IProductoService, ProductoUseCase>();
 
+// --- 1. CONFIGURACIÓN DE SERVICIOS (ANTES DE BUILD) ---
+builder.Services.AddControllersWithViews();
+builder.Services.AddSingleton<JsonProductService>();
+
+// Configuración de Autenticación
+builder.Services.AddAuthentication("JoCookieAuth")
+	.AddCookie("JoCookieAuth", options => {
+		options.LoginPath = "/Admin/Login";
+		options.AccessDeniedPath = "/Admin/AccesoDenegado";
+	});
+
+// Construimos la aplicación
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// --- 2. PIPELINE DE SOLICITUDES (MIDDLEWARE) ---
 if (!app.Environment.IsDevelopment())
 {
 	app.UseExceptionHandler("/Home/Error");
-	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 	app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles(); // O app.MapStaticAssets() si usas .NET 9
 app.UseRouting();
 
+// El orden aquí es vital: Primero Autenticar, luego Autorizar
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapStaticAssets();
+// --- 3. RUTAS ---
+// Ruta específica para Áreas (debe ir antes de la ruta default)
+app.MapControllerRoute(
+	name: "areas",
+	pattern: "{area:exists}/{controller=Gestion}/{action=Index}/{id?}");
+
 
 app.MapControllerRoute(
-	name: "default",
-	pattern: "{controller=Home}/{action=Index}/{id?}")
-	.WithStaticAssets();
+	name: "areas",
+	pattern: "{area:exists}/{controller=Login}/{action=Login}/{id?}");
 
+// Ruta por defecto
+app.MapControllerRoute(
+	name: "default",
+	pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

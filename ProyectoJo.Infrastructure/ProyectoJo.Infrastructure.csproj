@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ProyectoJo.Application\ProyectoJo.Application.csproj" />
     <ProjectReference Include="..\ProyectoJo.Domain\ProyectoJo.Domain.csproj" />
+     <FrameworkReference Include="Microsoft.AspNetCore.App" />	  
   </ItemGroup>
 
   <PropertyGroup>

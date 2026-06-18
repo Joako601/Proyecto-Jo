@@ -22,5 +22,9 @@ namespace ProyectoJo.Application.UseCases
 		{
 			return _repository.ObtenerPorCategoria(categoria);
 		}
+
+		public List<Item> ObtenerMenu() => _repository.ObtenerMenu();
+
+		public void GuardarMenu(List<Item> menu) => _repository.GuardarMenu(menu);
 	}
 }

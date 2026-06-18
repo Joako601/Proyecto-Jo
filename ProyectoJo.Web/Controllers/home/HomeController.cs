@@ -2,18 +2,20 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using ProyectoJo.Web.Data;
 using ProyectoJo.Domain.Entities;
+using ProyectoJo.Application.Ports.In;
 
 namespace ProyectoJo.Web.Controllers;
 	public class HomeController : Controller
 	{
 		private readonly ILogger<HomeController> _logger;
-		private readonly JsonProductService _productService; 
 
-		
-		public HomeController(ILogger<HomeController> logger, JsonProductService productService)
+	private readonly IProductoService _productoService;
+
+
+	public HomeController(ILogger<HomeController> logger, IProductoService productService)
 		{
 			_logger = logger;
-			_productService = productService;
+		_productoService = productService;
 		}
 
 		public IActionResult Index()
@@ -21,7 +23,7 @@ namespace ProyectoJo.Web.Controllers;
 			try
 			{
 				// 1. Intentamos obtener el menú
-				var menu = _productService.ObtenerMenu();
+				var menu = _productoService.ObtenerMenu();
 
 				// 2. Si el archivo no existe o está vacío, creamos una lista de emergencia
 				if (menu == null || !menu.Any())

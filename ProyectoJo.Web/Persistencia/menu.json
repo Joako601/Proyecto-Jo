@@ -1,74 +1,92 @@
-﻿[
-    {
-        "Id": 1,
-        "Platillo": "Panucho Tradicional",
-        "Categoria": "Panuchos",
-        "Base": "Frijol y Pavo",
-        "Precio": 25,
-        "Descripcion": "Tortilla frita rellena de frijol, con pavo, repollo, tomate, pepino y cebolla."
-    },
-    {
-        "Id": 2,
-        "Platillo": "Panucho de Huevo",
-        "Categoria": "Panuchos",
-        "Base": "Frijol y Huevo",
-        "Precio": 20,
-        "Descripcion": "Tortilla frita rellena de frijol, huevo cocido, repollo, tomate y cebolla."
-    },
-    {
-        "Id": 3,
-        "Platillo": "Salbute de Pavo",
-        "Categoria": "Salbutes",
-        "Base": "Masa Frita",
-        "Precio": 25,
-        "Descripcion": "Lechuga, repollo, pavo, tomate, pepino, aguacate y cebolla."
-    },
-    {
-        "Id": 4,
-        "Platillo": "Salbute de Relleno Negro",
-        "Categoria": "Salbutes",
-        "Base": "Masa Frita",
-        "Precio": 30,
-        "Descripcion": "Tradicional relleno negro yucateco con huevo y carne."
-    },
-    {
-        "Id": 5,
-        "Platillo": "Torta de Carne Asada con Queso",
-        "Categoria": "Tortas",
-        "Base": "Pan Francés",
-        "Precio": 60,
-        "Descripcion": "Lechuga, carne asada, cebolla, aguacate y queso fundido."
-    },
-    {
-        "Id": 6,
-        "Platillo": "Torta Especial Tía Caro",
-        "Categoria": "Tortas",
-        "Base": "Pan Francés",
-        "Precio": 70,
-        "Descripcion": "Carne asada, pavo, lechuga, cebolla, aguacate y queso."
-    },
-    {
-        "Id": 7,
-        "Platillo": "Caldo Comensal",
-        "Categoria": "Caldos",
-        "Base": "Caldo de Pavo",
-        "Precio": 80,
-        "Descripcion": "Pavo, repollo, pepino, cebolla, cilantro y tostadas."
-    },
-    {
-        "Id": 8,
-        "Platillo": "Agua de Chaya con Limón",
-        "Categoria": "Bebidas",
-        "Base": "Natural",
-        "Precio": 30,
-        "Descripcion": "Refrescante bebida tradicional yucateca."
-    },
-    {
-        "Id": 9,
-        "Platillo": "Refresco Embotellado",
-        "Categoria": "Bebidas",
-        "Base": "Gasificada",
-        "Precio": 25,
-        "Descripcion": "Coca-Cola, Cristal o Sidral (600ml)."
-    }
+[
+  {
+    "Id": 1,
+    "Platillo": "Panucho Tradicional",
+    "Categoria": "Panuchos",
+    "Precio": 25,
+    "Ingredientes": null,
+    "Descripcion": "Tortilla frita rellena de frijol, con pavo, repollo, tomate, pepino y cebolla.",
+    "Base": "Frijol y Pavo"
+  },
+  {
+    "Id": 2,
+    "Platillo": "Panucho de Huevo",
+    "Categoria": "Panuchos",
+    "Precio": 20,
+    "Ingredientes": null,
+    "Descripcion": "Tortilla frita rellena de frijol, huevo cocido, repollo, tomate y cebolla.",
+    "Base": "Frijol y Huevo"
+  },
+  {
+    "Id": 3,
+    "Platillo": "Salbute de Pavo",
+    "Categoria": "Salbutes",
+    "Precio": 25,
+    "Ingredientes": null,
+    "Descripcion": "Lechuga, repollo, pavo, tomate, pepino, aguacate y cebolla.",
+    "Base": "Masa Frita"
+  },
+  {
+    "Id": 4,
+    "Platillo": "Salbute de Relleno Negro",
+    "Categoria": "Salbutes",
+    "Precio": 30,
+    "Ingredientes": null,
+    "Descripcion": "Tradicional relleno negro yucateco con huevo y carne.",
+    "Base": "Masa Frita"
+  },
+  {
+    "Id": 5,
+    "Platillo": "Torta de Carne Asada con Queso",
+    "Categoria": "Tortas",
+    "Precio": 60,
+    "Ingredientes": null,
+    "Descripcion": "Lechuga, carne asada, cebolla, aguacate y queso fundido.",
+    "Base": "Pan Franc\u00E9s"
+  },
+  {
+    "Id": 6,
+    "Platillo": "Torta Especial T\u00EDa Caro",
+    "Categoria": "Tortas",
+    "Precio": 70,
+    "Ingredientes": null,
+    "Descripcion": "Carne asada, pavo, lechuga, cebolla, aguacate y queso.",
+    "Base": "Pan Franc\u00E9s"
+  },
+  {
+    "Id": 7,
+    "Platillo": "Caldo Comensal",
+    "Categoria": "Caldos",
+    "Precio": 80,
+    "Ingredientes": null,
+    "Descripcion": "Pavo, repollo, pepino, cebolla, cilantro y tostadas.",
+    "Base": "Caldo de Pavo"
+  },
+  {
+    "Id": 8,
+    "Platillo": "Agua de Chaya con Lim\u00F3n",
+    "Categoria": "Bebidas",
+    "Precio": 30,
+    "Ingredientes": null,
+    "Descripcion": "Refrescante bebida tradicional yucateca.",
+    "Base": "Natural"
+  },
+  {
+    "Id": 9,
+    "Platillo": "Refresco Embotellado",
+    "Categoria": "Bebidas",
+    "Precio": 25,
+    "Ingredientes": null,
+    "Descripcion": "Coca-Cola, Cristal o Sidral (600ml).",
+    "Base": "Gasificada"
+  },
+  {
+    "Id": 10,
+    "Platillo": "agua",
+    "Categoria": "Bebidas",
+    "Precio": 10,
+    "Ingredientes": "agua",
+    "Descripcion": "waw",
+    "Base": "Natural"
+  }
 ]

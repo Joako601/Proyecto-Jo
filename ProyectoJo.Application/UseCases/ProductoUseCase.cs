@@ -33,5 +33,16 @@ namespace ProyectoJo.Application.UseCases
 			item.Id = menu.Count > 0 ? menu.Max(i => i.Id) + 1 : 1;
 			_repository.AgregarItem(item);
 		}
+		public Item? ObtenerPorId(int id) => _repository.ObtenerPorId(id);
+
+		public void Eliminar(int id) => _repository.Eliminar(id);
+
+		public void EditarItem(Item item)
+		{
+			var menu = _repository.ObtenerMenu();
+			var index = menu.FindIndex(i => i.Id == item.Id);
+			if (index >= 0) menu[index] = item;
+			_repository.GuardarMenu(menu);
+		}
 	}
 }

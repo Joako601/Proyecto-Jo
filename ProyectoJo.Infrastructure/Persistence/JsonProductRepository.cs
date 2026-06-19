@@ -39,5 +39,14 @@ namespace ProyectoJo.Infrastructure.Persistence
 			var json = File.ReadAllText(_rutaArchivo);
 			return JsonSerializer.Deserialize<List<Item>>(json) ?? new List<Item>();
 		}
+		public Item? ObtenerPorId(int id) =>
+			LeerJson().FirstOrDefault(i => i.Id == id);
+
+		public void Eliminar(int id)
+		{
+			var menu = LeerJson();
+			menu.RemoveAll(i => i.Id == id);
+			GuardarMenu(menu);
+		}
 	}
 }

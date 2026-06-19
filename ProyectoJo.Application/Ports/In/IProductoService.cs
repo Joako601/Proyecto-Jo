@@ -9,5 +9,8 @@ namespace ProyectoJo.Application.Ports.In
         List<Item> ObtenerMenu();
         void GuardarMenu(List<Item> menu);
         void AgregarItem(Item item);
+		Item? ObtenerPorId(int id);
+		void Eliminar(int id);
+		void EditarItem(Item item);
 	}
 }

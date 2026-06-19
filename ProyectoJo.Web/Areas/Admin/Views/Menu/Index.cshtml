@@ -1,0 +1,58 @@
+﻿@model List<ProyectoJo.Domain.Entities.Item>
+
+@{
+    ViewData["Title"] = "Gestión de Menú";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Menú</h2>
+    <a asp-area="Admin" asp-controller="Menu" asp-action="Agregar" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> Agregar platillo
+    </a>
+</div>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">No hay platillos registrados todavía.</p>
+}
+else
+{
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>#</th>
+                <th>Platillo</th>
+                <th>Categoría</th>
+                <th>Base</th>
+                <th>Precio</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="text-muted">@item.Id</td>
+                    <td>@item.Platillo</td>
+                    <td>@item.Categoria</td>
+                    <td>@item.Base</td>
+                    <td>$@item.Precio.ToString("N2")</td>
+                    <td class="text-end">
+                        <a asp-area="Admin" asp-controller="Menu" asp-action="Editar"
+                           asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary me-1">
+                            <i class="bi bi-pencil"></i> Editar
+                        </a>
+                        <form asp-area="Admin" asp-controller="Menu" asp-action="Eliminar"
+                              asp-route-id="@item.Id" method="post" class="d-inline"
+                              onsubmit="return confirm('¿Eliminar @item.Platillo?')">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i> Eliminar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -5,7 +5,8 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/admin/finanzas.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-shared.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-form.css" asp-append-version="true" />
 }
 
 <div class="admin-form">
@@ -40,7 +41,8 @@
         <div class="form-group">
             <label asp-for="Fecha">Fecha</label>
             <input asp-for="Fecha" type="date" class="form-control"
-                   value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                   value="@DateTime.Today.ToString("yyyy-MM-dd")"
+                   max="@DateTime.Today.ToString("yyyy-MM-dd")" />
         </div>
         <div class="form-actions">
             <button type="submit" class="btn-primary">Guardar</button>
@@ -48,3 +50,7 @@
         </div>
     </form>
 </div>
+
+@section Scripts {
+    <script src="~/js/finanzas.js" asp-append-version="true"></script>
+}

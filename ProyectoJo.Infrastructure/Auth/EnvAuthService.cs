@@ -1,4 +1,5 @@
-﻿using ProyectoJo.Application.Ports.In;
+﻿using Microsoft.Extensions.Configuration;
+using ProyectoJo.Application.Ports.In;
 
 namespace ProyectoJo.Infrastructure.Auth
 {
@@ -7,10 +8,10 @@ namespace ProyectoJo.Infrastructure.Auth
 		private readonly string _usuario;
 		private readonly string _contrasena;
 
-		public EnvAuthService()
+		public EnvAuthService(IConfiguration configuration)
 		{
-			_usuario = Environment.GetEnvironmentVariable("JO_ADMIN_USER") ?? "";
-			_contrasena = Environment.GetEnvironmentVariable("JO_ADMIN_PASSWORD") ?? "";
+			_usuario = configuration["Auth:AdminUser"] ?? "";
+			_contrasena = configuration["Auth:AdminPassword"] ?? "";
 		}
 
 		public bool ValidarCredenciales(string usuario, string contrasena)

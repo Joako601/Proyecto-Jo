@@ -1,0 +1,111 @@
+﻿.filtro-bar {
+    margin-bottom: 1.25rem;
+}
+
+.filtro-form {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.form-control-sm {
+    padding: 0.35rem 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.875rem;
+}
+
+.header-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.resumen-bar {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    background: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.resumen-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.resumen-label {
+    font-size: 0.75rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.resumen-valor {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.resumen-item--ingreso .resumen-valor {
+    color: #2a7a2a;
+}
+
+.resumen-item--egreso .resumen-valor {
+    color: #c0392b;
+}
+
+.resumen-item--neto .resumen-valor {
+    color: #111;
+}
+
+.tag {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.tag--ingreso {
+    background: #e8f5e9;
+    color: #2a7a2a;
+}
+
+.tag--egreso {
+    background: #fdecea;
+    color: #c0392b;
+}
+
+.acciones {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.link-edit {
+    color: #b5a478;
+    text-decoration: none;
+    font-size: 0.85rem;
+}
+
+    .link-edit:hover {
+        text-decoration: underline;
+    }
+
+.link-delete {
+    background: none;
+    border: none;
+    color: #c0392b;
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 0;
+}
+
+    .link-delete:hover {
+        text-decoration: underline;
+    }

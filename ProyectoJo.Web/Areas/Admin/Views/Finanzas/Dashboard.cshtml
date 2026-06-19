@@ -1,0 +1,209 @@
+﻿@model ProyectoJo.Application.DTOs.ResumenDashboard
+@{
+    ViewData["Title"] = "Dashboard Financiero";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-shared.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-dashboard.css" asp-append-version="true" />
+}
+
+@* Datos para Chart.js *@
+<script type="application/json" id="data-meses">@Html.Raw(ViewBag.LabelesMeses)</script>
+<script type="application/json" id="data-ingresos-anio">@Html.Raw(ViewBag.DataIngresosAnio)</script>
+<script type="application/json" id="data-cat-labels">@Html.Raw(ViewBag.LabelsCategorias)</script>
+<script type="application/json" id="data-cat-data">@Html.Raw(ViewBag.DataCategorias)</script>
+<script type="application/json" id="data-cat-ing-labels">@Html.Raw(ViewBag.LabelsCategoriasIngresos)</script>
+<script type="application/json" id="data-cat-ing-data">@Html.Raw(ViewBag.DataCategoriasIngresos)</script>
+
+<div class="admin-page">
+
+    <div class="page-header">
+        <div class="header-left">
+            <a asp-area="Admin" asp-controller="Gestion" asp-action="Index" class="back-link">← Dashboard</a>
+            <h1>Dashboard Financiero</h1>
+        </div>
+    </div>
+
+    @* Fila grande: Total Ingresado / Total Egresado / Saldo Neto *@
+    <div class="dash-totales">
+        <div class="dash-card dash-card--total dash-card--ingreso">
+            <span class="dash-label">Total Ingresado</span>
+            <span class="dash-valor">$@Model.TotalIngresosHistorico.ToString("N2")</span>
+        </div>
+        <div class="dash-card dash-card--total dash-card--egreso">
+            <span class="dash-label">Total Egresado</span>
+            <span class="dash-valor">$@Model.TotalEgresosHistorico.ToString("N2")</span>
+        </div>
+        <div class="dash-card dash-card--total dash-card--neto">
+            <span class="dash-label">Saldo Neto</span>
+            <span class="dash-valor @(Model.SaldoNetoHistorico >= 0 ? "positivo" : "negativo")">
+                $@Model.SaldoNetoHistorico.ToString("N2")
+            </span>
+        </div>
+    </div>
+    <p class="dash-movimientos-nota">@Model.TotalMovimientos movimientos registrados en total</p>
+
+    @* KPIs de ventas por periodo *@
+    <div class="dash-kpis">
+        <div class="dash-card dash-card--kpi">
+            <span class="dash-label">Ventas en el año</span>
+            <span class="dash-valor">$@Model.VentasAnio.ToString("N2")</span>
+        </div>
+        <div class="dash-card dash-card--kpi">
+            <span class="dash-label">Ventas en el mes</span>
+            <span class="dash-valor">$@Model.VentasMes.ToString("N2")</span>
+        </div>
+        <div class="dash-card dash-card--kpi">
+            <span class="dash-label">Ventas en el día</span>
+            <span class="dash-valor">$@Model.VentasDia.ToString("N2")</span>
+        </div>
+    </div>
+
+    @* Comparativo con el mes pasado *@
+    <div class="dash-secundarios">
+        <div class="dash-card dash-card--secundario">
+            <span class="dash-label">Ventas</span>
+            <span class="dash-valor">$@Model.VentasMesPasado.ToString("N2")</span>
+            <span class="dash-sublabel">Mes pasado</span>
+        </div>
+        <div class="dash-card dash-card--secundario">
+            <span class="dash-label">Ticket promedio</span>
+            <span class="dash-valor">$@Model.TicketPromedioMesPasado.ToString("N2")</span>
+            <span class="dash-sublabel">Mes pasado</span>
+        </div>
+    </div>
+
+    @* Gráficas *@
+    <div class="grafica-card grafica-card--full">
+        <h2 class="seccion-titulo">Ventas — tendencia @DateTime.Today.Year</h2>
+        <div class="chart-wrap">
+            <canvas id="graficaTendenciaAnual"></canvas>
+        </div>
+    </div>
+
+    <div class="graficas-grid">
+        <div class="grafica-card">
+            <h2 class="seccion-titulo">Egresos por categoría</h2>
+            @if (Model.TopCategorias.Any())
+            {
+                <div class="chart-wrap chart-wrap--donut">
+                    <canvas id="graficaDona"></canvas>
+                </div>
+            }
+            else
+            {
+                <p class="empty-state">No hay egresos registrados aún.</p>
+            }
+        </div>
+        <div class="grafica-card">
+            <h2 class="seccion-titulo">Ingresos por categoría</h2>
+            @if (Model.TopCategoriasIngresos.Any())
+            {
+                <div class="chart-wrap chart-wrap--donut">
+                    <canvas id="graficaDonaIngresos"></canvas>
+                </div>
+            }
+            else
+            {
+                <p class="empty-state">No hay ingresos registrados aún.</p>
+            }
+        </div>
+    </div>
+
+    @* Tabla tendencia mensual *@
+    <h2 class="seccion-titulo">Tendencia mensual</h2>
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Mes</th>
+                <th>Ingresos</th>
+                <th>Egresos</th>
+                <th>Saldo neto</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var t in Model.UltimosSeisMeses)
+            {
+                <tr>
+                    <td>@t.Etiqueta</td>
+                    <td class="cifra-ingreso">$@t.Ingresos.ToString("N2")</td>
+                    <td class="cifra-egreso">$@t.Egresos.ToString("N2")</td>
+                    <td class="@(t.SaldoNeto >= 0 ? "cifra-positivo" : "cifra-negativo")">$@t.SaldoNeto.ToString("N2")</td>
+                    <td>
+                        @if (t.Ingresos == 0 && t.Egresos == 0)
+                        {
+                            <span class="badge-mes badge-mes--vacio">Sin movimientos</span>
+                        }
+                        else if (t.SaldoNeto >= 0)
+                        {
+                            <span class="badge-mes badge-mes--positivo">✓ Positivo</span>
+                        }
+                        else
+                        {
+                            <span class="badge-mes badge-mes--negativo">✕ Negativo</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @* Top categorías con barra *@
+    <h2 class="seccion-titulo">Top 5 categorías con más egresos</h2>
+    @if (Model.TopCategorias.Any())
+    {
+        var maxTotal = Model.TopCategorias.Max(c => c.Total);
+        <div class="categorias-lista">
+            @foreach (var c in Model.TopCategorias)
+            {
+                var porcentaje = maxTotal > 0 ? (int)((c.Total / maxTotal) * 100) : 0;
+                <div class="categoria-fila">
+                    <span class="categoria-nombre">@c.Categoria</span>
+                    <div class="categoria-barra-wrap">
+                        <div class="categoria-barra" style="width: @porcentaje%"></div>
+                    </div>
+                    <span class="categoria-total">$@c.Total.ToString("N2")</span>
+                    <span class="categoria-count">@c.Cantidad mov.</span>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="empty-state">No hay egresos registrados aún.</p>
+    }
+
+    @* Top categorías ingresos con barra *@
+    <h2 class="seccion-titulo">Top 5 categorías con más ingresos</h2>
+    @if (Model.TopCategoriasIngresos.Any())
+    {
+        var maxTotalIngresos = Model.TopCategoriasIngresos.Max(c => c.Total);
+        <div class="categorias-lista">
+            @foreach (var c in Model.TopCategoriasIngresos)
+            {
+                var porcentaje = maxTotalIngresos > 0 ? (int)((c.Total / maxTotalIngresos) * 100) : 0;
+                <div class="categoria-fila">
+                    <span class="categoria-nombre">@c.Categoria</span>
+                    <div class="categoria-barra-wrap">
+                        <div class="categoria-barra categoria-barra--ingreso" style="width: @porcentaje%"></div>
+                    </div>
+                    <span class="categoria-total categoria-total--ingreso">$@c.Total.ToString("N2")</span>
+                    <span class="categoria-count">@c.Cantidad mov.</span>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="empty-state">No hay ingresos registrados aún.</p>
+    }
+
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="~/js/finanzas-dashboard.js" asp-append-version="true"></script>
+}

@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ProyectoJo.Application.Ports.In;
 using ProyectoJo.Domain.Entities;
-using ProyectoJo.Application.DTOs;
 
 namespace ProyectoJo.Web.Areas.Admin.Controllers
 {
@@ -18,11 +17,22 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		}
 
 		// GET: /Admin/Finanzas
-		public IActionResult Index()
+		public IActionResult Index(int? mes, int? anio)
 		{
-			var movimientos = _finanzaService.ObtenerTodos();
-			var resumen = _finanzaService.ObtenerResumenDelDia(DateTime.Today);
+			var hoy = DateTime.Today;
+			var mesActual = mes ?? hoy.Month;
+			var anioActual = anio ?? hoy.Year;
+
+			var movimientos = _finanzaService.ObtenerTodos()
+				.Where(f => f.Fecha.Month == mesActual && f.Fecha.Year == anioActual)
+				.OrderByDescending(f => f.Fecha)
+				.ToList();
+
+			var resumen = _finanzaService.ObtenerResumenDelDia(hoy);
 			ViewBag.Resumen = resumen;
+			ViewBag.Mes = mesActual;
+			ViewBag.Anio = anioActual;
+
 			return View(movimientos);
 		}
 
@@ -71,6 +81,23 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 			ViewBag.Desde = inicio;
 			ViewBag.Hasta = fin;
 			return View(resumen);
+		}
+
+		// GET: /Admin/Finanzas/Dashboard
+		public IActionResult Dashboard()
+		{
+			var dashboard = _finanzaService.ObtenerDashboard();
+
+			ViewBag.LabelesMeses = System.Text.Json.JsonSerializer.Serialize(dashboard.TendenciaAnio.Select(t => t.Etiqueta));
+			ViewBag.DataIngresosAnio = System.Text.Json.JsonSerializer.Serialize(dashboard.TendenciaAnio.Select(t => t.Ingresos));
+			ViewBag.DataIngresos = System.Text.Json.JsonSerializer.Serialize(dashboard.UltimosSeisMeses.Select(t => t.Ingresos));
+			ViewBag.DataEgresos = System.Text.Json.JsonSerializer.Serialize(dashboard.UltimosSeisMeses.Select(t => t.Egresos));
+			ViewBag.LabelsCategorias = System.Text.Json.JsonSerializer.Serialize(dashboard.TopCategorias.Select(c => c.Categoria));
+			ViewBag.DataCategorias = System.Text.Json.JsonSerializer.Serialize(dashboard.TopCategorias.Select(c => c.Total));
+			ViewBag.LabelsCategoriasIngresos = System.Text.Json.JsonSerializer.Serialize(dashboard.TopCategoriasIngresos.Select(c => c.Categoria));
+			ViewBag.DataCategoriasIngresos = System.Text.Json.JsonSerializer.Serialize(dashboard.TopCategoriasIngresos.Select(c => c.Total));
+
+			return View(dashboard);
 		}
 	}
 }

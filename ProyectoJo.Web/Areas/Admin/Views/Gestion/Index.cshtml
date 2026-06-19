@@ -1,21 +1,75 @@
-﻿@{
+﻿@model ProyectoJo.Web.Models.DashboardViewModel
+@{
     ViewData["Title"] = "Panel de Control";
-    Layout = "_Layout"; // Asegúrate de tener un _ViewStart.cshtml en Areas/Admin/Views
+    Layout = "_Layout";
 }
 
 <div class="container-fluid py-4">
     <h2 class="mb-4">Dashboard Administrativo</h2>
 
     <div class="row g-4 mb-5">
-        <div class="col-md-3"><div class="card p-3 shadow-sm border-0 bg-primary text-white"><h5>Platillos Activos</h5><h2 class="mt-2">24</h2></div></div>
-        <div class="col-md-3"><div class="card p-3 shadow-sm border-0 bg-success text-white"><h5>Ventas Hoy</h5><h2 class="mt-2">$4,500</h2></div></div>
-        <div class="col-md-3"><div class="card p-3 shadow-sm border-0 bg-warning"><h5>Pendientes</h5><h2 class="mt-2">3</h2></div></div>
-        <div class="col-md-3"><div class="card p-3 shadow-sm border-0 bg-info text-white"><h5>Opiniones</h5><h2 class="mt-2">12</h2></div></div>
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm border-0 bg-primary text-white">
+                <h5>Platillos Activos</h5>
+                <h2 class="mt-2">@Model.TotalPlatillos</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm border-0 bg-success text-white">
+                <h5>Ventas Hoy</h5>
+                <h2 class="mt-2">$@Model.VentasHoy.ToString("N0")</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm border-0 bg-warning">
+                <h5>Pendientes</h5>
+                <h2 class="mt-2">@Model.PendientesHoy</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm border-0 bg-info text-white">
+                <h5>Opiniones</h5>
+                <h2 class="mt-2">12</h2>
+            </div>
+        </div>
     </div>
 
+    <h5 class="text-muted mb-3 fw-semibold">Módulos</h5>
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card h-100 shadow-sm border-0 modulo-card">
+                <div class="card-body d-flex flex-column">
+                    <h6 class="card-title text-primary">Finanzas</h6>
+                    <p class="card-text small text-muted flex-grow-1">Ingresos, egresos y saldo del día.</p>
+                    <a asp-area="Admin" asp-controller="Finanzas" asp-action="Index" class="btn btn-sm btn-primary w-100">Administrar</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100 shadow-sm border-0 modulo-card">
+                <div class="card-body d-flex flex-column">
+                    <h6 class="card-title text-primary">Dashboard Financiero</h6>
+                    <p class="card-text small text-muted flex-grow-1">Métricas globales y tendencia por mes.</p>
+                    <a asp-area="Admin" asp-controller="Finanzas" asp-action="Dashboard" class="btn btn-sm btn-primary w-100">Ver dashboard</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100 shadow-sm border-0 modulo-card">
+                <div class="card-body d-flex flex-column">
+                    <h6 class="card-title text-primary">Menú</h6>
+                    <p class="card-text small text-muted flex-grow-1">Gestión de platillos y categorías.</p>
+                    <a asp-area="" asp-controller="Menu" asp-action="Index" class="btn btn-sm btn-primary w-100">Administrar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h5 class="text-muted mb-3 fw-semibold">Próximamente</h5>
     <div class="row g-4">
         @{
-            var funciones = new List<(string T, string D)> {
+            var proximamente = new List<(string T, string D)>
+            {
                 ("Switch Inventario", "Pausar platillos agotados."),
                 ("Calendario Promos", "Gestión de ofertas por fecha."),
                 ("Mapa de Calor", "Analítica de horas pico."),
@@ -26,15 +80,14 @@
                 ("Cierre de Caja", "Reporte de ventas.")
             };
         }
-
-        @foreach (var f in funciones)
+        @foreach (var f in proximamente)
         {
             <div class="col-md-3">
-                <div class="card h-100 shadow-sm border-0 hover-shadow" style="transition: 0.3s;">
-                    <div class="card-body">
-                        <h6 class="card-title text-primary">@f.T</h6>
-                        <p class="card-text small text-muted">@f.D</p>
-                        <button class="btn btn-sm btn-outline-secondary w-100">Administrar</button>
+                <div class="card h-100 shadow-sm border-0 modulo-card modulo-card--pendiente">
+                    <div class="card-body d-flex flex-column">
+                        <h6 class="card-title text-secondary">@f.T</h6>
+                        <p class="card-text small text-muted flex-grow-1">@f.D</p>
+                        <button class="btn btn-sm btn-outline-secondary w-100" disabled>Próximamente</button>
                     </div>
                 </div>
             </div>
@@ -43,8 +96,21 @@
 </div>
 
 <style>
-    .hover-shadow:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    .modulo-card {
+        transition: transform 0.2s, box-shadow 0.2s;
     }
+
+        .modulo-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1) !important;
+        }
+
+    .modulo-card--pendiente {
+        opacity: 0.65;
+    }
+
+        .modulo-card--pendiente:hover {
+            transform: none;
+            box-shadow: none !important;
+        }
 </style>

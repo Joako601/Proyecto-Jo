@@ -1,14 +1,23 @@
-using System.Security.Claims; // ¡Esencial para los Claims!
-using Microsoft.AspNetCore.Authentication; // ¡Esencial para el SignInAsync!
+using System.Security.Claims; 
+using Microsoft.AspNetCore.Authentication; 
 using Microsoft.AspNetCore.Authentication.Cookies;
 using ProyectoJo.Application.Ports.In;
 using ProyectoJo.Application.UseCases;
 using ProyectoJo.Application.Ports.Out;
 using ProyectoJo.Infrastructure.Persistence;
 using ProyectoJo.Infrastructure.Auth;
+using System.Globalization;
+using Microsoft.Extensions.FileProviders;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+var adminWebRoot = Path.Combine(builder.Environment.ContentRootPath, "Areas", "Admin", "wwwroot");
+builder.Environment.WebRootFileProvider = new CompositeFileProvider(
+	builder.Environment.WebRootFileProvider,
+	new PhysicalFileProvider(adminWebRoot)
+);
+
 
 var rutaPersistencia = Path.Combine(builder.Environment.ContentRootPath, "Persistencia");
 var rutaMenu = Path.Combine(rutaPersistencia, "menu.json");
@@ -16,7 +25,6 @@ var rutaFinanzas = Path.Combine(rutaPersistencia, "finanzas.json");
 
 builder.Services.AddScoped<IProductoRepository>(_ => new JsonProductRepository(rutaMenu));
 builder.Services.AddScoped<IFinanzaRepository>(_ => new JsonFinanzaRepository(rutaFinanzas));
-
 
 builder.Services.AddScoped<IProductoService, ProductoUseCase>();
 

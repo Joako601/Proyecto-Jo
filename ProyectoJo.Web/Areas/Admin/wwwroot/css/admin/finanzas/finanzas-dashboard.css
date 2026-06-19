@@ -1,0 +1,247 @@
+﻿.dash-metricas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.dash-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    background: #fff;
+}
+
+.dash-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #888;
+    margin-bottom: 0.5rem;
+}
+
+.dash-valor {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #111;
+}
+
+.positivo {
+    color: #2a7a2a;
+}
+
+.negativo {
+    color: #c0392b;
+}
+
+.cifra-ingreso {
+    color: #2a7a2a;
+}
+
+.cifra-egreso {
+    color: #c0392b;
+}
+
+.cifra-positivo {
+    color: #2a7a2a;
+    font-weight: 600;
+}
+
+.cifra-negativo {
+    color: #c0392b;
+    font-weight: 600;
+}
+
+.seccion-titulo {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #333;
+    margin: 2rem 0 1rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.categorias-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.categoria-fila {
+    display: grid;
+    grid-template-columns: 160px 1fr 100px 70px;
+    align-items: center;
+    gap: 1rem;
+}
+
+.categoria-nombre {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.categoria-barra-wrap {
+    background: #f0f0f0;
+    border-radius: 3px;
+    height: 10px;
+    overflow: hidden;
+}
+
+.categoria-barra {
+    background: #c0392b;
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.4s ease;
+}
+
+.categoria-barra--ingreso {
+    background: #2a7a2a;
+}
+
+.categoria-total {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #c0392b;
+    text-align: right;
+}
+
+.categoria-total--ingreso {
+    color: #2a7a2a;
+}
+
+.categoria-count {
+    font-size: 0.8rem;
+    color: #999;
+    text-align: right;
+}
+
+/* --- Gráficas --- */
+
+.grafica-card--full {
+    margin-bottom: 1.5rem;
+}
+
+.graficas-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.grafica-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 1.25rem;
+}
+
+.chart-wrap {
+    position: relative;
+    height: 280px;
+}
+
+.chart-wrap--donut {
+    height: 260px;
+}
+
+@media (max-width: 900px) {
+    .graficas-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.badge-mes {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-mes--positivo {
+    background: #e8f5e9;
+    color: #2a7a2a;
+}
+
+.badge-mes--negativo {
+    background: #fdecea;
+    color: #c0392b;
+}
+
+.badge-mes--vacio {
+    background: #f5f5f5;
+    color: #999;
+}
+
+.cifra-negativo {
+    color: #c0392b;
+    font-weight: 600;
+}
+
+
+.dash-kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.dash-card--kpi {
+    border-left: 4px solid #2a7a2a;
+}
+
+    .dash-card--kpi .dash-valor {
+        color: #2a7a2a;
+    }
+
+/* --- Fila grande estilo "Total de deuda" --- */
+
+.dash-totales {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.dash-card--total {
+    padding: 1.75rem;
+}
+
+    .dash-card--total .dash-label {
+        font-size: 0.95rem;
+        text-transform: none;
+        letter-spacing: normal;
+        color: #555;
+        font-weight: 600;
+    }
+
+    .dash-card--total .dash-valor {
+        font-size: 2rem;
+    }
+
+.dash-movimientos-nota {
+    font-size: 0.85rem;
+    color: #999;
+    margin-bottom: 2rem;
+}
+
+/* --- Fila chica: Ventas / Ticket promedio (mes pasado) --- */
+
+.dash-secundarios {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.dash-card--secundario .dash-valor {
+    font-size: 1.4rem;
+}
+
+.dash-card--secundario .dash-sublabel {
+    font-size: 0.75rem;
+    color: #aaa;
+    margin-top: 0.25rem;
+}

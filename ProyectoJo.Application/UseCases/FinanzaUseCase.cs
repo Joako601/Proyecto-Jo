@@ -46,6 +46,83 @@ namespace ProyectoJo.Application.UseCases
 			return Calcular(movimientos, desde, hasta);
 		}
 
+		public ResumenDashboard ObtenerDashboard()
+		{
+			var cultura = System.Globalization.CultureInfo.GetCultureInfo("es-MX");
+			var hoy = DateTime.Today;
+			var mesPasado = hoy.AddMonths(-1);
+			var todos = _repository.ObtenerTodos();
+
+			decimal SumaIngresos(IEnumerable<Finanza> lista) =>
+				lista.Where(f => f.Tipo == TipoMovimiento.Ingreso).Sum(f => f.Monto);
+
+			var ventasAnio = SumaIngresos(todos.Where(f => f.Fecha.Year == hoy.Year));
+			var ventasMes = SumaIngresos(todos.Where(f => f.Fecha.Year == hoy.Year && f.Fecha.Month == hoy.Month));
+			var ventasDia = SumaIngresos(todos.Where(f => f.Fecha.Date == hoy.Date));
+
+			var movimientosMesPasado = todos
+				.Where(f => f.Fecha.Year == mesPasado.Year && f.Fecha.Month == mesPasado.Month && f.Tipo == TipoMovimiento.Ingreso)
+				.ToList();
+			var ventasMesPasado = movimientosMesPasado.Sum(f => f.Monto);
+			var ticketPromedioMesPasado = movimientosMesPasado.Count > 0
+				? ventasMesPasado / movimientosMesPasado.Count
+				: 0;
+
+			var tendenciaAnio = Enumerable.Range(1, 12)
+				.Select(mes => new DateTime(hoy.Year, mes, 1))
+				.Select(fecha => new TendenciaMensual
+				{
+					Mes = fecha.Month,
+					Anio = fecha.Year,
+					Etiqueta = fecha.ToString("MMM", cultura),
+					Ingresos = todos.Where(f => f.Fecha.Month == fecha.Month && f.Fecha.Year == fecha.Year && f.Tipo == TipoMovimiento.Ingreso).Sum(f => f.Monto),
+					Egresos = todos.Where(f => f.Fecha.Month == fecha.Month && f.Fecha.Year == fecha.Year && f.Tipo == TipoMovimiento.Egreso).Sum(f => f.Monto)
+				})
+				.ToList();
+
+			var ultimosSeisMeses = Enumerable.Range(0, 6)
+				.Select(i => hoy.AddMonths(-i))
+				.Select(fecha => new TendenciaMensual
+				{
+					Mes = fecha.Month,
+					Anio = fecha.Year,
+					Etiqueta = fecha.ToString("MMM yyyy", cultura),
+					Ingresos = todos.Where(f => f.Fecha.Month == fecha.Month && f.Fecha.Year == fecha.Year && f.Tipo == TipoMovimiento.Ingreso).Sum(f => f.Monto),
+					Egresos = todos.Where(f => f.Fecha.Month == fecha.Month && f.Fecha.Year == fecha.Year && f.Tipo == TipoMovimiento.Egreso).Sum(f => f.Monto)
+				})
+				.OrderBy(t => t.Anio).ThenBy(t => t.Mes)
+				.ToList();
+
+			List<CategoriaResumen> TopCategoriasPorTipo(TipoMovimiento tipo) =>
+				todos.Where(f => f.Tipo == tipo)
+					.GroupBy(f => f.Categoria)
+					.Select(g => new CategoriaResumen
+					{
+						Categoria = g.Key,
+						Total = g.Sum(f => f.Monto),
+						Cantidad = g.Count()
+					})
+					.OrderByDescending(c => c.Total)
+					.Take(5)
+					.ToList();
+
+			return new ResumenDashboard
+			{
+				TotalIngresosHistorico = SumaIngresos(todos),
+				TotalEgresosHistorico = todos.Where(f => f.Tipo == TipoMovimiento.Egreso).Sum(f => f.Monto),
+				TotalMovimientos = todos.Count,
+				VentasAnio = ventasAnio,
+				VentasMes = ventasMes,
+				VentasDia = ventasDia,
+				VentasMesPasado = ventasMesPasado,
+				TicketPromedioMesPasado = ticketPromedioMesPasado,
+				TendenciaAnio = tendenciaAnio,
+				UltimosSeisMeses = ultimosSeisMeses,
+				TopCategorias = TopCategoriasPorTipo(TipoMovimiento.Egreso),
+				TopCategoriasIngresos = TopCategoriasPorTipo(TipoMovimiento.Ingreso)
+			};
+		}
+
 		public Finanza? ObtenerPorId(int id) => _repository.ObtenerPorId(id);
 
 		public void Editar(Finanza finanza) => _repository.Actualizar(finanza);

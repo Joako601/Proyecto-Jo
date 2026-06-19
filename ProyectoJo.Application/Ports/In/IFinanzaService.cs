@@ -11,6 +11,7 @@ namespace ProyectoJo.Application.Ports.In
 		List<Finanza> ObtenerPorCategoria(string categoria);
 		ResumenFinanciero ObtenerResumenDelDia(DateTime fecha);
 		ResumenFinanciero ObtenerResumenPorPeriodo(DateTime desde, DateTime hasta);
+		ResumenDashboard ObtenerDashboard();
 		Finanza? ObtenerPorId(int id);
 		void Editar(Finanza finanza);
 		void Eliminar(int id);

@@ -1,0 +1,66 @@
+[
+  {
+    "Id": 1,
+    "Monto": 10000,
+    "Tipo": 0,
+    "Categoria": "Insumos",
+    "Descripcion": "queso de bola",
+    "Fecha": "2026-06-16T00:00:00"
+  },
+  {
+    "Id": 2,
+    "Monto": 2000,
+    "Tipo": 1,
+    "Categoria": "Insumos",
+    "Descripcion": "queso de bola",
+    "Fecha": "2026-06-17T00:00:00"
+  },
+  {
+    "Id": 3,
+    "Monto": 10,
+    "Tipo": 0,
+    "Categoria": "Insumos",
+    "Descripcion": "queso de bola",
+    "Fecha": "2026-06-19T00:00:00"
+  },
+  {
+    "Id": 4,
+    "Monto": 100,
+    "Tipo": 0,
+    "Categoria": "Insumos",
+    "Descripcion": "queso de bola",
+    "Fecha": "2026-06-18T00:00:00"
+  },
+  {
+    "Id": 5,
+    "Monto": 123,
+    "Tipo": 1,
+    "Categoria": "Renta",
+    "Descripcion": "awaw",
+    "Fecha": "2026-06-18T00:00:00"
+  },
+  {
+    "Id": 6,
+    "Monto": 1212,
+    "Tipo": 0,
+    "Categoria": "Materiales",
+    "Descripcion": "wa",
+    "Fecha": "2026-01-18T00:00:00"
+  },
+  {
+    "Id": 7,
+    "Monto": 2000,
+    "Tipo": 1,
+    "Categoria": "Insumos",
+    "Descripcion": "awaw",
+    "Fecha": "2026-02-18T00:00:00"
+  },
+  {
+    "Id": 8,
+    "Monto": 10,
+    "Tipo": 0,
+    "Categoria": "Insumos",
+    "Descripcion": "awaw",
+    "Fecha": "2026-05-18T00:00:00"
+  }
+]

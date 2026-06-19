@@ -65,3 +65,29 @@ body {
     color: white;
     border-radius: 8px;
 }
+
+body {
+    background-color: #f8f9fa;
+}
+
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    position: fixed;
+    background: #212529;
+    color: white;
+}
+
+.main-content {
+    margin-left: 250px;
+    padding: 20px;
+}
+
+.nav-link {
+    color: #adb5bd;
+}
+
+    .nav-link:hover {
+        color: white;
+        background: #343a40;
+    }

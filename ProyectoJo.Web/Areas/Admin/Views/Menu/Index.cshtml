@@ -3,7 +3,23 @@
 @{
     ViewData["Title"] = "Gestión de Menú";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+
+    var busqueda = Context.Request.Query["busqueda"].ToString();
+    var categoriaFiltro = Context.Request.Query["categoria"].ToString();
+    var categorias = Model.Select(i => i.Categoria).Distinct().OrderBy(c => c).ToList();
+
+    var resultado = Model
+        .Where(i => string.IsNullOrEmpty(busqueda) || i.Platillo.Contains(busqueda, StringComparison.OrdinalIgnoreCase))
+        .Where(i => string.IsNullOrEmpty(categoriaFiltro) || i.Categoria == categoriaFiltro)
+        .ToList();
 }
+
+<div class="mb-3">
+    <a asp-area="Admin" asp-controller="Gestion" asp-action="Index"
+       class="text-muted text-decoration-none">
+        <i class="bi bi-arrow-left"></i> Volver al dashboard
+    </a>
+</div>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="mb-0">Menú</h2>
@@ -12,9 +28,39 @@
     </a>
 </div>
 
-@if (!Model.Any())
+<form method="get" class="row g-2 mb-4">
+    <div class="col-md-5">
+        <input type="text" name="busqueda" value="@busqueda"
+               class="form-control" placeholder="Buscar por nombre..." />
+    </div>
+    <div class="col-md-4">
+        <select name="categoria" class="form-select">
+            <option value="">Todas las categorías</option>
+            @foreach (var cat in categorias)
+            {
+                <option value="@cat" selected="@(cat == categoriaFiltro)">@cat</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-outline-secondary w-100">
+            <i class="bi bi-search"></i> Filtrar
+        </button>
+    </div>
+    @if (!string.IsNullOrEmpty(busqueda) || !string.IsNullOrEmpty(categoriaFiltro))
+    {
+        <div class="col-md-1">
+            <a asp-area="Admin" asp-controller="Menu" asp-action="Index"
+               class="btn btn-outline-danger w-100" title="Limpiar filtros">
+                <i class="bi bi-x-lg"></i>
+            </a>
+        </div>
+    }
+</form>
+
+@if (!resultado.Any())
 {
-    <p class="text-muted">No hay platillos registrados todavía.</p>
+    <p class="text-muted">No se encontraron platillos con esos filtros.</p>
 }
 else
 {
@@ -26,11 +72,12 @@ else
                 <th>Categoría</th>
                 <th>Base</th>
                 <th>Precio</th>
+                <th class="text-center">Estado</th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var item in resultado)
             {
                 <tr>
                     <td class="text-muted">@item.Id</td>
@@ -38,6 +85,27 @@ else
                     <td>@item.Categoria</td>
                     <td>@item.Base</td>
                     <td>$@item.Precio.ToString("N2")</td>
+                    <td class="text-center">
+                        <form asp-area="Admin" asp-controller="Inventario"
+                              asp-action="ToggleActivo" asp-route-id="@item.Id" method="post" class="d-inline">
+                            <input type="hidden" name="origen" value="Menu" />
+                            <button type="submit"
+                                    class="btn btn-sm @(item.Activo ? "btn-success" : "btn-outline-secondary") me-1"
+                                    title="@(item.Activo ? "Ocultar" : "Mostrar")">
+                                <i class="bi @(item.Activo ? "bi-eye" : "bi-eye-slash")"></i>
+                            </button>
+                        </form>
+                        <form asp-area="Admin" asp-controller="Inventario"
+                              asp-action="ToggleAgotado" asp-route-id="@item.Id" method="post" class="d-inline">
+                            <input type="hidden" name="origen" value="Menu" />
+                            <button type="submit"
+                                    class="btn btn-sm @(item.Agotado ? "btn-warning" : "btn-outline-secondary")"
+                                    title="@(item.Agotado ? "Disponible" : "Agotado")"
+                                @(!item.Activo ? "disabled" : "")>
+                                <i class="bi @(item.Agotado ? "bi-x-circle" : "bi-check-circle")"></i>
+                            </button>
+                        </form>
+                    </td>
                     <td class="text-end">
                         <a asp-area="Admin" asp-controller="Menu" asp-action="Editar"
                            asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary me-1">
@@ -55,4 +123,5 @@ else
             }
         </tbody>
     </table>
+    <p class="text-muted small">Mostrando @resultado.Count de @Model.Count platillos</p>
 }

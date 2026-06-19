@@ -19,7 +19,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		// GET: /Admin/Menu
 		public IActionResult Index()
 		{
-			var menu = _productoService.ObtenerMenu();
+			var menu = _productoService.ObtenerTodos().ToList();
 			return View(menu);
 		}
 

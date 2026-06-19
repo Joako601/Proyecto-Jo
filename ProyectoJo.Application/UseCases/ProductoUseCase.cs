@@ -23,7 +23,8 @@ namespace ProyectoJo.Application.UseCases
 			return _repository.ObtenerPorCategoria(categoria);
 		}
 
-		public List<Item> ObtenerMenu() => _repository.ObtenerMenu();
+		public List<Item> ObtenerMenu() =>
+			_repository.ObtenerMenu().Where(i => i.Activo).ToList();
 
 		public void GuardarMenu(List<Item> menu) => _repository.GuardarMenu(menu);
 
@@ -44,5 +45,7 @@ namespace ProyectoJo.Application.UseCases
 			if (index >= 0) menu[index] = item;
 			_repository.GuardarMenu(menu);
 		}
+		public void ToggleActivo(int id) => _repository.ToggleActivo(id);
+		public void ToggleAgotado(int id) => _repository.ToggleAgotado(id);
 	}
 }

@@ -48,5 +48,20 @@ namespace ProyectoJo.Infrastructure.Persistence
 			menu.RemoveAll(i => i.Id == id);
 			GuardarMenu(menu);
 		}
+		public void ToggleActivo(int id)
+		{
+			var menu = LeerJson();
+			var item = menu.FirstOrDefault(i => i.Id == id);
+			if (item != null) item.Activo = !item.Activo;
+			GuardarMenu(menu);
+		}
+
+		public void ToggleAgotado(int id)
+		{
+			var menu = LeerJson();
+			var item = menu.FirstOrDefault(i => i.Id == id);
+			if (item != null) item.Agotado = !item.Agotado;
+			GuardarMenu(menu);
+		}
 	}
 }

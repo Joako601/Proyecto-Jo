@@ -62,5 +62,13 @@
     "Categoria": "Insumos",
     "Descripcion": "awaw",
     "Fecha": "2026-05-18T00:00:00"
+  },
+  {
+    "Id": 9,
+    "Monto": 7,
+    "Tipo": 1,
+    "Categoria": "Cena",
+    "Descripcion": "salbutes",
+    "Fecha": "2026-06-19T00:00:00"
   }
 ]

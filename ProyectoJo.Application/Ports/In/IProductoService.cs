@@ -12,5 +12,7 @@ namespace ProyectoJo.Application.Ports.In
 		Item? ObtenerPorId(int id);
 		void Eliminar(int id);
 		void EditarItem(Item item);
+		void ToggleActivo(int id);
+		void ToggleAgotado(int id);
 	}
 }

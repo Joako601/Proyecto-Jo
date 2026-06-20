@@ -1,11 +1,13 @@
-﻿@model IEnumerable<ProyectoJo.Domain.Entities.Item>
+﻿@model List<ProyectoJo.Web.Models.MenuItemViewModel>
 
 @{
     ViewData["Title"] = "Menú - Tía Caro";
+    var promosGenerales = (List<ProyectoJo.Domain.Entities.Promocion>)ViewBag.PromocionesGenerales;
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css//menu/menu.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/menu/menu-promos.css" asp-append-version="true" />
 }
 
 <div class="container py-5 mt-3">
@@ -13,7 +15,7 @@
         <h1 style="font-family: 'Playfair Display', serif; color: #222; font-weight: 700; font-size: 4.5rem; margin-bottom: 0.1rem;">
             Antojitos Tía Caro
         </h1>
-        
+
         <div class="mx-auto my-4" style="width: 80px; height: 3px; background-color: #b5a478;"></div>
 
         <p class="mt-4">
@@ -22,6 +24,43 @@
             </a>
         </p>
     </div>
+
+    @if (promosGenerales != null && promosGenerales.Any())
+    {
+        <div class="row justify-content-center mb-5 fade-in-up">
+            @foreach (var promo in promosGenerales)
+            {
+                <div class="col-md-9 mb-3">
+                    @if (!string.IsNullOrEmpty(promo.ImagenUrl))
+                    {
+                        <div class="promo-banner promo-banner--imagen">
+                            <img class="promo-banner__bg" src="@promo.ImagenUrl" alt="@promo.Titulo" />
+                            <div class="promo-banner__overlay"></div>
+                            <div class="promo-banner__content">
+                                <p class="promo-banner__titulo">@promo.Titulo</p>
+                                @if (!string.IsNullOrEmpty(promo.Descripcion))
+                                {
+                                    <p class="promo-banner__descripcion">@promo.Descripcion</p>
+                                }
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="promo-banner promo-banner--color">
+                            <div class="promo-banner__content">
+                                <p class="promo-banner__titulo">@promo.Titulo</p>
+                                @if (!string.IsNullOrEmpty(promo.Descripcion))
+                                {
+                                    <p class="promo-banner__descripcion">@promo.Descripcion</p>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    }
 
     <div class="menu-filters text-center mb-5 fade-in-up" style="animation-delay: 0.2s;">
         <button class="filter-btn active" data-filter="todos">Todos</button>
@@ -36,8 +75,9 @@
         @if (Model != null && Model.Any())
         {
             int delay = 1;
-            @foreach(var item in Model)
+            @foreach (var vm in Model)
             {
+                var item = vm.Platillo;
                 <div class="col-md-9 mb-4 menu-item-card card-animate"
                      data-category="@item.Categoria.ToLower()"
                      style="animation-delay: @(delay * 0.1)s; @(item.Agotado ? "opacity: 0.5;" : "")">
@@ -55,6 +95,10 @@
                                     {
                                         <span class="badge bg-secondary" style="font-size: 0.65rem; letter-spacing: 1px;">AGOTADO</span>
                                     }
+                                    @if (vm.TienePromocion)
+                                    {
+                                        <span class="badge" style="background-color: #b5a478; font-size: 0.65rem; letter-spacing: 1px;">PROMOCIÓN</span>
+                                    }
                                 </div>
                                 <p class="text-muted mb-5" style="font-family: 'Inter', sans-serif; font-size: 0.95rem;">
                                     @item.Descripcion
@@ -65,9 +109,19 @@
                             </div>
 
                             <div class="text-md-end d-flex flex-column justify-content-between align-items-md-end mt-4 mt-md-0">
-                                <h3 style="color: #b5a478; font-weight: 400; font-size: 1.4rem;">
-                                    $@item.Precio
-                                </h3>
+                                @if (vm.TienePromocion)
+                                {
+                                    <span class="text-muted text-decoration-line-through" style="font-size: 0.95rem;">$@item.Precio</span>
+                                    <h3 style="color: #b5a478; font-weight: 600; font-size: 1.4rem;">
+                                        $@vm.PrecioFinal
+                                    </h3>
+                                }
+                                else
+                                {
+                                    <h3 style="color: #b5a478; font-weight: 400; font-size: 1.4rem;">
+                                        $@item.Precio
+                                    </h3>
+                                }
                                 @if (!item.Agotado)
                                 {
                                     <a asp-controller="Menu" asp-action="Detalle" asp-route-id="@item.Id"

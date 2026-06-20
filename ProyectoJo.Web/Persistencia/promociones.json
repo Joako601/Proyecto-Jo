@@ -1,0 +1,13 @@
+[
+  {
+    "Id": 1,
+    "Titulo": "2x1",
+    "Descripcion": "awwa",
+    "TipoDescuento": 0,
+    "ValorDescuento": 10,
+    "ItemIds": [],
+    "Activa": true,
+    "FechaInicio": "2026-06-17T00:00:00",
+    "FechaFin": "2026-06-20T00:00:00"
+  }
+]

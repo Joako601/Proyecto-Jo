@@ -22,6 +22,7 @@ builder.Environment.WebRootFileProvider = new CompositeFileProvider(
 var rutaPersistencia = Path.Combine(builder.Environment.ContentRootPath, "Persistencia");
 var rutaMenu = Path.Combine(rutaPersistencia, "menu.json");
 var rutaFinanzas = Path.Combine(rutaPersistencia, "finanzas.json");
+var rutaPromociones = Path.Combine(rutaPersistencia, "promociones.json");
 
 builder.Services.AddScoped<IProductoRepository>(_ => new JsonProductRepository(rutaMenu));
 builder.Services.AddScoped<IFinanzaRepository>(_ => new JsonFinanzaRepository(rutaFinanzas));
@@ -32,6 +33,9 @@ builder.Services.AddScoped<IProductoService, ProductoUseCase>();
 builder.Services.AddScoped<IFinanzaService, FinanzaUseCase>();
 
 builder.Services.AddScoped<IAuthService, EnvAuthService>();
+
+builder.Services.AddScoped<IPromocionRepository>(_ => new JsonPromocionRepository(rutaPromociones));
+builder.Services.AddScoped<IPromocionService, PromocionUseCase>();
 
 // --- 1. CONFIGURACIÓN DE SERVICIOS (ANTES DE BUILD) ---
 builder.Services.AddControllersWithViews();

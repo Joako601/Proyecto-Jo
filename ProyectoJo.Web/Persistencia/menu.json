@@ -2,9 +2,9 @@
   {
     "Id": 1,
     "Platillo": "Panucho Tradicional",
-    "Categoria": "Panuchos",
-    "Precio": 25,
-    "Ingredientes": null,
+    "Categoria": "hola",
+    "Precio": 20,
+    "Ingredientes": "queso Xd",
     "Descripcion": "Tortilla frita rellena de frijol, con pavo, repollo, tomate, pepino y cebolla.",
     "Base": "Frijol y Pavo",
     "Activo": true,

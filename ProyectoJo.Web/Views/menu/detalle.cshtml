@@ -1,32 +1,42 @@
-﻿@model ProyectoJo.Domain.Entities.Item
+﻿@model ProyectoJo.Web.Models.MenuItemViewModel
+
+@{
+    var item = Model.Platillo;
+}
 
 @section Styles {
     <link rel="stylesheet" href="~/css/detalles/detalle.css" asp-append-version="true" />
 }
 <div class="container detalle-container module-reveal">
     <div class="platillo-wrapper shadow-lg">
-        
-        
+
         <div class="platillo-visual">
             <span>🌮</span>
         </div>
 
-        
         <div class="platillo-info">
             <header class="platillo-info-header">
-                <span class="tag-categoria">@Model.Categoria</span>
-                <h1 class="titulo-premium">@Model.Platillo</h1>
-                <span class="precio-premium">$@Model.Precio</span>
+                <span class="tag-categoria">@item.Categoria</span>
+                <h1 class="titulo-premium">@item.Platillo</h1>
+                @if (Model.TienePromocion)
+                {
+                    <span class="precio-premium text-decoration-line-through text-muted" style="font-size: 0.9em;">$@item.Precio</span>
+                    <span class="precio-premium">$@Model.PrecioFinal</span>
+                }
+                else
+                {
+                    <span class="precio-premium">$@item.Precio</span>
+                }
             </header>
 
             <p class="descripcion-premium">
-                "@Model.Descripcion"
+                "@item.Descripcion"
             </p>
 
             <div class="ficha-tecnica">
                 <div class="ficha-item">
                     <label>Ingredientes</label>
-                    <span>@Model.Ingredientes</span>
+                    <span>@item.Ingredientes</span>
                 </div>
                 <div class="ficha-item">
                     <label>Origen</label>

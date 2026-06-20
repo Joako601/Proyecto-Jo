@@ -1,0 +1,165 @@
+﻿@model List<ProyectoJo.Domain.Entities.Promocion>
+
+@{
+    ViewData["Title"] = "Promociones";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    var vigentes = (HashSet<int>)ViewBag.Vigentes;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/Areas/Admin/wwwroot/css/admin/promociones/promociones.css" asp-append-version="true" />
+}
+
+<div class="mb-3">
+    <a asp-area="Admin" asp-controller="Gestion" asp-action="Index" class="text-muted text-decoration-none">
+        <i class="bi bi-arrow-left"></i> Volver al dashboard
+    </a>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Promociones</h2>
+    <a asp-area="Admin" asp-controller="Promociones" asp-action="Agregar" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> Nueva promoción
+    </a>
+</div>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">Aún no hay promociones creadas.</p>
+}
+else
+{
+    var banners = Model.Where(p => p.TipoDescuento == ProyectoJo.Domain.Entities.TipoDescuento.Ninguno).ToList();
+    var descuentos = Model.Where(p => p.TipoDescuento != ProyectoJo.Domain.Entities.TipoDescuento.Ninguno).ToList();
+
+    @if (banners.Any())
+    {
+        <p class="text-muted text-uppercase mb-3" style="font-size: 0.7rem; letter-spacing: 2px;">Banners del menú</p>
+        <table class="table table-hover align-middle mb-5">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Imagen</th>
+                    <th>Título</th>
+                    <th>Vigencia</th>
+                    <th class="text-center">Estado</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var promo in banners)
+                {
+                    <tr>
+                        <td class="text-muted">@promo.Id</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(promo.ImagenUrl))
+                            {
+                                <img src="@promo.ImagenUrl" alt="@promo.Titulo" class="promo-thumbnail" />
+                            }
+                            else
+                            {
+                                <span class="promo-no-image">Sin imagen</span>
+                            }
+                        </td>
+                        <td>
+                            @promo.Titulo
+                            @if (vigentes.Contains(promo.Id))
+                            {
+                                <span class="badge bg-success ms-1">Vigente</span>
+                            }
+                        </td>
+                        <td class="small text-muted">
+                            @(promo.FechaInicio?.ToString("dd/MM/yyyy") ?? "—") al @(promo.FechaFin?.ToString("dd/MM/yyyy") ?? "—")
+                        </td>
+                        <td class="text-center">
+                            <form asp-area="Admin" asp-controller="Promociones" asp-action="ToggleActiva"
+                                  asp-route-id="@promo.Id" method="post" class="d-inline">
+                                <button type="submit"
+                                        class="btn btn-sm @(promo.Activa ? "btn-success" : "btn-outline-secondary")">
+                                    <i class="bi @(promo.Activa ? "bi-toggle-on" : "bi-toggle-off")"></i>
+                                </button>
+                            </form>
+                        </td>
+                        <td class="text-end">
+                            <a asp-area="Admin" asp-controller="Promociones" asp-action="Editar"
+                               asp-route-id="@promo.Id" class="btn btn-sm btn-outline-secondary me-1">
+                                <i class="bi bi-pencil"></i> Editar
+                            </a>
+                            <form asp-area="Admin" asp-controller="Promociones" asp-action="Eliminar"
+                                  asp-route-id="@promo.Id" method="post" class="d-inline"
+                                  onsubmit="return confirm('¿Eliminar @promo.Titulo?')">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    @if (descuentos.Any())
+    {
+        <p class="text-muted text-uppercase mb-3" style="font-size: 0.7rem; letter-spacing: 2px;">Promociones de descuento</p>
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Título</th>
+                    <th>Tipo</th>
+                    <th>Aplica a</th>
+                    <th>Vigencia</th>
+                    <th class="text-center">Estado</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var promo in descuentos)
+                {
+                    <tr>
+                        <td class="text-muted">@promo.Id</td>
+                        <td>
+                            @promo.Titulo
+                            @if (vigentes.Contains(promo.Id))
+                            {
+                                <span class="badge bg-success ms-1">Vigente</span>
+                            }
+                        </td>
+                        <td>
+                            @(promo.TipoDescuento == ProyectoJo.Domain.Entities.TipoDescuento.Porcentaje
+                                ? $"-{promo.ValorDescuento}%"
+                                : $"-${promo.ValorDescuento}")
+                        </td>
+                        <td>@(promo.ItemIds.Any() ? $"{promo.ItemIds.Count} platillo(s)" : "Todos")</td>
+                        <td class="small text-muted">
+                            @(promo.FechaInicio?.ToString("dd/MM/yyyy") ?? "—") al @(promo.FechaFin?.ToString("dd/MM/yyyy") ?? "—")
+                        </td>
+                        <td class="text-center">
+                            <form asp-area="Admin" asp-controller="Promociones" asp-action="ToggleActiva"
+                                  asp-route-id="@promo.Id" method="post" class="d-inline">
+                                <button type="submit"
+                                        class="btn btn-sm @(promo.Activa ? "btn-success" : "btn-outline-secondary")">
+                                    <i class="bi @(promo.Activa ? "bi-toggle-on" : "bi-toggle-off")"></i>
+                                </button>
+                            </form>
+                        </td>
+                        <td class="text-end">
+                            <a asp-area="Admin" asp-controller="Promociones" asp-action="Editar"
+                               asp-route-id="@promo.Id" class="btn btn-sm btn-outline-secondary me-1">
+                                <i class="bi bi-pencil"></i> Editar
+                            </a>
+                            <form asp-area="Admin" asp-controller="Promociones" asp-action="Eliminar"
+                                  asp-route-id="@promo.Id" method="post" class="d-inline"
+                                  onsubmit="return confirm('¿Eliminar @promo.Titulo?')">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}

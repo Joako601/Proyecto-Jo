@@ -1,57 +1,217 @@
-# 📊 Proyecto Jo' - Sistema de Gestión Financiera y Operativa
+# Proyecto Jo'
 
-![Status](https://img.shields.io/badge/Status-Desarrollo%20Activo-green)
-![Framework](https://img.shields.io/badge/.NET-10.0-blue)
-![Architecture](https://img.shields.io/badge/Architecture-MVC-orange)
-![Focus](https://img.shields.io/badge/Focus-Business%20Intelligence-success)
+> Sistema de gestión financiera y administrativa para dueños de pequeños y medianos
+> negocios, construido con **ASP.NET Core** bajo **Arquitectura Hexagonal (Ports & Adapters)**.
 
-**Proyecto Jo'** es una solución integral diseñada para proporcionar visibilidad operativa y control financiero estratégico, sumado a que
-el sistema centraliza el flujo de trabajo diario de una organización, permitiendo a dueños y administradores monitorear la salud económica del negocio mediante una gestión eficiente de recursos y
-datos en tiempo real.
+![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)
+![Arquitectura](https://img.shields.io/badge/Arquitectura-Hexagonal-blue)
+![API](https://img.shields.io/badge/API-REST%20%2B%20Swagger-85EA2D)
 
-## 🎯 Propuesta de Valor
+---
 
-El software está diseñado para transformar la operativa diaria en datos accionables, permitiendo:
-* **Control Centralizado**: Un flujo de trabajo unificado para la gestión financiera.
-* **Toma de Decisiones**: Visibilidad total de métricas clave para la administración de activos.
-* **Escalabilidad**: Arquitectura modular preparada para el crecimiento del volumen de operaciones.
+## Descripción
 
-## 🏗️ Entidades del Dominio
+Proyecto Jo' nació como una aplicación MVC monolítica y migró progresivamente hacia
+una **Arquitectura Hexagonal**, separando el dominio de negocio de los frameworks
+y la infraestructura, el sistema se compone de cinco proyectos independientes con
+fronteras explícitas y una dirección de dependencia única: los adaptadores dependen
+del dominio, el dominio nunca depende de ellos.
 
-El núcleo del sistema orquestra las siguientes entidades de negocio fundamentales:
+El sistema expone dos adaptadores de entrada simultáneos:
 
-* **Usuarios**: Control de acceso, seguridad y gestión de perfiles administrativos.
-* **Pedidos**: Ciclo de vida completo de las transacciones comerciales.
-* **Productos**: Catálogo técnico y gestión de atributos de mercancía.
-* **Cliente**: Registro y seguimiento de relaciones comerciales (CRM).
-* **Inventario**: Monitoreo de existencias, control de mermas y auditoría de stock.
-* **Punto de Venta (POS)**: Interfaz operativa para la ejecución de ventas y flujos de caja.
-* **Proveedor**: Gestión de cadena de suministro y obligaciones financieras.
-* **Métricas**: Motor de análisis para reportes de rendimiento y salud financiera.
+- **`ProyectoJo.Web`** — panel administrativo y vitrina pública (ASP.NET Core MVC)
+- **`ProyectoJo.Api`** — API REST documentada con Swagger, para clientes externos
+  (Postman, apps móviles, integraciones futuras)
 
-## 🛠️ Stack Tecnológico
+El historial completo de decisiones de diseño está documentado en
+[`/ProyectoJo.Web/ADRs`](./ProyectoJo.Web/ADRs).
 
-* **Backend**: ASP.NET Core MVC (.NET 8.0/9.0)
-* **Lenguaje**: C#
-* **Frontend**: Razor Pages, CSS3 (Estructura modular)
-* **Documentación**: ADRs (Architecture Decision Records) para trazabilidad técnica.
+---
 
-## 📂 Estructura del Proyecto
+## Arquitectura
+
+```mermaid
+flowchart TD
+
+    subgraph DOMAIN ["ProyectoJo.Domain"]
+        ENT["Entities
+        Item, Finanza, Pedido, Promocion"]
+    end
+
+    subgraph APPLICATION ["ProyectoJo.Application"]
+        direction TB
+        PIN["Ports/In
+        IProductoService, IFinanzaService,
+        IPedidoService, IPromocionService"]
+        UC["UseCases"]
+        POUT["Ports/Out
+        IProductoRepository, IFinanzaRepository,
+        IPedidoRepository, IPromocionRepository"]
+        PIN --> UC --> POUT
+    end
+
+    subgraph WEB ["ProyectoJo.Web"]
+        WC["Controllers MVC (Razor Views)"]
+    end
+
+    subgraph API ["ProyectoJo.Api"]
+        AC["Controllers REST (Swagger)"]
+    end
+
+    subgraph INFRA ["ProyectoJo.Infrastructure"]
+        PERS["Persistence — JSON"]
+        AUTH["Auth — IAuthService"]
+    end
+
+    WC -->|invoca| PIN
+    AC -->|invoca| PIN
+    UC -->|usa| ENT
+    POUT -->|implementado por| PERS
+    POUT -->|implementado por| AUTH
+```
+
+Más detalle en las vistas arquitectónicas de cada ADR.
+
+---
+
+## Estructura del repositorio
+
+```text
+ProyectoJo/
+├── ProyectoJo.Domain/            # Núcleo del negocio — sin dependencias externas
+│   └── Entities/                 # Item, Finanza, Pedido, ItemPedido, Promocion
+│
+├── ProyectoJo.Application/       # Casos de uso y puertos
+│   ├── Ports/In/                 # IProductoService, IFinanzaService, IPedidoService, IPromocionService
+│   ├── Ports/Out/                # IProductoRepository, IFinanzaRepository, IPedidoRepository, IPromocionRepository
+│   ├── UseCases/                 # Implementación de la lógica de negocio
+│   └── DTOs/                     # ResumenFinanciero, ResumenDashboard
+│
+├── ProyectoJo.Infrastructure/     # Adaptadores de salida
+│   ├── Persistence/               # Repositorios JSON
+│   └── Auth/                      # EnvAuthService
+│
+├── ProyectoJo.Web/                # Adaptador de entrada — ASP.NET Core MVC
+│   ├── Controllers/                # Home, Menu, Historia, Nosotros, Ubicación
+│   ├── Areas/Admin/                 # Panel administrativo (Finanzas, Productos, Promociones)
+│   ├── Views/
+│   ├── Persistencia/                 # menu.json, finanzas.json, promociones.json, pedidos.json
+│   └── ADRs/                          # Historial de decisiones arquitectónicas
+│
+└── ProyectoJo.Api/                 # Adaptador de entrada — ASP.NET Core Web API
+    ├── Controllers/                  # PedidosController
+    └── Program.cs                    # Composición de dependencias + Swagger
+```
+
+---
+
+## Tecnologías
+
+| Categoría | Tecnología |
+|---|---|
+| Framework | ASP.NET Core (.NET 10) |
+| Patrón arquitectónico | Arquitectura Hexagonal (Ports & Adapters) |
+| Web (adaptador de entrada) | ASP.NET Core MVC, Razor Views |
+| API (adaptador de entrada) | ASP.NET Core Web API |
+| Documentación de API | Swagger / OpenAPI (Swashbuckle.AspNetCore) |
+| Persistencia actual | Archivos JSON (planeado: SQL + Entity Framework) |
+| Autenticación | Cookie auth (`JoCookieAuth`) + `IAuthService` desacoplado |
+| Despliegue objetivo | AWS EC2 |
+
+---
+
+## Requisitos previos
+
+- [.NET SDK 10.0](https://dotnet.microsoft.com/download) o superior
+- Un editor compatible (Visual Studio, VS Code con C# Dev Kit, Rider)
+
+---
+
+## Cómo ejecutar el proyecto
+
+El sistema tiene **dos puntos de entrada independientes**: el sitio web (`ProyectoJo.Web`)
+y la API (`ProyectoJo.Api`). Cada uno se ejecuta por separado.
+
+```bash
+# Restaurar dependencias de toda la solución
+dotnet restore
+
+# Levantar el sitio web (panel admin + vitrina pública)
+dotnet run --project ProyectoJo.Web
+# → https://localhost:7287  /  http://localhost:5207
+
+# Levantar la API REST
+dotnet run --project ProyectoJo.Api
+# → https://localhost:63639  /  http://localhost:63640
+```
+
+### Credenciales del panel administrativo
+
+El panel admin requiere las variables de entorno `JO_ADMIN_USER` y `JO_ADMIN_PASSWORD`
+(ver `Infrastructure/Auth/EnvAuthService`). Configúralas en tu entorno local o en los
+*User Secrets* de .NET — **nunca las dejes hardcodeadas ni las subas al repositorio**
+en `launchSettings.json` con su valor real.
+
+---
+
+## Documentación interactiva (Swagger)
+
+Con `ProyectoJo.Api` corriendo, Swagger UI queda disponible directamente en la raíz
+del proyecto:
 
 ```
-├── ADRs/                # Architecture Decision Records
-├── Controllers/         # Lógica de orquestación y flujo de datos
-├── Models/              # Definición del dominio y entidades de negocio
-├── Views/               # Componentes de interfaz de usuario (Razor)
-├── wwwroot/             # Activos estáticos y recursos globales (CSS, JS)
-├── ProyectoJo.slnx      # Definición de la solución de Visual Studio
-└── appsettings.json     # Configuración de entornos y variables
+http://localhost:63640/
 ```
 
-## 🏛️ Decisiones de Arquitectura (ADR)
+Desde ahí se pueden explorar y probar todos los endpoints sin necesidad de Postman.
 
-Para garantizar la mantenibilidad y escalabilidad del sistema, cada decisión estructural crítica se documenta en la carpeta /ADRs.
-Esto permite una trazabilidad completa del diseño del sistema, facilitando auditorías técnicas y la integración de nuevos desarrolladores al flujo de trabajo de ingeniería.
+---
+
+## Endpoints disponibles
+
+> Esta tabla se mantiene actualizada manualmente como referencia rápida. La fuente
+> de verdad siempre es Swagger, generado directamente desde el código.
+
+### Pedidos — `/api/Pedidos`
+
+| Método | Ruta | Tag | Descripción |
+|---|---|---|---|
+| GET | `/api/Pedidos/recepcion` | Recepción | Lista pedidos para la vista de recepción |
+| GET | `/api/Pedidos/{id}` | Recepción | Obtiene un pedido por id |
+| POST | `/api/Pedidos` | Recepción | Crea un nuevo pedido |
+| PATCH | `/api/Pedidos/{id}/pagar` | Recepción | Marca un pedido como pagado |
+| GET | `/api/Pedidos/cocina` | Cocina | Lista pedidos pendientes/preparados para cocina |
+| PATCH | `/api/Pedidos/{id}/estado` | Cocina | Cambia el estado de un pedido |
+
+### Próximos módulos a exponer vía API
+
+Productos, Finanzas y Promociones ya tienen sus casos de uso y puertos listos en
+`ProyectoJo.Application` (`IProductoService`, `IFinanzaService`, `IPromocionService`),
+pero todavía solo se consumen desde `ProyectoJo.Web`. Quedan pendientes sus
+respectivos controladores en `ProyectoJo.Api`.
+
+---
+
+## Decisiones de arquitectura (ADRs)
+
+| ADR | Decisión |
+|---|---|
+| [ADR-01](./ProyectoJo.Web/ADRs/ADR-01-Joaquin-Uriona.md) | Decisión inicial de stack/arquitectura del MVP |
+| [ADR-02](./ProyectoJo.Web/ADRs/ADR-02-Joaquin-Uriona.md) | MVC puro y sus limitaciones anticipadas |
+| [ADR-03](./ProyectoJo.Web/ADRs/ADR-03-Joaquin-Uriona.md) | Migración hacia Arquitectura Hexagonal |
+| [ADR-04](./ProyectoJo.Web/ADRs/ADR-04-Joaquin-Uriona.md) | Incorporación de una API REST con Swagger |
+
+---
+
+## Uso de IA
+
+Se utilizó IA para:
+
+- Corregir redacción y ortografía de este documento
+- Generar la sintaxis Mermaid del diagrama de arquitectura
+- Redactar la estructura del README a partir del código real del repositorio
+
+No se utilizó para tomar decisiones arquitectónicas ni para diseñar la solución.
 
 ## 👨‍💻 Autor
 

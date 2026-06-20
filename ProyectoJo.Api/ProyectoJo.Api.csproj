@@ -1,9 +1,18 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\ProyectoJo.Application\ProyectoJo.Application.csproj" />
+		<ProjectReference Include="..\ProyectoJo.Infrastructure\ProyectoJo.Infrastructure.csproj" />
+	</ItemGroup>
 
 </Project>

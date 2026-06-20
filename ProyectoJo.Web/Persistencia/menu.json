@@ -108,5 +108,16 @@
     "Base": "Natural",
     "Activo": true,
     "Agotado": true
+  },
+  {
+    "Id": 11,
+    "Platillo": "Tacos de cochinita",
+    "Categoria": "Tacos",
+    "Precio": 90,
+    "Ingredientes": "tortilla",
+    "Descripcion": "un rico taco de cochinita con el precio super elevado",
+    "Base": "cochinita",
+    "Activo": false,
+    "Agotado": false
   }
 ]

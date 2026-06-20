@@ -70,5 +70,13 @@
     "Categoria": "Cena",
     "Descripcion": "salbutes",
     "Fecha": "2026-06-19T00:00:00"
+  },
+  {
+    "Id": 10,
+    "Monto": 1000,
+    "Tipo": 0,
+    "Categoria": "venta",
+    "Descripcion": "nose",
+    "Fecha": "2026-06-19T00:00:00"
   }
 ]

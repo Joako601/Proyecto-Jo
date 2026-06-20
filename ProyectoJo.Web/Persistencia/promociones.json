@@ -3,6 +3,7 @@
     "Id": 1,
     "Titulo": "2x1",
     "Descripcion": "awwa",
+    "ImagenUrl": null,
     "TipoDescuento": 0,
     "ValorDescuento": 10,
     "ItemIds": [],

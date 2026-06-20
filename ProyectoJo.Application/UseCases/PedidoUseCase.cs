@@ -39,5 +39,23 @@ namespace ProyectoJo.Application.UseCases
 			pedido.Estado = nuevoEstado;
 			return await _repository.ActualizarAsync(pedido);
 		}
+
+		public async Task<List<Pedido>> ObtenerParaCocinaAsync()
+		{
+			var todos = await _repository.ObtenerTodosAsync();
+			return todos
+				.Where(p => p.Estado == EstadoPedido.Pendiente || p.Estado == EstadoPedido.Preparado)
+				.OrderBy(p => p.FechaCreacion)
+				.ToList();
+		}
+
+		public async Task<List<Pedido>> ObtenerParaRecepcionAsync()
+		{
+			var todos = await _repository.ObtenerTodosAsync();
+			return todos
+				.Where(p => p.Estado != EstadoPedido.Cancelado)
+				.OrderByDescending(p => p.FechaCreacion)
+				.ToList();
+		}
 	}
 }

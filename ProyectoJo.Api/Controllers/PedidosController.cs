@@ -15,17 +15,19 @@ namespace ProyectoJo.Api.Controllers
 			_pedidoService = pedidoService;
 		}
 
-		
-		[HttpGet]
+
+		[HttpGet("recepcion")]
+		[Tags("Recepción")]
 		[ProducesResponseType(typeof(List<Pedido>), StatusCodes.Status200OK)]
-		public async Task<IActionResult> GetPendientes()
+		public async Task<IActionResult> GetRecepcion()
 		{
-			var pedidos = await _pedidoService.ObtenerPendientesAsync();
+			var pedidos = await _pedidoService.ObtenerParaRecepcionAsync();
 			return Ok(pedidos);
 		}
 
-		
+
 		[HttpGet("{id}")]
+		[Tags("Recepción")]
 		[ProducesResponseType(typeof(Pedido), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<IActionResult> GetById(int id)
@@ -35,8 +37,9 @@ namespace ProyectoJo.Api.Controllers
 			return Ok(pedido);
 		}
 
-		
+
 		[HttpPost]
+		[Tags("Recepción")]
 		[ProducesResponseType(typeof(Pedido), StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> Create([FromBody] Pedido pedido)
@@ -46,26 +49,38 @@ namespace ProyectoJo.Api.Controllers
 			return CreatedAtAction(nameof(GetById), new { id = creado.Id }, creado);
 		}
 
-		/// <summary>
-		/// Updates the order status. Kitchen uses this to mark an order as Prepared.
-		/// </summary>
-		[HttpPatch("{id}/estado")]
-		[ProducesResponseType(typeof(Pedido), StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public async Task<IActionResult> CambiarEstado(int id, [FromBody] EstadoPedido nuevoEstado)
-		{
-			var actualizado = await _pedidoService.CambiarEstadoAsync(id, nuevoEstado);
-			if (actualizado is null) return NotFound();
-			return Ok(actualizado);
-		}
 
-		
 		[HttpPatch("{id}/pagar")]
+		[Tags("Recepción")]
 		[ProducesResponseType(typeof(Pedido), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<IActionResult> Pagar(int id)
 		{
 			var actualizado = await _pedidoService.CambiarEstadoAsync(id, EstadoPedido.Pagado);
+			if (actualizado is null) return NotFound();
+			return Ok(actualizado);
+		}
+
+		
+
+		
+		[HttpGet("cocina")]
+		[Tags("Cocina")]
+		[ProducesResponseType(typeof(List<Pedido>), StatusCodes.Status200OK)]
+		public async Task<IActionResult> GetCocina()
+		{
+			var pedidos = await _pedidoService.ObtenerParaCocinaAsync();
+			return Ok(pedidos);
+		}
+
+		
+		[HttpPatch("{id}/estado")]
+		[Tags("Cocina")]
+		[ProducesResponseType(typeof(Pedido), StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<IActionResult> CambiarEstado(int id, [FromBody] EstadoPedido nuevoEstado)
+		{
+			var actualizado = await _pedidoService.CambiarEstadoAsync(id, nuevoEstado);
 			if (actualizado is null) return NotFound();
 			return Ok(actualizado);
 		}

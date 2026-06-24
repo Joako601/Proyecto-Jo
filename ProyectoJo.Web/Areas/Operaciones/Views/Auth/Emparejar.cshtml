@@ -1,0 +1,43 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Configurar dispositivo";
+}
+
+<div class="d-flex justify-content-center align-items-center" style="min-height: 90vh;">
+    <div class="card shadow-sm" style="max-width: 420px; width: 100%;">
+        <div class="card-body p-4">
+            <h4 class="mb-1">Configurar este dispositivo</h4>
+            <p class="text-muted mb-4">
+                Esto solo se hace una vez por tablet, celular o laptop. Después de
+                configurarlo, este dispositivo abrirá siempre directo en la estación
+                elegida.
+            </p>
+
+            <form method="post" asp-area="Operaciones" asp-controller="Auth" asp-action="Emparejar">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">¿Qué estación es este dispositivo?</label>
+                    <div class="d-grid gap-2">
+                        <input type="radio" class="btn-check" name="estacion" id="rolRecepcion" value="Recepcion" autocomplete="off" checked>
+                        <label class="btn btn-outline-primary btn-tactil text-start ps-3" for="rolRecepcion">
+                            <i class="bi bi-receipt"></i>&nbsp; Recepción
+                        </label>
+
+                        <input type="radio" class="btn-check" name="estacion" id="rolCocina" value="Cocina" autocomplete="off">
+                        <label class="btn btn-outline-warning btn-tactil text-start ps-3" for="rolCocina">
+                            <i class="bi bi-egg-fried"></i>&nbsp; Cocina
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Nombre del dispositivo (opcional)</label>
+                    <input type="text" class="form-control" name="nombre" placeholder="Ej. Tablet entrada, Laptop barra...">
+                </div>
+
+                <button type="submit" class="btn btn-success btn-tactil w-100">
+                    Guardar y continuar
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,10 @@
+﻿using ProyectoJo.Domain.Entities;
+
+namespace ProyectoJo.Application.Ports.In
+{
+	public interface IDispositivoService
+	{
+		Task<DispositivoOperaciones> EmparejarAsync(RolEmpleado estacion, string nombre);
+		Task<DispositivoOperaciones?> ReconocerAsync(string token);
+	}
+}

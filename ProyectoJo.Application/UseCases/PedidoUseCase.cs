@@ -7,10 +7,12 @@ namespace ProyectoJo.Application.UseCases
 	public class PedidoUseCase : IPedidoService
 	{
 		private readonly IPedidoRepository _repository;
+		private readonly IFinanzaService _finanzaService;
 
-		public PedidoUseCase(IPedidoRepository repository)
+		public PedidoUseCase(IPedidoRepository repository, IFinanzaService finanzaService)
 		{
 			_repository = repository;
+			_finanzaService = finanzaService;
 		}
 
 		public async Task<List<Pedido>> ObtenerPendientesAsync()
@@ -36,8 +38,30 @@ namespace ProyectoJo.Application.UseCases
 			var pedido = await _repository.ObtenerPorIdAsync(id);
 			if (pedido is null) return null;
 
+			var yaEstabaPagado = pedido.Estado == EstadoPedido.Pagado;
 			pedido.Estado = nuevoEstado;
-			return await _repository.ActualizarAsync(pedido);
+			var actualizado = await _repository.ActualizarAsync(pedido);
+
+			if (actualizado is not null && nuevoEstado == EstadoPedido.Pagado && !yaEstabaPagado)
+			{
+				try
+				{
+					_finanzaService.RegistrarMovimiento(new Finanza
+					{
+						Monto = actualizado.Total,
+						Tipo = TipoMovimiento.Ingreso,
+						Categoria = "Ventas",
+						Descripcion = $"Pedido #{actualizado.Id} — Mesa {actualizado.Mesa}",
+						Fecha = DateTime.UtcNow
+					});
+				}
+				catch (Exception ex)
+				{
+					Console.Error.WriteLine($"[Pedido #{id}] Error registrando finanza: {ex.Message}");
+				}
+			}
+
+			return actualizado;
 		}
 
 		public async Task<List<Pedido>> ObtenerParaCocinaAsync()

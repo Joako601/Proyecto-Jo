@@ -1,5 +1,5 @@
-using System.Security.Claims; 
-using Microsoft.AspNetCore.Authentication; 
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using ProyectoJo.Application.Ports.In;
 using ProyectoJo.Application.UseCases;
@@ -24,11 +24,14 @@ var rutaMenu = Path.Combine(rutaPersistencia, "menu.json");
 var rutaFinanzas = Path.Combine(rutaPersistencia, "finanzas.json");
 var rutaPromociones = Path.Combine(rutaPersistencia, "promociones.json");
 
+var rutaEmpleados = Path.Combine(rutaPersistencia, "empleados.json");
+var rutaDispositivos = Path.Combine(rutaPersistencia, "dispositivos.json");
+var rutaPedidos = Path.Combine(rutaPersistencia, "pedidos.json");
+
 builder.Services.AddScoped<IProductoRepository>(_ => new JsonProductRepository(rutaMenu));
 builder.Services.AddScoped<IFinanzaRepository>(_ => new JsonFinanzaRepository(rutaFinanzas));
 
 builder.Services.AddScoped<IProductoService, ProductoUseCase>();
-
 
 builder.Services.AddScoped<IFinanzaService, FinanzaUseCase>();
 
@@ -37,20 +40,49 @@ builder.Services.AddScoped<IAuthService, EnvAuthService>();
 builder.Services.AddScoped<IPromocionRepository>(_ => new JsonPromocionRepository(rutaPromociones));
 builder.Services.AddScoped<IPromocionService, PromocionUseCase>();
 
-// --- 1. CONFIGURACIÓN DE SERVICIOS (ANTES DE BUILD) ---
-builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IEmpleadoRepository>(_ => new JsonEmpleadoRepository(rutaEmpleados));
+builder.Services.AddScoped<IEmpleadoAuthService, EmpleadoAuthUseCase>();
 
-// Configuración de Autenticación
+builder.Services.AddScoped<IDispositivoRepository>(_ => new JsonDispositivoRepository(rutaDispositivos));
+builder.Services.AddScoped<IDispositivoService, DispositivoUseCase>();
+
+builder.Services.AddScoped<IPedidoRepository>(_ => new JsonPedidoRepository(rutaPedidos));
+builder.Services.AddScoped<IPedidoService, PedidoUseCase>();
+
+builder.Services.AddControllersWithViews()
+	.AddJsonOptions(options =>
+	{
+		options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+	});
+
 builder.Services.AddAuthentication("JoCookieAuth")
 	.AddCookie("JoCookieAuth", options => {
 		options.LoginPath = "/Admin/Login";
 		options.AccessDeniedPath = "/Admin/AccesoDenegado";
+	})
+	.AddCookie("OperacionesCookieAuth", options => {
+		options.LoginPath = "/Operaciones/Auth/Login";
+		options.AccessDeniedPath = "/Operaciones/Auth/Login";
+		options.Cookie.Name = "Jo.Operaciones";
+		options.ExpireTimeSpan = TimeSpan.FromHours(12);
+		options.SlidingExpiration = true;
+		options.Events.OnRedirectToLogin = context =>
+		{
+			if (context.Request.Headers.ContainsKey("X-Requested-With") ||
+				context.Request.Path.Value?.Contains("/Operaciones/Recepcion/") == true ||
+				context.Request.Path.Value?.Contains("/Operaciones/Cocina/") == true)
+			{
+				context.Response.StatusCode = 401;
+				return Task.CompletedTask;
+			}
+			context.Response.Redirect(context.RedirectUri);
+			return Task.CompletedTask;
+		};
 	});
 
-// Construimos la aplicación
+
 var app = builder.Build();
 
-// --- 2. PIPELINE DE SOLICITUDES (MIDDLEWARE) ---
 if (!app.Environment.IsDevelopment())
 {
 	app.UseExceptionHandler("/Home/Error");
@@ -58,20 +90,16 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles(); // O app.MapStaticAssets() si usas .NET 9
+app.UseStaticFiles();
 app.UseRouting();
 
-// El orden aquí es vital: Primero Autenticar, luego Autorizar
 app.UseAuthentication();
 app.UseAuthorization();
 
-// --- 3. RUTAS ---
-// Ruta específica para Áreas (debe ir antes de la ruta default)
 app.MapControllerRoute(
 	name: "areas",
 	pattern: "{area:exists}/{controller=Gestion}/{action=Index}/{id?}");
 
-// Ruta por defecto
 app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Home}/{action=Index}/{id?}");

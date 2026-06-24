@@ -1,0 +1,67 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="manifest" href="~/manifest.json">
+    <title>Recepción — Proyecto Jo'</title>
+    <link rel="stylesheet" href="~/css/operaciones/recepcion.css" asp-append-version="true">
+</head>
+<body>
+    <div class="top-bar">
+        <div class="top-bar__brand">
+            <span class="top-bar__icon">🧾</span>
+            <h1 class="top-bar__title">Recepción</h1>
+        </div>
+        <a class="top-bar__salir" asp-area="Operaciones" asp-controller="Auth" asp-action="Salir">
+            Cerrar sesión <span class="top-bar__empleado">(@User.Identity?.Name)</span>
+        </a>
+    </div>
+
+    <div class="layout">
+        <section class="col-menu">
+            <h2 class="seccion-titulo">Menú del negocio</h2>
+            <div id="menu-contenedor">
+                <p class="mensaje-vacio">Cargando menú...</p>
+            </div>
+        </section>
+
+        <aside class="col-carrito">
+            <h2 class="seccion-titulo">Pedido actual</h2>
+            <div class="carrito-box">
+                <div class="tipo-entrega">
+                    <button id="btn-mesa" class="tipo-entrega__btn tipo-entrega__btn--activo" data-tipo="mesa">
+                        Para mesa
+                    </button>
+                    <button id="btn-llevar" class="tipo-entrega__btn" data-tipo="llevar">
+                        Para llevar
+                    </button>
+                </div>
+
+                <input id="mesa-input" class="mesa-input" placeholder="Número o nombre de mesa">
+
+                <div id="carrito-lineas">
+                    <p class="mensaje-vacio">Aún no has agregado productos.</p>
+                </div>
+
+                <div class="total" id="total-carrito">Total: $0.00</div>
+                <button class="crear-btn" id="crear-btn" disabled>Crear pedido</button>
+            </div>
+        </aside>
+    </div>
+
+    <div class="tabs">
+        <button id="tab-activos" class="tabs__btn tabs__btn--activo" data-tab="activos">Pedidos activos</button>
+        <button id="tab-pagados" class="tabs__btn" data-tab="pagados">Pagados</button>
+    </div>
+
+    <div id="pedidos-grid" class="pedidos-grid">
+        <p class="mensaje-vacio">Cargando pedidos...</p>
+    </div>
+
+    <script src="~/js/operaciones/recepcion.js" asp-append-version="true"></script>
+</body>
+</html>

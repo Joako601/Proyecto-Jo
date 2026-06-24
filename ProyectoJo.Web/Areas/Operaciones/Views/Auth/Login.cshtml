@@ -1,0 +1,92 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Ingresar PIN";
+    var estacion = ViewBag.Estacion?.ToString() ?? "";
+    var esCocina = estacion == "Cocina";
+}
+
+<div class="d-flex justify-content-center align-items-center" style="min-height: 90vh;">
+    <div class="card shadow-sm" style="max-width: 380px; width: 100%;">
+        <div class="card-body p-4 text-center">
+
+            <span class="badge @(esCocina ? "bg-warning text-dark" : "bg-primary") mb-2 px-3 py-2">
+                <i class="bi @(esCocina ? "bi-egg-fried" : "bi-receipt")"></i>
+                @estacion
+            </span>
+
+            <h4 class="mb-1">Ingresa tu PIN</h4>
+            @if (ViewBag.NombreDispositivo is string nombre && !string.IsNullOrWhiteSpace(nombre))
+            {
+                <p class="text-muted small mb-3">@nombre</p>
+            }
+
+            @if (ViewBag.Error is string error)
+            {
+                <div class="alert alert-danger py-2">@error</div>
+            }
+
+            <form method="post" asp-area="Operaciones" asp-controller="Auth" asp-action="Login" id="formPin">
+                <input type="hidden" name="pin" id="pinValue" />
+
+                <div class="d-flex justify-content-center gap-2 mb-4" id="pinDots">
+                    <span class="pin-dot border rounded-circle" style="width:18px;height:18px;display:inline-block;"></span>
+                    <span class="pin-dot border rounded-circle" style="width:18px;height:18px;display:inline-block;"></span>
+                    <span class="pin-dot border rounded-circle" style="width:18px;height:18px;display:inline-block;"></span>
+                    <span class="pin-dot border rounded-circle" style="width:18px;height:18px;display:inline-block;"></span>
+                </div>
+
+                <div class="row g-2">
+                    @for (int n = 1; n <= 9; n++)
+                    {
+                        <div class="col-4">
+                            <button type="button" class="btn btn-outline-secondary btn-tactil w-100 tecla-pin" data-num="@n">@n</button>
+                        </div>
+                    }
+                    <div class="col-4"></div>
+                    <div class="col-4">
+                        <button type="button" class="btn btn-outline-secondary btn-tactil w-100 tecla-pin" data-num="0">0</button>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" class="btn btn-outline-danger btn-tactil w-100" id="btnBorrar">
+                            <i class="bi bi-backspace"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <a class="d-block mt-4 small text-muted" asp-area="Operaciones" asp-controller="Auth" asp-action="Emparejar">
+                ¿Este dispositivo está mal configurado?
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const MAX_PIN = 4;
+        let pin = "";
+
+        function actualizarPuntos() {
+            document.querySelectorAll(".pin-dot").forEach((dot, i) => {
+                dot.style.background = i < pin.length ? "#212529" : "transparent";
+            });
+        }
+
+        document.querySelectorAll(".tecla-pin").forEach(btn => {
+            btn.addEventListener("click", () => {
+                if (pin.length >= MAX_PIN) return;
+                pin += btn.dataset.num;
+                actualizarPuntos();
+                if (pin.length === MAX_PIN) {
+                    document.getElementById("pinValue").value = pin;
+                    document.getElementById("formPin").submit();
+                }
+            });
+        });
+
+        document.getElementById("btnBorrar").addEventListener("click", () => {
+            pin = pin.slice(0, -1);
+            actualizarPuntos();
+        });
+    </script>
+}

@@ -1,0 +1,42 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="manifest" href="~/manifest.json">
+    <title>Cocina — Proyecto Jo'</title>
+    <link rel="stylesheet" href="~/css/operaciones/cocina.css" asp-append-version="true">
+</head>
+<body>
+    <div class="top-bar">
+        <div class="top-bar__brand">
+            <span class="top-bar__icon">🍳</span>
+            <h1 class="top-bar__title">Cocina</h1>
+            <span class="estado-conexion" id="estado-conexion"></span>
+        </div>
+        <a class="top-bar__salir" asp-area="Operaciones" asp-controller="Auth" asp-action="Salir">
+            Cerrar sesión <span class="top-bar__empleado">(@User.Identity?.Name)</span>
+        </a>
+    </div>
+
+    <main class="tablero">
+        <section class="columna">
+            <h2 class="columna__titulo">Pendientes</h2>
+            <div class="columna__contenido" id="col-pendiente">
+                <p class="mensaje-vacio">Cargando...</p>
+            </div>
+        </section>
+        <section class="columna">
+            <h2 class="columna__titulo">En preparación / Listos</h2>
+            <div class="columna__contenido" id="col-preparado">
+                <p class="mensaje-vacio">Cargando...</p>
+            </div>
+        </section>
+    </main>
+
+    <script src="~/js/operaciones/cocina.js" asp-append-version="true"></script>
+</body>
+</html>

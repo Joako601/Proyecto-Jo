@@ -1,0 +1,313 @@
+[
+  {
+    "Id": 1,
+    "Mesa": "5",
+    "Items": [
+      {
+        "ItemId": 1,
+        "Nombre": "Panucho",
+        "Cantidad": 100,
+        "PrecioUnitario": 8,
+        "Subtotal": 800
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-20T04:44:54.8797943Z",
+    "Total": 800
+  },
+  {
+    "Id": 2,
+    "Mesa": "6",
+    "Items": [
+      {
+        "ItemId": 1,
+        "Nombre": "Jjj",
+        "Cantidad": 10,
+        "PrecioUnitario": 1,
+        "Subtotal": 10
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-20T04:47:19.563543Z",
+    "Total": 10
+  },
+  {
+    "Id": 3,
+    "Mesa": "5",
+    "Items": [
+      {
+        "ItemId": 1,
+        "Nombre": "panuchos",
+        "Cantidad": 1,
+        "PrecioUnitario": 10,
+        "Subtotal": 10
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-20T04:53:15.1681204Z",
+    "Total": 10
+  },
+  {
+    "Id": 4,
+    "Mesa": "Mesa 20",
+    "Items": [
+      {
+        "ItemId": 1,
+        "Nombre": "Panucho Tradicional",
+        "Cantidad": 2,
+        "PrecioUnitario": 20,
+        "Subtotal": 40
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-20T05:10:03.4947276Z",
+    "Total": 40
+  },
+  {
+    "Id": 5,
+    "Mesa": "Mesa 1",
+    "Items": [
+      {
+        "ItemId": 7,
+        "Nombre": "Caldo Comensal (sin Pavo)",
+        "Cantidad": 1,
+        "PrecioUnitario": 80,
+        "Subtotal": 80
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-20T05:16:15.5119445Z",
+    "Total": 80
+  },
+  {
+    "Id": 6,
+    "Mesa": "Mesa 1",
+    "Items": [
+      {
+        "ItemId": 1,
+        "Nombre": "Panucho Tradicional",
+        "Cantidad": 1,
+        "PrecioUnitario": 20,
+        "Subtotal": 20
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-20T05:21:14.3567445Z",
+    "Total": 20
+  },
+  {
+    "Id": 7,
+    "Mesa": "Mesa Mesa 3",
+    "Items": [
+      {
+        "ItemId": 1,
+        "Nombre": "Panucho Tradicional",
+        "Cantidad": 3,
+        "PrecioUnitario": 20,
+        "Subtotal": 60
+      },
+      {
+        "ItemId": 5,
+        "Nombre": "Torta de Carne Asada con Queso (sin cebolla, Lechuga)",
+        "Cantidad": 2,
+        "PrecioUnitario": 60,
+        "Subtotal": 120
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-20T05:24:51.2593651Z",
+    "Total": 180
+  },
+  {
+    "Id": 8,
+    "Mesa": "Mesa 5",
+    "Items": [
+      {
+        "ItemId": 1,
+        "Nombre": "Panucho Tradicional",
+        "Cantidad": 2,
+        "PrecioUnitario": 20,
+        "Subtotal": 40
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-20T05:28:59.6412957Z",
+    "Total": 40
+  },
+  {
+    "Id": 9,
+    "Mesa": "Para llevar",
+    "Items": [
+      {
+        "ItemId": 1,
+        "Nombre": "Panucho Tradicional",
+        "Cantidad": 2,
+        "PrecioUnitario": 20,
+        "Subtotal": 40
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-20T18:46:07.6876136Z",
+    "Total": 40
+  },
+  {
+    "Id": 10,
+    "Mesa": "1",
+    "Items": [
+      {
+        "ItemId": 1,
+        "Nombre": "Panucho Tradicional",
+        "Cantidad": 1,
+        "PrecioUnitario": 20,
+        "Subtotal": 20
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-21T01:56:15.8301114Z",
+    "Total": 20
+  },
+  {
+    "Id": 11,
+    "Mesa": "Para llevar",
+    "Items": [
+      {
+        "ItemId": 9,
+        "Nombre": "Refresco Embotellado",
+        "Cantidad": 1,
+        "PrecioUnitario": 25,
+        "Subtotal": 25
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-21T02:04:38.9140935Z",
+    "Total": 25
+  },
+  {
+    "Id": 12,
+    "Mesa": "Para llevar",
+    "Items": [
+      {
+        "ItemId": 1,
+        "Nombre": "Panucho Tradicional (sin queso Xd)",
+        "Cantidad": 1,
+        "PrecioUnitario": 20,
+        "Subtotal": 20
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-21T02:04:59.3532318Z",
+    "Total": 20
+  },
+  {
+    "Id": 13,
+    "Mesa": "Para llevar",
+    "Items": [
+      {
+        "ItemId": 9,
+        "Nombre": "Refresco Embotellado",
+        "Cantidad": 1,
+        "PrecioUnitario": 25,
+        "Subtotal": 25
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-21T02:13:24.1580082Z",
+    "Total": 25
+  },
+  {
+    "Id": 14,
+    "Mesa": "Para llevar",
+    "Items": [
+      {
+        "ItemId": 1,
+        "Nombre": "Panucho Tradicional",
+        "Cantidad": 1,
+        "PrecioUnitario": 20,
+        "Subtotal": 20
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-22T03:50:23.4980434Z",
+    "Total": 20
+  },
+  {
+    "Id": 15,
+    "Mesa": "Para llevar",
+    "Items": [
+      {
+        "ItemId": 1,
+        "Nombre": "Panucho Tradicional",
+        "Cantidad": 1,
+        "PrecioUnitario": 20,
+        "Subtotal": 20
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-22T04:02:45.4984161Z",
+    "Total": 20
+  },
+  {
+    "Id": 16,
+    "Mesa": "Mesa 1",
+    "Items": [
+      {
+        "ItemId": 5,
+        "Nombre": "Torta de Carne Asada con Queso (sin cebolla)",
+        "Cantidad": 1,
+        "PrecioUnitario": 60,
+        "Subtotal": 60
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-22T04:04:10.4056516Z",
+    "Total": 60
+  },
+  {
+    "Id": 17,
+    "Mesa": "Para llevar",
+    "Items": [
+      {
+        "ItemId": 1,
+        "Nombre": "Panucho Tradicional (sin queso Xd)",
+        "Cantidad": 1,
+        "PrecioUnitario": 20,
+        "Subtotal": 20
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-22T18:29:19.8772249Z",
+    "Total": 20
+  },
+  {
+    "Id": 18,
+    "Mesa": "Para llevar",
+    "Items": [
+      {
+        "ItemId": 1,
+        "Nombre": "Panucho Tradicional (sin queso Xd)",
+        "Cantidad": 1,
+        "PrecioUnitario": 20,
+        "Subtotal": 20
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-22T18:29:19.7137851Z",
+    "Total": 20
+  },
+  {
+    "Id": 19,
+    "Mesa": "Para llevar",
+    "Items": [
+      {
+        "ItemId": 1,
+        "Nombre": "Panucho Tradicional",
+        "Cantidad": 1,
+        "PrecioUnitario": 20,
+        "Subtotal": 20
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-24T13:42:52.9805063Z",
+    "Total": 20
+  }
+]

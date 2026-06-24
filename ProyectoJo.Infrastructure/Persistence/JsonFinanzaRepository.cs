@@ -7,6 +7,7 @@ namespace ProyectoJo.Infrastructure.Persistence
 	public class JsonFinanzaRepository : IFinanzaRepository
 	{
 		private readonly string _rutaArchivo;
+		private static readonly object _lock = new();
 
 		public JsonFinanzaRepository(string rutaArchivo)
 		{
@@ -15,9 +16,10 @@ namespace ProyectoJo.Infrastructure.Persistence
 
 		public List<Finanza> ObtenerTodos()
 		{
-			if (!File.Exists(_rutaArchivo)) return new List<Finanza>();
-			var json = File.ReadAllText(_rutaArchivo);
-			return JsonSerializer.Deserialize<List<Finanza>>(json) ?? new List<Finanza>();
+			lock (_lock)
+			{
+				return LeerSinCandado();
+			}
 		}
 
 		public Finanza? ObtenerPorId(int id) =>
@@ -25,27 +27,51 @@ namespace ProyectoJo.Infrastructure.Persistence
 
 		public void Guardar(Finanza finanza)
 		{
-			var lista = ObtenerTodos();
-			lista.Add(finanza);
-			Persistir(lista);
+			lock (_lock)
+			{
+				var lista = LeerSinCandado();
+				lista.Add(finanza);
+				PersistirSinCandado(lista);
+			}
 		}
 
 		public void Actualizar(Finanza finanza)
 		{
-			var lista = ObtenerTodos();
-			var index = lista.FindIndex(f => f.Id == finanza.Id);
-			if (index >= 0) lista[index] = finanza;
-			Persistir(lista);
+			lock (_lock)
+			{
+				var lista = LeerSinCandado();
+				var index = lista.FindIndex(f => f.Id == finanza.Id);
+				if (index >= 0) lista[index] = finanza;
+				PersistirSinCandado(lista);
+			}
 		}
 
 		public void Eliminar(int id)
 		{
-			var lista = ObtenerTodos();
-			lista.RemoveAll(f => f.Id == id);
-			Persistir(lista);
+			lock (_lock)
+			{
+				var lista = LeerSinCandado();
+				lista.RemoveAll(f => f.Id == id);
+				PersistirSinCandado(lista);
+			}
+		}
+
+		private List<Finanza> LeerSinCandado()
+		{
+			if (!File.Exists(_rutaArchivo)) return new List<Finanza>();
+			var json = File.ReadAllText(_rutaArchivo);
+			return JsonSerializer.Deserialize<List<Finanza>>(json) ?? new List<Finanza>();
 		}
 
 		private void Persistir(List<Finanza> lista)
+		{
+			lock (_lock)
+			{
+				PersistirSinCandado(lista);
+			}
+		}
+
+		private void PersistirSinCandado(List<Finanza> lista)
 		{
 			var json = JsonSerializer.Serialize(lista, new JsonSerializerOptions { WriteIndented = true });
 			File.WriteAllText(_rutaArchivo, json);

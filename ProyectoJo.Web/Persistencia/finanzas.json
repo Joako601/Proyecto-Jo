@@ -78,5 +78,93 @@
     "Categoria": "venta",
     "Descripcion": "nose",
     "Fecha": "2026-06-19T00:00:00"
+  },
+  {
+    "Id": 11,
+    "Monto": 20,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #10 \u2014 Mesa 1",
+    "Fecha": "2026-06-21T02:04:25.6217351Z"
+  },
+  {
+    "Id": 12,
+    "Monto": 25,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #11 \u2014 Mesa Para llevar",
+    "Fecha": "2026-06-21T02:04:40.7283551Z"
+  },
+  {
+    "Id": 13,
+    "Monto": 20,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #12 \u2014 Mesa Para llevar",
+    "Fecha": "2026-06-21T02:13:07.9941529Z"
+  },
+  {
+    "Id": 14,
+    "Monto": 25,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #13 \u2014 Mesa Para llevar",
+    "Fecha": "2026-06-22T03:41:33.6052351Z"
+  },
+  {
+    "Id": 15,
+    "Monto": 20,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #6 \u2014 Mesa Mesa 1",
+    "Fecha": "2026-06-22T03:49:04.1560998Z"
+  },
+  {
+    "Id": 16,
+    "Monto": 20,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #14 \u2014 Mesa Para llevar",
+    "Fecha": "2026-06-22T03:57:25.4545498Z"
+  },
+  {
+    "Id": 17,
+    "Monto": 20,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #15 \u2014 Mesa Para llevar",
+    "Fecha": "2026-06-22T04:03:56.3915694Z"
+  },
+  {
+    "Id": 18,
+    "Monto": 60,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #16 \u2014 Mesa Mesa 1",
+    "Fecha": "2026-06-22T04:04:23.2357956Z"
+  },
+  {
+    "Id": 19,
+    "Monto": 20,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #18 \u2014 Mesa Para llevar",
+    "Fecha": "2026-06-22T18:29:38.6261977Z"
+  },
+  {
+    "Id": 20,
+    "Monto": 20,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #17 \u2014 Mesa Para llevar",
+    "Fecha": "2026-06-24T13:32:00.1173403Z"
+  },
+  {
+    "Id": 21,
+    "Monto": 20,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #19 \u2014 Mesa Para llevar",
+    "Fecha": "2026-06-24T13:43:03.4532305Z"
   }
 ]

@@ -1,0 +1,194 @@
+[
+  {
+    "Token": "iv4Du287m5osTe6DMxprZu03B7yD6km6wEbPhwzhayE",
+    "Estacion": "Recepcion",
+    "Nombre": "Recepci\u00F3n ",
+    "FechaRegistro": "2026-06-20T19:48:16.603311Z"
+  },
+  {
+    "Token": "uC0sOIuxaP0Z3c2SDSymXsWj0bVaBt0FHJ72uzEvK4",
+    "Estacion": "Recepcion",
+    "Nombre": null,
+    "FechaRegistro": "2026-06-20T19:49:16.6923583Z"
+  },
+  {
+    "Token": "KfDlKuhALg0SAX4LmjOlAgvEfSvHJGJWmKpAbMQHLY",
+    "Estacion": "Cocina",
+    "Nombre": "Carito",
+    "FechaRegistro": "2026-06-20T19:50:09.6872135Z"
+  },
+  {
+    "Token": "gynBL9zdloF6IsCSypZwicsOgZygKYV0mTsLEdbJobA",
+    "Estacion": "Cocina",
+    "Nombre": "Carito",
+    "FechaRegistro": "2026-06-20T19:53:43.2969541Z"
+  },
+  {
+    "Token": "5qzb6P4TUJqjrv1DqZ4oXQkhIbAsXyxnfiroqZrUOQ",
+    "Estacion": "Recepcion",
+    "Nombre": "C",
+    "FechaRegistro": "2026-06-20T19:53:51.7594582Z"
+  },
+  {
+    "Token": "834pYV5soFjPGBr9kAXn20nbf8mZENdxn5kpjKzA5f0",
+    "Estacion": "Cocina",
+    "Nombre": null,
+    "FechaRegistro": "2026-06-20T20:00:12.5266765Z"
+  },
+  {
+    "Token": "JYqt8qKRs90lHIK1XQQhlo38tahPojM8bxviTRtOaI",
+    "Estacion": "Cocina",
+    "Nombre": "G",
+    "FechaRegistro": "2026-06-20T20:01:16.2275294Z"
+  },
+  {
+    "Token": "Pit0EwLDBKhgpo2nLMSe2fA4XMJQE2trGFMLh5n2A",
+    "Estacion": "Cocina",
+    "Nombre": "G",
+    "FechaRegistro": "2026-06-20T20:03:01.8580059Z"
+  },
+  {
+    "Token": "OoiWCiOV9QwdDdgbwSaM4GhJbcdWKTKCSPkkfxzvikQ",
+    "Estacion": "Recepcion",
+    "Nombre": null,
+    "FechaRegistro": "2026-06-20T20:03:33.905373Z"
+  },
+  {
+    "Token": "1cRNDQmpYDsuZHHokMBrgzqrgkmWwEEhiMX9AVWEqGc",
+    "Estacion": "Cocina",
+    "Nombre": "Caro",
+    "FechaRegistro": "2026-06-20T20:12:59.284779Z"
+  },
+  {
+    "Token": "bqIsuKz373zezq8AWbvfg3U1uuFbFpXtWLe1xP7KPQ",
+    "Estacion": "Cocina",
+    "Nombre": "Caro",
+    "FechaRegistro": "2026-06-20T20:16:11.816096Z"
+  },
+  {
+    "Token": "vLJPp2yOZIZjtS6n1bXWDeLocR2JIlOeq9JgXgFlrE",
+    "Estacion": "Cocina",
+    "Nombre": "Caro",
+    "FechaRegistro": "2026-06-20T20:18:56.764029Z"
+  },
+  {
+    "Token": "XdgatUqnzdHo2QBvBy4RqN14NHnIFVsQKvtMhw6pNiI",
+    "Estacion": "Cocina",
+    "Nombre": "Caro",
+    "FechaRegistro": "2026-06-20T20:23:10.9888587Z"
+  },
+  {
+    "Token": "rpqjLX9qsT1g9gA5QL8yjPfJV4VWHjlT79vHr8yeloQ",
+    "Estacion": "Recepcion",
+    "Nombre": "Caro",
+    "FechaRegistro": "2026-06-20T20:23:24.7149774Z"
+  },
+  {
+    "Token": "cCSwXTyux47axshOdwaz9JhH2bw3LiqjlQKwe5WA",
+    "Estacion": "Cocina",
+    "Nombre": null,
+    "FechaRegistro": "2026-06-21T01:56:28.3442544Z"
+  },
+  {
+    "Token": "x0it9fSLrHeJUPKLAW98anXcGZudS7QGm1ppQyRmk",
+    "Estacion": "Recepcion",
+    "Nombre": "Lap",
+    "FechaRegistro": "2026-06-21T02:04:07.5025198Z"
+  },
+  {
+    "Token": "ojgHnS3eoJO1G0v0cSVVY4srdOVy5XJF85nfhaTfkrE",
+    "Estacion": "Cocina",
+    "Nombre": "a",
+    "FechaRegistro": "2026-06-21T02:06:03.1967526Z"
+  },
+  {
+    "Token": "Ps8O2ITIa0h4RlgkzwsgYudqW3XdOzhuJB191UEQ8g",
+    "Estacion": "Recepcion",
+    "Nombre": "carito",
+    "FechaRegistro": "2026-06-22T03:32:12.1385886Z"
+  },
+  {
+    "Token": "ODdvWh6Fqhpp18LnYJ4xYDAmaupLd3AaTzt4jBjiHoQ",
+    "Estacion": "Cocina",
+    "Nombre": "caro",
+    "FechaRegistro": "2026-06-22T03:32:19.1673539Z"
+  },
+  {
+    "Token": "T6AZtXlTWr8cRo86ZEKh0NWZ48KGrp49sac45IApwE",
+    "Estacion": "Recepcion",
+    "Nombre": null,
+    "FechaRegistro": "2026-06-22T03:41:25.7850659Z"
+  },
+  {
+    "Token": "VhbP4YpjpGzBqwVaIz01kutKguLFQ0NVHWUGLPTp0",
+    "Estacion": "Cocina",
+    "Nombre": null,
+    "FechaRegistro": "2026-06-22T03:48:31.7651526Z"
+  },
+  {
+    "Token": "8LZt3yBPLfk0jbGdTqupukVZNEJypW51NLRVJZT0I",
+    "Estacion": "Recepcion",
+    "Nombre": null,
+    "FechaRegistro": "2026-06-22T03:48:58.2435825Z"
+  },
+  {
+    "Token": "SW2zgy55o7I8HUc0EKWZiMGf3UxbKsBKTPITf216IOQ",
+    "Estacion": "Cocina",
+    "Nombre": null,
+    "FechaRegistro": "2026-06-22T03:49:53.4724124Z"
+  },
+  {
+    "Token": "g91XJJoPxKI8z9CZzkagXhVL5JG2t2XXHXPdSpU",
+    "Estacion": "Recepcion",
+    "Nombre": null,
+    "FechaRegistro": "2026-06-22T03:50:17.6591801Z"
+  },
+  {
+    "Token": "nZHUZVn8DPiT4FgW5xMbmwpsZ6jUzFV7uYgyBCZ0gc8",
+    "Estacion": "Recepcion",
+    "Nombre": null,
+    "FechaRegistro": "2026-06-22T03:56:45.6955664Z"
+  },
+  {
+    "Token": "1F3AAIoAhT8Zi4zheUki9wNuxpxSCRiSzNb7cVXNEc",
+    "Estacion": "Cocina",
+    "Nombre": null,
+    "FechaRegistro": "2026-06-22T03:56:50.6560886Z"
+  },
+  {
+    "Token": "DKP4fvSzWUngHXaTK0jKWnUoNVQFfWLKt7x90eXk",
+    "Estacion": "Recepcion",
+    "Nombre": null,
+    "FechaRegistro": "2026-06-22T03:57:20.2088179Z"
+  },
+  {
+    "Token": "wPi3h2SC51YVS59ayO1Z2ztOB7e9XjTgAtNNj1aQ5Q",
+    "Estacion": "Cocina",
+    "Nombre": null,
+    "FechaRegistro": "2026-06-22T03:57:34.6495145Z"
+  },
+  {
+    "Token": "93yaiAcknpeJa3IGSa3Lzf63gPpgkCOgBUxm4NJxQU",
+    "Estacion": "Recepcion",
+    "Nombre": null,
+    "FechaRegistro": "2026-06-22T04:02:32.3124485Z"
+  },
+  {
+    "Token": "xnmsDPRRvFILaUIA9O5BnZRkM0UMkM6xkEIpCmlPxgA",
+    "Estacion": "Cocina",
+    "Nombre": null,
+    "FechaRegistro": "2026-06-22T04:03:36.514241Z"
+  },
+  {
+    "Token": "g6LVJsehZ282yL8b3DMjZADaNQgxKC2rmfhNBWFNQ",
+    "Estacion": "Cocina",
+    "Nombre": "caro",
+    "FechaRegistro": "2026-06-22T18:28:46.5693715Z"
+  },
+  {
+    "Token": "PjCRejaLgZ2VlFNLurEmu9z5g2cOXZlEbvGUxbc",
+    "Estacion": "Cocina",
+    "Nombre": null,
+    "FechaRegistro": "2026-06-24T13:31:36.1044959Z"
+  }
+]

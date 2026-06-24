@@ -1,0 +1,16 @@
+﻿[
+    {
+        "Id": 1,
+        "Nombre": "Empleado Recepción",
+        "PinHash": "jiGGIOqny9Pi6j8d6B/Gvg==.TjdspX+UqIWTJ7trjwX7GjOWTMTUk3c95hYWiMuAcE0=",
+        "Rol": "Recepcion",
+        "Activo": true
+    },
+    {
+        "Id": 2,
+        "Nombre": "Empleado Cocina",
+        "PinHash": "jiGGIOqny9Pi6j8d6B/Gvg==.TjdspX+UqIWTJ7trjwX7GjOWTMTUk3c95hYWiMuAcE0=",
+        "Rol": "Cocina",
+        "Activo": true
+    }
+]

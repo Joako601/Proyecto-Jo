@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Proyecto Jo' — Selección de rol</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            background: #f4f1ec;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            text-align: center;
+        }
+
+        h1 {
+            color: #3a2e26;
+            margin-bottom: 8px;
+        }
+
+        p {
+            color: #6b6258;
+            margin-bottom: 32px;
+        }
+
+        .roles {
+            display: flex;
+            gap: 24px;
+        }
+
+        .rol-btn {
+            width: 180px;
+            padding: 32px 16px;
+            border-radius: 16px;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            transition: transform 0.15s ease;
+        }
+
+            .rol-btn:hover {
+                transform: translateY(-4px);
+            }
+
+        .recepcion {
+            background: #2563eb;
+        }
+
+        .cocina {
+            background: #ea580c;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Proyecto Jo'</h1>
+        <p>¿Desde dónde estás trabajando?</p>
+        <div class="roles">
+            <button class="rol-btn recepcion" onclick="location.href='recepcion.html'">
+                🧾<br>Recepción
+            </button>
+            <button class="rol-btn cocina" onclick="location.href='cocina.html'">
+                🍳<br>Cocina
+            </button>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,117 @@
+﻿(function () {
+    'use strict';
+
+    var INTERVALO_MS = 3000;
+
+    function formatHora(fechaIso) {
+        var d = new Date(fechaIso);
+        return d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function crearTarjeta(pedido) {
+        var div = document.createElement('div');
+        div.className = 'pedido' + (pedido.estado === 'Preparado' ? ' pedido--preparado' : '');
+
+        var itemsHtml = pedido.items
+            .map(function (i) { return '<li>' + i.cantidad + 'x ' + i.nombre + '</li>'; })
+            .join('');
+
+        var accionHtml = pedido.estado === 'Pendiente'
+            ? '<button class="pedido__accion" data-id="' + pedido.id + '">Marcar como Preparado</button>'
+            : '<span class="pedido__listo">✓ Preparado — esperando pago</span>';
+
+        div.innerHTML =
+            '<div class="pedido__header">' +
+            '<span class="pedido__mesa">' + pedido.mesa + '</span>' +
+            '<span class="pedido__hora">' + formatHora(pedido.fechaCreacion) + '</span>' +
+            '</div>' +
+            '<ul class="pedido__items">' + itemsHtml + '</ul>' +
+            accionHtml;
+
+        return div;
+    }
+
+    function setEstadoConexion(texto) {
+        var el = document.getElementById('estado-conexion');
+        if (el) el.textContent = texto;
+    }
+
+    function renderPedidos(pedidos) {
+        var colPendiente = document.getElementById('col-pendiente');
+        var colPreparado = document.getElementById('col-preparado');
+
+        colPendiente.innerHTML = '';
+        colPreparado.innerHTML = '';
+
+        var pendientes = pedidos.filter(function (p) { return p.estado === 'Pendiente'; });
+        var preparados = pedidos.filter(function (p) { return p.estado === 'Preparado'; });
+
+        if (pendientes.length === 0) {
+            colPendiente.innerHTML = '<p class="mensaje-vacio">Sin pedidos pendientes 🎉</p>';
+        } else {
+            pendientes.forEach(function (p) { colPendiente.appendChild(crearTarjeta(p)); });
+        }
+
+        if (preparados.length === 0) {
+            colPreparado.innerHTML = '<p class="mensaje-vacio">Nada en espera de pago.</p>';
+        } else {
+            preparados.forEach(function (p) { colPreparado.appendChild(crearTarjeta(p)); });
+        }
+
+        setEstadoConexion('');
+    }
+
+    function cargarPedidos() {
+        fetch('/Operaciones/Cocina/ObtenerPedidos')
+            .then(function (res) {
+                if (res.status === 401) {
+                    window.location.href = '/Operaciones/Auth/Login';
+                    return null;
+                }
+                if (res.status === 403) {
+                    setEstadoConexion('⛔ Sin autorización');
+                    return null;
+                }
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                return res.json();
+            })
+            .then(function (pedidos) {
+                if (pedidos) renderPedidos(pedidos);
+            })
+            .catch(function () {
+                setEstadoConexion('⚠ Sin conexión');
+            });
+    }
+
+    function marcarPreparado(id) {
+        fetch('/Operaciones/Cocina/CambiarEstado', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'id=' + id + '&nuevoEstado=Preparado'
+        })
+            .then(function (res) {
+                if (res.status === 401) {
+                    window.location.href = '/Operaciones/Auth/Login';
+                    return;
+                }
+                if (!res.ok) {
+                    alert('No se pudo actualizar el pedido. Código: ' + res.status);
+                    return;
+                }
+                cargarPedidos();
+            })
+            .catch(function () {
+                alert('Error de red al actualizar el pedido.');
+            });
+    }
+
+    document.addEventListener('click', function (e) {
+        if (e.target && e.target.matches('.pedido__accion')) {
+            marcarPreparado(e.target.dataset.id);
+        }
+    });
+
+    cargarPedidos();
+    setInterval(cargarPedidos, INTERVALO_MS);
+
+})();

@@ -119,5 +119,16 @@
     "Base": "cochinita",
     "Activo": false,
     "Agotado": false
+  },
+  {
+    "Id": 12,
+    "Platillo": "Hambueguesa sencilla",
+    "Categoria": "Hamburguesa",
+    "Precio": 200,
+    "Ingredientes": "carne",
+    "Descripcion": "una rica hamburguesa",
+    "Base": "joad",
+    "Activo": true,
+    "Agotado": true
   }
 ]

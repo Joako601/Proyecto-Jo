@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using ProyectoJo.Application.Ports.Out;
 using ProyectoJo.Domain.Entities;
 
@@ -7,7 +8,14 @@ namespace ProyectoJo.Infrastructure.Persistence
 	public class JsonPedidoRepository : IPedidoRepository
 	{
 		private readonly string _filePath;
-		private readonly JsonSerializerOptions _options = new() { WriteIndented = true };
+
+		private static readonly SemaphoreSlim _lock = new(1, 1);
+
+		private readonly JsonSerializerOptions _options = new()
+		{
+			WriteIndented = true,
+			Converters = { new JsonStringEnumConverter() }
+		};
 
 		public JsonPedidoRepository(string filePath)
 		{
@@ -15,6 +23,19 @@ namespace ProyectoJo.Infrastructure.Persistence
 		}
 
 		public async Task<List<Pedido>> ObtenerTodosAsync()
+		{
+			await _lock.WaitAsync();
+			try
+			{
+				return await LeerAsync();
+			}
+			finally
+			{
+				_lock.Release();
+			}
+		}
+
+		private async Task<List<Pedido>> LeerAsync()
 		{
 			if (!File.Exists(_filePath)) return new List<Pedido>();
 			var json = await File.ReadAllTextAsync(_filePath);
@@ -29,21 +50,37 @@ namespace ProyectoJo.Infrastructure.Persistence
 
 		public async Task<Pedido> GuardarAsync(Pedido pedido)
 		{
-			var todos = await ObtenerTodosAsync();
-			pedido.Id = todos.Any() ? todos.Max(p => p.Id) + 1 : 1;
-			todos.Add(pedido);
-			await File.WriteAllTextAsync(_filePath, JsonSerializer.Serialize(todos, _options));
-			return pedido;
+			await _lock.WaitAsync();
+			try
+			{
+				var todos = await LeerAsync();
+				pedido.Id = todos.Any() ? todos.Max(p => p.Id) + 1 : 1;
+				todos.Add(pedido);
+				await File.WriteAllTextAsync(_filePath, JsonSerializer.Serialize(todos, _options));
+				return pedido;
+			}
+			finally
+			{
+				_lock.Release();
+			}
 		}
 
 		public async Task<Pedido?> ActualizarAsync(Pedido pedido)
 		{
-			var todos = await ObtenerTodosAsync();
-			var index = todos.FindIndex(p => p.Id == pedido.Id);
-			if (index == -1) return null;
-			todos[index] = pedido;
-			await File.WriteAllTextAsync(_filePath, JsonSerializer.Serialize(todos, _options));
-			return pedido;
+			await _lock.WaitAsync();
+			try
+			{
+				var todos = await LeerAsync();
+				var index = todos.FindIndex(p => p.Id == pedido.Id);
+				if (index == -1) return null;
+				todos[index] = pedido;
+				await File.WriteAllTextAsync(_filePath, JsonSerializer.Serialize(todos, _options));
+				return pedido;
+			}
+			finally
+			{
+				_lock.Release();
+			}
 		}
 	}
 }

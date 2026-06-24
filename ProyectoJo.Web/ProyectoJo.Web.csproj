@@ -1,10 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
-    <Compile Include="ADRs\ARD-04-Joaquin-Uriona.md" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ProyectoJo.Application\ProyectoJo.Application.csproj" />
     <ProjectReference Include="..\ProyectoJo.Domain\ProyectoJo.Domain.csproj" />
     <ProjectReference Include="..\ProyectoJo.Infrastructure\ProyectoJo.Infrastructure.csproj" />

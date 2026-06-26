@@ -1,4 +1,5 @@
-﻿using ProyectoJo.Domain.Entities;
+﻿using ProyectoJo.Application.DTOs;
+using ProyectoJo.Domain.Entities;
 
 namespace ProyectoJo.Application.Ports.In
 {
@@ -8,7 +9,14 @@ namespace ProyectoJo.Application.Ports.In
 		Task<Pedido?> ObtenerPorIdAsync(int id);
 		Task<Pedido> CrearAsync(Pedido pedido);
 		Task<Pedido?> CambiarEstadoAsync(int id, EstadoPedido nuevoEstado);
-		Task<List<Pedido>> ObtenerParaCocinaAsync();       // ← NUEVO
+		Task<List<Pedido>> ObtenerParaCocinaAsync();       
 		Task<List<Pedido>> ObtenerParaRecepcionAsync();
+		Task<ResumenMapaCalor> ObtenerMapaCalorAsync(
+			DateTime? desde = null,
+			DateTime? hasta = null,
+			bool semanaHistoricoCompleto = true,
+			int semanaOffset = 0,
+			int? anioMeses = null,
+			int? mesDetalle = null);
 	}
 }

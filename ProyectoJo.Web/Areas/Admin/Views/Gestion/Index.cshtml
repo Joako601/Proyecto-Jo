@@ -72,6 +72,15 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-3">
+            <div class="card h-100 shadow-sm border-0 modulo-card">
+                <div class="card-body d-flex flex-column">
+                    <h6 class="card-title text-primary">Promociones</h6>
+                    <p class="card-text small text-muted flex-grow-1">Ofertas y descuentos activos.</p>
+                    <a asp-area="Admin" asp-controller="Promociones" asp-action="Index" class="btn btn-sm btn-primary w-100">Administrar</a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <h5 class="text-muted mb-3 fw-semibold">Próximamente</h5>
@@ -79,7 +88,6 @@
         @{
             var proximamente = new List<(string T, string D)>
             {
-                ("Calendario Promos", "Gestión de ofertas por fecha."),
                 ("Mapa de Calor", "Analítica de horas pico."),
                 ("Semáforo Feedback", "Gestión de opiniones."),
                 ("Recetario Digital", "Cálculo de costos y rendimientos."),

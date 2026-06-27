@@ -1,271 +1,263 @@
-﻿# ADR-04: Incorporación de una API REST 
+﻿# ADR-05: Integración de Patrones de Diseño GOF
 
 | Campo  | Valor |
 |--------|-------|
 | Autor  | Joaquin Uriona |
-| Fecha  | 19/06/2026 |
+| Fecha  | 26/06/2026 |
 | Estado | `Aceptado` |
+
 
 ---
 
 ## Contexto
 
-Hasta ahora, `Proyecto Jo'` exponía toda su funcionalidad únicamente a través del
-adaptador `ProyectoJo.Web`, pensado para un único cliente, el navegador, ya que ADR-03
-solo contemplaba migrar hacia Arquitectura Hexagonal manteniendo ASP.NET Core MVC como
-único adaptador de entrada, sin mencionar todavía una API. Sin embargo, esa misma
-migración hexagonal deja el dominio y los casos de uso completamente desacoplados de
-ASP.NET, por lo que agregar un adaptador de entrada adicional se vuelve una extensión
-natural y de bajo riesgo en vez de una reescritura, justo en el momento en que surge la
-necesidad real de que el sistema sea consumido por clientes distintos al navegador, ya
-sea una aplicación móvil, una integración con WhatsApp, herramientas de prueba como
-Postman o un futuro frontend desacoplado.
+Hasta ahora `Proyecto Jo'` ha definido en ADR-03 las capas de la Arquitectura
+Hexagonal y en ADR-04 la incorporación de `ProyectoJo.Api` como segundo adaptador
+de entrada, sin embargo ninguno de los dos documentos nombra explícitamente los
+patrones de diseño estructurales y de comportamiento que sostienen esas decisiones
+en el código, y a medida que el sistema crece con seis módulos implementados y cinco
+más planificados, la ausencia de una decisión formal sobre patrones GOF genera el
+riesgo de que los módulos futuros como Recetario Digital, Alerta de Stock o Cierre
+de Caja se construyan de formas inconsistentes entre sí.
 
 Las condiciones que influyeron en esta decisión son las siguientes:
 
-- **Restricción de equipo:** sigue siendo un desarrollador único, por lo que cualquier
-  forma de exponer datos hacia afuera debe reutilizar la lógica de negocio ya existente
-  en `ProyectoJo.Application`, sin duplicar reglas financieras ni de inventario y sin
-  multiplicar el trabajo de mantenimiento
-- **Arquitectura ya preparada:** gracias a ADR-03, el dominio y los casos de uso
-  (`IProductoService`, `IFinanzaService`, `IPedidoService`, `IPromocionService`) no
-  conocen ASP.NET ni la capa web, por lo que agregar un segundo adaptador de entrada
-  no debería tocar `Domain` ni `Application`, sino únicamente traducir HTTP hacia los
-  puertos ya existentes
+- **Incompatibilidad de interfaces entre capas:** los controladores de
+  `ProyectoJo.Web` y `ProyectoJo.Api` necesitan comunicarse con los puertos de
+  `ProyectoJo.Application` y los repositorios de `ProyectoJo.Infrastructure`
+  necesitan implementar esos mismos puertos, pero cada capa habla un lenguaje
+  distinto, HTTP, casos de uso y persistencia, lo que requiere una forma
+  estructurada de traducir entre ellos sin romper el aislamiento del dominio.
+- **Intercambiabilidad de la persistencia:** la solución comenzó con repositorios
+  JSON y tiene planificada la migración a SQL mediante Entity Framework, por lo que
+  se necesita una forma de encapsular esas implementaciones concretas detrás de un
+  contrato común que permita cambiarlas sin modificar ningún caso de uso.
+- **Consistencia entre módulos:** con módulos ya implementados como Finanzas, Menú,
+  Inventario, Promociones, Mapa de Calor y el flujo Cocina/Recepción, documentar
+  los patrones que los sostienen garantiza que los módulos futuros sigan el mismo
+  modelo estructural sin que el desarrollador tenga que decidirlo de nuevo
+  cada vez.
 
 ---
 
 ## Decisión
 
-Se decide implementar una **API REST con ASP.NET Core Web API** dentro del proyecto
-`ProyectoJo.Api`, documentada con **Swagger / OpenAPI (Swashbuckle)**, de modo que los
-controladores de la API actúen como adaptadores de entrada delgados, igual que los
-controladores MVC de `ProyectoJo.Web`: reciben la petición HTTP, invocan el puerto
-correspondiente en `ProyectoJo.Application` (los mismos `UseCases` que ya usa la vista
-web) y devuelven el resultado serializado a JSON.
+Se decide documentar e integrar formalmente dos patrones de diseño GOF en la
+solución, uno estructural y uno de comportamiento, el patrón **Adapter** para
+traducir entre las interfaces incompatibles de las capas y el patrón **Strategy**
+para encapsular las implementaciones de persistencia como algoritmos intercambiables.
 
 ### ¿Por qué?
 
-REST resuelve el problema de exponer el dominio hacia clientes distintos al navegador
-sin introducir una segunda implementación de la lógica de negocio, ya que al estar
-`Domain` y `Application` aislados, `ProyectoJo.Api` simplemente
-se conecta a los mismos casos de uso (`ProductoUseCase`, `FinanzaUseCase`,
-`PedidoUseCase`, `PromocionUseCase`) que ya existían, lo que valida en la práctica que
-la arquitectura hexagonal cumple su promesa de añadir adaptadores sin modificar el
-núcleo u además, REST mapea de forma natural sobre operaciones que los puertos ya
-exponían como CRUD (`ObtenerTodos`, `ObtenerPorId`, `Agregar`, `Editar`, `Eliminar`),
-por lo que no fue necesario diseñar un nuevo modelo de comunicación desde cero, y
-Swagger genera documentación interactiva automáticamente a partir de los mismos
-controladores, sin mantener un archivo de esquema aparte, lo cual es clave para un
-desarrollador único que no tiene tiempo de escribir documentación por separado.
+El patrón Adapter resuelve directamente el problema de incompatibilidad de interfaces
+entre capas sin violar el principio de inversión de dependencias, pues los
+controllers de `ProyectoJo.Web` y `ProyectoJo.Api` actúan como adaptadores de
+entrada que traducen peticiones HTTP a llamadas sobre `IFinanzaService`,
+`IMenuService` o `IPedidoService`, y las implementaciones en
+`ProyectoJo.Infrastructure` actúan como adaptadores de salida que traducen las
+llamadas del dominio a operaciones sobre archivos JSON o en el futuro sobre
+Entity Framework, garantizando que ninguna de las dos capas extremas conozca los
+detalles de la otra.
+
+El patrón Strategy resuelve el problema de intercambiabilidad de la persistencia,
+pues los puertos de salida como `IFinanzaRepository` o `IMenuRepository` definen
+el contrato y cada implementación concreta como `FinanzaJsonRepository` encapsula
+el algoritmo específico de acceso a datos, lo que permite al `Program.cs`
+seleccionar en tiempo de composición qué estrategia inyectar sin que los casos de
+uso en `ProyectoJo.Application` cambien ni una línea.
 
 ### Alternativas consideradas
 
+- Facade en lugar de Adapter
+- Template Method en lugar de Strategy
+- Repository sin abstracción de interfaz
+
 | Alternativa | Por qué la descarté |
 |-------------|---------------------|
-| GraphQL | Obliga a definir un esquema y resolvers adicionales, y como la mayoría de las operaciones del dominio (Productos, Finanzas, Pedidos, Promociones) son CRUD simples, la flexibilidad de consulta de GraphQL no compensa la complejidad añadida para un equipo unipersonal |
-| gRPC | Requiere definir contratos `.proto` y no tiene soporte nativo en el navegador ni en herramientas simples de prueba como Postman o WhatsApp, lo que dificulta la validación rápida de endpoints durante el desarrollo |
-| SOAP | Es un protocolo más pesado, basado en sobres XML, sin beneficio real frente a JSON sobre HTTP en este contexto, además de que no es el estándar que se pide documentar con Swagger |
-| Servir JSON directamente desde los controladores de `ProyectoJo.Web` | Mezclaría la responsabilidad de presentación (vistas Razor) con la de servir datos a clientes externos, rompiendo el principio de adaptadores separados ya establecido en ADR-03 y violando SRP |
+| Facade en lugar de Adapter | Facade simplifica una interfaz compleja pero el problema real no es simplificación sino traducción entre el lenguaje HTTP y el lenguaje del dominio, y esa responsabilidad de conversión entre interfaces incompatibles corresponde al Adapter |
+| Template Method en lugar de Strategy | Template Method requiere herencia para definir el esqueleto del algoritmo y que las subclases rellenen los pasos, pero la solución ya usa composición mediante interfaces por DIP y Strategy es la variante de comportamiento que encaja con inyección de dependencias sin introducir jerarquías de herencia |
+| Repository sin abstracción de interfaz | Implementar los repositorios como clases concretas directamente referenciadas desde los casos de uso acoplaría `ProyectoJo.Application` a `ProyectoJo.Infrastructure`, violando la regla de dependencias de la Arquitectura Hexagonal y el principio de inversión de dependencias |
 
 ---
 
 ## Consecuencias
 
-**✅ Lo que gano:**
+✅ Lo que gano:
 
-- **Consecuencia técnica:** `ProyectoJo.Api` se convierte en un segundo adaptador de
-  entrada que reutiliza por completo `ProyectoJo.Application`, sin duplicar lógica
-  financiera ni de inventario, lo que confirma en código real que la frontera entre
-  Domain/Application e Infraestructura/Presentación definida en ADR-03 funciona, ya
-  que agregar la API no requirió modificar ni `Domain` ni `Application`
-- **Consecuencia sobre el proceso:** Swagger expone una interfaz interactiva para
-  probar cada endpoint sin escribir un cliente HTTP manual, lo que reduce el tiempo
-  que el desarrollador único dedica a verificar manualmente cada ruta y además sirve
-  como documentación viva para quien revise el repositorio
+- **Consecuencia técnica:** los controllers permanecen delgados porque el Adapter
+  encapsula toda la traducción entre HTTP y los puertos, la migración de JSON a SQL
+  solo requiere crear una nueva clase que implemente `IFinanzaRepository` y cambiar
+  el registro en `Program.cs` sin tocar ningún caso de uso, y cualquier módulo nuevo
+  como Recetario Digital o Alerta de Stock puede seguir el mismo modelo de Adapter
+  en entrada y Strategy en persistencia de forma consistente en ambos adaptadores,
+  `ProyectoJo.Web` y `ProyectoJo.Api`.
 
-**⚠️ Lo que sacrifico o asumo:**
+- **Consecuencia sobre el proceso:** al tener los patrones documentados como decisión
+  explícita el desarrollador tiene una guía clara al agregar módulos nuevos sin
+  necesidad de decidir caso por caso cómo estructurar la traducción entre capas,
+  reduciendo la carga cognitiva del rol unipersonal a medida que el sistema crece
+  hacia los módulos planificados.
 
-- **Limitación técnica:** por ahora la API no tiene un mecanismo de autenticación o
-  autorización propio más allá de lo que ofrezca `IAuthService` reutilizado de forma
-  básica, por lo que los endpoints quedan abiertos, lo cual es aceptable para fines
-  académicos pero es un riesgo que debe resolverse antes de exponer datos financieros
-  reales en producción
-- **Deuda o riesgo:** ahora existen dos adaptadores de entrada, `ProyectoJo.Web` y
-  `ProyectoJo.Api`, que dependen de los mismos puertos en `ProyectoJo.Application`,
-  por lo que si un puerto cambia su firma, ambos adaptadores deben actualizarse, lo
-  que aumenta la superficie de mantenimiento a medida que crecen los módulos de
-  Finanzas, Flujo de Trabajo y Reportes
+⚠️ Lo que sacrifico o asumo:
+
+- **Limitación técnica:** cada módulo nuevo requiere al menos una interfaz de entrada,
+  una interfaz de salida y dos implementaciones concretas antes de poder ejecutar el
+  primer flujo, lo que incrementa el número de archivos por módulo respecto a un
+  enfoque MVC directo sin abstracciones.
+
+- **Deuda o riesgo:** si la interfaz de un puerto de salida se diseña mal desde el
+  inicio todas las implementaciones concretas que actúen como Strategy heredan esa
+  decisión y requieren cambios coordinados en todos los módulos que dependan de ese
+  puerto, y la calidad del contrato inicial es crítica porque su costo de corrección
+  crece con cada módulo que se agregue.
 
 ---
 
 ## Diagrama
 
 ```mermaid
-flowchart TB
+flowchart TD
 
     subgraph CLIENTES ["Clientes"]
         NAV["Navegador / Panel admin"]
-        EXT["Postman / Mobile / WhatsApp / futuro frontend"]
+        EXT["Postman / Mobile / Cliente externo"]
     end
 
-    subgraph ADAPTIN ["Adaptadores de entrada"]
-        WEB["ProyectoJo.Web — ASP.NET MVC"]
-        API["ProyectoJo.Api — ASP.NET Core Web API + Swagger"]
+    subgraph ADAPTIN ["Adaptadores de Entrada — Patrón Adapter"]
+        WEB["ProyectoJo.Web\nFinanzasController, MenuController\n(Adapter In — traduce HTTP → dominio)"]
+        API["ProyectoJo.Api\nFinanzasController, ProductosController\n(Adapter In — traduce HTTP → dominio)"]
     end
 
     subgraph APP ["ProyectoJo.Application"]
-        PIN["Ports/In: IProductoService, IFinanzaService, IPedidoService, IPromocionService"]
+        PIN["Ports/In: IFinanzaService, IMenuService, IPedidoService"]
         UC["UseCases"]
-        POUT["Ports/Out: IProductoRepository, IFinanzaRepository, IPedidoRepository, IPromocionRepository"]
+        POUT["Ports/Out: IFinanzaRepository, IMenuRepository\n(Strategy — contrato intercambiable)"]
     end
 
     subgraph DOM ["ProyectoJo.Domain"]
         ENT["Entities: Item, Finanza, Pedido, Promocion"]
     end
 
-    subgraph INFRA ["ProyectoJo.Infrastructure"]
-        PERS["Persistence — JSON / SQL"]
-        AUTH["Auth"]
+    subgraph INFRA ["Adaptadores de Salida — Patrón Adapter + Strategy"]
+        FJR["FinanzaJsonRepository\n(Strategy concreta A)"]
+        FSR["FinanzaSqlRepository\n(Strategy concreta B — planificado)"]
+        MJR["MenuJsonRepository\n(Strategy concreta A)"]
     end
-
-    DB[("Almacenamiento: archivos JSON / Base de datos")]
 
     NAV --> WEB
     EXT --> API
-    WEB --> PIN
-    API --> PIN
+    WEB -->|"invoca"| PIN
+    API -->|"invoca"| PIN
     PIN --> UC
     UC --> ENT
     UC --> POUT
-    POUT --> PERS
-    POUT --> AUTH
-    PERS --> DB
+    POUT -.->|"implementado por"| FJR
+    POUT -.->|"implementado por"| FSR
+    POUT -.->|"implementado por"| MJR
 ```
 
 ---
 
-## Vistas Arquitectonicas
+## Vistas Arquitectónicas
 
-### Vista logica
+### Vista lógica
 
 ```mermaid
 flowchart TD
 
-    subgraph DOMAIN ["ProyectoJo.Domain"]
-        ENT["Entities
-        Item, Finanza, Pedido, Promocion
-        (sin dependencias externas)"]
+    subgraph ADAPTER ["Patrón Adapter — Estructural"]
+        direction LR
+        A1["Controller HTTP\n(Adaptador de Entrada)\nProyectoJo.Web / ProyectoJo.Api"]
+        A2["IXxxService\n(Puerto de Entrada)\nProyectoJo.Application"]
+        A3["IXxxRepository\n(Puerto de Salida)\nProyectoJo.Application"]
+        A4["XxxJsonRepository\n(Adaptador de Salida)\nProyectoJo.Infrastructure"]
+        A1 -->|"traduce HTTP → dominio"| A2
+        A3 -->|"traduce dominio → JSON / SQL"| A4
     end
 
-    subgraph APPLICATION ["ProyectoJo.Application"]
-        direction TB
-        PIN["Ports/In
-        IProductoService, IFinanzaService,
-        IPedidoService, IPromocionService"]
-        UC["UseCases
-        ProductoUseCase, FinanzaUseCase,
-        PedidoUseCase, PromocionUseCase"]
-        POUT["Ports/Out
-        IProductoRepository, IFinanzaRepository,
-        IPedidoRepository, IPromocionRepository"]
-        PIN --> UC
-        UC --> POUT
+    subgraph STRATEGY ["Patrón Strategy — Comportamiento"]
+        direction LR
+        S1["UseCase / Service\n(Contexto)\nProyectoJo.Application"]
+        S2["IXxxRepository\n(Estrategia abstracta)\nProyectoJo.Application"]
+        S3["XxxJsonRepository\n(Estrategia concreta A)\nProyectoJo.Infrastructure"]
+        S4["XxxSqlRepository\n(Estrategia concreta B — planificado)\nProyectoJo.Infrastructure"]
+        S1 -->|"usa"| S2
+        S2 -.->|"implementada por"| S3
+        S2 -.->|"implementada por"| S4
     end
-
-    subgraph WEB ["ProyectoJo.Web"]
-        WC["Controllers MVC
-        (Razor Views)"]
-    end
-
-    subgraph API ["ProyectoJo.Api"]
-        AC["Controllers REST
-        (Swagger / Swashbuckle)"]
-    end
-
-    subgraph INFRA ["ProyectoJo.Infrastructure"]
-        PERS["Persistence
-        JSON / SQL"]
-        AUTH["Auth
-        IAuthService"]
-    end
-
-    WC -->|"invoca"| PIN
-    AC -->|"invoca"| PIN
-    UC -->|"usa"| ENT
-    POUT -->|"implementado por"| PERS
-    POUT -->|"implementado por"| AUTH
-    WC -.->|"valida sesión con"| AUTH
-    AC -.->|"valida sesión con"| AUTH
-
-    classDef dominio fill:#2d2d2d,color:#fff,stroke:#888;
-    classDef app fill:#3a3a55,color:#fff,stroke:#888;
-    classDef adapter fill:#1f3a3a,color:#fff,stroke:#888;
-    class ENT dominio
-    class PIN,UC,POUT app
-    class WC,AC,PERS,AUTH adapter
 ```
 
 ### Vista de desarrollo
 
 ```text
-Projecto Jo'
-├── Domain/               # Núcleo del negocio — sin cambios respecto a ADR-03
-│   ├── Entities/         # Item, Finanza, Pedido, Promocion
-│   ├── Ports/
-│   │   ├── In/           # IProductoService, IFinanzaService, IPedidoService, IPromocionService
-│   │   └── Out/          # IProductoRepository, IFinanzaRepository, IPedidoRepository, IPromocionRepository
-│   └── UseCases/         # Implementación de la lógica de negocio pura — sin cambios
-├── Infrastructure/       # Adaptadores de salida — sin cambios
-│   ├── Persistence/
-│   └── Auth/
-├── Web/                  # Adaptador de entrada — ASP.NET MVC (navegador)
-│   ├── Controllers/
-│   ├── Views/
-│   └── Areas/
-├── Api/                  # Adaptador de entrada — ASP.NET Core Web API (NUEVO)
-│   ├── Controllers/      # ProductosController, FinanzasController, PedidosController, PromocionesController
-│   └── Program.cs        # Configuración de Swagger / Swashbuckle
-└── Program.cs            # Composición de dependencias compartida por ambos adaptadores
+ProyectoJo'
+├── ProyectoJo.Application/
+│   └── Ports/
+│       ├── In/
+│       │   ├── IFinanzaService.cs        # Puerto de entrada — contrato del Adapter In
+│       │   ├── IMenuService.cs
+│       │   └── IPedidoService.cs
+│       └── Out/
+│           ├── IFinanzaRepository.cs     # Estrategia abstracta (Strategy)
+│           └── IMenuRepository.cs
+│
+├── ProyectoJo.Infrastructure/
+│   └── Persistence/
+│       ├── FinanzaJsonRepository.cs      # Adaptador de salida (Adapter) + Strategy concreta A
+│       └── MenuJsonRepository.cs
+│
+├── ProyectoJo.Web/
+│   └── Areas/Admin/Controllers/
+│       ├── FinanzasController.cs         # Adaptador de entrada (Adapter In)
+│       ├── MenuController.cs
+│       └── OperacionesController.cs
+│
+└── ProyectoJo.Api/
+    └── Controllers/
+        ├── FinanzasController.cs         # Segundo adaptador de entrada (Adapter In)
+        └── ProductosController.cs
 ```
 
 ### Vista de procesos
 
 ```text
-[Cliente externo]      [Api / Adaptador In]      [Domain / Port In]      [Domain / UseCase]      [Domain / Port Out]    [Infrastructure / Adaptador Out]
-       │                        │                         │                       │                        │                        │
-       │ 1. GET /api/finanzas   │                         │                       │                        │                        │
-       ────────────────────────>│                         │                       │                        │                        │
-       │                        │ 2. Ejecuta caso de uso  │                       │                        │                        │
-       │                        │    (IFinanzaService)    │                       │                        │                        │
-       │                        ─────────────────────────>│                       │                        │                        │
-       │                        │                         │ 3. Invoca             │                        │                        │
-       │                        │                         ───────────────────────>│                        │                        │
-       │                        │                         │                       │ 4. Consulta repositorio│                        │
-       │                        │                         │                       │   (IFinanzaRepository) │                        │
-       │                        │                         │                       │───────────────────────>│                        │
-       │                        │                         │                       │                        │ 5. Lee de DB / JSON    │
-       │                        │                         │                       │                        ────────────────────────>│
-       │                        │                         │                       │                        │ 6. Retorna datos       │
-       │                        │                         │                       │                        │<───────────────────────│
-       │                        │                         │                       │ 7. Retorna lista        │                        │
-       │                        │                         │                       │<───────────────────────│                        │
-       │                        │                         │ 8. Retorna DTO/Estado │                         │                        │
-       │                        │                         │<───────────────────────│                        │                        │
-       │                        │ 9. Serializa a JSON     │                       │                        │                        │
-       │                        │<─────────────────────────│                       │                        │                        │
-       │ 10. Respuesta 200 OK   │                         │                       │                        │                        │
-       │<───────────────────────│                         │                       │                        │                        │
-
+[Cliente]           [Controller / Adapter In]     [IXxxService / Port In]    [UseCase]         [IXxxRepository / Strategy]   [JsonRepository / Adapter Out]
+      │                         │                           │                      │                        │                            │
+      │  POST /Finanzas/Create  │                           │                      │                        │                            │
+      ────────────────────────> │                           │                      │                        │                            │
+      │                         │  2. Adapter traduce HTTP  │                      │                        │                            │
+      │                         │     → RegistrarMovimiento │                      │                        │                            │
+      │                         ──────────────────────────> │                      │                        │                            │
+      │                         │                           │  3. Invoca UseCase   │                        │                            │
+      │                         │                           ─────────────────────> │                        │                            │
+      │                         │                           │                      │  4. Valida dominio     │                            │
+      │                         │                           │                      │ ──┐                    │                            │
+      │                         │                           │                      │   │                    │                            │
+      │                         │                           │                      │ <─┘                    │                            │
+      │                         │                           │                      │  5. Strategy.Guardar() │                            │
+      │                         │                           │                      ───────────────────────> │                            │
+      │                         │                           │                      │                        │  6. Adapter traduce        │
+      │                         │                           │                      │                        │     dominio → JSON         │
+      │                         │                           │                      │                        ──────────────────────────> │
+      │                         │                           │                      │                        │  7. Confirmación           │
+      │                         │                           │                      │                        │ <──────────────────────── │
+      │                         │                           │                      │  8. Resultado          │                            │
+      │                         │                           │                      │ <───────────────────── │                            │
+      │                         │                           │  9. DTO / estado     │                        │                            │
+      │                         │                           │ <──────────────────  │                        │                            │
+      │                         │  10. Renderiza / JSON     │                      │                        │                            │
+      │                         │ <─────────────────────────│                      │                        │                            │
+      │  11. HTML / 200 OK      │                           │                      │                        │                            │
+      │ <──────────────────── ─ │                           │                      │                        │                            │
 ```
 
-### Vista de despligue
+### Vista de despliegue
 
-![Vista de despliegue](./Vistas-Arquitectonicas/vista-despliegue-img.drawio.svg)
-
-La API se despliega dentro del mismo proceso Kestrel en la instancia AWS EC2 ya
-utilizada por `ProyectoJo.Web`, por lo que no se agrega infraestructura nueva, solo
-nuevas rutas (`/api/...`) que conviven con las rutas MVC existentes.
+Los patrones Adapter y Strategy no alteran la vista de despliegue documentada en
+ADR-03 y ADR-04, y el sistema sigue siendo un monolito desplegado en una única
+instancia AWS EC2 con Kestrel como servidor web integrado, pues los patrones operan
+en tiempo de compilación e inyección de dependencias y no en tiempo de despliegue,
+por lo que no se agrega infraestructura nueva.
 
 ---
 
@@ -273,68 +265,68 @@ nuevas rutas (`/api/...`) que conviven con las rutas MVC existentes.
 
 | Decisión | Ganas | Sacrificas |
 |---|---|---|
-| API REST sobre GraphQL o gRPC | Curva de aprendizaje mínima, compatible con cualquier cliente HTTP y con Swagger out-of-the-box | Sin flexibilidad de consultas como GraphQL ni contratos binarios eficientes como gRPC si el sistema lo necesitara más adelante |
-| `ProyectoJo.Api` como adaptador independiente | `ProyectoJo.Web` no se contamina con responsabilidades de servir JSON a terceros | Dos adaptadores de entrada que deben mantenerse sincronizados contra los mismos puertos |
-| Swagger/Swashbuckle sobre documentación manual | Documentación interactiva generada automáticamente desde el código, siempre actualizada | Depende de que los controladores y DTOs estén bien anotados, o la documentación pierde calidad |
-| Reutilizar `ProyectoJo.Application` sobre duplicar lógica en la API | Cero duplicación de reglas de negocio entre Web y Api | Cualquier cambio de contrato en un puerto impacta a ambos adaptadores simultáneamente |
+| Adapter sobre acceso directo entre capas | Las capas permanecen desacopladas y cambiar el framework web o la capa de persistencia no rompe el dominio | Más clases e interfaces por módulo y la navegación del código requiere seguir más niveles de indirección |
+| Strategy sobre implementación concreta directa | La migración de JSON a SQL es un cambio de una línea en `Program.cs` y los casos de uso no se tocan | Requiere disciplina para no filtrar detalles de implementación hacia arriba en la interfaz del puerto |
+| Composición vía Strategy sobre herencia vía Template Method | Sin jerarquías de herencia y la estrategia concreta se inyecta en tiempo de ejecución | Se pierde la posibilidad de reutilizar pasos comunes en una clase base aunque esto no aplica al caso de persistencia simple |
+| Dos patrones de categorías distintas sobre un solo patrón | Cubre tanto la traducción estructural entre capas como el comportamiento intercambiable de la persistencia | Mayor superficie de conceptos a dominar para un equipo unipersonal en fase de migración |
 
 ---
 
 ## Atributos de calidad
 
-### Estaticos
+### Estáticos
 
 | Atributo | Pregunta que responde | En Proyecto Jo' |
 | :--- | :--- | :--- |
-| **Mantenibilidad** | ¿Puedo agregar un endpoint nuevo sin tocar la lógica financiera? | `Api/Controllers` solo invoca los puertos existentes en `Application`, sin reglas propias |
-| **Modularidad** | ¿Puedo agregar la API sin romper el adaptador Web? | `ProyectoJo.Web` y `ProyectoJo.Api` son proyectos independientes que comparten `Application` |
-| **Testeabilidad** | ¿Puedo verificar un endpoint sin levantar vistas Razor? | Sí, Swagger permite probar cada ruta de forma aislada, sin pasar por el navegador ni por las vistas |
+| **Mantenibilidad** | ¿Puedo cambiar la persistencia de JSON a SQL sin tocar los casos de uso? | Sí, Strategy garantiza que `FinanzaJsonRepository` sea reemplazable por `FinanzaSqlRepository` sin modificar `FinanzaService` |
+| **Modularidad** | ¿Puedo agregar el módulo Recetario Digital siguiendo el mismo modelo? | Sí, el par Adapter + Strategy define el modelo repetible para cualquier módulo nuevo en Web y en Api |
+| **Testeabilidad** | ¿Puedo probar `FinanzaService` sin repositorio real ni servidor web? | Sí, Strategy permite inyectar un repositorio en memoria o un mock durante las pruebas unitarias |
 
-### Dinamicos
+### Dinámicos
 
 | Atributo | Pregunta que responde | En Proyecto Jo' |
 | :--- | :--- | :--- |
-| **Disponibilidad** | Si el EC2 cae, ¿la API también deja de responder? | Sí, al compartir el mismo proceso Kestrel y la misma instancia, ambos adaptadores caen juntos |
-| **Seguridad** | ¿Cualquiera puede consumir los endpoints sin autenticarse? | Actualmente sí, ya que la API aún no implementa autenticación propia, lo cual queda como riesgo abierto |
-| **Escalabilidad** | Si crece el consumo desde clientes externos, ¿se puede escalar solo la API? | No todavía, pues al ser un monolito hexagonal, escalar implica escalar todo el servidor EC2, incluyendo Web y Api juntos |
+| **Disponibilidad** | ¿Los patrones agregan puntos de falla en tiempo de ejecución? | No, Adapter y Strategy operan en compilación e inyección de dependencias sin overhead en ejecución |
+| **Seguridad** | ¿El Adapter de entrada expone detalles internos del dominio al cliente? | No, el controller solo retorna DTOs o `IActionResult` y nunca entidades del dominio directamente |
+| **Escalabilidad** | ¿Los patrones limitan el escalado del monolito? | No, la estrategia de persistencia es independiente del número de instancias del proceso |
 
 ---
 
-## Bounded Contexts expuestos por la API
+## Bounded Contexts
 
 ```mermaid
 flowchart LR
 
-    subgraph EXP ["Expuesto vía API REST"]
-        EX1["Productos /api/productos"]
-        EX2["Finanzas /api/finanzas"]
-        EX3["Pedidos /api/pedidos"]
-        EX4["Promociones /api/promociones"]
+    subgraph VP ["Vitrina pública"]
+        VP1["Producto nombre, precio, imagen"]
+        VP2["Historia, contenido, galería"]
+        VP3["Ubicación, dirección, mapa"]
+        VP4["Menú / catálogo — id, nombre, categoría"]
     end
 
-    subgraph INT ["Interno, no expuesto"]
-        IN1["Autenticación, cookies, sesión"]
-        IN2["Flujo de trabajo, estado, responsable"]
-        IN3["Composición de dependencias, Program.cs"]
+    subgraph PA ["Panel admin"]
+        PA1["Producto — CRUD completo"]
+        PA2["Finanza — monto, fecha, tipo"]
+        PA3["Flujo de trabajo — estado, responsable"]
+        PA4["Reportes — resúmenes, métricas"]
     end
 
-    EX1 -. "consulta precio con descuento" .-> EX4
-    EX2 -. "protege con" .-> IN1
-    EX3 -. "protege con" .-> IN1
+    subgraph AU ["Autenticación"]
+        AU1["Sesión, cookie, token"]
+        AU2["Credenciales, usuario, contraseña"]
+        AU3["Permiso, rol, área protegida"]
+    end
+
+    subgraph GOF ["Patrones GOF aplicados"]
+        G1["Adapter — Controllers y Repositories\ntraduce entre capas (Estructural)"]
+        G2["Strategy — IXxxRepository\npersistencia intercambiable (Comportamiento)"]
+    end
+
+    VP4 -. "lee" .-> PA1
+    PA1 -. "protege" .-> AU1
+    G1 -. "estructura" .-> PA1
+    G2 -. "comportamiento" .-> PA2
 ```
-
----
-
-## Documentacion de la api
-
-
-Se determino que el punto de entrada principal para consultar los endpoints será el archivo `README.md` del repositorio y
-en lugar de detallar las rutas dentro de los documentos de arquitectura, el `README.md` de Proyecto Jo'
-contendrá el enlace directo y las instrucciones necesarias para ejecutar y acceder a la interfaz interactiva de Swagger de forma local o en el entorno de despliegue. 
-
-**Porque:** Esto centraliza la información de inicio rápido para los desarrolladores en el lugar más intuitivo al explorar el repositorio,
-evitando que la documentación de acceso quede desactualizada u oculta en los registros de decisiones.
-
 
 ---
 
@@ -342,8 +334,8 @@ evitando que la documentación de acceso quede desactualizada u oculta en los re
 
 Se utilizó IA únicamente para:
 
-- Corregir redacción y ortografía del documento
-- Generar la sintaxis Mermaid del diagrama de Bounded Contexts y el boceto en texto
-  de la vista de procesos y la vista de desarrollo
+- Corregir redacción y ortografía del documento.
+- Generar la sintaxis Mermaid de los diagramas.
 
-No se utilizó para tomar decisiones arquitectónicas ni para diseñar la solución.
+No se utilizó para tomar decisiones sobre qué patrones integrar ni para diseñar
+su aplicación dentro del sistema.

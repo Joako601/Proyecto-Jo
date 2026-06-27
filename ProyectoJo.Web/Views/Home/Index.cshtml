@@ -55,7 +55,7 @@
             {
                 bool isEven = index % 2 == 0;
 
-                <div class="row g-0 fade-in-up">
+                <div class="row g-0 fade-in-up" style="animation-delay: @(Math.Min(index, 4) * 0.12)s;">
 
                     <div class="col-md-6 @(isEven ? "order-md-1" : "order-md-2")">
                         @if (string.IsNullOrEmpty(item.ImagenUrl))

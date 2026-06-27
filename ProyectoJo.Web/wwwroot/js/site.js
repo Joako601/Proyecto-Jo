@@ -1,5 +1,5 @@
 ﻿const reveal = () => {
-    const items = document.querySelectorAll('.module-reveal');
+    const items = document.querySelectorAll('.module-reveal, .fade-in-up, .card-animate');
 
     items.forEach(item => {
         const windowHeight = window.innerHeight;

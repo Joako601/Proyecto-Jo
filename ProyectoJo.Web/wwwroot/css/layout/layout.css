@@ -114,3 +114,67 @@ footer h3, footer h5 {
 		margin: 0 0.75rem;
 	}
 }
+
+@view-transition {
+	navigation: auto;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	::view-transition-old(root),
+	::view-transition-new(root) {
+		animation-duration: 0.45s;
+		animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+	}
+}
+
+/* 2) Entrada escalonada del contenido dentro de cada pagina.
+      Mismo patron que ".module-reveal": el elemento nace oculto y
+      site.js le agrega ".active" cuando entra en el viewport (o al
+      cargar, si ya esta visible). El "animation-delay" inline que ya
+      tenian algunas vistas (ej. menu) se respeta tal cual. */
+@media (prefers-reduced-motion: no-preference) {
+	.fade-in-up,
+	.card-animate {
+		opacity: 0;
+		visibility: hidden;
+	}
+
+		.fade-in-up.active,
+		.card-animate.active {
+			visibility: visible;
+			animation-name: paginaFadeInUp;
+			animation-duration: 0.7s;
+			animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+			animation-fill-mode: forwards;
+		}
+}
+
+@keyframes paginaFadeInUp {
+	from {
+		opacity: 0;
+		transform: translateY(28px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* Accesibilidad: si el usuario pidio reducir movimiento, todo se muestra
+   de inmediato y sin animar, incluida la transicion entre paginas. */
+@media (prefers-reduced-motion: reduce) {
+	.fade-in-up,
+	.card-animate,
+	.module-reveal {
+		opacity: 1 !important;
+		visibility: visible !important;
+		transform: none !important;
+	}
+
+	::view-transition-group(*),
+	::view-transition-old(*),
+	::view-transition-new(*) {
+		animation: none !important;
+	}
+}

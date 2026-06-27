@@ -1,14 +1,14 @@
 [
   {
     "Id": 1,
-    "Titulo": "2x1",
-    "Descripcion": "awaw",
+    "Titulo": "Combo Familiar",
+    "Descripcion": "Pide 4 platillos y obt\u00E9n 15% de descuento en tu cuenta.",
     "ImagenUrl": null,
-    "TipoDescuento": 0,
-    "ValorDescuento": 10,
+    "TipoDescuento": 1,
+    "ValorDescuento": 15,
     "ItemIds": [],
     "Activa": true,
-    "FechaInicio": "2026-06-17T00:00:00",
+    "FechaInicio": "2026-06-26T00:00:00",
     "FechaFin": "2026-06-30T00:00:00"
   },
   {
@@ -21,7 +21,7 @@
     "ItemIds": [
       1
     ],
-    "Activa": true,
+    "Activa": false,
     "FechaInicio": null,
     "FechaFin": null
   }

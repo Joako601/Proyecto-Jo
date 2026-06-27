@@ -338,8 +338,54 @@
         "Subtotal": 25
       }
     ],
-    "Estado": "Pendiente",
+    "Estado": "Pagado",
     "FechaCreacion": "2026-06-27T03:20:33.9422629Z",
     "Total": 25
+  },
+  {
+    "Id": 22,
+    "Mesa": "Mesa 1",
+    "Items": [
+      {
+        "ItemId": 1,
+        "Nombre": "Panucho de Pavo (sin Lechuga)",
+        "Cantidad": 1,
+        "PrecioUnitario": 25,
+        "Subtotal": 25
+      },
+      {
+        "ItemId": 2,
+        "Nombre": "Panucho de Huevo",
+        "Cantidad": 2,
+        "PrecioUnitario": 25,
+        "Subtotal": 50
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-27T04:51:03.4351515Z",
+    "Total": 75
+  },
+  {
+    "Id": 23,
+    "Mesa": "Mesa 1",
+    "Items": [
+      {
+        "ItemId": 1,
+        "Nombre": "Panucho de Pavo (sin Lechuga)",
+        "Cantidad": 2,
+        "PrecioUnitario": 25,
+        "Subtotal": 50
+      },
+      {
+        "ItemId": 5,
+        "Nombre": "Salbute de Huevo",
+        "Cantidad": 1,
+        "PrecioUnitario": 25,
+        "Subtotal": 25
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-27T05:27:31.0827761Z",
+    "Total": 75
   }
 ]

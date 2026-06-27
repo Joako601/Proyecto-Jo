@@ -174,5 +174,29 @@
     "Categoria": "Ventas",
     "Descripcion": "Pedido #20 \u2014 Mesa Para llevar",
     "Fecha": "2026-06-26T18:06:05.4170005Z"
+  },
+  {
+    "Id": 23,
+    "Monto": 25,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #21 \u2014 Mesa Para llevar",
+    "Fecha": "2026-06-27T04:29:34.3838658Z"
+  },
+  {
+    "Id": 24,
+    "Monto": 75,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #22 \u2014 Mesa Mesa 1",
+    "Fecha": "2026-06-27T04:51:21.2763551Z"
+  },
+  {
+    "Id": 25,
+    "Monto": 75,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #23 \u2014 Mesa Mesa 1",
+    "Fecha": "2026-06-27T05:28:00.4976931Z"
   }
 ]

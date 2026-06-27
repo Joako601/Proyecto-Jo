@@ -214,5 +214,21 @@
     "Categoria": "venta",
     "Descripcion": "nose",
     "Fecha": "2026-04-27T00:00:00"
+  },
+  {
+    "Id": 28,
+    "Monto": 20,
+    "Tipo": 1,
+    "Categoria": "Insumos",
+    "Descripcion": "Prueba",
+    "Fecha": "2026-06-27T00:00:00"
+  },
+  {
+    "Id": 29,
+    "Monto": 20,
+    "Tipo": 1,
+    "Categoria": "Insumos",
+    "Descripcion": "prueba",
+    "Fecha": "2026-06-27T00:00:00"
   }
 ]

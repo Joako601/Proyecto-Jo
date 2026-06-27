@@ -1,0 +1,77 @@
+﻿@model IEnumerable<ProyectoJo.Domain.Entities.CierreCaja>
+@{
+    ViewData["Title"] = "Cierre de Caja";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    var cajaAbierta = ViewBag.CajaAbierta as ProyectoJo.Domain.Entities.CierreCaja;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-shared.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/cierre-caja/cierre-caja.css" asp-append-version="true" />
+}
+
+<div class="admin-page">
+
+    <div class="page-header">
+        <div class="header-left">
+            <a asp-area="Admin" asp-controller="Gestion" asp-action="Index" class="back-link">← Dashboard</a>
+            <h1>Cierre de Caja</h1>
+        </div>
+        @if (cajaAbierta is null)
+        {
+            <a asp-action="Abrir" class="btn-primary">+ Abrir caja</a>
+        }
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert-error">@TempData["Error"]</div>
+    }
+
+    @if (cajaAbierta is not null)
+    {
+        <div class="caja-abierta-card">
+            <div class="info">
+                <strong>Caja abierta desde el @cajaAbierta.FechaApertura.ToString("dd/MM/yyyy HH:mm")</strong>
+                <span>Fondo inicial: $@cajaAbierta.FondoInicial.ToString("N2")</span>
+            </div>
+            <a asp-action="Cerrar" asp-route-id="@cajaAbierta.Id" class="btn-primary">Cerrar caja</a>
+        </div>
+    }
+
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Apertura</th>
+                <th>Cierre</th>
+                <th>Fondo inicial</th>
+                <th>Ventas</th>
+                <th>Gastos</th>
+                <th>Total</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var caja in Model)
+            {
+                <tr>
+                    <td>@caja.FechaApertura.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@(caja.FechaCierre?.ToString("dd/MM/yyyy HH:mm") ?? "—")</td>
+                    <td>$@caja.FondoInicial.ToString("N2")</td>
+                    <td>$@caja.VentasDelDia.ToString("N2")</td>
+                    <td>$@caja.GastosDelDia.ToString("N2")</td>
+                    <td>$@caja.Total.ToString("N2")</td>
+                    <td>
+                        <span class="tag--@caja.Estado.ToString().ToLower()">@caja.Estado</span>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (!Model.Any())
+    {
+        <p class="empty-state">Todavía no hay registros de caja.</p>
+    }
+
+</div>

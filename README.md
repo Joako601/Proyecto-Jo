@@ -233,15 +233,21 @@ No se utilizó para tomar decisiones arquitectónicas ni para diseñar la soluci
 * [LinkedIn](https://www.linkedin.com/in/Joaquin-Uriona)
 * [GitHub](https://github.com/Joako601)
 
-## 🔒 Cláusula de Propiedad y Uso Privado
+## 🔒 Licencia y propiedad intelectual
 
-Este software, incluyendo su código fuente, arquitectura, diseño y documentación, es de **uso estrictamente privado y exclusivo**. Queda terminantemente prohibida la reproducción, distribución, comunicación pública,
-transformación o cualquier otra actividad
-que se pueda realizar con los contenidos de este repositorio por cualquier persona distinta al autor original,
-**Joaquin Uriona**, sin autorización expresa y por escrito.
+Copyright (c) 2026 Joaquin Uriona — Todos los derechos reservados.
 
-El acceso a este proyecto se otorga bajo fines de revisión técnica personal y profesional,
-manteniendo todos los derechos de propiedad intelectual reservados exclusivamente a su creador.
+Este software, su código fuente, arquitectura, diseño y documentación son
+propiedad exclusiva de **Joaquin Uriona**. Queda terminantemente prohibido
+el uso, copia, modificación, distribución o comercialización sin permiso
+expreso y por escrito del autor.
+
+El acceso a este repositorio se otorga únicamente para revisión técnica y
+evaluación académica o profesional. Cualquier otro uso queda expresamente
+prohibido.
+
+> Este software se proporciona "tal cual", para fines de exhibición de
+> portafolio profesional, sin garantías de ningún tipo.
 
 
 

@@ -309,5 +309,37 @@
     "Estado": "Pagado",
     "FechaCreacion": "2026-06-24T13:42:52.9805063Z",
     "Total": 20
+  },
+  {
+    "Id": 20,
+    "Mesa": "Para llevar",
+    "Items": [
+      {
+        "ItemId": 1,
+        "Nombre": "Panucho Tradicional",
+        "Cantidad": 1,
+        "PrecioUnitario": 20,
+        "Subtotal": 20
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-26T18:05:51.2247971Z",
+    "Total": 20
+  },
+  {
+    "Id": 21,
+    "Mesa": "Para llevar",
+    "Items": [
+      {
+        "ItemId": 1,
+        "Nombre": "Panucho de Pavo",
+        "Cantidad": 1,
+        "PrecioUnitario": 25,
+        "Subtotal": 25
+      }
+    ],
+    "Estado": "Pendiente",
+    "FechaCreacion": "2026-06-27T03:20:33.9422629Z",
+    "Total": 25
   }
 ]

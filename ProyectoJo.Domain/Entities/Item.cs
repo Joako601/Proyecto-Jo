@@ -11,5 +11,6 @@
 		public string Base { get; set; }
 		public bool Activo { get; set; } = true;
 		public bool Agotado { get; set; } = false;
+		public string? ImagenUrl { get; set; }
 	}
 }

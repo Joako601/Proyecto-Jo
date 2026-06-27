@@ -133,17 +133,31 @@
 .hero-container {
 	/* Altura del hero, ajusta si tienes un navbar muy alto */
 	min-height: 85vh;
-	/* IMAGEN DE FONDO (Reemplaza la URL por una foto de tus antojitos) */
-	background-image: url('https://images.unsplash.com/photo-1551183053-bf91a1d81141?q=80&w=1920&auto=format&fit=crop');
+	/* TODO: reemplazar con foto propia del negocio (sprint de fotografía) */
+	/* PLACEHOLDER: degradado dorado + patrón sutil mientras llega la foto real */
+	background-color: #f4f1ea;
+	background-image: repeating-linear-gradient(45deg, rgba(181, 164, 120, 0.06) 0px, rgba(181, 164, 120, 0.06) 2px, transparent 2px, transparent 14px), linear-gradient(160deg, #f4f1ea 0%, #ece5d3 55%, #e2d6b8 100%);
 	background-size: cover;
 	background-position: center;
-	/* El attachment fixed crea un efecto parallax sutil y elegante al hacer scroll */
-	background-attachment: fixed;
+	position: relative;
 	/* Centrado del recuadro usando Flexbox */
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	padding: 2rem;
+}
+
+.hero-proximamente-tag {
+	position: absolute;
+	bottom: 2.5rem;
+	left: 0;
+	right: 0;
+	text-align: center;
+	letter-spacing: 3px;
+	text-transform: uppercase;
+	font-size: 0.75rem;
+	color: #a8946a;
+	font-weight: bold;
 }
 
 /* --- EL RECUADRO CENTRAL (Efecto Cristal Claro) --- */
@@ -168,6 +182,12 @@
 	width: 60px;
 	height: 2px;
 	background-color: #b5a478; /* Tu color dorado */
+}
+
+/* --- PLACEHOLDER "PRÓXIMAMENTE" (mientras llegan las fotos reales del negocio) --- */
+.proximamente-placeholder {
+	background-color: #faf9f6;
+	border: 1px dashed #b5a478;
 }
 
 /* --- BOTÓN PERSONALIZADO "VER DETALLE" --- */

@@ -163,35 +163,6 @@
     }
 }
 
-/* --- Botones de Filtro Minimalistas --- */
-.menu-filters {
-    display: flex;
-    justify-content: center;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-}
-
-.filter-btn {
-    background-color: transparent;
-    border: none;
-    color: #888;
-    padding: 5px 10px;
-    font-family: 'Inter', sans-serif;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 2px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-}
-
-    /* Efecto hover minimalista */
-    .filter-btn:hover, .filter-btn.active {
-        color: #222;
-        border-bottom: 2px solid #b5a478;
-    }
-
 /* --- Transición para el filtrado JS --- */
 .menu-item-card {
     transition: opacity 0.4s ease, transform 0.4s ease;
@@ -250,3 +221,72 @@
         text-decoration: none;
         opacity: 1 !important;
     }
+
+/* ============================================= */
+/* --- Botones de Filtro Minimalistas (ÚNICA definición, con scroll horizontal) --- */
+/* ============================================= */
+
+.menu-filters-wrapper {
+    position: relative;
+    overflow: hidden; /* evita que el wrapper agrande el ancho de toda la página */
+}
+
+.menu-filters {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 1.2rem;
+    padding: 0.5rem 2rem; /* espacio lateral para que el degradado no tape el primer/último botón */
+    justify-content: flex-start;
+    scrollbar-width: none; /* Firefox: oculta la barra de scroll */
+}
+
+    .menu-filters::-webkit-scrollbar {
+        display: none; /* Chrome/Safari: oculta la barra de scroll */
+    }
+
+.filter-btn {
+    background-color: transparent;
+    border: none;
+    color: #888;
+    padding: 5px 10px;
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    flex: 0 0 auto; /* evita que los botones se compriman */
+    white-space: nowrap; /* texto en una sola línea */
+}
+
+    /* Efecto hover minimalista */
+    .filter-btn:hover, .filter-btn.active {
+        color: #222;
+        border-bottom: 2px solid #b5a478;
+    }
+
+/* Sombras en los bordes para indicar que hay más contenido al deslizar */
+.menu-filters-wrapper::before,
+.menu-filters-wrapper::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 32px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.menu-filters-wrapper::before {
+    left: 0;
+    background: linear-gradient(to right, var(--yerba-cream), transparent);
+}
+
+.menu-filters-wrapper::after {
+    right: 0;
+    background: linear-gradient(to left, var(--yerba-cream), transparent);
+}

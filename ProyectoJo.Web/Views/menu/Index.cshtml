@@ -17,12 +17,6 @@
         </h1>
 
         <div class="mx-auto my-4" style="width: 80px; height: 3px; background-color: #b5a478;"></div>
-
-        <p class="mt-4">
-            <a href="#" class="text-decoration-none text-uppercase" style="color: #b5a478; font-size: 0.75rem; letter-spacing: 2px; font-weight: 600;">
-                + Integrar Nuevo Platillo
-            </a>
-        </p>
     </div>
 
     @if (promosGenerales != null && promosGenerales.Any())
@@ -62,13 +56,25 @@
         </div>
     }
 
-    <div class="menu-filters text-center mb-5 fade-in-up" style="animation-delay: 0.2s;">
-        <button class="filter-btn active" data-filter="todos">Todos</button>
-        <button class="filter-btn" data-filter="panuchos">Panuchos</button>
-        <button class="filter-btn" data-filter="salbutes">Salbutes</button>
-        <button class="filter-btn" data-filter="tortas">Tortas</button>
-        <button class="filter-btn" data-filter="caldos">Caldos</button>
-        <button class="filter-btn" data-filter="bebidas">Bebidas</button>
+    <div class="row justify-content-center mb-5 fade-in-up" style="animation-delay: 0.2s;">
+        <div class="col-md-9">
+            <div class="menu-filters-wrapper">
+                <div class="menu-filters text-center">
+                    <button class="filter-btn active" data-filter="todos">Todos</button>
+                    <button class="filter-btn" data-filter="panuchos">Panuchos</button>
+                    <button class="filter-btn" data-filter="salbutes">Salbutes</button>
+                    <button class="filter-btn" data-filter="tortas">Tortas</button>
+                    <button class="filter-btn" data-filter="caldos">Caldos</button>
+                    <button class="filter-btn" data-filter="hamburguesas">Hamburguesas</button>
+                    <button class="filter-btn" data-filter="nachos">Nachos</button>
+                    <button class="filter-btn" data-filter="burros">Burros</button>
+                    <button class="filter-btn" data-filter="empanadas">Empanadas</button>
+                    <button class="filter-btn" data-filter="tamales">Tamales</button>
+                    <button class="filter-btn" data-filter="polcanes">Polcanes</button>
+                    <button class="filter-btn" data-filter="bebidas">Bebidas</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="row justify-content-center" id="menu-container">

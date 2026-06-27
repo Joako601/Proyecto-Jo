@@ -178,3 +178,77 @@ footer h3, footer h5 {
 		animation: none !important;
 	}
 }
+
+/* --- Nuevos elementos del footer: icono, horario, CTA y barra inferior --- */
+.footer-icon {
+	color: #b5a478;
+	margin-right: 0.4rem;
+}
+
+.footer-schedule-row {
+	display: flex;
+	justify-content: space-between;
+	padding-bottom: 0.5rem;
+	margin-bottom: 0.5rem;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.footer-schedule-time {
+	font-family: 'Inter', sans-serif;
+	font-size: 0.9rem;
+	color: #b5a478;
+	font-weight: 600;
+}
+
+.footer-whatsapp-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-family: 'Inter', sans-serif;
+	font-size: 0.8rem;
+	letter-spacing: 0.5px;
+	text-transform: uppercase;
+	color: #1a1d20;
+	background-color: #b5a478;
+	border: 1px solid #b5a478;
+	padding: 0.6rem 1.1rem;
+	border-radius: 2px;
+	text-decoration: none;
+	transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+	.footer-whatsapp-btn:hover,
+	.footer-whatsapp-btn:focus-visible {
+		background-color: transparent;
+		color: #b5a478;
+	}
+
+.footer-divider {
+	border-color: rgba(255, 255, 255, 0.1);
+	margin: 2.5rem 0 1.5rem;
+}
+
+.footer-copy {
+	font-family: 'Inter', sans-serif;
+	font-size: 0.8rem;
+	color: #777;
+}
+
+.footer-copy-link {
+	font-family: 'Inter', sans-serif;
+	font-size: 0.8rem;
+	color: #777;
+	text-decoration: none;
+	transition: color 0.3s ease;
+}
+
+	.footer-copy-link:hover {
+		color: #b5a478;
+	}
+
+@media (max-width: 767px) {
+	.footer-copy,
+	.footer-copy-link {
+		text-align: center;
+	}
+}

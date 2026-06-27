@@ -86,7 +86,7 @@
                 var item = vm.Platillo;
                 <div class="col-md-9 mb-4 menu-item-card card-animate"
                      data-category="@item.Categoria.ToLower()"
-                     style="animation-delay: @(delay * 0.1)s; @(item.Agotado ? "opacity: 0.5;" : "")">
+                     style="animation-delay: @((delay % 4) * 0.08)s; @(item.Agotado ? "opacity: 0.5;" : "")">
 
                     <div class="card border-0 p-5 item-card"
                          style="background-color: #ffffff; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border-radius: 2px;">

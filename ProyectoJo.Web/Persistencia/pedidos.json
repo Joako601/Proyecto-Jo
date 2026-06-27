@@ -387,5 +387,21 @@
     "Estado": "Pagado",
     "FechaCreacion": "2026-06-27T05:27:31.0827761Z",
     "Total": 75
+  },
+  {
+    "Id": 24,
+    "Mesa": "Mesa 1",
+    "Items": [
+      {
+        "ItemId": 1,
+        "Nombre": "Panucho de Pavo (sin aguacate y cebolla)",
+        "Cantidad": 1,
+        "PrecioUnitario": 25,
+        "Subtotal": 25
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-27T15:30:51.830663Z",
+    "Total": 25
   }
 ]

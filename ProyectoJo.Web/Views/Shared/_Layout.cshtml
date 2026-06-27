@@ -46,23 +46,47 @@
 
     <footer class="main-footer">
         <div class="container">
-            <div class="row">
-                <div class="col-md-4 mb-4 mb-md-0">
+            <div class="row gy-4">
+                <div class="col-lg-4 col-md-6">
                     <h5 class="footer-title">TÍA CARO</h5>
-                    <p class="footer-text">Tradición yucateca en San Pedro Uxmal.</p>
+                    <p class="footer-text">Tradición yucateca en San Pedro Uxmal, Mérida.</p>
+                    <p class="footer-text mb-0">
+                        <i class="bi bi-geo-alt-fill footer-icon"></i>
+                        Calle 36 x 5 y 7, San Pedro Uxmal
+                    </p>
                 </div>
 
-                <div class="col-md-4 text-md-center mb-4 mb-md-0">
+                <div class="col-lg-2 col-md-6">
                     <h5 class="footer-title">EXPLORA</h5>
-                    <ul class="list-unstyled">
+                    <ul class="list-unstyled mb-0">
+                        <li><a asp-controller="Home" asp-action="Index" class="footer-link">Inicio</a></li>
                         <li><a asp-controller="Menu" asp-action="Index" class="footer-link">Menú</a></li>
+                        <li><a asp-controller="Historia" asp-action="Historia" class="footer-link">Nuestra Historia</a></li>
+                        <li><a asp-controller="Nosotros" asp-action="Index" class="footer-link">Quiénes Somos</a></li>
                         <li><a asp-controller="Ubicacion" asp-action="Ubicacion" class="footer-link">Ubicación</a></li>
-                        <li><a asp-controller="Home" asp-action="Privacy" class="footer-link">Aviso de Privacidad</a></li>
                     </ul>
                 </div>
 
-                <div class="col-md-4 text-md-end">
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="footer-title">HORARIO</h5>
+                    <ul class="list-unstyled mb-3">
+                        <li class="footer-schedule-row">
+                            <span class="footer-text mb-0">Lun - Sáb</span>
+                            <span class="footer-schedule-time">18:30 - 23:30</span>
+                        </li>
+                        <li class="footer-schedule-row">
+                            <span class="footer-text mb-0">Domingos</span>
+                            <span class="footer-schedule-time">07:00 - 13:00</span>
+                        </li>
+                    </ul>
+                    <a href="https://wa.me/529990000000" target="_blank" rel="noopener noreferrer" class="footer-whatsapp-btn">
+                        <i class="bi bi-whatsapp"></i> Pedir por WhatsApp
+                    </a>
+                </div>
+
+                <div class="col-lg-3 col-md-6 text-md-start text-lg-end">
                     <h5 class="footer-title">REDES</h5>
+                    <p class="footer-text">Síguenos para ver lo nuevo de la cocina.</p>
                     <div class="footer-socials">
 
                         <a href="https://www.instagram.com/antojitos_la_tia_caro" target="_blank" rel="noopener noreferrer">
@@ -75,6 +99,16 @@
                             <i class="bi bi-facebook"></i>
                         </a>
                     </div>
+                </div>
+            </div>
+
+            <hr class="footer-divider" />
+
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+                <p class="footer-copy mb-0">&copy; @DateTime.Now.Year Tía Caro. Todos los derechos reservados.</p>
+                <div class="d-flex align-items-center gap-3">
+                    <a asp-controller="Home" asp-action="Privacy" class="footer-copy-link">Aviso de Privacidad</a>
+                    <p class="footer-copy mb-0">Hecho con <i class="bi bi-heart-fill" style="color:#b5a478;"></i> en Mérida, Yucatán.</p>
                 </div>
             </div>
         </div>

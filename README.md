@@ -24,7 +24,7 @@ El sistema expone dos adaptadores de entrada simultáneos:
   (Postman, apps móviles, integraciones futuras)
 
 El historial completo de decisiones de diseño está documentado en
-[`/ProyectoJo.Web/ADRs`](./ProyectoJo.Web/ADRs).
+[`/ADRs`](./ADRs).
 
 ---
 
@@ -71,6 +71,19 @@ flowchart TD
 ```
 
 Más detalle en las vistas arquitectónicas de cada ADR.
+
+## Módulos implementados
+
+| Módulo | Descripción |
+|---|---|
+| Finanzas | CRUD de movimientos, dashboard con gráficas, filtros por mes y año |
+| Menú | CRUD de platillos con búsqueda y filtros por categoría |
+| Inventario | Toggle activo/agotado por platillo |
+| Promociones | Banners y descuentos, vista pública en menú |
+| Mapa de Calor | Ventas por semana y por mes con navegación por período |
+| Cocina / Recepción | Flujo operacional de pedidos con autenticación por rol y PIN |
+
+>  En desarrollo activo — Arquitectura Hexagonal implementada, nuevos módulos en camino
 
 ---
 
@@ -196,10 +209,11 @@ respectivos controladores en `ProyectoJo.Api`.
 
 | ADR | Decisión |
 |---|---|
-| [ADR-01](./ProyectoJo.Web/ADRs/ADR-01-Joaquin-Uriona.md) | Decisión inicial de stack/arquitectura del MVP |
-| [ADR-02](./ProyectoJo.Web/ADRs/ADR-02-Joaquin-Uriona.md) | MVC puro y sus limitaciones anticipadas |
-| [ADR-03](./ProyectoJo.Web/ADRs/ADR-03-Joaquin-Uriona.md) | Migración hacia Arquitectura Hexagonal |
-| [ADR-04](./ProyectoJo.Web/ADRs/ADR-04-Joaquin-Uriona.md) | Incorporación de una API REST con Swagger |
+| [ADR-01](./ADRs/ARD-01-Joaquin-Uriona.md) | Decisión inicial de stack/arquitectura del MVP |
+| [ADR-02](./ADRs/ARD-02-Joaquin-Uriona.md) | MVC puro y sus limitaciones anticipadas |
+| [ADR-03](./ADRs/ARD-03-Joaquin-Uriona.md) | Migración hacia Arquitectura Hexagonal |
+| [ADR-04](./ADRs/ARD-04-Joaquin-Uriona.md) | Incorporación de una API REST con Swagger |
+| [ADR-05](./ADRs/ARD-05-Joaquin-Uriona.md) | Integración de Patrones de Diseño GOF |
 
 ---
 
@@ -219,15 +233,21 @@ No se utilizó para tomar decisiones arquitectónicas ni para diseñar la soluci
 * [LinkedIn](https://www.linkedin.com/in/Joaquin-Uriona)
 * [GitHub](https://github.com/Joako601)
 
-## 🔒 Cláusula de Propiedad y Uso Privado
+## 🔒 Licencia y propiedad intelectual
 
-Este software, incluyendo su código fuente, arquitectura, diseño y documentación, es de **uso estrictamente privado y exclusivo**. Queda terminantemente prohibida la reproducción, distribución, comunicación pública,
-transformación o cualquier otra actividad
-que se pueda realizar con los contenidos de este repositorio por cualquier persona distinta al autor original,
-**Joaquin Uriona**, sin autorización expresa y por escrito.
+Copyright (c) 2026 Joaquin Uriona — Todos los derechos reservados.
 
-El acceso a este proyecto se otorga bajo fines de revisión técnica personal y profesional,
-manteniendo todos los derechos de propiedad intelectual reservados exclusivamente a su creador.
+Este software, su código fuente, arquitectura, diseño y documentación son
+propiedad exclusiva de **Joaquin Uriona**. Queda terminantemente prohibido
+el uso, copia, modificación, distribución o comercialización sin permiso
+expreso y por escrito del autor.
+
+El acceso a este repositorio se otorga únicamente para revisión técnica y
+evaluación académica o profesional. Cualquier otro uso queda expresamente
+prohibido.
+
+> Este software se proporciona "tal cual", para fines de exhibición de
+> portafolio profesional, sin garantías de ningún tipo.
 
 
 

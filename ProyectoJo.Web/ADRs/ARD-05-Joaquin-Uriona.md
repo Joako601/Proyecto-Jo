@@ -1,4 +1,4 @@
-﻿# ADR-05: Integración de Patrones de Diseño GOF
+# ADR-05: Integración de Patrones de Diseño GOF
 
 | Campo  | Valor |
 |--------|-------|

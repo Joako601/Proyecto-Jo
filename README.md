@@ -24,7 +24,7 @@ El sistema expone dos adaptadores de entrada simultáneos:
   (Postman, apps móviles, integraciones futuras)
 
 El historial completo de decisiones de diseño está documentado en
-[`/ProyectoJo.Web/ADRs`](./ProyectoJo.Web/ADRs).
+[`/ADRs`](./ADRs).
 
 ---
 
@@ -196,10 +196,11 @@ respectivos controladores en `ProyectoJo.Api`.
 
 | ADR | Decisión |
 |---|---|
-| [ADR-01](./ProyectoJo.Web/ADRs/ADR-01-Joaquin-Uriona.md) | Decisión inicial de stack/arquitectura del MVP |
-| [ADR-02](./ProyectoJo.Web/ADRs/ADR-02-Joaquin-Uriona.md) | MVC puro y sus limitaciones anticipadas |
-| [ADR-03](./ProyectoJo.Web/ADRs/ADR-03-Joaquin-Uriona.md) | Migración hacia Arquitectura Hexagonal |
-| [ADR-04](./ProyectoJo.Web/ADRs/ADR-04-Joaquin-Uriona.md) | Incorporación de una API REST con Swagger |
+| [ADR-01](./ADRs/ARD-01-Joaquin-Uriona.md) | Decisión inicial de stack/arquitectura del MVP |
+| [ADR-02](./ADRs/ARD-02-Joaquin-Uriona.md) | MVC puro y sus limitaciones anticipadas |
+| [ADR-03](./ADRs/ARD-03-Joaquin-Uriona.md) | Migración hacia Arquitectura Hexagonal |
+| [ADR-04](./ADRs/ARD-04-Joaquin-Uriona.md) | Incorporación de una API REST con Swagger |
+| [ADR-05](./ADRs/ARD-05-Joaquin-Uriona.md) | Integración de Patrones de Diseño GOF |
 
 ---
 

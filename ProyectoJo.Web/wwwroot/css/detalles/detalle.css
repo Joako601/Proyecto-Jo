@@ -29,6 +29,15 @@
 		transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
 	}
 
+.platillo-visual-img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
 .platillo-wrapper:hover .platillo-visual span {
 	transform: scale(1.1) rotate(5deg);
 }

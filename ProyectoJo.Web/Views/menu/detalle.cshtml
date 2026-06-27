@@ -11,7 +11,19 @@
     <div class="platillo-wrapper shadow-lg">
 
         <div class="platillo-visual">
-            <span>🌮</span>
+            @if (string.IsNullOrEmpty(item.ImagenUrl))
+            {
+                <!-- TODO: reemplazar con foto propia del negocio (sprint de fotografía) -->
+                <div class="d-flex flex-column align-items-center justify-content-center text-center">
+                    <span style="font-size: 2.8rem; color: white;">&#10047;</span>
+                    <p class="text-uppercase mt-3 mb-0" style="letter-spacing: 3px; color: white; font-weight: bold; font-size: 0.85rem;">Próximamente</p>
+                    <p class="text-uppercase mt-1" style="letter-spacing: 2px; color: rgba(255,255,255,0.7); font-size: 0.7rem;">Foto en camino</p>
+                </div>
+            }
+            else
+            {
+                <img src="@item.ImagenUrl" alt="@item.Platillo" class="platillo-visual-img" />
+            }
         </div>
 
         <div class="platillo-info">

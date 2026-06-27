@@ -1,0 +1,94 @@
+.privacy-hero {
+	background-color: #faf9f6;
+	padding: 5rem 0 3rem;
+	text-align: center;
+	border-bottom: 1px solid #eee;
+}
+
+.privacy-hero h1 {
+	font-family: 'Playfair Display', serif;
+	font-style: italic;
+	color: #222;
+	font-size: 2.6rem;
+	margin-bottom: 0.5rem;
+}
+
+.privacy-hero p {
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	color: #999;
+	font-size: 0.75rem;
+}
+
+.privacy-content {
+	max-width: 760px;
+	margin: 0 auto;
+	padding: 3.5rem 1.5rem 5rem;
+	font-family: 'Inter', sans-serif;
+	color: #444;
+	line-height: 1.8;
+}
+
+.privacy-content h2 {
+	font-family: 'Playfair Display', serif;
+	color: #222;
+	font-size: 1.4rem;
+	margin-top: 2.5rem;
+	margin-bottom: 0.75rem;
+	padding-bottom: 0.4rem;
+	border-bottom: 2px solid #b5a478;
+	display: inline-block;
+}
+
+.privacy-content p,
+.privacy-content li {
+	font-size: 0.95rem;
+	color: #555;
+}
+
+.privacy-content ul {
+	padding-left: 1.2rem;
+}
+
+.privacy-content .privacy-updated {
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-size: 0.7rem;
+	color: #999;
+	margin-bottom: 2rem;
+}
+
+.privacy-content .privacy-disclaimer {
+	background-color: #faf9f6;
+	border-left: 3px solid #b5a478;
+	padding: 1rem 1.25rem;
+	font-size: 0.85rem;
+	color: #777;
+	margin-top: 3rem;
+}
+
+.privacy-contact-list {
+	list-style: none;
+	padding-left: 0;
+	margin-top: 1rem;
+}
+
+.privacy-contact-list li {
+	margin-bottom: 0.6rem;
+}
+
+.privacy-contact-list a {
+	color: #b5a478;
+	text-decoration: none;
+	font-weight: 600;
+}
+
+.privacy-contact-list a:hover {
+	color: #8e7a52;
+	text-decoration: underline;
+}
+
+.privacy-contact-list i {
+	margin-right: 8px;
+	color: #b5a478;
+}

@@ -116,3 +116,9 @@
         height: 300px;
     }
 }
+
+/* --- PLACEHOLDER "PRÓXIMAMENTE" (mientras llegan las fotos reales del equipo) --- */
+.proximamente-placeholder {
+    background-color: #faf9f6;
+    border: 1px dashed #b5a478;
+}

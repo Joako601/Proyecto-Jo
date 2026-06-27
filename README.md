@@ -72,6 +72,19 @@ flowchart TD
 
 Más detalle en las vistas arquitectónicas de cada ADR.
 
+## Módulos implementados
+
+| Módulo | Descripción |
+|---|---|
+| Finanzas | CRUD de movimientos, dashboard con gráficas, filtros por mes y año |
+| Menú | CRUD de platillos con búsqueda y filtros por categoría |
+| Inventario | Toggle activo/agotado por platillo |
+| Promociones | Banners y descuentos, vista pública en menú |
+| Mapa de Calor | Ventas por semana y por mes con navegación por período |
+| Cocina / Recepción | Flujo operacional de pedidos con autenticación por rol y PIN |
+
+>  En desarrollo activo — Arquitectura Hexagonal implementada, nuevos módulos en camino
+
 ---
 
 ## Estructura del repositorio

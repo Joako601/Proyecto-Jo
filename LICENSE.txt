@@ -1,7 +1,19 @@
-Copyright (c) 2026 Joaquin Uriona
+Copyright (c) 2026 Joaquin Uriona — Todos los derechos reservados.
 
-Todos los derechos reservados.
+Este software, su código fuente, arquitectura, diseño y documentación asociada
+son propiedad exclusiva de Joaquin Uriona.
 
-Queda terminantemente prohibido el uso, copia, modificación, distribución o comercialización de este software y su documentación asociada sin el permiso expreso y por escrito del titular del copyright, Joaquin Uriona. 
+Queda terminantemente prohibido, sin el permiso expreso y por escrito del autor:
 
-Este software se proporciona "tal cual", para fines de exhibición de portafolio profesional, sin garantías de ningún tipo.
+  - Usar, copiar o reproducir el software o cualquier parte de él
+  - Modificar, adaptar o crear obras derivadas
+  - Distribuir, publicar o compartir el código fuente o compilado
+  - Comercializar o sublicenciar el software o su documentación
+  - Presentar este trabajo como propio en cualquier contexto académico o profesional
+
+El acceso a este repositorio se otorga únicamente para revisión técnica y
+evaluación académica o profesional del autor. Cualquier otro uso queda
+expresamente prohibido.
+
+Este software se proporciona "tal cual", sin garantías de ningún tipo,
+expresas o implícitas.

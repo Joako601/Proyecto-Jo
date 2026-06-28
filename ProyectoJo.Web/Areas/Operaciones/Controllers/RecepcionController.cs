@@ -44,8 +44,20 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 		public async Task<IActionResult> Crear([FromBody] Pedido pedido)
 		{
 			if (!ModelState.IsValid) return BadRequest(ModelState);
-			var creado = await _pedidoService.CrearAsync(pedido);
-			return Json(creado);
+			try
+			{
+				var resultado = await _pedidoService.CrearAsync(pedido);
+				return Json(resultado);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(new { error = ex.Message });
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error inesperado al crear pedido");
+				return StatusCode(500, new { error = "Ocurrió un error al crear el pedido. Intenta de nuevo." });
+			}
 		}
 
 		// POST /Operaciones/Recepcion/Pagar

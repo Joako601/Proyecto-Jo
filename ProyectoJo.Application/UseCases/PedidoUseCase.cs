@@ -11,17 +11,23 @@ namespace ProyectoJo.Application.UseCases
 		private readonly IPedidoRepository _repository;
 		private readonly IFinanzaService _finanzaService;
 		private readonly IPedidoNotificador _notificador;
+		private readonly IProductoService _productoService;
+		private readonly IPromocionService _promocionService;
 		private readonly ILogger<PedidoUseCase> _logger;
 
 		public PedidoUseCase(
 			IPedidoRepository repository,
 			IFinanzaService finanzaService,
 			IPedidoNotificador notificador,
+			IProductoService productoService,
+			IPromocionService promocionService,
 			ILogger<PedidoUseCase> logger)
 		{
 			_repository = repository;
 			_finanzaService = finanzaService;
 			_notificador = notificador;
+			_productoService = productoService;
+			_promocionService = promocionService;
 			_logger = logger;
 		}
 
@@ -36,22 +42,48 @@ namespace ProyectoJo.Application.UseCases
 			return await _repository.ObtenerPorIdAsync(id);
 		}
 
-		public async Task<Pedido> CrearAsync(Pedido pedido)
+		public async Task<ResultadoCrearPedido> CrearAsync(Pedido pedido)
 		{
+			var lineasValidas = new List<ItemPedido>();
+			var lineasDescartadas = new List<LineaDescartada>();
+
+			foreach (var linea in pedido.Items)
+			{
+				if (linea.Cantidad <= 0)
+				{
+					lineasDescartadas.Add(new LineaDescartada { ItemId = linea.ItemId, Nombre = linea.Nombre, Motivo = "Cantidad inválida" });
+					continue;
+				}
+
+				var item = _productoService.ObtenerPorId(linea.ItemId);
+				if (item is null || !item.Activo)
+				{
+					lineasDescartadas.Add(new LineaDescartada { ItemId = linea.ItemId, Nombre = linea.Nombre, Motivo = "Ya no está disponible en el menú" });
+					continue;
+				}
+
+				if (item.Agotado)
+				{
+					lineasDescartadas.Add(new LineaDescartada { ItemId = linea.ItemId, Nombre = linea.Nombre, Motivo = "Sin stock en este momento" });
+					continue;
+				}
+
+				linea.PrecioUnitario = _promocionService.CalcularPrecioFinal(item);
+				lineasValidas.Add(linea);
+			}
+
+			if (lineasValidas.Count == 0)
+				throw new InvalidOperationException("Ninguno de los productos del pedido está disponible. No se creó el pedido.");
+
+			pedido.Items = lineasValidas;
 			pedido.Estado = EstadoPedido.Pendiente;
 			pedido.FechaCreacion = DateTime.UtcNow;
 			var creado = await _repository.GuardarAsync(pedido);
 
-			try
-			{
-				await _notificador.NotificarCreadoAsync(creado);
-			}
-			catch (Exception ex)
-			{
-				_logger.LogError(ex, "Error notificando creación del Pedido #{PedidoId}", creado.Id);
-			}
+			try { await _notificador.NotificarCreadoAsync(creado); }
+			catch (Exception ex) { _logger.LogError(ex, "Error notificando creación del Pedido #{PedidoId}", creado.Id); }
 
-			return creado;
+			return new ResultadoCrearPedido { Pedido = creado, LineasDescartadas = lineasDescartadas };
 		}
 
 		public async Task<Pedido?> CambiarEstadoAsync(int id, EstadoPedido nuevoEstado)

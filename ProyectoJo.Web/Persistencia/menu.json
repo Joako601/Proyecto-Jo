@@ -8,7 +8,7 @@
     "Descripcion": "Tortilla frita rellena de frijol, con pavo, lechuga, repollo, tomate, pepino, aguacate y cebolla.",
     "Base": "Frijol y Pavo",
     "Activo": true,
-    "Agotado": false,
+    "Agotado": true,
     "ImagenUrl": null
   },
   {

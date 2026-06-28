@@ -7,7 +7,7 @@ namespace ProyectoJo.Application.Ports.In
 	{
 		Task<List<Pedido>> ObtenerPendientesAsync();
 		Task<Pedido?> ObtenerPorIdAsync(int id);
-		Task<Pedido> CrearAsync(Pedido pedido);
+		Task<ResultadoCrearPedido> CrearAsync(Pedido pedido);
 		Task<Pedido?> CambiarEstadoAsync(int id, EstadoPedido nuevoEstado);
 		Task<List<Pedido>> ObtenerParaCocinaAsync();       
 		Task<List<Pedido>> ObtenerParaRecepcionAsync();

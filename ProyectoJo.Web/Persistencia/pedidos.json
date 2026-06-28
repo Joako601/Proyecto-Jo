@@ -483,5 +483,101 @@
     "Estado": "Pagado",
     "FechaCreacion": "2026-06-28T19:56:42.5051513Z",
     "Total": 50
+  },
+  {
+    "Id": 30,
+    "Mesa": "Para llevar",
+    "Items": [
+      {
+        "ItemId": 1,
+        "Nombre": "Panucho de Pavo",
+        "Cantidad": 1,
+        "PrecioUnitario": 20,
+        "Subtotal": 20
+      }
+    ],
+    "Estado": "Pendiente",
+    "FechaCreacion": "2026-06-28T21:32:39.2003393Z",
+    "Total": 20
+  },
+  {
+    "Id": 31,
+    "Mesa": "Mesa 1",
+    "Items": [
+      {
+        "ItemId": 3,
+        "Nombre": "Panucho de Carne Asada",
+        "Cantidad": 1,
+        "PrecioUnitario": 30,
+        "Subtotal": 30
+      }
+    ],
+    "Estado": "Pendiente",
+    "FechaCreacion": "2026-06-28T21:33:24.8224995Z",
+    "Total": 30
+  },
+  {
+    "Id": 32,
+    "Mesa": "Mesa 1",
+    "Items": [
+      {
+        "ItemId": 2,
+        "Nombre": "Panucho de Huevo",
+        "Cantidad": 1,
+        "PrecioUnitario": 25,
+        "Subtotal": 25
+      }
+    ],
+    "Estado": "Pendiente",
+    "FechaCreacion": "2026-06-28T21:42:20.2251303Z",
+    "Total": 25
+  },
+  {
+    "Id": 33,
+    "Mesa": "Mesa 1",
+    "Items": [
+      {
+        "ItemId": 2,
+        "Nombre": "Panucho de Huevo",
+        "Cantidad": 1,
+        "PrecioUnitario": 25,
+        "Subtotal": 25
+      }
+    ],
+    "Estado": "Pendiente",
+    "FechaCreacion": "2026-06-28T21:45:16.1068378Z",
+    "Total": 25
+  },
+  {
+    "Id": 34,
+    "Mesa": "Mesa 1",
+    "Items": [
+      {
+        "ItemId": 2,
+        "Nombre": "Panucho de Huevo (sin pur\u00E9 de tomate natural y cebolla)",
+        "Cantidad": 1,
+        "PrecioUnitario": 25,
+        "Subtotal": 25
+      }
+    ],
+    "Estado": "Pendiente",
+    "FechaCreacion": "2026-06-28T21:46:49.0251297Z",
+    "Total": 25
+  },
+  {
+    "Id": 35,
+    "Mesa": "Para llevar",
+    "Items": [
+      {
+        "ItemId": 2,
+        "Nombre": "Panucho de Huevo",
+        "Cantidad": 1,
+        "PrecioUnitario": 25,
+        "Subtotal": 25
+      }
+    ],
+    "Estado": "Pendiente",
+    "FechaCreacion": "2026-06-28T21:50:20.4832276Z",
+    "Total": 25
   }
 ]

@@ -12,7 +12,7 @@
     var tabActiva = 'activos';
     var ultimosPedidos = [];
 
-     
+
 
     function ir(url) {
         window.location.href = url;
@@ -23,7 +23,7 @@
         return fuente.split(',').map(function (s) { return s.trim(); }).filter(function (s) { return s.length > 0; });
     }
 
-    
+
 
     function setEstadoConexion(estado) {
         var el = document.getElementById('estado-conexion');
@@ -36,7 +36,7 @@
         el.textContent = textos[estado] || '';
     }
 
-    
+
 
     function setTipoEntrega(tipo) {
         tipoEntrega = tipo;
@@ -45,7 +45,7 @@
         document.getElementById('mesa-input').style.display = tipo === 'mesa' ? 'block' : 'none';
     }
 
-    
+
 
     function cambiarTab(tab) {
         tabActiva = tab;
@@ -54,7 +54,7 @@
         renderPedidos();
     }
 
-    
+
 
     function cargarMenu() {
         fetch('/Operaciones/Recepcion/ObtenerMenu')
@@ -109,7 +109,7 @@
         });
     }
 
-    
+
 
     function agregarAlCarrito(itemId) {
         var item = menu.find(function (i) { return i.id === itemId; });
@@ -194,30 +194,10 @@
         document.getElementById('total-carrito').textContent = 'Total: $' + total.toFixed(2);
     }
 
-    
 
-    function crearPedido() {
-        var mesaInput = document.getElementById('mesa-input').value.trim();
 
-        if (tipoEntrega === 'mesa' && !mesaInput) {
-            alert('Escribe el número o nombre de la mesa.');
-            return;
-        }
-
-        var mesaTexto = tipoEntrega === 'mesa' ? 'Mesa ' + mesaInput : 'Para llevar';
-
-        var items = carrito.map(function (l) {
-            var sufijo = l.ingredientesQuitados.length > 0
-                ? ' (sin ' + l.ingredientesQuitados.join(', ') + ')'
-                : '';
-            return {
-                itemId: l.itemId,
-                nombre: l.nombre + sufijo,
-                cantidad: l.cantidad,
-                precioUnitario: l.precioUnitario
-            };
-        });
-
+    // Envía el pedido al servidor con los items recibidos (ya validados/confirmados por el usuario)
+    function enviarPedido(mesaTexto, items) {
         fetch('/Operaciones/Recepcion/Crear', {
             method: 'POST',
             headers: {
@@ -229,22 +209,213 @@
             .then(function (res) {
                 if (res.status === 401) { ir('/Operaciones/Auth/Login'); return null; }
                 if (!res.ok) {
-                    return res.text().then(function (t) {
-                        alert('No se pudo crear el pedido (' + res.status + '). ' + t);
+                    return res.json().then(function (data) {
+                        mostrarModalError(data.error || 'No se pudo crear el pedido.');
                     });
                 }
-                carrito = [];
-                document.getElementById('mesa-input').value = '';
-                renderCarrito();
-                
+                return res.json().then(function (resultado) {
+                    carrito = [];
+                    document.getElementById('mesa-input').value = '';
+                    renderCarrito();
+                });
             })
             .catch(function (err) {
                 console.error('Error creando pedido:', err);
-                alert('Error de red al crear el pedido.');
+                mostrarModalError('Error de red al crear el pedido.');
             });
     }
 
-    
+    function mostrarModalError(mensaje) {
+        var modal = document.getElementById('modal-confirmacion');
+        document.getElementById('modal-titulo').textContent = 'Error';
+        document.getElementById('modal-cuerpo').textContent = mensaje;
+        document.getElementById('modal-confirmar').style.display = 'none';
+        document.getElementById('modal-cancelar').textContent = 'Cerrar';
+        modal.style.display = 'flex';
+    }
+
+    function validarYMostrarModal(mesaTexto) {
+        // Pre-validación contra el menú actualizado
+        var itemsDisponibles = [];
+        var itemsProblema = [];
+
+        carrito.forEach(function (l) {
+            var itemMenu = menu.find(function (m) { return m.id === l.itemId; });
+            var sufijo = l.ingredientesQuitados.length > 0
+                ? ' (sin ' + l.ingredientesQuitados.join(', ') + ')'
+                : '';
+            var lineaPayload = {
+                itemId: l.itemId,
+                nombre: l.nombre + sufijo,
+                cantidad: l.cantidad,
+                precioUnitario: l.precioUnitario
+            };
+
+            if (!itemMenu || !itemMenu.activo) {
+                itemsProblema.push({ nombre: l.nombre, motivo: 'Ya no está disponible en el menú' });
+            } else if (itemMenu.agotado) {
+                itemsProblema.push({ nombre: l.nombre, motivo: 'Sin stock en este momento' });
+            } else {
+                itemsDisponibles.push(lineaPayload);
+            }
+        });
+
+        // Sin problemas: enviar directo
+        if (itemsProblema.length === 0) {
+            enviarPedido(mesaTexto, itemsDisponibles);
+            return;
+        }
+
+        // Todo el carrito está agotado/inactivo
+        if (itemsDisponibles.length === 0) {
+            var modal = document.getElementById('modal-confirmacion');
+            document.getElementById('modal-titulo').textContent = 'Sin productos disponibles';
+            document.getElementById('modal-cuerpo').innerHTML =
+                'Ninguno de los productos del pedido está disponible ahora mismo:<br><br>' +
+                itemsProblema.map(function (p) {
+                    return '• <b>' + p.nombre + '</b>: ' + p.motivo;
+                }).join('<br>') +
+                '<br><br>Revisá el menú y armá el pedido de nuevo.';
+            document.getElementById('modal-confirmar').style.display = 'none';
+            document.getElementById('modal-cancelar').textContent = 'Cerrar';
+            modal.style.display = 'flex';
+            return;
+        }
+
+        // Pedido parcial: mostrar qué se va y qué no, y dejar decidir
+        var modal = document.getElementById('modal-confirmacion');
+        document.getElementById('modal-titulo').textContent = 'Revisá el pedido antes de enviarlo';
+        document.getElementById('modal-cuerpo').innerHTML =
+            '<span style="color:#dc2626;font-weight:600;">❌ No disponibles (no se envían):</span><br>' +
+            itemsProblema.map(function (p) {
+                return '&nbsp;&nbsp;• <b>' + p.nombre + '</b>: ' + p.motivo;
+            }).join('<br>') +
+            '<br><br>' +
+            '<span style="color:#16a34a;font-weight:600;">✅ Disponibles (se envían a cocina):</span><br>' +
+            itemsDisponibles.map(function (p) {
+                return '&nbsp;&nbsp;• <b>' + p.nombre + '</b> ×' + p.cantidad;
+            }).join('<br>') +
+            '<br><br>¿Confirmás el pedido <b>solo con los productos disponibles</b>, o preferís cancelar y editar el carrito?';
+        document.getElementById('modal-confirmar').style.display = '';
+        document.getElementById('modal-confirmar').textContent = 'Confirmar y enviar';
+        document.getElementById('modal-cancelar').textContent = 'Cancelar y editar';
+
+        document.getElementById('modal-confirmar').onclick = function () {
+            cerrarModal();
+            enviarPedido(mesaTexto, itemsDisponibles);
+        };
+
+        modal.style.display = 'flex';
+    }
+
+    function crearPedido() {
+        var mesaInput = document.getElementById('mesa-input').value.trim();
+
+        if (tipoEntrega === 'mesa' && !mesaInput) {
+            alert('Escribe el número o nombre de la mesa.');
+            return;
+        }
+
+        var mesaTexto = tipoEntrega === 'mesa' ? 'Mesa ' + mesaInput : 'Para llevar';
+
+        // Refrescar el menú desde el servidor antes de validar,
+        // para detectar cambios de agotado/activo hechos desde otro dispositivo
+        fetch('/Operaciones/Recepcion/ObtenerMenu')
+            .then(function (res) {
+                if (res.status === 401) { ir('/Operaciones/Auth/Login'); return null; }
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                return res.json();
+            })
+            .then(function (menuActualizado) {
+                if (!menuActualizado) return;
+                menu = menuActualizado;
+                renderMenu();
+                validarYMostrarModal(mesaTexto);
+            })
+            .catch(function (err) {
+                console.error('Error refrescando menú:', err);
+                // Si falla el refresh, validar con el menú que tenemos en memoria
+                validarYMostrarModal(mesaTexto);
+            });
+    }
+
+    function validarYMostrarModal(mesaTexto) {
+        var itemsDisponibles = [];
+        var itemsProblema = [];
+
+        carrito.forEach(function (l) {
+            var itemMenu = menu.find(function (m) { return m.id === l.itemId; });
+            var sufijo = l.ingredientesQuitados.length > 0
+                ? ' (sin ' + l.ingredientesQuitados.join(', ') + ')'
+                : '';
+            var lineaPayload = {
+                itemId: l.itemId,
+                nombre: l.nombre + sufijo,
+                cantidad: l.cantidad,
+                precioUnitario: l.precioUnitario
+            };
+
+            if (!itemMenu || !itemMenu.activo) {
+                itemsProblema.push({ nombre: l.nombre, motivo: 'Ya no está disponible en el menú' });
+            } else if (itemMenu.agotado) {
+                itemsProblema.push({ nombre: l.nombre, motivo: 'Sin stock en este momento' });
+            } else {
+                itemsDisponibles.push(lineaPayload);
+            }
+        });
+
+        // Sin problemas: enviar directo
+        if (itemsProblema.length === 0) {
+            enviarPedido(mesaTexto, itemsDisponibles);
+            return;
+        }
+
+        // Todo el carrito está agotado/inactivo: modal de error sin opción de confirmar
+        if (itemsDisponibles.length === 0) {
+            document.getElementById('modal-titulo').textContent = 'Sin productos disponibles';
+            document.getElementById('modal-cuerpo').innerHTML =
+                'Ninguno de los productos del pedido está disponible ahora mismo:<br><br>' +
+                itemsProblema.map(function (p) {
+                    return '• <b>' + p.nombre + '</b>: ' + p.motivo;
+                }).join('<br>') +
+                '<br><br>Revisá el menú y armá el pedido de nuevo.';
+            document.getElementById('modal-confirmar').style.display = 'none';
+            document.getElementById('modal-cancelar').textContent = 'Cerrar';
+            document.getElementById('modal-confirmacion').style.display = 'flex';
+            return;
+        }
+
+        // Pedido parcial: mostrar qué se va y qué no, dejar decidir
+        document.getElementById('modal-titulo').textContent = 'Revisá el pedido antes de enviarlo';
+        document.getElementById('modal-cuerpo').innerHTML =
+            '<span style="color:#dc2626;font-weight:600;">❌ No disponibles (no se envían):</span><br>' +
+            itemsProblema.map(function (p) {
+                return '&nbsp;&nbsp;• <b>' + p.nombre + '</b>: ' + p.motivo;
+            }).join('<br>') +
+            '<br><br>' +
+            '<span style="color:#16a34a;font-weight:600;">✅ Disponibles (se envían a cocina):</span><br>' +
+            itemsDisponibles.map(function (p) {
+                return '&nbsp;&nbsp;• <b>' + p.nombre + '</b> ×' + p.cantidad;
+            }).join('<br>') +
+            '<br><br>¿Confirmás el pedido <b>solo con los productos disponibles</b>, o preferís cancelar y editar el carrito?';
+        document.getElementById('modal-confirmar').style.display = '';
+        document.getElementById('modal-confirmar').textContent = 'Confirmar y enviar';
+        document.getElementById('modal-cancelar').textContent = 'Cancelar y editar';
+
+        document.getElementById('modal-confirmar').onclick = function () {
+            cerrarModal();
+            enviarPedido(mesaTexto, itemsDisponibles);
+        };
+
+        document.getElementById('modal-confirmacion').style.display = 'flex';
+    }
+
+    function cerrarModal() {
+        document.getElementById('modal-confirmacion').style.display = 'none';
+        document.getElementById('modal-confirmar').onclick = null;
+    }
+
+
 
     function cargarPedidos() {
         fetch('/Operaciones/Recepcion/ObtenerPedidos')
@@ -315,7 +486,7 @@
                     alert('No se pudo marcar como pagado (código ' + res.status + ').');
                     return;
                 }
-                
+
             })
             .catch(function (err) {
                 console.error('Error marcando pagado:', err);
@@ -323,7 +494,7 @@
             });
     }
 
-    
+
 
     var connection = new signalR.HubConnectionBuilder()
         .withUrl('/hubs/pedidos')
@@ -363,7 +534,7 @@
             });
     }
 
-    
+
 
     document.addEventListener('click', function (e) {
         var t = e.target;
@@ -404,6 +575,10 @@
             cargarPedidos();
             return;
         }
+        if (t.matches('#modal-cancelar') || t.matches('#modal-overlay')) {
+            cerrarModal();
+            return;
+        }
     });
 
     document.addEventListener('change', function (e) {
@@ -413,7 +588,7 @@
         }
     });
 
-    
+
 
     setTipoEntrega('mesa');
     cambiarTab('activos');

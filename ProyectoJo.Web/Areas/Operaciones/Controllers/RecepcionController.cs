@@ -41,7 +41,6 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 
 		// POST /Operaciones/Recepcion/Crear
 		[HttpPost]
-		[IgnoreAntiforgeryToken]
 		public async Task<IActionResult> Crear([FromBody] Pedido pedido)
 		{
 			if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -51,7 +50,6 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 
 		// POST /Operaciones/Recepcion/Pagar
 		[HttpPost]
-		[IgnoreAntiforgeryToken]
 		public async Task<IActionResult> Pagar(int id)
 		{
 			try

@@ -29,7 +29,6 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 
 		// POST /Operaciones/Cocina/CambiarEstado
 		[HttpPost]
-		[IgnoreAntiforgeryToken]
 		public async Task<IActionResult> CambiarEstado(int id, string nuevoEstado)
 		{
 			if (!Enum.TryParse<EstadoPedido>(nuevoEstado, ignoreCase: true, out var estado))

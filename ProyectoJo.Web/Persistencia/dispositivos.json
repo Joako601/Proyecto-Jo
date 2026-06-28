@@ -310,5 +310,35 @@
     "Estacion": "Cocina",
     "Nombre": null,
     "FechaRegistro": "2026-06-28T06:59:38.9014793Z"
+  },
+  {
+    "Token": "swTMSqMpFby61loSKYVt9OOuNPZ8MQHeGQ4BVD26hfU",
+    "Estacion": "Recepcion",
+    "Nombre": null,
+    "FechaRegistro": "2026-06-28T19:56:34.0899624Z"
+  },
+  {
+    "Token": "UJCh1UkyDYafvbcXDdv46arUNYCbDz0lTIYAa9AFKA",
+    "Estacion": "Cocina",
+    "Nombre": null,
+    "FechaRegistro": "2026-06-28T19:56:50.8045725Z"
+  },
+  {
+    "Token": "o3b1ZOrsEmjYWXTg4x3UbDYobqSqCikjZNUjMHOXo",
+    "Estacion": "Recepcion",
+    "Nombre": null,
+    "FechaRegistro": "2026-06-28T19:57:31.7635933Z"
+  },
+  {
+    "Token": "I3SbB20jnSlXq8Qzjbj9WpbxFLydCrZLXKKg4rTp8",
+    "Estacion": "Cocina",
+    "Nombre": null,
+    "FechaRegistro": "2026-06-28T20:00:47.6469081Z"
+  },
+  {
+    "Token": "SLBbqcTFx6zrHflfR2VbWIVctzCaGkRCJ2PhTxy8llc",
+    "Estacion": "Recepcion",
+    "Nombre": null,
+    "FechaRegistro": "2026-06-28T20:01:00.9000018Z"
   }
 ]

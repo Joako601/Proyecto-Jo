@@ -1,7 +1,10 @@
 ﻿(function () {
     'use strict';
 
- 
+    function obtenerTokenAntiforgery() {
+        var meta = document.querySelector('meta[name="request-verification-token"]');
+        return meta ? meta.getAttribute('content') : '';
+    }
 
     function formatHora(fechaIso) {
         var d = new Date(fechaIso);
@@ -31,8 +34,6 @@
         return div;
     }
 
-    
-
     function setEstadoConexion(estado) {
         var el = document.getElementById('estado-conexion');
         if (!el) return;
@@ -43,8 +44,6 @@
         };
         el.textContent = textos[estado] || '';
     }
-
-   
 
     function renderPedidos(pedidos) {
         var colPendiente = document.getElementById('col-pendiente');
@@ -69,8 +68,6 @@
         }
     }
 
-    
-
     function cargarPedidos() {
         fetch('/Operaciones/Cocina/ObtenerPedidos')
             .then(function (res) {
@@ -93,12 +90,13 @@
             });
     }
 
-    
-
     function marcarPreparado(id) {
         fetch('/Operaciones/Cocina/CambiarEstado', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'RequestVerificationToken': obtenerTokenAntiforgery()
+            },
             body: 'id=' + id + '&nuevoEstado=Preparado'
         })
             .then(function (res) {
@@ -109,23 +107,18 @@
                 if (!res.ok) {
                     alert('No se pudo actualizar el pedido. Código: ' + res.status);
                 }
-                
             })
             .catch(function () {
                 alert('Error de red al actualizar el pedido.');
             });
     }
 
-    
-
     var connection = new signalR.HubConnectionBuilder()
         .withUrl('/hubs/pedidos')
         .withAutomaticReconnect()
         .build();
 
-    
     connection.on('PedidoNuevo', function (pedido) {
-        
         cargarPedidos();
     });
 
@@ -139,7 +132,7 @@
 
     connection.onreconnected(function () {
         setEstadoConexion('conectado');
-        cargarPedidos(); 
+        cargarPedidos();
     });
 
     connection.onclose(function () {
@@ -158,20 +151,17 @@
             });
     }
 
-   
     document.addEventListener('click', function (e) {
         if (e.target && e.target.matches('.pedido__accion')) {
             marcarPreparado(e.target.dataset.id);
         }
-       
+
         if (e.target && e.target.matches('#btn-refrescar')) {
             cargarPedidos();
         }
     });
 
-   
-
-    cargarPedidos();   
-    iniciarSignalR();  
+    cargarPedidos();
+    iniciarSignalR();
 
 })();

@@ -467,5 +467,21 @@
     "Estado": "Pagado",
     "FechaCreacion": "2026-06-28T06:02:16.9037888Z",
     "Total": 25
+  },
+  {
+    "Id": 29,
+    "Mesa": "Mesa 34",
+    "Items": [
+      {
+        "ItemId": 1,
+        "Nombre": "Panucho de Pavo",
+        "Cantidad": 2,
+        "PrecioUnitario": 25,
+        "Subtotal": 50
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-28T19:56:42.5051513Z",
+    "Total": 50
   }
 ]

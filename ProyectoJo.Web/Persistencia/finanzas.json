@@ -286,5 +286,13 @@
     "Categoria": "Ventas",
     "Descripcion": "Pedido #28 \u2014 Mesa Mesa 1",
     "Fecha": "2026-06-28T06:02:39.540541Z"
+  },
+  {
+    "Id": 37,
+    "Monto": 50,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #29 \u2014 Mesa Mesa 34",
+    "Fecha": "2026-06-28T20:01:05.1932008Z"
   }
 ]

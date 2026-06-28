@@ -198,5 +198,15 @@
     "Entidad": "Finanza #36",
     "DetalleAntes": null,
     "DetalleDespues": "Ingreso - Ventas - $25"
+  },
+  {
+    "Id": 21,
+    "FechaHora": "2026-06-28T14:01:05.2910594-06:00",
+    "Usuario": "Sistema (Pedido)",
+    "Modulo": "Finanzas",
+    "Accion": 0,
+    "Entidad": "Finanza #37",
+    "DetalleAntes": null,
+    "DetalleDespues": "Ingreso - Ventas - $50"
   }
 ]

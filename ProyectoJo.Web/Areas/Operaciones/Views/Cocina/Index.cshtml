@@ -1,11 +1,15 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Antiforgery
+@inject IAntiforgery Antiforgery
+@{
     Layout = null;
+    var tokenSet = Antiforgery.GetAndStoreTokens(Context);
 }
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="request-verification-token" content="@tokenSet.RequestToken">
     <link rel="manifest" href="~/manifest.json">
     <title>Cocina — Proyecto Jo'</title>
     <link rel="stylesheet" href="~/css/operaciones/cocina.css" asp-append-version="true">

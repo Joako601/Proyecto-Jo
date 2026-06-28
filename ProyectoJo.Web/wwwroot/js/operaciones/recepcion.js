@@ -1,6 +1,11 @@
 ﻿(function () {
     'use strict';
 
+    function obtenerTokenAntiforgery() {
+        var meta = document.querySelector('meta[name="request-verification-token"]');
+        return meta ? meta.getAttribute('content') : '';
+    }
+
     var menu = [];
     var carrito = [];
     var tipoEntrega = 'mesa';
@@ -215,7 +220,10 @@
 
         fetch('/Operaciones/Recepcion/Crear', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': obtenerTokenAntiforgery()
+            },
             body: JSON.stringify({ mesa: mesaTexto, items: items })
         })
             .then(function (res) {
@@ -295,7 +303,10 @@
     function marcarPagado(id) {
         fetch('/Operaciones/Recepcion/Pagar', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'RequestVerificationToken': obtenerTokenAntiforgery()
+            },
             body: 'id=' + id
         })
             .then(function (res) {

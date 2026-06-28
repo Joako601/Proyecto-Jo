@@ -8,6 +8,7 @@ namespace ProyectoJo.Infrastructure.Persistence
 	public class JsonEmpleadoRepository : IEmpleadoRepository
 	{
 		private readonly string _rutaArchivo;
+		private static readonly SemaphoreSlim _lock = new(1, 1);
 		private static readonly JsonSerializerOptions _options = new()
 		{
 			Converters = { new JsonStringEnumConverter() }
@@ -20,9 +21,17 @@ namespace ProyectoJo.Infrastructure.Persistence
 
 		public async Task<List<Empleado>> ObtenerTodosAsync()
 		{
-			if (!File.Exists(_rutaArchivo)) return new List<Empleado>();
-			var json = await File.ReadAllTextAsync(_rutaArchivo);
-			return JsonSerializer.Deserialize<List<Empleado>>(json, _options) ?? new List<Empleado>();
+			await _lock.WaitAsync();
+			try
+			{
+				if (!File.Exists(_rutaArchivo)) return new List<Empleado>();
+				var json = await File.ReadAllTextAsync(_rutaArchivo);
+				return JsonSerializer.Deserialize<List<Empleado>>(json, _options) ?? new List<Empleado>();
+			}
+			finally
+			{
+				_lock.Release();
+			}
 		}
 
 		public async Task<Empleado?> ObtenerPorIdAsync(int id)

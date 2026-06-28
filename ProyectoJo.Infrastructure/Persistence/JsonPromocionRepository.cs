@@ -7,55 +7,79 @@ namespace ProyectoJo.Infrastructure.Persistence
 	public class JsonPromocionRepository : IPromocionRepository
 	{
 		private readonly string _rutaArchivo;
+		private static readonly object _lock = new();
 
 		public JsonPromocionRepository(string rutaArchivo)
 		{
 			_rutaArchivo = rutaArchivo;
 		}
 
-		public IEnumerable<Promocion> ObtenerTodas() => LeerJson();
+		public IEnumerable<Promocion> ObtenerTodas()
+		{
+			lock (_lock)
+			{
+				return LeerSinCandado();
+			}
+		}
 
-		public Promocion? ObtenerPorId(int id) =>
-			LeerJson().FirstOrDefault(p => p.Id == id);
+		public Promocion? ObtenerPorId(int id)
+		{
+			lock (_lock)
+			{
+				return LeerSinCandado().FirstOrDefault(p => p.Id == id);
+			}
+		}
 
 		public void Agregar(Promocion promocion)
 		{
-			var promociones = LeerJson();
-			promociones.Add(promocion);
-			Guardar(promociones);
+			lock (_lock)
+			{
+				var promociones = LeerSinCandado();
+				promociones.Add(promocion);
+				PersistirSinCandado(promociones);
+			}
 		}
 
 		public void Editar(Promocion promocion)
 		{
-			var promociones = LeerJson();
-			var index = promociones.FindIndex(p => p.Id == promocion.Id);
-			if (index >= 0) promociones[index] = promocion;
-			Guardar(promociones);
+			lock (_lock)
+			{
+				var promociones = LeerSinCandado();
+				var index = promociones.FindIndex(p => p.Id == promocion.Id);
+				if (index >= 0) promociones[index] = promocion;
+				PersistirSinCandado(promociones);
+			}
 		}
 
 		public void Eliminar(int id)
 		{
-			var promociones = LeerJson();
-			promociones.RemoveAll(p => p.Id == id);
-			Guardar(promociones);
+			lock (_lock)
+			{
+				var promociones = LeerSinCandado();
+				promociones.RemoveAll(p => p.Id == id);
+				PersistirSinCandado(promociones);
+			}
 		}
 
 		public void ToggleActiva(int id)
 		{
-			var promociones = LeerJson();
-			var promo = promociones.FirstOrDefault(p => p.Id == id);
-			if (promo != null) promo.Activa = !promo.Activa;
-			Guardar(promociones);
+			lock (_lock)
+			{
+				var promociones = LeerSinCandado();
+				var promo = promociones.FirstOrDefault(p => p.Id == id);
+				if (promo != null) promo.Activa = !promo.Activa;
+				PersistirSinCandado(promociones);
+			}
 		}
 
-		private List<Promocion> LeerJson()
+		private List<Promocion> LeerSinCandado()
 		{
 			if (!File.Exists(_rutaArchivo)) return new List<Promocion>();
 			var json = File.ReadAllText(_rutaArchivo);
 			return JsonSerializer.Deserialize<List<Promocion>>(json) ?? new List<Promocion>();
 		}
 
-		private void Guardar(List<Promocion> promociones)
+		private void PersistirSinCandado(List<Promocion> promociones)
 		{
 			var json = JsonSerializer.Serialize(promociones, new JsonSerializerOptions { WriteIndented = true });
 			File.WriteAllText(_rutaArchivo, json);

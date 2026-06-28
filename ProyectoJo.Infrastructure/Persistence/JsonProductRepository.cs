@@ -7,61 +7,106 @@ namespace ProyectoJo.Infrastructure.Persistence
 	public class JsonProductRepository : IProductoRepository
 	{
 		private readonly string _rutaArchivo;
+		private static readonly object _lock = new();
 
 		public JsonProductRepository(string rutaArchivo)
 		{
 			_rutaArchivo = rutaArchivo;
 		}
 
-		public IEnumerable<Item> ObtenerTodos() => LeerJson();
+		public IEnumerable<Item> ObtenerTodos()
+		{
+			lock (_lock)
+			{
+				return LeerSinCandado();
+			}
+		}
 
-		public IEnumerable<Item> ObtenerPorCategoria(string categoria) =>
-			LeerJson().Where(i => i.Categoria == categoria);
+		public IEnumerable<Item> ObtenerPorCategoria(string categoria)
+		{
+			lock (_lock)
+			{
+				return LeerSinCandado().Where(i => i.Categoria == categoria).ToList();
+			}
+		}
 
-		public List<Item> ObtenerMenu() => LeerJson();
+		public List<Item> ObtenerMenu()
+		{
+			lock (_lock)
+			{
+				return LeerSinCandado();
+			}
+		}
 
 		public void GuardarMenu(List<Item> menu)
 		{
-			var json = JsonSerializer.Serialize(menu, new JsonSerializerOptions { WriteIndented = true });
-			File.WriteAllText(_rutaArchivo, json);
+			lock (_lock)
+			{
+				PersistirSinCandado(menu);
+			}
 		}
 
 		public void AgregarItem(Item item)
 		{
-			var menu = LeerJson();
-			menu.Add(item);
-			var json = JsonSerializer.Serialize(menu, new JsonSerializerOptions { WriteIndented = true });
-			File.WriteAllText(_rutaArchivo, json);
+			lock (_lock)
+			{
+				var menu = LeerSinCandado();
+				menu.Add(item);
+				PersistirSinCandado(menu);
+			}
 		}
 
-		private List<Item> LeerJson()
+		public Item? ObtenerPorId(int id)
 		{
-			var json = File.ReadAllText(_rutaArchivo);
-			return JsonSerializer.Deserialize<List<Item>>(json) ?? new List<Item>();
+			lock (_lock)
+			{
+				return LeerSinCandado().FirstOrDefault(i => i.Id == id);
+			}
 		}
-		public Item? ObtenerPorId(int id) =>
-			LeerJson().FirstOrDefault(i => i.Id == id);
 
 		public void Eliminar(int id)
 		{
-			var menu = LeerJson();
-			menu.RemoveAll(i => i.Id == id);
-			GuardarMenu(menu);
+			lock (_lock)
+			{
+				var menu = LeerSinCandado();
+				menu.RemoveAll(i => i.Id == id);
+				PersistirSinCandado(menu);
+			}
 		}
+
 		public void ToggleActivo(int id)
 		{
-			var menu = LeerJson();
-			var item = menu.FirstOrDefault(i => i.Id == id);
-			if (item != null) item.Activo = !item.Activo;
-			GuardarMenu(menu);
+			lock (_lock)
+			{
+				var menu = LeerSinCandado();
+				var item = menu.FirstOrDefault(i => i.Id == id);
+				if (item != null) item.Activo = !item.Activo;
+				PersistirSinCandado(menu);
+			}
 		}
 
 		public void ToggleAgotado(int id)
 		{
-			var menu = LeerJson();
-			var item = menu.FirstOrDefault(i => i.Id == id);
-			if (item != null) item.Agotado = !item.Agotado;
-			GuardarMenu(menu);
+			lock (_lock)
+			{
+				var menu = LeerSinCandado();
+				var item = menu.FirstOrDefault(i => i.Id == id);
+				if (item != null) item.Agotado = !item.Agotado;
+				PersistirSinCandado(menu);
+			}
+		}
+
+		private List<Item> LeerSinCandado()
+		{
+			if (!File.Exists(_rutaArchivo)) return new List<Item>();
+			var json = File.ReadAllText(_rutaArchivo);
+			return JsonSerializer.Deserialize<List<Item>>(json) ?? new List<Item>();
+		}
+
+		private void PersistirSinCandado(List<Item> menu)
+		{
+			var json = JsonSerializer.Serialize(menu, new JsonSerializerOptions { WriteIndented = true });
+			File.WriteAllText(_rutaArchivo, json);
 		}
 	}
 }

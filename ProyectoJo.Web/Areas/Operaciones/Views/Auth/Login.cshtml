@@ -3,6 +3,7 @@
     ViewData["Title"] = "Ingresar PIN";
     var estacion = ViewBag.Estacion?.ToString() ?? "";
     var esCocina = estacion == "Cocina";
+    var bloqueado = ViewBag.Bloqueado is bool b && b;
 }
 
 <div class="d-flex justify-content-center align-items-center" style="min-height: 90vh;">
@@ -35,7 +36,7 @@
                     <span class="pin-dot border rounded-circle" style="width:18px;height:18px;display:inline-block;"></span>
                 </div>
 
-                <div class="row g-2">
+                <div class="row g-2 @(bloqueado ? "tecla-pin-bloqueada" : "")" id="teclaPinGrid">
                     @for (int n = 1; n <= 9; n++)
                     {
                         <div class="col-4">
@@ -62,8 +63,15 @@
 </div>
 
 @section Scripts {
+    <style>
+        .tecla-pin-bloqueada {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+    </style>
     <script>
         const MAX_PIN = 4;
+        const bloqueado = @Html.Raw(bloqueado ? "true" : "false");
         let pin = "";
 
         function actualizarPuntos() {
@@ -74,6 +82,7 @@
 
         document.querySelectorAll(".tecla-pin").forEach(btn => {
             btn.addEventListener("click", () => {
+                if (bloqueado) return;
                 if (pin.length >= MAX_PIN) return;
                 pin += btn.dataset.num;
                 actualizarPuntos();
@@ -85,6 +94,7 @@
         });
 
         document.getElementById("btnBorrar").addEventListener("click", () => {
+            if (bloqueado) return;
             pin = pin.slice(0, -1);
             actualizarPuntos();
         });

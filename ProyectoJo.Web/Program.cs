@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.RateLimiting;
 using ProyectoJo.Application.Ports.In;
 using ProyectoJo.Application.UseCases;
 using ProyectoJo.Application.Ports.Out;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.FileProviders;
 using Serilog;
 using ProyectoJo.Web.Hubs;
 using ProyectoJo.Web.Realtime;
+using System.Threading.RateLimiting;
 
 Log.Logger = new LoggerConfiguration()
 	.MinimumLevel.Information()
@@ -70,6 +72,48 @@ builder.Services.AddScoped<IPedidoNotificador, SignalRPedidoNotificador>();
 
 builder.Services.AddSignalR();
 
+
+builder.Services.AddRateLimiter(options =>
+{
+	options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+	options.OnRejected = (context, cancellationToken) =>
+	{
+		var path = context.HttpContext.Request.Path.Value ?? "";
+
+
+		var destino = path.Contains("/Operaciones/Auth/Login", StringComparison.OrdinalIgnoreCase)
+			? "/Operaciones/Auth/Login?bloqueado=true"
+			: "/Admin/Login?bloqueado=true";
+
+
+		context.HttpContext.Response.StatusCode = StatusCodes.Status302Found;
+		context.HttpContext.Response.Headers.Location = destino;
+
+		return ValueTask.CompletedTask;
+	};
+
+	options.AddPolicy("login-pin", httpContext =>
+		RateLimitPartition.GetFixedWindowLimiter(
+			partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "desconocido",
+			factory: _ => new FixedWindowRateLimiterOptions
+			{
+				PermitLimit = 5,
+				Window = TimeSpan.FromMinutes(1),
+				QueueLimit = 0
+			}));
+
+	options.AddPolicy("login-admin", httpContext =>
+		RateLimitPartition.GetFixedWindowLimiter(
+			partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "desconocido",
+			factory: _ => new FixedWindowRateLimiterOptions
+			{
+				PermitLimit = 8,
+				Window = TimeSpan.FromMinutes(1),
+				QueueLimit = 0
+			}));
+});
+
 builder.Services.AddControllersWithViews(options =>
 {
 	options.Filters.Add(new Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute());
@@ -121,6 +165,8 @@ else
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+
+app.UseRateLimiter();
 
 app.UseAuthentication();
 app.UseAuthorization();

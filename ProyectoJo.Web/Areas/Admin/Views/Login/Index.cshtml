@@ -5,6 +5,12 @@
 
 <div class="container py-5">
     <h2>Inicio de Sesión Administrativo</h2>
+
+    @if (ViewBag.Error is string error)
+    {
+        <div class="alert alert-danger py-2">@error</div>
+    }
+
     <form asp-area="Admin" asp-controller="Login" asp-action="Index" method="post">
         <input type="text" name="usuario" placeholder="Usuario" class="form-control mb-2" required />
         <input type="password" name="contrasena" placeholder="Contraseña" class="form-control mb-2" required />

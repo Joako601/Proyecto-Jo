@@ -292,5 +292,23 @@
     "Estacion": "Recepcion",
     "Nombre": null,
     "FechaRegistro": "2026-06-28T06:02:31.0034807Z"
+  },
+  {
+    "Token": "5c0SNzP9ybFjGpxRkjooViNFEHUUyQMeNN0UqHZk88",
+    "Estacion": "Recepcion",
+    "Nombre": null,
+    "FechaRegistro": "2026-06-28T06:52:20.7240041Z"
+  },
+  {
+    "Token": "reOwmVolrG2qA4wVjRMtIaGJ4v1dzY6oz9h0iijH3XI",
+    "Estacion": "Recepcion",
+    "Nombre": null,
+    "FechaRegistro": "2026-06-28T06:59:16.1372233Z"
+  },
+  {
+    "Token": "6k4JvoxMwN074YZbFkUXVI45qs0VE0A0Pxihiqne0",
+    "Estacion": "Cocina",
+    "Nombre": null,
+    "FechaRegistro": "2026-06-28T06:59:38.9014793Z"
   }
 ]

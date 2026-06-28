@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using ProyectoJo.Application.Ports.In;
 using ProyectoJo.Domain.Entities;
 using System.Security.Claims;
@@ -19,13 +20,17 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 			_dispositivoService = dispositivoService;
 		}
 
-		public async Task<IActionResult> Login()
+		public async Task<IActionResult> Login(bool bloqueado = false)
 		{
 			var token = Request.Cookies["Jo.DispositivoToken"];
 			var dispositivo = token is null ? null : await _dispositivoService.ReconocerAsync(token);
 
 			if (dispositivo is null)
 				return RedirectToAction("Emparejar");
+
+			ViewBag.Bloqueado = bloqueado;
+			if (bloqueado)
+				ViewBag.Error = "Demasiados intentos. Espera un momento antes de volver a intentar.";
 
 			ViewBag.Estacion = dispositivo.Estacion;
 			ViewBag.NombreDispositivo = dispositivo.Nombre;
@@ -34,6 +39,7 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 
 		// POST /Operaciones/Auth/Login
 		[HttpPost]
+		[EnableRateLimiting("login-pin")]
 		public async Task<IActionResult> Login(string pin)
 		{
 			var token = Request.Cookies["Jo.DispositivoToken"];

@@ -57,7 +57,10 @@ builder.Services.AddScoped<ICierreCajaService, CierreCajaUseCase>();
 builder.Services.AddScoped<IAuditoriaRepository>(_ => new JsonAuditoriaRepository(rutaAuditoria));
 builder.Services.AddScoped<IAuditoriaService, AuditoriaUseCase>();
 
-builder.Services.AddControllersWithViews()
+builder.Services.AddControllersWithViews(options =>
+{
+	options.Filters.Add(new Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute());
+})
 	.AddJsonOptions(options =>
 	{
 		options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());

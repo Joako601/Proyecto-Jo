@@ -10,6 +10,8 @@
 # Snapshots del proyecto
 *.zip
 
+Logs/
+
 # Configuración local de Visual Studio por desarrollador
 *.user
 *.csproj.user

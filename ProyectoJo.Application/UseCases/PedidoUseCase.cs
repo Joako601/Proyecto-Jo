@@ -2,6 +2,7 @@
 using ProyectoJo.Application.Ports.Out;
 using ProyectoJo.Domain.Entities;
 using ProyectoJo.Application.DTOs;
+using Microsoft.Extensions.Logging;
 
 namespace ProyectoJo.Application.UseCases
 {
@@ -9,11 +10,13 @@ namespace ProyectoJo.Application.UseCases
 	{
 		private readonly IPedidoRepository _repository;
 		private readonly IFinanzaService _finanzaService;
+		private readonly ILogger<PedidoUseCase> _logger;
 
-		public PedidoUseCase(IPedidoRepository repository, IFinanzaService finanzaService)
+		public PedidoUseCase(IPedidoRepository repository, IFinanzaService finanzaService, ILogger<PedidoUseCase> logger)
 		{
 			_repository = repository;
 			_finanzaService = finanzaService;
+			_logger = logger;
 		}
 
 		public async Task<List<Pedido>> ObtenerPendientesAsync()
@@ -58,7 +61,7 @@ namespace ProyectoJo.Application.UseCases
 				}
 				catch (Exception ex)
 				{
-					Console.Error.WriteLine($"[Pedido #{id}] Error registrando finanza: {ex.Message}");
+					_logger.LogError(ex, "Error registrando finanza para el Pedido #{PedidoId}", id);
 				}
 			}
 

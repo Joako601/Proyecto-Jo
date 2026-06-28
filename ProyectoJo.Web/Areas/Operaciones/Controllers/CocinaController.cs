@@ -17,11 +17,9 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 		}
 
 		// GET /Operaciones/Cocina
-		
 		public IActionResult Index() => View();
 
 		// GET /Operaciones/Cocina/ObtenerPedidos
-	
 		[HttpGet]
 		public async Task<IActionResult> ObtenerPedidos()
 		{
@@ -31,6 +29,7 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 
 		// POST /Operaciones/Cocina/CambiarEstado
 		[HttpPost]
+		[IgnoreAntiforgeryToken]
 		public async Task<IActionResult> CambiarEstado(int id, string nuevoEstado)
 		{
 			if (!Enum.TryParse<EstadoPedido>(nuevoEstado, ignoreCase: true, out var estado))
@@ -40,7 +39,5 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 			if (actualizado is null) return NotFound($"Pedido #{id} no encontrado.");
 			return Json(actualizado);
 		}
-
-
 	}
 }

@@ -18,5 +18,115 @@
     "Entidad": "Finanza #31",
     "DetalleAntes": null,
     "DetalleDespues": "Ingreso - Ventas - $25"
+  },
+  {
+    "Id": 3,
+    "FechaHora": "2026-06-27T19:37:10.9210266-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Finanzas",
+    "Accion": 0,
+    "Entidad": "Finanza #32",
+    "DetalleAntes": null,
+    "DetalleDespues": "Egreso - Insumos - $5"
+  },
+  {
+    "Id": 4,
+    "FechaHora": "2026-06-27T19:38:00.7694731-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #2",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
+  },
+  {
+    "Id": 5,
+    "FechaHora": "2026-06-27T19:38:02.6590205-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #2",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
+  },
+  {
+    "Id": 6,
+    "FechaHora": "2026-06-27T19:38:08.0623063-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #2",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
+  },
+  {
+    "Id": 7,
+    "FechaHora": "2026-06-27T19:38:08.8870408-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #2",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
+  },
+  {
+    "Id": 8,
+    "FechaHora": "2026-06-27T19:38:20.0513445-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #2 - panuchos",
+    "DetalleAntes": "dada - MontoFijo 5",
+    "DetalleDespues": "panuchos - MontoFijo 5"
+  },
+  {
+    "Id": 9,
+    "FechaHora": "2026-06-27T19:39:22.9475068-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Productos",
+    "Accion": 1,
+    "Entidad": "Producto #1",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activo/Inactivo"
+  },
+  {
+    "Id": 10,
+    "FechaHora": "2026-06-27T19:39:27.0553386-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Productos",
+    "Accion": 1,
+    "Entidad": "Producto #1",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activo/Inactivo"
+  },
+  {
+    "Id": 11,
+    "FechaHora": "2026-06-27T20:26:52.028477-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Finanzas",
+    "Accion": 0,
+    "Entidad": "Finanza #33",
+    "DetalleAntes": null,
+    "DetalleDespues": "Ingreso - Insumos - $1"
+  },
+  {
+    "Id": 12,
+    "FechaHora": "2026-06-27T20:31:32.2005952-06:00",
+    "Usuario": "Sistema (Pedido)",
+    "Modulo": "Finanzas",
+    "Accion": 0,
+    "Entidad": "Finanza #34",
+    "DetalleAntes": null,
+    "DetalleDespues": "Ingreso - Ventas - $25"
+  },
+  {
+    "Id": 13,
+    "FechaHora": "2026-06-27T20:31:54.6693305-06:00",
+    "Usuario": "Sistema (Pedido)",
+    "Modulo": "Finanzas",
+    "Accion": 0,
+    "Entidad": "Finanza #35",
+    "DetalleAntes": null,
+    "DetalleDespues": "Ingreso - Ventas - $30"
   }
 ]

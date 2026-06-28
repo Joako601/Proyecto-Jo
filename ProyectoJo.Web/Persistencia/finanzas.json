@@ -246,5 +246,37 @@
     "Categoria": "Ventas",
     "Descripcion": "Pedido #25 \u2014 Mesa Mesa 1",
     "Fecha": "2026-06-28T01:23:19.9623163Z"
+  },
+  {
+    "Id": 32,
+    "Monto": 5,
+    "Tipo": 1,
+    "Categoria": "Insumos",
+    "Descripcion": "prueba",
+    "Fecha": "2026-06-27T00:00:00"
+  },
+  {
+    "Id": 33,
+    "Monto": 1,
+    "Tipo": 0,
+    "Categoria": "Insumos",
+    "Descripcion": "prueba",
+    "Fecha": "2026-06-27T00:00:00"
+  },
+  {
+    "Id": 34,
+    "Monto": 25,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #26 \u2014 Mesa Mesa 1",
+    "Fecha": "2026-06-28T02:31:32.0929097Z"
+  },
+  {
+    "Id": 35,
+    "Monto": 30,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #27 \u2014 Mesa Mesa 1",
+    "Fecha": "2026-06-28T02:31:54.6613522Z"
   }
 ]

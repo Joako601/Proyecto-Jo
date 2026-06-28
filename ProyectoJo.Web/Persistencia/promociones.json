@@ -13,7 +13,7 @@
   },
   {
     "Id": 2,
-    "Titulo": "dada",
+    "Titulo": "panuchos",
     "Descripcion": "dada",
     "ImagenUrl": null,
     "TipoDescuento": 2,
@@ -21,7 +21,7 @@
     "ItemIds": [
       1
     ],
-    "Activa": false,
+    "Activa": true,
     "FechaInicio": null,
     "FechaFin": null
   }

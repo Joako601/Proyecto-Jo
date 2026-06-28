@@ -11,11 +11,13 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 	{
 		private readonly IPedidoService _pedidoService;
 		private readonly IProductoService _productoService;
+		private readonly ILogger<RecepcionController> _logger;
 
-		public RecepcionController(IPedidoService pedidoService, IProductoService productoService)
+		public RecepcionController(IPedidoService pedidoService, IProductoService productoService, ILogger<RecepcionController> logger)
 		{
 			_pedidoService = pedidoService;
 			_productoService = productoService;
+			_logger = logger;
 		}
 
 		// GET /Operaciones/Recepcion
@@ -39,6 +41,7 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 
 		// POST /Operaciones/Recepcion/Crear
 		[HttpPost]
+		[IgnoreAntiforgeryToken]
 		public async Task<IActionResult> Crear([FromBody] Pedido pedido)
 		{
 			if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -48,6 +51,7 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 
 		// POST /Operaciones/Recepcion/Pagar
 		[HttpPost]
+		[IgnoreAntiforgeryToken]
 		public async Task<IActionResult> Pagar(int id)
 		{
 			try
@@ -58,7 +62,8 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 			}
 			catch (Exception ex)
 			{
-				return StatusCode(500, $"Error interno al pagar pedido #{id}: {ex.Message}");
+				_logger.LogError(ex, "Error al pagar el pedido #{PedidoId}", id);
+				return StatusCode(500, "Ocurrió un error al procesar el pago. Intenta de nuevo.");
 			}
 		}
 	}

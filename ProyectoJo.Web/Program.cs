@@ -8,9 +8,22 @@ using ProyectoJo.Infrastructure.Persistence;
 using ProyectoJo.Infrastructure.Auth;
 using System.Globalization;
 using Microsoft.Extensions.FileProviders;
+using Serilog;
 
+Log.Logger = new LoggerConfiguration()
+	.MinimumLevel.Information()
+	.MinimumLevel.Override("Microsoft.AspNetCore", Serilog.Events.LogEventLevel.Warning)
+	.Enrich.FromLogContext()
+	.WriteTo.Console()
+	.WriteTo.File(
+		path: "Logs/proyectojo-.log",
+		rollingInterval: RollingInterval.Day,
+		retainedFileCountLimit: 14)
+	.CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog();
 
 var adminWebRoot = Path.Combine(builder.Environment.ContentRootPath, "Areas", "Admin", "wwwroot");
 builder.Environment.WebRootFileProvider = new CompositeFileProvider(
@@ -94,10 +107,16 @@ builder.Services.AddAuthentication("JoCookieAuth")
 
 var app = builder.Build();
 
+app.UseSerilogRequestLogging();
+
 if (!app.Environment.IsDevelopment())
 {
 	app.UseExceptionHandler("/Home/Error");
 	app.UseHsts();
+}
+else
+{
+	app.UseExceptionHandler("/Home/Error");
 }
 
 app.UseHttpsRedirection();

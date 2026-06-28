@@ -451,5 +451,21 @@
     "Estado": "Pagado",
     "FechaCreacion": "2026-06-28T02:31:38.4261104Z",
     "Total": 30
+  },
+  {
+    "Id": 28,
+    "Mesa": "Mesa 1",
+    "Items": [
+      {
+        "ItemId": 1,
+        "Nombre": "Panucho de Pavo (sin Lechuga)",
+        "Cantidad": 1,
+        "PrecioUnitario": 25,
+        "Subtotal": 25
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-28T06:02:16.9037888Z",
+    "Total": 25
   }
 ]

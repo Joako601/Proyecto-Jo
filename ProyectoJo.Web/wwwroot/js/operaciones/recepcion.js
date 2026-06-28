@@ -1,15 +1,13 @@
 ﻿(function () {
     'use strict';
 
-    var INTERVALO_MS = 3000;
-
     var menu = [];
     var carrito = [];
     var tipoEntrega = 'mesa';
     var tabActiva = 'activos';
     var ultimosPedidos = [];
 
-    /* ── Utilidades ── */
+     
 
     function ir(url) {
         window.location.href = url;
@@ -20,7 +18,20 @@
         return fuente.split(',').map(function (s) { return s.trim(); }).filter(function (s) { return s.length > 0; });
     }
 
-    /* ── Tipo de entrega ── */
+    
+
+    function setEstadoConexion(estado) {
+        var el = document.getElementById('estado-conexion');
+        if (!el) return;
+        var textos = {
+            conectado: '',
+            reconectando: '🔄 Reconectando…',
+            desconectado: '⚠ Sin conexión — usa el botón de refresco'
+        };
+        el.textContent = textos[estado] || '';
+    }
+
+    
 
     function setTipoEntrega(tipo) {
         tipoEntrega = tipo;
@@ -29,7 +40,7 @@
         document.getElementById('mesa-input').style.display = tipo === 'mesa' ? 'block' : 'none';
     }
 
-    /* ── Tabs ── */
+    
 
     function cambiarTab(tab) {
         tabActiva = tab;
@@ -38,7 +49,7 @@
         renderPedidos();
     }
 
-    /* ── Menú ── */
+    
 
     function cargarMenu() {
         fetch('/Operaciones/Recepcion/ObtenerMenu')
@@ -93,7 +104,7 @@
         });
     }
 
-    /* ── Carrito ── */
+    
 
     function agregarAlCarrito(itemId) {
         var item = menu.find(function (i) { return i.id === itemId; });
@@ -178,7 +189,7 @@
         document.getElementById('total-carrito').textContent = 'Total: $' + total.toFixed(2);
     }
 
-    /* ── Crear pedido ── */
+    
 
     function crearPedido() {
         var mesaInput = document.getElementById('mesa-input').value.trim();
@@ -217,7 +228,7 @@
                 carrito = [];
                 document.getElementById('mesa-input').value = '';
                 renderCarrito();
-                cargarPedidos();
+                
             })
             .catch(function (err) {
                 console.error('Error creando pedido:', err);
@@ -225,7 +236,7 @@
             });
     }
 
-    /* ── Pedidos ── */
+    
 
     function cargarPedidos() {
         fetch('/Operaciones/Recepcion/ObtenerPedidos')
@@ -293,7 +304,7 @@
                     alert('No se pudo marcar como pagado (código ' + res.status + ').');
                     return;
                 }
-                cargarPedidos();
+                
             })
             .catch(function (err) {
                 console.error('Error marcando pagado:', err);
@@ -301,7 +312,47 @@
             });
     }
 
-    /* ── Delegación de eventos ── */
+    
+
+    var connection = new signalR.HubConnectionBuilder()
+        .withUrl('/hubs/pedidos')
+        .withAutomaticReconnect()
+        .build();
+
+    connection.on('PedidoNuevo', function (pedido) {
+        cargarPedidos();
+    });
+
+    connection.on('PedidoActualizado', function (pedido) {
+        cargarPedidos();
+    });
+
+    connection.onreconnecting(function () {
+        setEstadoConexion('reconectando');
+    });
+
+    connection.onreconnected(function () {
+        setEstadoConexion('conectado');
+        cargarPedidos();
+    });
+
+    connection.onclose(function () {
+        setEstadoConexion('desconectado');
+    });
+
+    function iniciarSignalR() {
+        connection.start()
+            .then(function () {
+                setEstadoConexion('conectado');
+                return connection.invoke('UnirseAGrupo', 'Recepcion');
+            })
+            .catch(function (err) {
+                console.error('Error iniciando SignalR en Recepción:', err);
+                setEstadoConexion('desconectado');
+            });
+    }
+
+    
 
     document.addEventListener('click', function (e) {
         var t = e.target;
@@ -338,6 +389,10 @@
             crearPedido();
             return;
         }
+        if (t.matches('#btn-refrescar')) {
+            cargarPedidos();
+            return;
+        }
     });
 
     document.addEventListener('change', function (e) {
@@ -347,13 +402,12 @@
         }
     });
 
-    /* ── Inicio ── */
+    
 
     setTipoEntrega('mesa');
     cambiarTab('activos');
     cargarMenu();
     cargarPedidos();
-    setInterval(cargarPedidos, INTERVALO_MS);
-
+    iniciarSignalR();
 
 })();

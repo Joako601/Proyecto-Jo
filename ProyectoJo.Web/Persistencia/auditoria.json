@@ -128,5 +128,75 @@
     "Entidad": "Finanza #35",
     "DetalleAntes": null,
     "DetalleDespues": "Ingreso - Ventas - $30"
+  },
+  {
+    "Id": 14,
+    "FechaHora": "2026-06-27T23:18:45.1477516-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #1",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
+  },
+  {
+    "Id": 15,
+    "FechaHora": "2026-06-27T23:18:51.0054074-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #1",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
+  },
+  {
+    "Id": 16,
+    "FechaHora": "2026-06-27T23:19:00.6644808-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Productos",
+    "Accion": 1,
+    "Entidad": "Producto #1",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activo/Inactivo"
+  },
+  {
+    "Id": 17,
+    "FechaHora": "2026-06-27T23:19:07.9432449-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Productos",
+    "Accion": 1,
+    "Entidad": "Producto #1",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activo/Inactivo"
+  },
+  {
+    "Id": 18,
+    "FechaHora": "2026-06-27T23:19:09.2615367-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Productos",
+    "Accion": 1,
+    "Entidad": "Producto #1",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Agotado/Disponible"
+  },
+  {
+    "Id": 19,
+    "FechaHora": "2026-06-27T23:19:19.1257947-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Productos",
+    "Accion": 1,
+    "Entidad": "Producto #1",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Agotado/Disponible"
+  },
+  {
+    "Id": 20,
+    "FechaHora": "2026-06-28T00:02:39.6042461-06:00",
+    "Usuario": "Sistema (Pedido)",
+    "Modulo": "Finanzas",
+    "Accion": 0,
+    "Entidad": "Finanza #36",
+    "DetalleAntes": null,
+    "DetalleDespues": "Ingreso - Ventas - $25"
   }
 ]

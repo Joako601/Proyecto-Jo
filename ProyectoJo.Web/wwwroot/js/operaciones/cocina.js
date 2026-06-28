@@ -1,7 +1,7 @@
 ﻿(function () {
     'use strict';
 
-    var INTERVALO_MS = 3000;
+ 
 
     function formatHora(fechaIso) {
         var d = new Date(fechaIso);
@@ -31,10 +31,20 @@
         return div;
     }
 
-    function setEstadoConexion(texto) {
+    
+
+    function setEstadoConexion(estado) {
         var el = document.getElementById('estado-conexion');
-        if (el) el.textContent = texto;
+        if (!el) return;
+        var textos = {
+            conectado: '',
+            reconectando: '🔄 Reconectando…',
+            desconectado: '⚠ Sin conexión — usa el botón de refresco'
+        };
+        el.textContent = textos[estado] || '';
     }
+
+   
 
     function renderPedidos(pedidos) {
         var colPendiente = document.getElementById('col-pendiente');
@@ -57,9 +67,9 @@
         } else {
             preparados.forEach(function (p) { colPreparado.appendChild(crearTarjeta(p)); });
         }
-
-        setEstadoConexion('');
     }
+
+    
 
     function cargarPedidos() {
         fetch('/Operaciones/Cocina/ObtenerPedidos')
@@ -69,7 +79,7 @@
                     return null;
                 }
                 if (res.status === 403) {
-                    setEstadoConexion('⛔ Sin autorización');
+                    setEstadoConexion('desconectado');
                     return null;
                 }
                 if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -79,9 +89,11 @@
                 if (pedidos) renderPedidos(pedidos);
             })
             .catch(function () {
-                setEstadoConexion('⚠ Sin conexión');
+                setEstadoConexion('desconectado');
             });
     }
+
+    
 
     function marcarPreparado(id) {
         fetch('/Operaciones/Cocina/CambiarEstado', {
@@ -96,22 +108,70 @@
                 }
                 if (!res.ok) {
                     alert('No se pudo actualizar el pedido. Código: ' + res.status);
-                    return;
                 }
-                cargarPedidos();
+                
             })
             .catch(function () {
                 alert('Error de red al actualizar el pedido.');
             });
     }
 
+    
+
+    var connection = new signalR.HubConnectionBuilder()
+        .withUrl('/hubs/pedidos')
+        .withAutomaticReconnect()
+        .build();
+
+    
+    connection.on('PedidoNuevo', function (pedido) {
+        
+        cargarPedidos();
+    });
+
+    connection.on('PedidoActualizado', function (pedido) {
+        cargarPedidos();
+    });
+
+    connection.onreconnecting(function () {
+        setEstadoConexion('reconectando');
+    });
+
+    connection.onreconnected(function () {
+        setEstadoConexion('conectado');
+        cargarPedidos(); 
+    });
+
+    connection.onclose(function () {
+        setEstadoConexion('desconectado');
+    });
+
+    function iniciarSignalR() {
+        connection.start()
+            .then(function () {
+                setEstadoConexion('conectado');
+                return connection.invoke('UnirseAGrupo', 'Cocina');
+            })
+            .catch(function (err) {
+                console.error('Error iniciando SignalR en Cocina:', err);
+                setEstadoConexion('desconectado');
+            });
+    }
+
+   
     document.addEventListener('click', function (e) {
         if (e.target && e.target.matches('.pedido__accion')) {
             marcarPreparado(e.target.dataset.id);
         }
+       
+        if (e.target && e.target.matches('#btn-refrescar')) {
+            cargarPedidos();
+        }
     });
 
-    cargarPedidos();
-    setInterval(cargarPedidos, INTERVALO_MS);
+   
+
+    cargarPedidos();   
+    iniciarSignalR();  
 
 })();

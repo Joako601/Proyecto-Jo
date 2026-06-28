@@ -10,12 +10,18 @@ namespace ProyectoJo.Application.UseCases
 	{
 		private readonly IPedidoRepository _repository;
 		private readonly IFinanzaService _finanzaService;
+		private readonly IPedidoNotificador _notificador;
 		private readonly ILogger<PedidoUseCase> _logger;
 
-		public PedidoUseCase(IPedidoRepository repository, IFinanzaService finanzaService, ILogger<PedidoUseCase> logger)
+		public PedidoUseCase(
+			IPedidoRepository repository,
+			IFinanzaService finanzaService,
+			IPedidoNotificador notificador,
+			ILogger<PedidoUseCase> logger)
 		{
 			_repository = repository;
 			_finanzaService = finanzaService;
+			_notificador = notificador;
 			_logger = logger;
 		}
 
@@ -34,7 +40,18 @@ namespace ProyectoJo.Application.UseCases
 		{
 			pedido.Estado = EstadoPedido.Pendiente;
 			pedido.FechaCreacion = DateTime.UtcNow;
-			return await _repository.GuardarAsync(pedido);
+			var creado = await _repository.GuardarAsync(pedido);
+
+			try
+			{
+				await _notificador.NotificarCreadoAsync(creado);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error notificando creación del Pedido #{PedidoId}", creado.Id);
+			}
+
+			return creado;
 		}
 
 		public async Task<Pedido?> CambiarEstadoAsync(int id, EstadoPedido nuevoEstado)
@@ -62,6 +79,18 @@ namespace ProyectoJo.Application.UseCases
 				catch (Exception ex)
 				{
 					_logger.LogError(ex, "Error registrando finanza para el Pedido #{PedidoId}", id);
+				}
+			}
+
+			if (actualizado is not null)
+			{
+				try
+				{
+					await _notificador.NotificarEstadoCambiadoAsync(actualizado);
+				}
+				catch (Exception ex)
+				{
+					_logger.LogError(ex, "Error notificando cambio de estado del Pedido #{PedidoId}", id);
 				}
 			}
 
@@ -136,7 +165,7 @@ namespace ProyectoJo.Application.UseCases
 				.Take(10)
 				.ToList();
 
-			// --- Ventas por día de la semana (histórico o semana puntual) ---
+			// --- Ventas por día de la semana ---
 			var diasOrdenados = new[]
 			{
 				DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday,
@@ -177,7 +206,7 @@ namespace ProyectoJo.Application.UseCases
 				})
 				.ToList();
 
-			// --- Historial día por día (para el collapse "Ver historial por día") ---
+			// --- Historial día por día ---
 			var historialPorDia = pagados
 				.GroupBy(p => p.FechaCreacion.Date)
 				.Select(g => new VentasPorDia
@@ -190,7 +219,7 @@ namespace ProyectoJo.Application.UseCases
 				.OrderByDescending(v => v.Fecha)
 				.ToList();
 
-			// --- Ventas por mes del año seleccionado (Ene-Dic) ---
+			// --- Ventas por mes del año seleccionado ---
 			var anioMesesSeleccionado = anioMeses ?? hoy.Year;
 
 			var nombresMesesCortos = new[]
@@ -217,7 +246,7 @@ namespace ProyectoJo.Application.UseCases
 				})
 				.ToList();
 
-			// --- Detalle de días del mes en el que se hizo clic (si aplica) ---
+			// --- Detalle de días del mes seleccionado ---
 			var diasDelMesSeleccionado = new List<VentasPorDia>();
 			if (mesDetalle.HasValue)
 			{

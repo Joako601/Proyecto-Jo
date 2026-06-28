@@ -52,22 +52,5 @@ namespace ProyectoJo.Web.Controllers
 
 			return View(vm);
 		}
-
-		// GET: /Catalogo/Agregar
-		public IActionResult Agregar() => View();
-
-		// POST: /Catalogo/Agregar
-		[HttpPost]
-		public IActionResult Agregar(Item nuevo)
-		{
-			if (!ModelState.IsValid)
-			{
-				return View(nuevo);
-			}
-
-			_productoService.AgregarItem(nuevo, "Cliente público");
-
-			return RedirectToAction("Index");
-		}
 	}
 }

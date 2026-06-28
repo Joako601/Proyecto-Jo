@@ -1,0 +1,22 @@
+[
+  {
+    "Id": 1,
+    "FechaHora": "2026-06-27T19:22:30.7342372-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Finanzas",
+    "Accion": 0,
+    "Entidad": "Finanza #30",
+    "DetalleAntes": null,
+    "DetalleDespues": "Ingreso - Insumos - $10"
+  },
+  {
+    "Id": 2,
+    "FechaHora": "2026-06-27T19:23:19.9681035-06:00",
+    "Usuario": "Sistema (Pedido)",
+    "Modulo": "Finanzas",
+    "Accion": 0,
+    "Entidad": "Finanza #31",
+    "DetalleAntes": null,
+    "DetalleDespues": "Ingreso - Ventas - $25"
+  }
+]

@@ -5,7 +5,7 @@ namespace ProyectoJo.Application.Ports.In
 {
 	public interface IFinanzaService
 	{
-		void RegistrarMovimiento(Finanza finanza);
+		void RegistrarMovimiento(Finanza finanza, string usuario);
 		List<Finanza> ObtenerTodos();
 		List<Finanza> ObtenerPorFecha(DateTime desde, DateTime hasta);
 		List<Finanza> ObtenerPorCategoria(string categoria);
@@ -13,7 +13,7 @@ namespace ProyectoJo.Application.Ports.In
 		ResumenFinanciero ObtenerResumenPorPeriodo(DateTime desde, DateTime hasta);
 		ResumenDashboard ObtenerDashboard();
 		Finanza? ObtenerPorId(int id);
-		void Editar(Finanza finanza);
-		void Eliminar(int id);
+		void Editar(Finanza finanza, string usuario);
+		void Eliminar(int id, string usuario);
 	}
 }

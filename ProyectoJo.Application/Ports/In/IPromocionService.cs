@@ -10,10 +10,10 @@ namespace ProyectoJo.Application.Ports.In
 		IEnumerable<Promocion> ObtenerVigentesPorItem(int itemId);
 		Promocion? ObtenerPorId(int id);
 
-		void Agregar(Promocion promocion);
-		void Editar(Promocion promocion);
-		void Eliminar(int id);
-		void ToggleActiva(int id);
+		void Agregar(Promocion promocion, string usuario);
+		void Editar(Promocion promocion, string usuario);
+		void Eliminar(int id, string usuario);
+		void ToggleActiva(int id, string usuario);
 
 		bool EstaVigente(Promocion promocion);
 		decimal CalcularPrecioFinal(Item item);

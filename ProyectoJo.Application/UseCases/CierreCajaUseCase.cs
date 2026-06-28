@@ -10,18 +10,20 @@ namespace ProyectoJo.Application.UseCases
 
 		private readonly ICierreCajaRepository _cierreCajaRepository;
 		private readonly IFinanzaRepository _finanzaRepository;
+		private readonly IAuditoriaService _auditoriaService;
 
-		public CierreCajaUseCase(ICierreCajaRepository cierreCajaRepository, IFinanzaRepository finanzaRepository)
+		public CierreCajaUseCase(ICierreCajaRepository cierreCajaRepository, IFinanzaRepository finanzaRepository, IAuditoriaService auditoriaService)
 		{
 			_cierreCajaRepository = cierreCajaRepository;
 			_finanzaRepository = finanzaRepository;
+			_auditoriaService = auditoriaService;
 		}
 
 		public CierreCaja? ObtenerCajaAbierta() =>
 			_cierreCajaRepository.ObtenerTodos()
 				.FirstOrDefault(c => c.Estado == EstadoCaja.Abierta);
 
-		public CierreCaja AbrirCaja(decimal fondoInicial, string? notas)
+		public CierreCaja AbrirCaja(decimal fondoInicial, string? notas, string usuario)
 		{
 			if (ObtenerCajaAbierta() is not null)
 				throw new InvalidOperationException("Ya hay una caja abierta. Cierra la caja actual antes de abrir una nueva.");
@@ -38,10 +40,19 @@ namespace ProyectoJo.Application.UseCases
 			};
 
 			_cierreCajaRepository.Guardar(nuevaCaja);
+
+			_auditoriaService.RegistrarAccion(
+				usuario: usuario,
+				modulo: "CierreCaja",
+				accion: TipoAccionAuditoria.Creacion,
+				entidad: $"Caja #{nuevaCaja.Id}",
+				detalleDespues: $"Apertura con fondo inicial ${fondoInicial}"
+			);
+
 			return nuevaCaja;
 		}
 
-		public CierreCaja CerrarCaja(int id, string? notas)
+		public CierreCaja CerrarCaja(int id, string? notas, string usuario)
 		{
 			var caja = ObtenerCajaParaCerrar(id);
 			var fechaCierre = DateTime.Now;
@@ -54,6 +65,15 @@ namespace ProyectoJo.Application.UseCases
 			caja.Estado = EstadoCaja.Cerrada;
 
 			_cierreCajaRepository.Actualizar(caja);
+
+			_auditoriaService.RegistrarAccion(
+				usuario: usuario,
+				modulo: "CierreCaja",
+				accion: TipoAccionAuditoria.Edicion,
+				entidad: $"Caja #{caja.Id}",
+				detalleDespues: $"Cierre - Ventas: ${ventas} - Gastos: ${gastos}"
+			);
+
 			return caja;
 		}
 

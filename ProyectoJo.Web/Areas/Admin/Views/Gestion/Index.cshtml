@@ -96,7 +96,15 @@
                     <h6 class="card-title text-primary">Cierre de Caja</h6>
                     <p class="card-text small text-muted flex-grow-1">Apertura, cierre y reporte de ventas del día.</p>
                     <a asp-area="Admin" asp-controller="CierreCaja" asp-action="Index" class="btn btn-sm btn-primary w-100">Administrar</a>
-
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100 shadow-sm border-0 modulo-card">
+                <div class="card-body d-flex flex-column">
+                    <h6 class="card-title text-primary">Historial de Auditoría</h6>
+                    <p class="card-text small text-muted flex-grow-1">Registro de cambios realizados en el sistema.</p>
+                    <a asp-area="Admin" asp-controller="HistorialAuditoria" asp-action="Index" class="btn btn-sm btn-primary w-100">Ver historial</a>
                 </div>
             </div>
         </div>
@@ -109,8 +117,7 @@
             {
                 ("Semáforo Feedback", "Gestión de opiniones."),
                 ("Recetario Digital", "Cálculo de costos y rendimientos."),
-                ("Alerta de Stock", "Insumos críticos."),
-                ("Historial Auditoría", "Registro de cambios."),
+                ("Alerta de Stock", "Insumos críticos.")
             };
         }
         @foreach (var f in proximamente)

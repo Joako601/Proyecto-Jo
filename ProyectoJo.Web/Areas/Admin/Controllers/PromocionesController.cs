@@ -44,7 +44,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 				return View(promocion);
 			}
 
-			_promocionService.Agregar(promocion);
+			_promocionService.Agregar(promocion, User.Identity?.Name ?? "Desconocido");
 			return RedirectToAction("Index");
 		}
 
@@ -68,7 +68,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 				return View(promocion);
 			}
 
-			_promocionService.Editar(promocion);
+			_promocionService.Editar(promocion, User.Identity?.Name ?? "Desconocido");
 			return RedirectToAction("Index");
 		}
 
@@ -76,7 +76,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		[HttpPost]
 		public IActionResult Eliminar(int id)
 		{
-			_promocionService.Eliminar(id);
+			_promocionService.Eliminar(id, User.Identity?.Name ?? "Desconocido");
 			return RedirectToAction("Index");
 		}
 
@@ -84,7 +84,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		[HttpPost]
 		public IActionResult ToggleActiva(int id)
 		{
-			_promocionService.ToggleActiva(id);
+			_promocionService.ToggleActiva(id, User.Identity?.Name ?? "Desconocido");
 			return RedirectToAction("Index");
 		}
 	}

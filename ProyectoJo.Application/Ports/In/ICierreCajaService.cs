@@ -7,9 +7,9 @@ namespace ProyectoJo.Application.Ports.In
 		// ¿Hay una caja abierta en este momento? (null si no hay ninguna)
 		CierreCaja? ObtenerCajaAbierta();
 
-		CierreCaja AbrirCaja(decimal fondoInicial, string? notas);
+		CierreCaja AbrirCaja(decimal fondoInicial, string? notas, string usuario);
 
-		CierreCaja CerrarCaja(int id, string? notas);
+		CierreCaja CerrarCaja(int id, string? notas, string usuario);
 
 		// Calcula ventas/gastos del turno SIN guardar nada (para mostrar antes de confirmar el cierre)
 		CierreCaja ObtenerVistaPreviaCierre(int id);

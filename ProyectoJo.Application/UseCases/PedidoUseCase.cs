@@ -54,7 +54,7 @@ namespace ProyectoJo.Application.UseCases
 						Categoria = "Ventas",
 						Descripcion = $"Pedido #{actualizado.Id} — Mesa {actualizado.Mesa}",
 						Fecha = DateTime.UtcNow
-					});
+					}, "Sistema (Pedido)");
 				}
 				catch (Exception ex)
 				{

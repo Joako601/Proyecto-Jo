@@ -32,7 +32,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		{
 			try
 			{
-				_cierreCajaService.AbrirCaja(fondoInicial, notas);
+				_cierreCajaService.AbrirCaja(fondoInicial, notas, User.Identity?.Name ?? "Desconocido");
 				return RedirectToAction("Index");
 			}
 			catch (InvalidOperationException ex)
@@ -63,7 +63,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		{
 			try
 			{
-				_cierreCajaService.CerrarCaja(id, notas);
+				_cierreCajaService.CerrarCaja(id, notas, User.Identity?.Name ?? "Desconocido");
 				return RedirectToAction("Index");
 			}
 			catch (InvalidOperationException ex)

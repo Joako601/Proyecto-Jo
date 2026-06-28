@@ -65,7 +65,7 @@ namespace ProyectoJo.Web.Controllers
 				return View(nuevo);
 			}
 
-			_productoService.AgregarItem(nuevo);
+			_productoService.AgregarItem(nuevo, "Cliente público");
 
 			return RedirectToAction("Index");
 		}

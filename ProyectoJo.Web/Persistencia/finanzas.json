@@ -230,5 +230,21 @@
     "Categoria": "Insumos",
     "Descripcion": "prueba",
     "Fecha": "2026-06-27T00:00:00"
+  },
+  {
+    "Id": 30,
+    "Monto": 10,
+    "Tipo": 0,
+    "Categoria": "Insumos",
+    "Descripcion": "prueba",
+    "Fecha": "2026-06-27T00:00:00"
+  },
+  {
+    "Id": 31,
+    "Monto": 25,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #25 \u2014 Mesa Mesa 1",
+    "Fecha": "2026-06-28T01:23:19.9623163Z"
   }
 ]

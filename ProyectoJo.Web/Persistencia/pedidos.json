@@ -403,5 +403,21 @@
     "Estado": "Pagado",
     "FechaCreacion": "2026-06-27T15:30:51.830663Z",
     "Total": 25
+  },
+  {
+    "Id": 25,
+    "Mesa": "Mesa 1",
+    "Items": [
+      {
+        "ItemId": 2,
+        "Nombre": "Panucho de Huevo (sin Huevo sancochado)",
+        "Cantidad": 1,
+        "PrecioUnitario": 25,
+        "Subtotal": 25
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-28T01:23:17.5051376Z",
+    "Total": 25
   }
 ]

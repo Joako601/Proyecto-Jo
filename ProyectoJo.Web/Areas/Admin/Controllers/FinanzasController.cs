@@ -44,7 +44,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		public IActionResult Registrar(Finanza finanza)
 		{
 			if (!ModelState.IsValid) return View(finanza);
-			_finanzaService.RegistrarMovimiento(finanza);
+			_finanzaService.RegistrarMovimiento(finanza, User.Identity?.Name ?? "Desconocido");
 			return RedirectToAction("Index");
 		}
 
@@ -60,7 +60,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		public IActionResult Editar(Finanza finanza)
 		{
 			if (!ModelState.IsValid) return View(finanza);
-			_finanzaService.Editar(finanza);
+			_finanzaService.Editar(finanza, User.Identity?.Name ?? "Desconocido");
 			return RedirectToAction("Index");
 		}
 
@@ -68,7 +68,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		[HttpPost]
 		public IActionResult Eliminar(int id)
 		{
-			_finanzaService.Eliminar(id);
+			_finanzaService.Eliminar(id, User.Identity?.Name ?? "Desconocido");
 			return RedirectToAction("Index");
 		}
 

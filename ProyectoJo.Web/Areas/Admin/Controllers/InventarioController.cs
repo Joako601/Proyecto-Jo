@@ -26,7 +26,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		[HttpPost]
 		public IActionResult ToggleActivo(int id, string origen = "Inventario")
 		{
-			_productoService.ToggleActivo(id);
+			_productoService.ToggleActivo(id, User.Identity?.Name ?? "Desconocido");
 			return origen == "Menu"
 				? RedirectToAction("Index", "Menu")
 				: RedirectToAction("Index");
@@ -36,7 +36,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		[HttpPost]
 		public IActionResult ToggleAgotado(int id, string origen = "Inventario")
 		{
-			_productoService.ToggleAgotado(id);
+			_productoService.ToggleAgotado(id, User.Identity?.Name ?? "Desconocido");
 			return origen == "Menu"
 				? RedirectToAction("Index", "Menu")
 				: RedirectToAction("Index");

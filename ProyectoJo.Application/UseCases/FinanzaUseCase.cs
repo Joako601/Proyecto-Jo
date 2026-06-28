@@ -8,18 +8,28 @@ namespace ProyectoJo.Application.UseCases
 	public class FinanzaUseCase : IFinanzaService
 	{
 		private readonly IFinanzaRepository _repository;
+		private readonly IAuditoriaService _auditoriaService;
 
-		public FinanzaUseCase(IFinanzaRepository repository)
+		public FinanzaUseCase(IFinanzaRepository repository, IAuditoriaService auditoriaService)
 		{
 			_repository = repository;
+			_auditoriaService = auditoriaService;
 		}
 
-		public void RegistrarMovimiento(Finanza finanza)
+		public void RegistrarMovimiento(Finanza finanza, string usuario)
 		{
 			var todos = _repository.ObtenerTodos();
 			finanza.Id = todos.Count > 0 ? todos.Max(f => f.Id) + 1 : 1;
 			finanza.Fecha = finanza.Fecha == default ? DateTime.Now : finanza.Fecha;
 			_repository.Guardar(finanza);
+
+			_auditoriaService.RegistrarAccion(
+				usuario: usuario,
+				modulo: "Finanzas",
+				accion: TipoAccionAuditoria.Creacion,
+				entidad: $"Finanza #{finanza.Id}",
+				detalleDespues: $"{finanza.Tipo} - {finanza.Categoria} - ${finanza.Monto}"
+			);
 		}
 
 		public List<Finanza> ObtenerTodos() => _repository.ObtenerTodos();
@@ -125,9 +135,34 @@ namespace ProyectoJo.Application.UseCases
 
 		public Finanza? ObtenerPorId(int id) => _repository.ObtenerPorId(id);
 
-		public void Editar(Finanza finanza) => _repository.Actualizar(finanza);
+		public void Editar(Finanza finanza, string usuario)
+		{
+			var anterior = _repository.ObtenerPorId(finanza.Id);
+			_repository.Actualizar(finanza);
 
-		public void Eliminar(int id) => _repository.Eliminar(id);
+			_auditoriaService.RegistrarAccion(
+				usuario: usuario,
+				modulo: "Finanzas",
+				accion: TipoAccionAuditoria.Edicion,
+				entidad: $"Finanza #{finanza.Id}",
+				detalleAntes: anterior is not null ? $"{anterior.Tipo} - {anterior.Categoria} - ${anterior.Monto}" : null,
+				detalleDespues: $"{finanza.Tipo} - {finanza.Categoria} - ${finanza.Monto}"
+			);
+		}
+
+		public void Eliminar(int id, string usuario)
+		{
+			var finanza = _repository.ObtenerPorId(id);
+			_repository.Eliminar(id);
+
+			_auditoriaService.RegistrarAccion(
+				usuario: usuario,
+				modulo: "Finanzas",
+				accion: TipoAccionAuditoria.Eliminacion,
+				entidad: $"Finanza #{id}",
+				detalleAntes: finanza is not null ? $"{finanza.Tipo} - {finanza.Categoria} - ${finanza.Monto}" : null
+			);
+		}
 
 		private ResumenFinanciero Calcular(List<Finanza> movimientos, DateTime desde, DateTime hasta) =>
 			new ResumenFinanciero

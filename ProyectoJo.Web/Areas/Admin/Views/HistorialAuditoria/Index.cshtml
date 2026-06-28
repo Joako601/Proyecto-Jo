@@ -1,0 +1,79 @@
+﻿@model IEnumerable<ProyectoJo.Domain.Entities.RegistroAuditoria>
+@{
+    ViewData["Title"] = "Historial de Auditoría";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-shared.css" asp-append-version="true" />
+}
+
+<div class="admin-page">
+
+    <div class="page-header">
+        <div class="header-left">
+            <a asp-area="Admin" asp-controller="Gestion" asp-action="Index" class="back-link">← Dashboard</a>
+            <h1>Historial de Auditoría</h1>
+        </div>
+    </div>
+
+    <form method="get" asp-action="Index" class="admin-filtros">
+        <input type="text" name="modulo" value="@Context.Request.Query["modulo"]" placeholder="Módulo (ej. Finanzas)" />
+        <input type="date" name="desde" value="@Context.Request.Query["desde"]" />
+        <input type="date" name="hasta" value="@Context.Request.Query["hasta"]" />
+        <button type="submit" class="btn-primary">Filtrar</button>
+    </form>
+
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Fecha y hora</th>
+                <th>Usuario</th>
+                <th>Módulo</th>
+                <th>Acción</th>
+                <th>Entidad</th>
+                <th>Detalle</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var registro in Model)
+            {
+                <tr>
+                    <td>@registro.FechaHora.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@registro.Usuario</td>
+                    <td>@registro.Modulo</td>
+                    <td>
+                        <span class="tag--@registro.Accion.ToString().ToLower()">@registro.Accion</span>
+                    </td>
+                    <td>@registro.Entidad</td>
+                    <td>
+                        @if (!string.IsNullOrWhiteSpace(registro.DetalleAntes) || !string.IsNullOrWhiteSpace(registro.DetalleDespues))
+                        {
+                            <details>
+                                <summary>Ver cambios</summary>
+                                @if (!string.IsNullOrWhiteSpace(registro.DetalleAntes))
+                                {
+                                    <p><strong>Antes:</strong> @registro.DetalleAntes</p>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(registro.DetalleDespues))
+                                {
+                                    <p><strong>Después:</strong> @registro.DetalleDespues</p>
+                                }
+                            </details>
+                        }
+                        else
+                        {
+                            <span>—</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (!Model.Any())
+    {
+        <p class="empty-state">No hay registros de auditoría todavía.</p>
+    }
+
+</div>

@@ -31,7 +31,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		public IActionResult Agregar(Item item)
 		{
 			if (!ModelState.IsValid) return View(item);
-			_productoService.AgregarItem(item);
+			_productoService.AgregarItem(item, User.Identity?.Name ?? "Desconocido");
 			return RedirectToAction("Index");
 		}
 
@@ -47,7 +47,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		public IActionResult Editar(Item item)
 		{
 			if (!ModelState.IsValid) return View(item);
-			_productoService.EditarItem(item);
+			_productoService.EditarItem(item, User.Identity?.Name ?? "Desconocido");
 			return RedirectToAction("Index");
 		}
 
@@ -55,7 +55,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		[HttpPost]
 		public IActionResult Eliminar(int id)
 		{
-			_productoService.Eliminar(id);
+			_productoService.Eliminar(id, User.Identity?.Name ?? "Desconocido");
 			return RedirectToAction("Index");
 		}
 	}

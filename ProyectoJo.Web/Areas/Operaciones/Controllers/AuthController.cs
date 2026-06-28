@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProyectoJo.Application.Ports.In;
 using ProyectoJo.Domain.Entities;
@@ -71,9 +72,13 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 				: RedirectToAction("Index", "Recepcion");
 		}
 
+		// GET /Operaciones/Auth/Emparejar
+		[Authorize(AuthenticationSchemes = "JoCookieAuth")]
 		public IActionResult Emparejar() => View();
 
+		// POST /Operaciones/Auth/Emparejar
 		[HttpPost]
+		[Authorize(AuthenticationSchemes = "JoCookieAuth")]
 		public async Task<IActionResult> Emparejar(RolEmpleado estacion, string nombre)
 		{
 			var dispositivo = await _dispositivoService.EmparejarAsync(estacion, nombre);

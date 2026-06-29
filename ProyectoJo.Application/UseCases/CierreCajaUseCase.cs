@@ -25,11 +25,6 @@ namespace ProyectoJo.Application.UseCases
 
 		public CierreCaja AbrirCaja(decimal fondoInicial, string? notas, string usuario)
 		{
-			if (ObtenerCajaAbierta() is not null)
-				throw new InvalidOperationException("Ya hay una caja abierta. Cierra la caja actual antes de abrir una nueva.");
-
-			var todos = _cierreCajaRepository.ObtenerTodos();
-
 			var nuevaCaja = new CierreCaja
 			{
 				Estado = EstadoCaja.Abierta,
@@ -38,7 +33,9 @@ namespace ProyectoJo.Application.UseCases
 				NotasApertura = notas
 			};
 
-			_cierreCajaRepository.Guardar(nuevaCaja);
+			var abierta = _cierreCajaRepository.IntentarAbrir(nuevaCaja);
+			if (!abierta)
+				throw new InvalidOperationException("Ya hay una caja abierta. Cierra la caja actual antes de abrir una nueva.");
 
 			_auditoriaService.RegistrarAccion(
 				usuario: usuario,

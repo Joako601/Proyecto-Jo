@@ -36,6 +36,20 @@ namespace ProyectoJo.Infrastructure.Persistence
 			}
 		}
 
+		public bool IntentarAbrir(CierreCaja nuevaCaja)
+		{
+			lock (_lock)
+			{
+				var lista = LeerSinCandado();
+				if (lista.Any(c => c.Estado == EstadoCaja.Abierta)) return false;
+
+				nuevaCaja.Id = lista.Count > 0 ? lista.Max(c => c.Id) + 1 : 1;
+				lista.Add(nuevaCaja);
+				PersistirSinCandado(lista);
+				return true;
+			}
+		}
+
 		public void Actualizar(CierreCaja cierreCaja)
 		{
 			lock (_lock)

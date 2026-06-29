@@ -1,12 +1,10 @@
 ﻿using ProyectoJo.Domain.Entities;
 
-namespace ProyectoJo.Application.Ports.Out
+public interface ICierreCajaRepository
 {
-	public interface ICierreCajaRepository
-	{
-		List<CierreCaja> ObtenerTodos();
-		CierreCaja? ObtenerPorId(int id);
-		void Guardar(CierreCaja cierreCaja);
-		void Actualizar(CierreCaja cierreCaja);
-	}
+	List<CierreCaja> ObtenerTodos();
+	CierreCaja? ObtenerPorId(int id);
+	void Guardar(CierreCaja cierreCaja);
+	void Actualizar(CierreCaja cierreCaja);
+	bool IntentarAbrir(CierreCaja nuevaCaja);
 }

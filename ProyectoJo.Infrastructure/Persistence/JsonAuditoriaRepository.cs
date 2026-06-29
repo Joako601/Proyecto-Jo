@@ -27,6 +27,7 @@ namespace ProyectoJo.Infrastructure.Persistence
 			lock (_lock)
 			{
 				var lista = LeerSinCandado();
+				registro.Id = lista.Count > 0 ? lista.Max(r => r.Id) + 1 : 1;
 				lista.Add(registro);
 				PersistirSinCandado(lista);
 			}

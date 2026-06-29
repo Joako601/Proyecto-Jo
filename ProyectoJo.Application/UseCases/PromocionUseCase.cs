@@ -60,8 +60,6 @@ namespace ProyectoJo.Application.UseCases
 
 		public void Agregar(Promocion promocion, string usuario)
 		{
-			var todas = _repository.ObtenerTodas().ToList();
-			promocion.Id = todas.Count > 0 ? todas.Max(p => p.Id) + 1 : 1;
 			_repository.Agregar(promocion);
 
 			_auditoriaService.RegistrarAccion(

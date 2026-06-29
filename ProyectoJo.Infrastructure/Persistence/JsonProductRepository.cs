@@ -51,6 +51,7 @@ namespace ProyectoJo.Infrastructure.Persistence
 			lock (_lock)
 			{
 				var menu = LeerSinCandado();
+				item.Id = menu.Count > 0 ? menu.Max(i => i.Id) + 1 : 1;
 				menu.Add(item);
 				PersistirSinCandado(menu);
 			}

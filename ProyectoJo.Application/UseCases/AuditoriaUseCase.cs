@@ -16,11 +16,8 @@ namespace ProyectoJo.Application.UseCases
 		public void RegistrarAccion(string usuario, string modulo, TipoAccionAuditoria accion, string entidad,
 			string? detalleAntes = null, string? detalleDespues = null)
 		{
-			var todos = _auditoriaRepository.ObtenerTodos();
-
 			var registro = new RegistroAuditoria
 			{
-				Id = todos.Count > 0 ? todos.Max(r => r.Id) + 1 : 1,
 				FechaHora = DateTime.Now,
 				Usuario = usuario,
 				Modulo = modulo,

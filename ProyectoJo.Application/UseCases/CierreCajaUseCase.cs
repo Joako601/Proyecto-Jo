@@ -32,7 +32,6 @@ namespace ProyectoJo.Application.UseCases
 
 			var nuevaCaja = new CierreCaja
 			{
-				Id = todos.Count > 0 ? todos.Max(c => c.Id) + 1 : 1,
 				Estado = EstadoCaja.Abierta,
 				FechaApertura = DateTime.Now,
 				FondoInicial = fondoInicial,

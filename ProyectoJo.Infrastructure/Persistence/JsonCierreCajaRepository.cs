@@ -30,6 +30,7 @@ namespace ProyectoJo.Infrastructure.Persistence
 			lock (_lock)
 			{
 				var lista = LeerSinCandado();
+				cierreCaja.Id = lista.Count > 0 ? lista.Max(c => c.Id) + 1 : 1;
 				lista.Add(cierreCaja);
 				PersistirSinCandado(lista);
 			}

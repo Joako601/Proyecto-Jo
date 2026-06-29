@@ -32,8 +32,6 @@ namespace ProyectoJo.Application.UseCases
 
 		public void AgregarItem(Item item, string usuario)
 		{
-			var menu = _repository.ObtenerMenu();
-			item.Id = menu.Count > 0 ? menu.Max(i => i.Id) + 1 : 1;
 			_repository.AgregarItem(item);
 
 			_auditoriaService.RegistrarAccion(

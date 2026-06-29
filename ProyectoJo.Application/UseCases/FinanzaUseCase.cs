@@ -18,8 +18,6 @@ namespace ProyectoJo.Application.UseCases
 
 		public void RegistrarMovimiento(Finanza finanza, string usuario)
 		{
-			var todos = _repository.ObtenerTodos();
-			finanza.Id = todos.Count > 0 ? todos.Max(f => f.Id) + 1 : 1;
 			finanza.Fecha = finanza.Fecha == default ? DateTime.Now : finanza.Fecha;
 			_repository.Guardar(finanza);
 

@@ -35,6 +35,7 @@ namespace ProyectoJo.Infrastructure.Persistence
 			lock (_lock)
 			{
 				var promociones = LeerSinCandado();
+				promocion.Id = promociones.Count > 0 ? promociones.Max(p => p.Id) + 1 : 1;
 				promociones.Add(promocion);
 				PersistirSinCandado(promociones);
 			}

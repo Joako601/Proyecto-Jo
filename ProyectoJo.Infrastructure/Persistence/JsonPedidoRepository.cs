@@ -82,5 +82,24 @@ namespace ProyectoJo.Infrastructure.Persistence
 				_lock.Release();
 			}
 		}
+
+		public async Task<Pedido?> CambiarEstadoAtomicoAsync(int id, EstadoPedido nuevoEstado)
+		{
+			await _lock.WaitAsync();
+			try
+			{
+				var todos = await LeerAsync();
+				var index = todos.FindIndex(p => p.Id == id);
+				if (index == -1) return null;
+
+				todos[index].Estado = nuevoEstado;
+				await File.WriteAllTextAsync(_filePath, JsonSerializer.Serialize(todos, _options));
+				return todos[index];
+			}
+			finally
+			{
+				_lock.Release();
+			}
+		}
 	}
 }

@@ -88,12 +88,11 @@ namespace ProyectoJo.Application.UseCases
 
 		public async Task<Pedido?> CambiarEstadoAsync(int id, EstadoPedido nuevoEstado)
 		{
-			var pedido = await _repository.ObtenerPorIdAsync(id);
-			if (pedido is null) return null;
+			var pedidoAntes = await _repository.ObtenerPorIdAsync(id);
+			if (pedidoAntes is null) return null;
 
-			var yaEstabaPagado = pedido.Estado == EstadoPedido.Pagado;
-			pedido.Estado = nuevoEstado;
-			var actualizado = await _repository.ActualizarAsync(pedido);
+			var yaEstabaPagado = pedidoAntes.Estado == EstadoPedido.Pagado;
+			var actualizado = await _repository.CambiarEstadoAtomicoAsync(id, nuevoEstado);
 
 			if (actualizado is not null && nuevoEstado == EstadoPedido.Pagado && !yaEstabaPagado)
 			{

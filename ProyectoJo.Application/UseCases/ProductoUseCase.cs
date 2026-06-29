@@ -45,9 +45,11 @@ namespace ProyectoJo.Application.UseCases
 
 		public Item? ObtenerPorId(int id) => _repository.ObtenerPorId(id);
 
-		public void Eliminar(int id, string usuario)
+		public bool Eliminar(int id, string usuario)
 		{
 			var item = _repository.ObtenerPorId(id);
+			if (item is null) return false;
+
 			_repository.Eliminar(id);
 
 			_auditoriaService.RegistrarAccion(
@@ -55,16 +57,20 @@ namespace ProyectoJo.Application.UseCases
 				modulo: "Productos",
 				accion: TipoAccionAuditoria.Eliminacion,
 				entidad: $"Producto #{id}",
-				detalleAntes: item is not null ? $"{item.Platillo} - ${item.Precio}" : null
+				detalleAntes: $"{item.Platillo} - ${item.Precio}"
 			);
+
+			return true;
 		}
 
-		public void EditarItem(Item item, string usuario)
+		public bool EditarItem(Item item, string usuario)
 		{
 			var menu = _repository.ObtenerMenu();
 			var anterior = menu.FirstOrDefault(i => i.Id == item.Id);
 			var index = menu.FindIndex(i => i.Id == item.Id);
-			if (index >= 0) menu[index] = item;
+			if (index < 0) return false;
+
+			menu[index] = item;
 			_repository.GuardarMenu(menu);
 
 			_auditoriaService.RegistrarAccion(
@@ -72,9 +78,11 @@ namespace ProyectoJo.Application.UseCases
 				modulo: "Productos",
 				accion: TipoAccionAuditoria.Edicion,
 				entidad: $"Producto #{item.Id} - {item.Platillo}",
-				detalleAntes: anterior is not null ? $"{anterior.Platillo} - ${anterior.Precio}" : null,
+				detalleAntes: $"{anterior!.Platillo} - ${anterior.Precio}",
 				detalleDespues: $"{item.Platillo} - ${item.Precio}"
 			);
+
+			return true;
 		}
 
 		public void ToggleActivo(int id, string usuario)

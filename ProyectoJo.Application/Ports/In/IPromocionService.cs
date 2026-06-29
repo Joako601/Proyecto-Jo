@@ -11,8 +11,8 @@ namespace ProyectoJo.Application.Ports.In
 		Promocion? ObtenerPorId(int id);
 
 		void Agregar(Promocion promocion, string usuario);
-		void Editar(Promocion promocion, string usuario);
-		void Eliminar(int id, string usuario);
+		bool Editar(Promocion promocion, string usuario);
+		bool Eliminar(int id, string usuario);
 		void ToggleActiva(int id, string usuario);
 
 		bool EstaVigente(Promocion promocion);

@@ -13,7 +13,7 @@ namespace ProyectoJo.Application.Ports.In
 		ResumenFinanciero ObtenerResumenPorPeriodo(DateTime desde, DateTime hasta);
 		ResumenDashboard ObtenerDashboard();
 		Finanza? ObtenerPorId(int id);
-		void Editar(Finanza finanza, string usuario);
-		void Eliminar(int id, string usuario);
+		bool Editar(Finanza finanza, string usuario);
+		bool Eliminar(int id, string usuario);
 	}
 }

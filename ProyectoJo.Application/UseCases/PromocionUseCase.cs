@@ -71,9 +71,11 @@ namespace ProyectoJo.Application.UseCases
 			);
 		}
 
-		public void Editar(Promocion promocion, string usuario)
+		public bool Editar(Promocion promocion, string usuario)
 		{
 			var anterior = _repository.ObtenerPorId(promocion.Id);
+			if (anterior is null) return false;
+
 			_repository.Editar(promocion);
 
 			_auditoriaService.RegistrarAccion(
@@ -81,14 +83,18 @@ namespace ProyectoJo.Application.UseCases
 				modulo: "Promociones",
 				accion: TipoAccionAuditoria.Edicion,
 				entidad: $"Promoción #{promocion.Id} - {promocion.Titulo}",
-				detalleAntes: anterior is not null ? $"{anterior.Titulo} - {anterior.TipoDescuento} {anterior.ValorDescuento}" : null,
+				detalleAntes: $"{anterior.Titulo} - {anterior.TipoDescuento} {anterior.ValorDescuento}",
 				detalleDespues: $"{promocion.Titulo} - {promocion.TipoDescuento} {promocion.ValorDescuento}"
 			);
+
+			return true;
 		}
 
-		public void Eliminar(int id, string usuario)
+		public bool Eliminar(int id, string usuario)
 		{
 			var promocion = _repository.ObtenerPorId(id);
+			if (promocion is null) return false;
+
 			_repository.Eliminar(id);
 
 			_auditoriaService.RegistrarAccion(
@@ -96,8 +102,10 @@ namespace ProyectoJo.Application.UseCases
 				modulo: "Promociones",
 				accion: TipoAccionAuditoria.Eliminacion,
 				entidad: $"Promoción #{id}",
-				detalleAntes: promocion is not null ? $"{promocion.Titulo}" : null
+				detalleAntes: $"{promocion.Titulo}"
 			);
+
+			return true;
 		}
 
 		public void ToggleActiva(int id, string usuario)

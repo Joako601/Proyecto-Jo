@@ -10,8 +10,8 @@ namespace ProyectoJo.Application.Ports.In
 		void GuardarMenu(List<Item> menu);
 		void AgregarItem(Item item, string usuario);
 		Item? ObtenerPorId(int id);
-		void Eliminar(int id, string usuario);
-		void EditarItem(Item item, string usuario);
+		bool Eliminar(int id, string usuario);
+		bool EditarItem(Item item, string usuario);
 		void ToggleActivo(int id, string usuario);
 		void ToggleAgotado(int id, string usuario);
 	}

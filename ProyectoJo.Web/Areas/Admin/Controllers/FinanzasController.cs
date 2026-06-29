@@ -60,7 +60,8 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		public IActionResult Editar(Finanza finanza)
 		{
 			if (!ModelState.IsValid) return View(finanza);
-			_finanzaService.Editar(finanza, User.Identity?.Name ?? "Desconocido");
+			var actualizado = _finanzaService.Editar(finanza, User.Identity?.Name ?? "Desconocido");
+			if (!actualizado) return NotFound();
 			return RedirectToAction("Index");
 		}
 
@@ -68,7 +69,8 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		[HttpPost]
 		public IActionResult Eliminar(int id)
 		{
-			_finanzaService.Eliminar(id, User.Identity?.Name ?? "Desconocido");
+			var eliminado = _finanzaService.Eliminar(id, User.Identity?.Name ?? "Desconocido");
+			if (!eliminado) return NotFound();
 			return RedirectToAction("Index");
 		}
 

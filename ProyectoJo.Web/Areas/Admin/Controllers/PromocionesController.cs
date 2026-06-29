@@ -68,7 +68,8 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 				return View(promocion);
 			}
 
-			_promocionService.Editar(promocion, User.Identity?.Name ?? "Desconocido");
+			var actualizado = _promocionService.Editar(promocion, User.Identity?.Name ?? "Desconocido");
+			if (!actualizado) return NotFound();
 			return RedirectToAction("Index");
 		}
 
@@ -76,7 +77,8 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		[HttpPost]
 		public IActionResult Eliminar(int id)
 		{
-			_promocionService.Eliminar(id, User.Identity?.Name ?? "Desconocido");
+			var eliminado = _promocionService.Eliminar(id, User.Identity?.Name ?? "Desconocido");
+			if (!eliminado) return NotFound();
 			return RedirectToAction("Index");
 		}
 

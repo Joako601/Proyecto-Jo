@@ -133,9 +133,11 @@ namespace ProyectoJo.Application.UseCases
 
 		public Finanza? ObtenerPorId(int id) => _repository.ObtenerPorId(id);
 
-		public void Editar(Finanza finanza, string usuario)
+		public bool Editar(Finanza finanza, string usuario)
 		{
 			var anterior = _repository.ObtenerPorId(finanza.Id);
+			if (anterior is null) return false;
+
 			_repository.Actualizar(finanza);
 
 			_auditoriaService.RegistrarAccion(
@@ -143,14 +145,18 @@ namespace ProyectoJo.Application.UseCases
 				modulo: "Finanzas",
 				accion: TipoAccionAuditoria.Edicion,
 				entidad: $"Finanza #{finanza.Id}",
-				detalleAntes: anterior is not null ? $"{anterior.Tipo} - {anterior.Categoria} - ${anterior.Monto}" : null,
+				detalleAntes: $"{anterior.Tipo} - {anterior.Categoria} - ${anterior.Monto}",
 				detalleDespues: $"{finanza.Tipo} - {finanza.Categoria} - ${finanza.Monto}"
 			);
+
+			return true;
 		}
 
-		public void Eliminar(int id, string usuario)
+		public bool Eliminar(int id, string usuario)
 		{
 			var finanza = _repository.ObtenerPorId(id);
+			if (finanza is null) return false;
+
 			_repository.Eliminar(id);
 
 			_auditoriaService.RegistrarAccion(
@@ -158,8 +164,10 @@ namespace ProyectoJo.Application.UseCases
 				modulo: "Finanzas",
 				accion: TipoAccionAuditoria.Eliminacion,
 				entidad: $"Finanza #{id}",
-				detalleAntes: finanza is not null ? $"{finanza.Tipo} - {finanza.Categoria} - ${finanza.Monto}" : null
+				detalleAntes: $"{finanza.Tipo} - {finanza.Categoria} - ${finanza.Monto}"
 			);
+
+			return true;
 		}
 
 		private ResumenFinanciero Calcular(List<Finanza> movimientos, DateTime desde, DateTime hasta) =>

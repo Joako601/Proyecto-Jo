@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="ProyectoJo.Api/ProyectoJo.Api.csproj" Id="52601a91-0ddf-4dd2-9632-587b859e527a" />
+  <Project Path="ProyectoJo.Application.Tests/ProyectoJo.Application.Tests.csproj" Id="5dacf362-00dc-4121-8d56-5c1495ac93f7" />
   <Project Path="ProyectoJo.Application/ProyectoJo.Application.csproj" Id="46ece7e3-f070-4ed9-8f45-2a4ec3349b7e" />
   <Project Path="ProyectoJo.Domain/ProyectoJo.Domain.csproj" Id="d04167b4-ba05-4eea-b7ef-a296383e3f2a" />
   <Project Path="ProyectoJo.Infrastructure/ProyectoJo.Infrastructure.csproj" Id="7f60cc11-ccc9-4fe6-8fb4-09ddd2a7e5cf" />

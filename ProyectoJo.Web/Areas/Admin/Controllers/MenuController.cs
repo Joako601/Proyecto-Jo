@@ -43,11 +43,13 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		}
 
 		// POST: /Admin/Menu/Editar
+		// POST: /Admin/Menu/Editar
 		[HttpPost]
 		public IActionResult Editar(Item item)
 		{
 			if (!ModelState.IsValid) return View(item);
-			_productoService.EditarItem(item, User.Identity?.Name ?? "Desconocido");
+			var actualizado = _productoService.EditarItem(item, User.Identity?.Name ?? "Desconocido");
+			if (!actualizado) return NotFound();
 			return RedirectToAction("Index");
 		}
 
@@ -55,7 +57,8 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		[HttpPost]
 		public IActionResult Eliminar(int id)
 		{
-			_productoService.Eliminar(id, User.Identity?.Name ?? "Desconocido");
+			var eliminado = _productoService.Eliminar(id, User.Identity?.Name ?? "Desconocido");
+			if (!eliminado) return NotFound();
 			return RedirectToAction("Index");
 		}
 	}

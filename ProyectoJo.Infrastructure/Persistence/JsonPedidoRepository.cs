@@ -56,7 +56,7 @@ namespace ProyectoJo.Infrastructure.Persistence
 				var todos = await LeerAsync();
 				pedido.Id = todos.Any() ? todos.Max(p => p.Id) + 1 : 1;
 				todos.Add(pedido);
-				await File.WriteAllTextAsync(_filePath, JsonSerializer.Serialize(todos, _options));
+				await EscribirAtomicoAsync(todos);
 				return pedido;
 			}
 			finally
@@ -74,7 +74,7 @@ namespace ProyectoJo.Infrastructure.Persistence
 				var index = todos.FindIndex(p => p.Id == pedido.Id);
 				if (index == -1) return null;
 				todos[index] = pedido;
-				await File.WriteAllTextAsync(_filePath, JsonSerializer.Serialize(todos, _options));
+				await EscribirAtomicoAsync(todos);
 				return pedido;
 			}
 			finally
@@ -93,13 +93,21 @@ namespace ProyectoJo.Infrastructure.Persistence
 				if (index == -1) return null;
 
 				todos[index].Estado = nuevoEstado;
-				await File.WriteAllTextAsync(_filePath, JsonSerializer.Serialize(todos, _options));
+				await EscribirAtomicoAsync(todos);
 				return todos[index];
 			}
 			finally
 			{
 				_lock.Release();
 			}
+		}
+
+		private async Task EscribirAtomicoAsync(List<Pedido> todos)
+		{
+			var json = JsonSerializer.Serialize(todos, _options);
+			var rutaTemporal = _filePath + ".tmp";
+			await File.WriteAllTextAsync(rutaTemporal, json);
+			File.Move(rutaTemporal, _filePath, overwrite: true);
 		}
 	}
 }

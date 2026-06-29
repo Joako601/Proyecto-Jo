@@ -61,7 +61,9 @@ namespace ProyectoJo.Infrastructure.Persistence
 		private async Task PersistirAsync(List<DispositivoOperaciones> lista)
 		{
 			var json = JsonSerializer.Serialize(lista, _options);
-			await File.WriteAllTextAsync(_rutaArchivo, json);
+			var rutaTemporal = _rutaArchivo + ".tmp";
+			await File.WriteAllTextAsync(rutaTemporal, json);
+			File.Move(rutaTemporal, _rutaArchivo, overwrite: true);
 		}
 	}
 }

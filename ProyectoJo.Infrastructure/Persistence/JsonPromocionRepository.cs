@@ -83,7 +83,9 @@ namespace ProyectoJo.Infrastructure.Persistence
 		private void PersistirSinCandado(List<Promocion> promociones)
 		{
 			var json = JsonSerializer.Serialize(promociones, new JsonSerializerOptions { WriteIndented = true });
-			File.WriteAllText(_rutaArchivo, json);
+			var rutaTemporal = _rutaArchivo + ".tmp";
+			File.WriteAllText(rutaTemporal, json);
+			File.Move(rutaTemporal, _rutaArchivo, overwrite: true);
 		}
 	}
 }

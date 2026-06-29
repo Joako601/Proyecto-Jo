@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+﻿	using System.Text.Json;
 using ProyectoJo.Application.Ports.Out;
 using ProyectoJo.Domain.Entities;
 
@@ -75,7 +75,9 @@ namespace ProyectoJo.Infrastructure.Persistence
 		private void PersistirSinCandado(List<Finanza> lista)
 		{
 			var json = JsonSerializer.Serialize(lista, new JsonSerializerOptions { WriteIndented = true });
-			File.WriteAllText(_rutaArchivo, json);
+			var rutaTemporal = _rutaArchivo + ".tmp";
+			File.WriteAllText(rutaTemporal, json);
+			File.Move(rutaTemporal, _rutaArchivo, overwrite: true);
 		}
 	}
 }

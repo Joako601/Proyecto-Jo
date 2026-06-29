@@ -107,7 +107,9 @@ namespace ProyectoJo.Infrastructure.Persistence
 		private void PersistirSinCandado(List<Item> menu)
 		{
 			var json = JsonSerializer.Serialize(menu, new JsonSerializerOptions { WriteIndented = true });
-			File.WriteAllText(_rutaArchivo, json);
+			var rutaTemporal = _rutaArchivo + ".tmp";
+			File.WriteAllText(rutaTemporal, json);
+			File.Move(rutaTemporal, _rutaArchivo, overwrite: true);
 		}
 	}
 }

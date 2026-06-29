@@ -43,7 +43,9 @@ namespace ProyectoJo.Infrastructure.Persistence
 		private void PersistirSinCandado(List<RegistroAuditoria> lista)
 		{
 			var json = JsonSerializer.Serialize(lista, new JsonSerializerOptions { WriteIndented = true });
-			File.WriteAllText(_rutaArchivo, json);
+			var rutaTemporal = _rutaArchivo + ".tmp";
+			File.WriteAllText(rutaTemporal, json);
+			File.Move(rutaTemporal, _rutaArchivo, overwrite: true);
 		}
 	}
 }

@@ -152,6 +152,8 @@ var app = builder.Build();
 
 app.UseSerilogRequestLogging();
 
+app.UseMiddleware<ProyectoJo.Web.Middleware.JsonExceptionMiddleware>();
+
 if (!app.Environment.IsDevelopment())
 {
 	app.UseExceptionHandler("/Home/Error");

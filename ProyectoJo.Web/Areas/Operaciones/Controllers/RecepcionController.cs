@@ -27,16 +27,32 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 		[HttpGet]
 		public IActionResult ObtenerMenu()
 		{
-			var menu = _productoService.ObtenerMenu();
-			return Json(menu);
+			try
+			{
+				var menu = _productoService.ObtenerMenu();
+				return Json(menu);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error al obtener el menú para Recepción");
+				return StatusCode(500, new { error = "No se pudo cargar el menú. Intentá de nuevo." });
+			}
 		}
 
 		// GET /Operaciones/Recepcion/ObtenerPedidos
 		[HttpGet]
 		public async Task<IActionResult> ObtenerPedidos()
 		{
-			var pedidos = await _pedidoService.ObtenerParaRecepcionAsync();
-			return Json(pedidos);
+			try
+			{
+				var pedidos = await _pedidoService.ObtenerParaRecepcionAsync();
+				return Json(pedidos);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error al obtener pedidos para Recepción");
+				return StatusCode(500, new { error = "No se pudieron cargar los pedidos. Intentá de nuevo." });
+			}
 		}
 
 		// POST /Operaciones/Recepcion/Crear

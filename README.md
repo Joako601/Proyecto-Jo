@@ -6,6 +6,7 @@
 ![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)
 ![Arquitectura](https://img.shields.io/badge/Arquitectura-Hexagonal-blue)
 ![API](https://img.shields.io/badge/API-REST%20%2B%20Swagger-85EA2D)
+![Tests](https://img.shields.io/badge/Tests-26%20passing-brightgreen)
 
 ---
 
@@ -19,9 +20,11 @@ del dominio, el dominio nunca depende de ellos.
 
 El sistema expone dos adaptadores de entrada simultáneos:
 
-- **`ProyectoJo.Web`** — panel administrativo y vitrina pública (ASP.NET Core MVC)
-- **`ProyectoJo.Api`** — API REST documentada con Swagger, para clientes externos
-  (Postman, apps móviles, integraciones futuras)
+- **`ProyectoJo.Web`** — panel administrativo y vitrina pública (ASP.NET Core MVC),
+  con comunicación en tiempo real vía **SignalR** para las pantallas de Cocina y Recepción
+- **`ProyectoJo.Api`** — API REST documentada con Swagger, actualmente desarrollada
+  pero sin uso activo en el sistema, reservada para una futura integración con clientes
+  externos (apps móviles, WhatsApp, Postman)
 
 El historial completo de decisiones de diseño está documentado en
 [`/ADRs`](./ADRs).
@@ -46,12 +49,16 @@ flowchart TD
         UC["UseCases"]
         POUT["Ports/Out
         IProductoRepository, IFinanzaRepository,
-        IPedidoRepository, IPromocionRepository"]
+        IPedidoRepository, IPromocionRepository,
+        IPedidoNotificador"]
         PIN --> UC --> POUT
     end
 
     subgraph WEB ["ProyectoJo.Web"]
         WC["Controllers MVC (Razor Views)"]
+        HUB["PedidosHub (SignalR)"]
+        NOTIF["SignalRPedidoNotificador"]
+        MW["JsonExceptionMiddleware"]
     end
 
     subgraph API ["ProyectoJo.Api"]
@@ -59,8 +66,13 @@ flowchart TD
     end
 
     subgraph INFRA ["ProyectoJo.Infrastructure"]
-        PERS["Persistence — JSON"]
+        PERS["Persistence — JSON (escritura atómica)"]
         AUTH["Auth — IAuthService"]
+    end
+
+    subgraph TESTS ["ProyectoJo.Application.Tests"]
+        UT["UseCases/ — Tests unitarios (Moq)"]
+        IT["Infrastructure/ — Tests de integración (archivo temporal)"]
     end
 
     WC -->|invoca| PIN
@@ -68,6 +80,10 @@ flowchart TD
     UC -->|usa| ENT
     POUT -->|implementado por| PERS
     POUT -->|implementado por| AUTH
+    POUT -->|implementado por| NOTIF
+    NOTIF -->|push| HUB
+    UT -->|mock de| POUT
+    IT -->|instancia real de| PERS
 ```
 
 Más detalle en las vistas arquitectónicas de cada ADR.
@@ -81,7 +97,7 @@ Más detalle en las vistas arquitectónicas de cada ADR.
 | Inventario | Toggle activo/agotado por platillo |
 | Promociones | Banners y descuentos, vista pública en menú |
 | Mapa de Calor | Ventas por semana y por mes con navegación por período |
-| Cocina / Recepción | Flujo operacional de pedidos con autenticación por rol y PIN |
+| Cocina / Recepción | Flujo operacional de pedidos con autenticación por rol y PIN, sincronización en tiempo real vía SignalR |
 
 >  En desarrollo activo — Arquitectura Hexagonal implementada, nuevos módulos en camino
 
@@ -96,24 +112,37 @@ ProyectoJo/
 │
 ├── ProyectoJo.Application/       # Casos de uso y puertos
 │   ├── Ports/In/                 # IProductoService, IFinanzaService, IPedidoService, IPromocionService
-│   ├── Ports/Out/                # IProductoRepository, IFinanzaRepository, IPedidoRepository, IPromocionRepository
+│   ├── Ports/Out/                # IProductoRepository, IFinanzaRepository, IPedidoRepository,
+│   │                             # IPromocionRepository, IPedidoNotificador
 │   ├── UseCases/                 # Implementación de la lógica de negocio
-│   └── DTOs/                     # ResumenFinanciero, ResumenDashboard
+│   └── DTOs/                     # ResumenFinanciero, ResumenDashboard, ResultadoCrearPedido
 │
-├── ProyectoJo.Infrastructure/     # Adaptadores de salida
-│   ├── Persistence/               # Repositorios JSON
-│   └── Auth/                      # EnvAuthService
+├── ProyectoJo.Infrastructure/    # Adaptadores de salida
+│   ├── Persistence/              # Repositorios JSON con escritura atómica (.tmp + Move)
+│   └── Auth/                     # EnvAuthService
 │
-├── ProyectoJo.Web/                # Adaptador de entrada — ASP.NET Core MVC
-│   ├── Controllers/                # Home, Menu, Historia, Nosotros, Ubicación
-│   ├── Areas/Admin/                 # Panel administrativo (Finanzas, Productos, Promociones)
+├── ProyectoJo.Web/               # Adaptador de entrada — ASP.NET Core MVC
+│   ├── Controllers/              # Home, Menu, Historia, Nosotros, Ubicación
+│   ├── Areas/Admin/              # Panel administrativo (Finanzas, Productos, Promociones)
+│   ├── Areas/Operaciones/        # Cocina, Recepción, Auth por PIN
+│   ├── Hubs/                     # PedidosHub — canal SignalR en tiempo real
+│   ├── Realtime/                 # SignalRPedidoNotificador
+│   ├── Middleware/               # JsonExceptionMiddleware
 │   ├── Views/
-│   ├── Persistencia/                 # menu.json, finanzas.json, promociones.json, pedidos.json
-│   └── ADRs/                          # Historial de decisiones arquitectónicas
+│   ├── Persistencia/             # menu.json, finanzas.json, promociones.json,
+│   │                             # pedidos.json, cierres-caja.json, auditoria.json
+│   └── ADRs/                     # Historial de decisiones arquitectónicas
 │
-└── ProyectoJo.Api/                 # Adaptador de entrada — ASP.NET Core Web API
-    ├── Controllers/                  # PedidosController
-    └── Program.cs                    # Composición de dependencias + Swagger
+├── ProyectoJo.Api/               # Adaptador de entrada — ASP.NET Core Web API
+│   ├── Controllers/              # PedidosController
+│   └── Program.cs                # Composición de dependencias + Swagger
+│
+└── ProyectoJo.Application.Tests/ # Proyecto de tests — xUnit + Moq
+    ├── UseCases/                 # Tests unitarios con mocks (ProductoUseCase,
+    │                             # FinanzaUseCase, PromocionUseCase,
+    │                             # CierreCajaUseCase, PedidoUseCase)
+    └── Infrastructure/           # Tests de integración con repos reales contra
+                                  # archivos temporales (concurrencia y escritura atómica)
 ```
 
 ---
@@ -126,9 +155,12 @@ ProyectoJo/
 | Patrón arquitectónico | Arquitectura Hexagonal (Ports & Adapters) |
 | Web (adaptador de entrada) | ASP.NET Core MVC, Razor Views |
 | API (adaptador de entrada) | ASP.NET Core Web API |
+| Tiempo real | SignalR |
 | Documentación de API | Swagger / OpenAPI (Swashbuckle.AspNetCore) |
-| Persistencia actual | Archivos JSON (planeado: SQL + Entity Framework) |
-| Autenticación | Cookie auth (`JoCookieAuth`) + `IAuthService` desacoplado |
+| Persistencia actual | Archivos JSON con escritura atómica (planeado: SQL + Entity Framework) |
+| Autenticación | Cookie auth  |
+| Logging | Serilog (consola + archivo rotativo diario) |
+| Tests | xUnit 2.9.2 + Moq 4.20.72 — 26 tests (unitarios + integración con concurrencia real) |
 | Despliegue objetivo | AWS EC2 |
 
 ---
@@ -149,21 +181,26 @@ y la API (`ProyectoJo.Api`). Cada uno se ejecuta por separado.
 # Restaurar dependencias de toda la solución
 dotnet restore
 
-# Levantar el sitio web (panel admin + vitrina pública)
+# Levantar el sitio web (panel admin + vitrina pública + Cocina/Recepción)
 dotnet run --project ProyectoJo.Web
 # → https://localhost:7287  /  http://localhost:5207
 
-# Levantar la API REST
+# Levantar la API REST (actualmente sin uso activo en el sistema)
 dotnet run --project ProyectoJo.Api
 # → https://localhost:63639  /  http://localhost:63640
+
+# Correr los tests
+dotnet test ProyectoJo.Application.Tests
+# → 26 tests, 0 errores
 ```
 
 ### Credenciales del panel administrativo
 
-El panel admin requiere las variables de entorno `JO_ADMIN_USER` y `JO_ADMIN_PASSWORD`
-(ver `Infrastructure/Auth/EnvAuthService`). Configúralas en tu entorno local o en los
-*User Secrets* de .NET — **nunca las dejes hardcodeadas ni las subas al repositorio**
-en `launchSettings.json` con su valor real.
+El panel admin requiere las variables de entorno `Auth__AdminUser` y
+`Auth__AdminPasswordHash` (ver `Infrastructure/Auth/EnvAuthService`).
+Configúralas en tu entorno local o en los *User Secrets* de .NET —
+**nunca las dejes hardcodeadas ni las subas al repositorio** en `launchSettings.json`
+con su valor real.
 
 ---
 
@@ -172,9 +209,7 @@ en `launchSettings.json` con su valor real.
 Con `ProyectoJo.Api` corriendo, Swagger UI queda disponible directamente en la raíz
 del proyecto:
 
-```
 http://localhost:63640/
-```
 
 Desde ahí se pueden explorar y probar todos los endpoints sin necesidad de Postman.
 
@@ -196,6 +231,12 @@ Desde ahí se pueden explorar y probar todos los endpoints sin necesidad de Post
 | GET | `/api/Pedidos/cocina` | Cocina | Lista pedidos pendientes/preparados para cocina |
 | PATCH | `/api/Pedidos/{id}/estado` | Cocina | Cambia el estado de un pedido |
 
+### Hub de tiempo real — SignalR
+
+| Ruta | Descripción |
+|---|---|
+| `/hubs/pedidos` | Canal SignalR para Cocina y Recepción — push de cambios de estado en tiempo real |
+
 ### Próximos módulos a exponer vía API
 
 Productos, Finanzas y Promociones ya tienen sus casos de uso y puertos listos en
@@ -214,6 +255,8 @@ respectivos controladores en `ProyectoJo.Api`.
 | [ADR-03](./ADRs/ARD-03-Joaquin-Uriona.md) | Migración hacia Arquitectura Hexagonal |
 | [ADR-04](./ADRs/ARD-04-Joaquin-Uriona.md) | Incorporación de una API REST con Swagger |
 | [ADR-05](./ADRs/ARD-05-Joaquin-Uriona.md) | Integración de Patrones de Diseño GOF |
+| [ADR-06](./ADRs/ARD-06-Joaquin-Uriona.md) | Reemplazo de Polling por SignalR en Cocina/Recepción |
+| [ADR-07](./ADRs/ARD-07-Joaquin-Uriona.md) | Introducción de Proyecto de Tests y Estrategia de Cobertura |
 
 ---
 
@@ -223,7 +266,8 @@ Se utilizó IA para:
 
 - Corregir redacción y ortografía de este documento
 - Generar la sintaxis Mermaid del diagrama de arquitectura
-- Redactar la estructura del README a partir del código real del repositorio
+- Generar la estructura y el código de los tests unitarios y de integración a partir del código existente en
+  `ProyectoJo.Application` y `ProyectoJo.Infrastructure`
 
 No se utilizó para tomar decisiones arquitectónicas ni para diseñar la solución.
 
@@ -248,8 +292,3 @@ prohibido.
 
 > Este software se proporciona "tal cual", para fines de exhibición de
 > portafolio profesional, sin garantías de ningún tipo.
-
-
-
-
-

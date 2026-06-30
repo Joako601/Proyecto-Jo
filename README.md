@@ -209,7 +209,9 @@ con su valor real.
 Con `ProyectoJo.Api` corriendo, Swagger UI queda disponible directamente en la raíz
 del proyecto:
 
+```
 http://localhost:63640/
+```
 
 Desde ahí se pueden explorar y probar todos los endpoints sin necesidad de Postman.
 

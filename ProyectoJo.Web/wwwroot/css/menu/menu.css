@@ -290,3 +290,61 @@
     right: 0;
     background: linear-gradient(to left, var(--yerba-cream), transparent);
 }
+
+/* ============================================= */
+/* --- Paginación del Menú (estilo minimalista) --- */
+/* ============================================= */
+
+.menu-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 4rem 0 0 0;
+}
+
+    .menu-pagination .page-item {
+        display: inline-flex;
+    }
+
+    .menu-pagination .page-link {
+        background-color: transparent;
+        border: none;
+        color: #888;
+        padding: 5px 8px;
+        font-family: 'Inter', sans-serif;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 2px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+    }
+
+        .menu-pagination .page-link:hover {
+            color: #222;
+            border-bottom: 2px solid #b5a478;
+        }
+
+    .menu-pagination .page-item.active .page-link {
+        color: #222;
+        border-bottom: 2px solid #b5a478;
+    }
+
+    .menu-pagination .page-item.disabled .page-link {
+        color: #ccc;
+        pointer-events: none;
+        cursor: default;
+        border-bottom: 2px solid transparent;
+    }
+
+    /* Anterior / Siguiente un poco más discretos que los números */
+    .menu-pagination .page-item:first-child .page-link,
+    .menu-pagination .page-item:last-child .page-link {
+        font-size: 0.65rem;
+        letter-spacing: 1.5px;
+    }

@@ -294,5 +294,77 @@
     "Categoria": "Ventas",
     "Descripcion": "Pedido #29 \u2014 Mesa Mesa 34",
     "Fecha": "2026-06-28T20:01:05.1932008Z"
+  },
+  {
+    "Id": 38,
+    "Monto": 80,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #36 \u2014 Mesa Mesa 6",
+    "Fecha": "2026-06-30T22:57:30.4768392Z"
+  },
+  {
+    "Id": 39,
+    "Monto": 25,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #35 \u2014 Mesa Para llevar",
+    "Fecha": "2026-06-30T22:57:39.643458Z"
+  },
+  {
+    "Id": 40,
+    "Monto": 25,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #34 \u2014 Mesa Mesa 1",
+    "Fecha": "2026-06-30T22:57:40.4661726Z"
+  },
+  {
+    "Id": 41,
+    "Monto": 25,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #33 \u2014 Mesa Mesa 1",
+    "Fecha": "2026-06-30T22:57:41.029634Z"
+  },
+  {
+    "Id": 42,
+    "Monto": 25,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #32 \u2014 Mesa Mesa 1",
+    "Fecha": "2026-06-30T22:57:41.4664605Z"
+  },
+  {
+    "Id": 43,
+    "Monto": 30,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #31 \u2014 Mesa Mesa 1",
+    "Fecha": "2026-06-30T22:57:41.9574709Z"
+  },
+  {
+    "Id": 44,
+    "Monto": 20,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #30 \u2014 Mesa Para llevar",
+    "Fecha": "2026-06-30T22:57:42.4511801Z"
+  },
+  {
+    "Id": 45,
+    "Monto": 80,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #37 \u2014 Mesa Mesa 7",
+    "Fecha": "2026-06-30T23:02:14.1967875Z"
+  },
+  {
+    "Id": 46,
+    "Monto": 25,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #38 \u2014 Mesa Mesa 5",
+    "Fecha": "2026-07-08T18:00:00.0382929Z"
   }
 ]

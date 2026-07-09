@@ -14,17 +14,16 @@ namespace ProyectoJo.Web.Realtime
 			_hubContext = hubContext;
 		}
 
-		public async Task NotificarCreadoAsync(Pedido pedido)
-		{
-			await _hubContext.Clients.Group("Cocina").SendAsync("PedidoNuevo", pedido);
-			await _hubContext.Clients.Group("Recepcion").SendAsync("PedidoNuevo", pedido);
-		}
+		public Task NotificarCreadoAsync(Pedido pedido) =>
+			Task.WhenAll(
+				_hubContext.Clients.Group("Cocina").SendAsync("PedidoNuevo", pedido),
+				_hubContext.Clients.Group("Recepcion").SendAsync("PedidoNuevo", pedido)
+			);
 
-
-		public async Task NotificarEstadoCambiadoAsync(Pedido pedido)
-		{
-			await _hubContext.Clients.Group("Cocina").SendAsync("PedidoActualizado", pedido);
-			await _hubContext.Clients.Group("Recepcion").SendAsync("PedidoActualizado", pedido);
-		}
+		public Task NotificarEstadoCambiadoAsync(Pedido pedido) =>
+			Task.WhenAll(
+				_hubContext.Clients.Group("Cocina").SendAsync("PedidoActualizado", pedido),
+				_hubContext.Clients.Group("Recepcion").SendAsync("PedidoActualizado", pedido)
+			);
 	}
 }

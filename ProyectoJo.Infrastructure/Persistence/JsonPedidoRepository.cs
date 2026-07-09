@@ -83,18 +83,31 @@ namespace ProyectoJo.Infrastructure.Persistence
 			}
 		}
 
-		public async Task<Pedido?> CambiarEstadoAtomicoAsync(int id, EstadoPedido nuevoEstado)
+		public async Task<(Pedido? Anterior, Pedido? Actualizado)> CambiarEstadoAtomicoAsync(int id, EstadoPedido nuevoEstado)
 		{
 			await _lock.WaitAsync();
 			try
 			{
 				var todos = await LeerAsync();
 				var index = todos.FindIndex(p => p.Id == id);
-				if (index == -1) return null;
+				if (index == -1) return (null, null);
 
-				todos[index].Estado = nuevoEstado;
+				var anterior = todos[index];
+				var estadoAnterior = anterior.Estado; 
+				anterior.Estado = nuevoEstado;
 				await EscribirAtomicoAsync(todos);
-				return todos[index];
+
+				
+				var anteriorSnapshot = new Pedido
+				{
+					Id = anterior.Id,
+					Estado = estadoAnterior,
+					Mesa = anterior.Mesa,
+					FechaCreacion = anterior.FechaCreacion,
+					Items = anterior.Items
+				};
+
+				return (anteriorSnapshot, anterior);
 			}
 			finally
 			{

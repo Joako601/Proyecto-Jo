@@ -3,6 +3,7 @@ using ProyectoJo.Application.Ports.Out;
 using ProyectoJo.Domain.Entities;
 using ProyectoJo.Application.DTOs;
 using Microsoft.Extensions.Logging;
+using System.Runtime.InteropServices;
 
 namespace ProyectoJo.Application.UseCases
 {
@@ -47,6 +48,10 @@ namespace ProyectoJo.Application.UseCases
 			var lineasValidas = new List<ItemPedido>();
 			var lineasDescartadas = new List<LineaDescartada>();
 
+			// 1 sola lectura de cada catálogo (y ahora cacheada, casi gratis) en vez de N por línea
+			var menu = _productoService.ObtenerTodos().ToDictionary(i => i.Id);
+			var promosVigentes = _promocionService.ObtenerVigentes().ToList();
+
 			foreach (var linea in pedido.Items)
 			{
 				if (linea.Cantidad <= 0)
@@ -55,8 +60,7 @@ namespace ProyectoJo.Application.UseCases
 					continue;
 				}
 
-				var item = _productoService.ObtenerPorId(linea.ItemId);
-				if (item is null || !item.Activo)
+				if (!menu.TryGetValue(linea.ItemId, out var item) || !item.Activo)
 				{
 					lineasDescartadas.Add(new LineaDescartada { ItemId = linea.ItemId, Nombre = linea.Nombre, Motivo = "Ya no está disponible en el menú" });
 					continue;
@@ -68,7 +72,7 @@ namespace ProyectoJo.Application.UseCases
 					continue;
 				}
 
-				linea.PrecioUnitario = _promocionService.CalcularPrecioFinal(item);
+				linea.PrecioUnitario = CalcularPrecioFinalEnMemoria(item, promosVigentes);
 				lineasValidas.Add(linea);
 			}
 
@@ -86,13 +90,32 @@ namespace ProyectoJo.Application.UseCases
 			return new ResultadoCrearPedido { Pedido = creado, LineasDescartadas = lineasDescartadas };
 		}
 
+		private static decimal CalcularPrecioFinalEnMemoria(Item item, List<Promocion> promosVigentes)
+		{
+			var promo = promosVigentes
+				.Where(p => (p.ItemIds != null && p.ItemIds.Contains(item.Id))
+						 && p.TipoDescuento != TipoDescuento.Ninguno && p.ValorDescuento.HasValue)
+				.OrderByDescending(p => p.Id)
+				.FirstOrDefault();
+
+			if (promo == null) return item.Precio;
+
+			decimal precioFinal = promo.TipoDescuento switch
+			{
+				TipoDescuento.Porcentaje => item.Precio - (item.Precio * (promo.ValorDescuento!.Value / 100m)),
+				TipoDescuento.MontoFijo => item.Precio - promo.ValorDescuento!.Value,
+				_ => item.Precio
+			};
+
+			return precioFinal < 0 ? 0 : Math.Round(precioFinal, 2);
+		}
+
 		public async Task<Pedido?> CambiarEstadoAsync(int id, EstadoPedido nuevoEstado)
 		{
-			var pedidoAntes = await _repository.ObtenerPorIdAsync(id);
+			var (pedidoAntes, actualizado) = await _repository.CambiarEstadoAtomicoAsync(id, nuevoEstado);
 			if (pedidoAntes is null) return null;
 
 			var yaEstabaPagado = pedidoAntes.Estado == EstadoPedido.Pagado;
-			var actualizado = await _repository.CambiarEstadoAtomicoAsync(id, nuevoEstado);
 
 			if (actualizado is not null && nuevoEstado == EstadoPedido.Pagado && !yaEstabaPagado)
 			{
@@ -115,14 +138,8 @@ namespace ProyectoJo.Application.UseCases
 
 			if (actualizado is not null)
 			{
-				try
-				{
-					await _notificador.NotificarEstadoCambiadoAsync(actualizado);
-				}
-				catch (Exception ex)
-				{
-					_logger.LogError(ex, "Error notificando cambio de estado del Pedido #{PedidoId}", id);
-				}
+				try { await _notificador.NotificarEstadoCambiadoAsync(actualizado); }
+				catch (Exception ex) { _logger.LogError(ex, "Error notificando cambio de estado del Pedido #{PedidoId}", id); }
 			}
 
 			return actualizado;
@@ -146,175 +163,164 @@ namespace ProyectoJo.Application.UseCases
 				.ToList();
 		}
 
-		public async Task<ResumenMapaCalor> ObtenerMapaCalorAsync(
-			DateTime? desde = null,
-			DateTime? hasta = null,
-			bool semanaHistoricoCompleto = true,
-			int semanaOffset = 0,
-			int? anioMeses = null,
-			int? mesDetalle = null)
+	public async Task<ResumenMapaCalor> ObtenerMapaCalorAsync(
+	DateTime? desde = null,
+	DateTime? hasta = null,
+	bool semanaHistoricoCompleto = true,
+	int semanaOffset = 0,
+	int? anioMeses = null,
+	int? mesDetalle = null)
+	{
+		var todos = await _repository.ObtenerTodosAsync();
+
+		var hoy = DateTime.UtcNow.Date;
+		var fechaSeleccionada = (desde ?? hoy).Date;
+		var anioMesesSeleccionado = anioMeses ?? hoy.Year;
+
+		int diffHastaLunes = ((int)hoy.DayOfWeek - (int)DayOfWeek.Monday + 7) % 7;
+		var lunesSemanaActual = hoy.AddDays(-diffHastaLunes);
+		var inicioSemana = lunesSemanaActual.AddDays(7 * semanaOffset);
+		var finSemana = inicioSemana.AddDays(6);
+
+		
+		var horaCounts = new (int cant, decimal total)[24];
+		var diaSemanaCounts = new (int cant, decimal total)[7];
+		var porDiaDict = new Dictionary<DateTime, (int cant, decimal total)>();
+		var porMesCounts = new (int cant, decimal total)[13]; // índice 1-12
+		var porDiaMesDict = new Dictionary<DateTime, (int cant, decimal total)>();
+		var topProductosDict = new Dictionary<string, (int cant, decimal total)>();
+
+		int totalPedidosDelDia = 0;
+		decimal totalVendidoDelDia = 0;
+
+		foreach (var p in todos)
 		{
-			var todos = await _repository.ObtenerTodosAsync();
-			var pagados = todos.Where(p => p.Estado == EstadoPedido.Pagado).ToList();
+			if (p.Estado != EstadoPedido.Pagado) continue;
 
-			var hoy = DateTime.UtcNow.Date;
-			var fechaSeleccionada = (desde ?? hoy).Date;
+			var fecha = p.FechaCreacion.Date;
 
-			// --- Pedidos por hora del día seleccionado ---
-			var pedidosDelDia = pagados
-				.Where(p => p.FechaCreacion.Date == fechaSeleccionada)
-				.ToList();
-
-			var ventasPorHoraAgrupado = pedidosDelDia
-				.GroupBy(p => p.FechaCreacion.Hour)
-				.Select(g => new VentasPorHora
-				{
-					Hora = g.Key,
-					Etiqueta = $"{g.Key:D2}:00",
-					CantidadPedidos = g.Count(),
-					TotalVendido = g.Sum(p => p.Total)
-				})
-				.ToList();
-
-			var horasCompletas = Enumerable.Range(0, 24)
-				.Select(h => ventasPorHoraAgrupado.FirstOrDefault(v => v.Hora == h)
-					?? new VentasPorHora { Hora = h, Etiqueta = $"{h:D2}:00" })
-				.OrderBy(v => v.Hora)
-				.ToList();
-
-			// --- Top productos (histórico completo) ---
-			var topProductos = pagados
-				.SelectMany(p => p.Items)
-				.GroupBy(i => i.Nombre)
-				.Select(g => new ProductoMasVendido
-				{
-					Nombre = g.Key,
-					CantidadVendida = g.Sum(i => i.Cantidad),
-					TotalGenerado = g.Sum(i => i.Subtotal)
-				})
-				.OrderByDescending(p => p.CantidadVendida)
-				.Take(10)
-				.ToList();
-
-			// --- Ventas por día de la semana ---
-			var diasOrdenados = new[]
+			// Ventas por hora (solo día seleccionado)
+			if (fecha == fechaSeleccionada)
 			{
-				DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday,
-				DayOfWeek.Thursday, DayOfWeek.Friday, DayOfWeek.Saturday, DayOfWeek.Sunday
-			};
-
-			var nombresDias = new Dictionary<DayOfWeek, string>
-			{
-				[DayOfWeek.Monday] = "Lunes",
-				[DayOfWeek.Tuesday] = "Martes",
-				[DayOfWeek.Wednesday] = "Miércoles",
-				[DayOfWeek.Thursday] = "Jueves",
-				[DayOfWeek.Friday] = "Viernes",
-				[DayOfWeek.Saturday] = "Sábado",
-				[DayOfWeek.Sunday] = "Domingo"
-			};
-
-			int diffHastaLunes = ((int)hoy.DayOfWeek - (int)DayOfWeek.Monday + 7) % 7;
-			var lunesSemanaActual = hoy.AddDays(-diffHastaLunes);
-			var inicioSemana = lunesSemanaActual.AddDays(7 * semanaOffset);
-			var finSemana = inicioSemana.AddDays(6);
-
-			var pedidosParaDiaSemana = semanaHistoricoCompleto
-				? pagados
-				: pagados.Where(p => p.FechaCreacion.Date >= inicioSemana && p.FechaCreacion.Date <= finSemana).ToList();
-
-			var ventasPorDiaSemanaAgrupado = pedidosParaDiaSemana
-				.GroupBy(p => p.FechaCreacion.DayOfWeek)
-				.ToDictionary(g => g.Key, g => g.ToList());
-
-			var ventasPorDiaSemana = diasOrdenados
-				.Select(dia => new VentasPorDiaSemana
-				{
-					DiaSemana = dia,
-					Etiqueta = nombresDias[dia],
-					CantidadPedidos = ventasPorDiaSemanaAgrupado.ContainsKey(dia) ? ventasPorDiaSemanaAgrupado[dia].Count : 0,
-					TotalVendido = ventasPorDiaSemanaAgrupado.ContainsKey(dia) ? ventasPorDiaSemanaAgrupado[dia].Sum(p => p.Total) : 0
-				})
-				.ToList();
-
-			// --- Historial día por día ---
-			var historialPorDia = pagados
-				.GroupBy(p => p.FechaCreacion.Date)
-				.Select(g => new VentasPorDia
-				{
-					Fecha = g.Key,
-					Etiqueta = g.Key.ToString("dd/MM/yyyy"),
-					CantidadPedidos = g.Count(),
-					TotalVendido = g.Sum(p => p.Total)
-				})
-				.OrderByDescending(v => v.Fecha)
-				.ToList();
-
-			// --- Ventas por mes del año seleccionado ---
-			var anioMesesSeleccionado = anioMeses ?? hoy.Year;
-
-			var nombresMesesCortos = new[]
-			{
-				"Ene", "Feb", "Mar", "Abr", "May", "Jun",
-				"Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
-			};
-
-			var pedidosDelAnio = pagados
-				.Where(p => p.FechaCreacion.Year == anioMesesSeleccionado)
-				.ToList();
-
-			var ventasPorMesAgrupado = pedidosDelAnio
-				.GroupBy(p => p.FechaCreacion.Month)
-				.ToDictionary(g => g.Key, g => g.ToList());
-
-			var ventasPorMes = Enumerable.Range(1, 12)
-				.Select(m => new VentasPorMes
-				{
-					Mes = m,
-					Etiqueta = nombresMesesCortos[m - 1],
-					CantidadPedidos = ventasPorMesAgrupado.ContainsKey(m) ? ventasPorMesAgrupado[m].Count : 0,
-					TotalVendido = ventasPorMesAgrupado.ContainsKey(m) ? ventasPorMesAgrupado[m].Sum(p => p.Total) : 0
-				})
-				.ToList();
-
-			// --- Detalle de días del mes seleccionado ---
-			var diasDelMesSeleccionado = new List<VentasPorDia>();
-			if (mesDetalle.HasValue)
-			{
-				diasDelMesSeleccionado = pagados
-					.Where(p => p.FechaCreacion.Month == mesDetalle.Value && p.FechaCreacion.Year == anioMesesSeleccionado)
-					.GroupBy(p => p.FechaCreacion.Date)
-					.Select(g => new VentasPorDia
-					{
-						Fecha = g.Key,
-						Etiqueta = g.Key.ToString("dd/MM/yyyy"),
-						CantidadPedidos = g.Count(),
-						TotalVendido = g.Sum(p => p.Total)
-					})
-					.OrderBy(v => v.Fecha)
-					.ToList();
+				ref var h = ref horaCounts[p.FechaCreacion.Hour];
+				h.cant++; h.total += p.Total;
+				totalPedidosDelDia++;
+				totalVendidoDelDia += p.Total;
 			}
 
-			return new ResumenMapaCalor
+			// Ventas por día de semana (histórico completo o solo semana actual)
+			bool incluirEnDiaSemana = semanaHistoricoCompleto || (fecha >= inicioSemana && fecha <= finSemana);
+			if (incluirEnDiaSemana)
 			{
-				VentasPorHora = horasCompletas,
-				TopProductos = topProductos,
-				VentasPorDiaSemana = ventasPorDiaSemana,
-				HistorialPorDia = historialPorDia,
-				FechaSeleccionada = fechaSeleccionada,
-				TotalPedidos = pedidosDelDia.Count,
-				TotalVendido = pedidosDelDia.Sum(p => p.Total),
+				ref var d = ref diaSemanaCounts[(int)p.FechaCreacion.DayOfWeek];
+				d.cant++; d.total += p.Total;
+			}
 
-				VentasPorMes = ventasPorMes,
-				AnioMesesSeleccionado = anioMesesSeleccionado,
-				DiasDelMesSeleccionado = diasDelMesSeleccionado,
-				MesDetalleSeleccionado = mesDetalle,
+			// Historial día por día (todo el histórico)
+			ref var porDia = ref CollectionsMarshal.GetValueRefOrAddDefault(porDiaDict, fecha, out _);
+			porDia.cant++; porDia.total += p.Total;
 
-				InicioSemana = inicioSemana,
-				FinSemana = finSemana,
-				SemanaOffset = semanaOffset,
-				SemanaHistoricoCompleto = semanaHistoricoCompleto
-			};
+			// Ventas por mes (solo año seleccionado)
+			if (p.FechaCreacion.Year == anioMesesSeleccionado)
+			{
+				ref var m = ref porMesCounts[p.FechaCreacion.Month];
+				m.cant++; m.total += p.Total;
+
+				// Detalle de días del mes (solo si se pidió mesDetalle)
+				if (mesDetalle.HasValue && p.FechaCreacion.Month == mesDetalle.Value)
+				{
+					ref var porDiaMes = ref CollectionsMarshal.GetValueRefOrAddDefault(porDiaMesDict, fecha, out _);
+					porDiaMes.cant++; porDiaMes.total += p.Total;
+				}
+			}
+
+			// Top productos (todo el histórico)
+			foreach (var item in p.Items)
+			{
+				ref var tp = ref CollectionsMarshal.GetValueRefOrAddDefault(topProductosDict, item.Nombre, out _);
+				tp.cant += item.Cantidad; tp.total += item.Subtotal;
+			}
 		}
+
+		// --- Construcción de DTOs a partir de los acumuladores ---
+		var ventasPorHora = Enumerable.Range(0, 24)
+			.Select(h => new VentasPorHora
+			{
+				Hora = h,
+				Etiqueta = $"{h:D2}:00",
+				CantidadPedidos = horaCounts[h].cant,
+				TotalVendido = horaCounts[h].total
+			})
+			.ToList();
+
+		var topProductos = topProductosDict
+			.Select(kv => new ProductoMasVendido { Nombre = kv.Key, CantidadVendida = kv.Value.cant, TotalGenerado = kv.Value.total })
+			.OrderByDescending(p => p.CantidadVendida)
+			.Take(10)
+			.ToList();
+
+		var diasOrdenados = new[]
+		{
+		DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday,
+		DayOfWeek.Thursday, DayOfWeek.Friday, DayOfWeek.Saturday, DayOfWeek.Sunday
+	};
+		var nombresDias = new Dictionary<DayOfWeek, string>
+		{
+			[DayOfWeek.Monday] = "Lunes",
+			[DayOfWeek.Tuesday] = "Martes",
+			[DayOfWeek.Wednesday] = "Miércoles",
+			[DayOfWeek.Thursday] = "Jueves",
+			[DayOfWeek.Friday] = "Viernes",
+			[DayOfWeek.Saturday] = "Sábado",
+			[DayOfWeek.Sunday] = "Domingo"
+		};
+		var ventasPorDiaSemana = diasOrdenados
+			.Select(dia => new VentasPorDiaSemana
+			{
+				DiaSemana = dia,
+				Etiqueta = nombresDias[dia],
+				CantidadPedidos = diaSemanaCounts[(int)dia].cant,
+				TotalVendido = diaSemanaCounts[(int)dia].total
+			})
+			.ToList();
+
+		var historialPorDia = porDiaDict
+			.Select(kv => new VentasPorDia { Fecha = kv.Key, Etiqueta = kv.Key.ToString("dd/MM/yyyy"), CantidadPedidos = kv.Value.cant, TotalVendido = kv.Value.total })
+			.OrderByDescending(v => v.Fecha)
+			.ToList();
+
+		var nombresMesesCortos = new[] { "Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic" };
+		var ventasPorMes = Enumerable.Range(1, 12)
+			.Select(m => new VentasPorMes { Mes = m, Etiqueta = nombresMesesCortos[m - 1], CantidadPedidos = porMesCounts[m].cant, TotalVendido = porMesCounts[m].total })
+			.ToList();
+
+		var diasDelMesSeleccionado = mesDetalle.HasValue
+			? porDiaMesDict
+				.Select(kv => new VentasPorDia { Fecha = kv.Key, Etiqueta = kv.Key.ToString("dd/MM/yyyy"), CantidadPedidos = kv.Value.cant, TotalVendido = kv.Value.total })
+				.OrderBy(v => v.Fecha)
+				.ToList()
+			: new List<VentasPorDia>();
+
+		return new ResumenMapaCalor
+		{
+			VentasPorHora = ventasPorHora,
+			TopProductos = topProductos,
+			VentasPorDiaSemana = ventasPorDiaSemana,
+			HistorialPorDia = historialPorDia,
+			FechaSeleccionada = fechaSeleccionada,
+			TotalPedidos = totalPedidosDelDia,
+			TotalVendido = totalVendidoDelDia,
+
+			VentasPorMes = ventasPorMes,
+			AnioMesesSeleccionado = anioMesesSeleccionado,
+			DiasDelMesSeleccionado = diasDelMesSeleccionado,
+			MesDetalleSeleccionado = mesDetalle,
+
+			InicioSemana = inicioSemana,
+			FinSemana = finSemana,
+			SemanaOffset = semanaOffset,
+			SemanaHistoricoCompleto = semanaHistoricoCompleto
+		};
 	}
+}
 }

@@ -16,15 +16,28 @@ namespace ProyectoJo.Web.Controllers
 			_promocionService = promocionService;
 		}
 
-		public IActionResult Index(string? categoria)
+		public IActionResult Index(string? categoria, int pagina = 1)
 		{
+			const int tamanoPagina = 8;
+
 			var menu = _productoService.ObtenerMenu();
 
 			var resultado = string.IsNullOrEmpty(categoria)
 				? menu
 				: menu.Where(i => i.Categoria == categoria).ToList();
 
-			var viewModels = resultado.Select(i => new MenuItemViewModel
+			var totalItems = resultado.Count;
+			var totalPaginas = (int)Math.Ceiling(totalItems / (double)tamanoPagina);
+			if (totalPaginas < 1) totalPaginas = 1;
+			if (pagina < 1) pagina = 1;
+			if (pagina > totalPaginas) pagina = totalPaginas;
+
+			var paginaActual = resultado
+				.Skip((pagina - 1) * tamanoPagina)
+				.Take(tamanoPagina)
+				.ToList();
+
+			var viewModels = paginaActual.Select(i => new MenuItemViewModel
 			{
 				Platillo = i,
 				PrecioFinal = _promocionService.CalcularPrecioFinal(i)
@@ -33,6 +46,8 @@ namespace ProyectoJo.Web.Controllers
 			ViewBag.Categorias = menu.Select(i => i.Categoria).Distinct().ToList();
 			ViewBag.CategoriaActual = categoria;
 			ViewBag.PromocionesGenerales = _promocionService.ObtenerVigentesGenerales().ToList();
+			ViewBag.PaginaActual = pagina;
+			ViewBag.TotalPaginas = totalPaginas;
 
 			return View(viewModels);
 		}

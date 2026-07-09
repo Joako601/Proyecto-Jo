@@ -496,7 +496,7 @@
         "Subtotal": 20
       }
     ],
-    "Estado": "Pendiente",
+    "Estado": "Pagado",
     "FechaCreacion": "2026-06-28T21:32:39.2003393Z",
     "Total": 20
   },
@@ -512,7 +512,7 @@
         "Subtotal": 30
       }
     ],
-    "Estado": "Pendiente",
+    "Estado": "Pagado",
     "FechaCreacion": "2026-06-28T21:33:24.8224995Z",
     "Total": 30
   },
@@ -528,7 +528,7 @@
         "Subtotal": 25
       }
     ],
-    "Estado": "Pendiente",
+    "Estado": "Pagado",
     "FechaCreacion": "2026-06-28T21:42:20.2251303Z",
     "Total": 25
   },
@@ -544,7 +544,7 @@
         "Subtotal": 25
       }
     ],
-    "Estado": "Pendiente",
+    "Estado": "Pagado",
     "FechaCreacion": "2026-06-28T21:45:16.1068378Z",
     "Total": 25
   },
@@ -560,7 +560,7 @@
         "Subtotal": 25
       }
     ],
-    "Estado": "Pendiente",
+    "Estado": "Pagado",
     "FechaCreacion": "2026-06-28T21:46:49.0251297Z",
     "Total": 25
   },
@@ -576,8 +576,70 @@
         "Subtotal": 25
       }
     ],
-    "Estado": "Pendiente",
+    "Estado": "Pagado",
     "FechaCreacion": "2026-06-28T21:50:20.4832276Z",
+    "Total": 25
+  },
+  {
+    "Id": 36,
+    "Mesa": "Mesa 6",
+    "Items": [
+      {
+        "ItemId": 2,
+        "Nombre": "Panucho de Huevo (sin Huevo sancochado)",
+        "Cantidad": 2,
+        "PrecioUnitario": 25,
+        "Subtotal": 50
+      },
+      {
+        "ItemId": 3,
+        "Nombre": "Panucho de Carne Asada",
+        "Cantidad": 1,
+        "PrecioUnitario": 30,
+        "Subtotal": 30
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-30T22:57:01.1936318Z",
+    "Total": 80
+  },
+  {
+    "Id": 37,
+    "Mesa": "Mesa 7",
+    "Items": [
+      {
+        "ItemId": 2,
+        "Nombre": "Panucho de Huevo (sin Huevo sancochado)",
+        "Cantidad": 2,
+        "PrecioUnitario": 25,
+        "Subtotal": 50
+      },
+      {
+        "ItemId": 3,
+        "Nombre": "Panucho de Carne Asada",
+        "Cantidad": 1,
+        "PrecioUnitario": 30,
+        "Subtotal": 30
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-06-30T23:01:48.1984753Z",
+    "Total": 80
+  },
+  {
+    "Id": 38,
+    "Mesa": "Mesa 5",
+    "Items": [
+      {
+        "ItemId": 2,
+        "Nombre": "Panucho de Huevo",
+        "Cantidad": 1,
+        "PrecioUnitario": 25,
+        "Subtotal": 25
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-07-08T17:59:35.0972693Z",
     "Total": 25
   }
 ]

@@ -408,5 +408,95 @@
     "Entidad": "Producto #1",
     "DetalleAntes": null,
     "DetalleDespues": "Se altern\u00F3 el estado Agotado/Disponible"
+  },
+  {
+    "Id": 42,
+    "FechaHora": "2026-06-30T16:57:30.5072335-06:00",
+    "Usuario": "Sistema (Pedido)",
+    "Modulo": "Finanzas",
+    "Accion": 0,
+    "Entidad": "Finanza #38",
+    "DetalleAntes": null,
+    "DetalleDespues": "Ingreso - Ventas - $80"
+  },
+  {
+    "Id": 43,
+    "FechaHora": "2026-06-30T16:57:39.6512474-06:00",
+    "Usuario": "Sistema (Pedido)",
+    "Modulo": "Finanzas",
+    "Accion": 0,
+    "Entidad": "Finanza #39",
+    "DetalleAntes": null,
+    "DetalleDespues": "Ingreso - Ventas - $25"
+  },
+  {
+    "Id": 44,
+    "FechaHora": "2026-06-30T16:57:40.4867803-06:00",
+    "Usuario": "Sistema (Pedido)",
+    "Modulo": "Finanzas",
+    "Accion": 0,
+    "Entidad": "Finanza #40",
+    "DetalleAntes": null,
+    "DetalleDespues": "Ingreso - Ventas - $25"
+  },
+  {
+    "Id": 45,
+    "FechaHora": "2026-06-30T16:57:41.0644578-06:00",
+    "Usuario": "Sistema (Pedido)",
+    "Modulo": "Finanzas",
+    "Accion": 0,
+    "Entidad": "Finanza #41",
+    "DetalleAntes": null,
+    "DetalleDespues": "Ingreso - Ventas - $25"
+  },
+  {
+    "Id": 46,
+    "FechaHora": "2026-06-30T16:57:41.5611954-06:00",
+    "Usuario": "Sistema (Pedido)",
+    "Modulo": "Finanzas",
+    "Accion": 0,
+    "Entidad": "Finanza #42",
+    "DetalleAntes": null,
+    "DetalleDespues": "Ingreso - Ventas - $25"
+  },
+  {
+    "Id": 47,
+    "FechaHora": "2026-06-30T16:57:42.0104691-06:00",
+    "Usuario": "Sistema (Pedido)",
+    "Modulo": "Finanzas",
+    "Accion": 0,
+    "Entidad": "Finanza #43",
+    "DetalleAntes": null,
+    "DetalleDespues": "Ingreso - Ventas - $30"
+  },
+  {
+    "Id": 48,
+    "FechaHora": "2026-06-30T16:57:42.4785208-06:00",
+    "Usuario": "Sistema (Pedido)",
+    "Modulo": "Finanzas",
+    "Accion": 0,
+    "Entidad": "Finanza #44",
+    "DetalleAntes": null,
+    "DetalleDespues": "Ingreso - Ventas - $20"
+  },
+  {
+    "Id": 49,
+    "FechaHora": "2026-06-30T17:02:14.2326571-06:00",
+    "Usuario": "Sistema (Pedido)",
+    "Modulo": "Finanzas",
+    "Accion": 0,
+    "Entidad": "Finanza #45",
+    "DetalleAntes": null,
+    "DetalleDespues": "Ingreso - Ventas - $80"
+  },
+  {
+    "Id": 50,
+    "FechaHora": "2026-07-08T12:00:00.144315-06:00",
+    "Usuario": "Sistema (Pedido)",
+    "Modulo": "Finanzas",
+    "Accion": 0,
+    "Entidad": "Finanza #46",
+    "DetalleAntes": null,
+    "DetalleDespues": "Ingreso - Ventas - $25"
   }
 ]

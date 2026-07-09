@@ -144,6 +144,23 @@ ProyectoJo/
     └── Infrastructure/           # Tests de integración con repos reales contra
                                   # archivos temporales (concurrencia y escritura atómica)
 ```
+---
+
+## Documentación de Arquitectura (Modelo C4)
+
+La arquitectura del sistema está documentada en tres niveles de detalle bajo el
+[Modelo C4](https://c4model.com/) — Contexto, Contenedores y Componentes -
+
+📄 **[Ver documentación completa → `/docs/Arquitectura-C4.md`](./docs/Arquitectura-C4.md)**
+
+| Nivel | Contenido | Audiencia |
+|---|---|---|
+| 1 — Contexto | Qué es el sistema y quién interactúa con él | General |
+| 2 — Contenedores | Procesos desplegables y cómo se comunican | Equipo técnico |
+| 3 — Componentes | Clases e interfaces dentro de `ProyectoJo.Web` | Equipo de desarrollo |
+
+> El historial de decisiones que sustenta esta arquitectura está documentado
+> por separado en [`/ADRs`](./ADRs).
 
 ---
 

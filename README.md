@@ -151,7 +151,7 @@ ProyectoJo/
 La arquitectura del sistema está documentada en tres niveles de detalle bajo el
 [Modelo C4](https://c4model.com/) — Contexto, Contenedores y Componentes -
 
-📄 **[Ver documentación completa → `/docs/Arquitectura-C4.md`](./docs/Arquitectura-C4.md)**
+**[Ver documentación completa → `/docs/Arquitectura-C4.md`](./docs/Arquitectura-C4.md)**
 
 | Nivel | Contenido | Audiencia |
 |---|---|---|

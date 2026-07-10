@@ -498,5 +498,15 @@
     "Entidad": "Finanza #46",
     "DetalleAntes": null,
     "DetalleDespues": "Ingreso - Ventas - $25"
+  },
+  {
+    "Id": 51,
+    "FechaHora": "2026-07-09T12:51:22.6268035-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Finanzas",
+    "Accion": 2,
+    "Entidad": "Finanza #46",
+    "DetalleAntes": "Ingreso - Ventas - $25",
+    "DetalleDespues": null
   }
 ]

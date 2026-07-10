@@ -1,19 +1,38 @@
 ﻿@{
     ViewData["Title"] = "Acceso";
-    Layout = "_Layout";
+    Layout = "_LayoutAuth";
 }
 
-<div class="container py-5">
-    <h2>Inicio de Sesión Administrativo</h2>
+<div class="tc-auth-card">
+    <div class="tc-auth-card__brand">
+        <picture>
+            <source srcset="@Url.Content("~/img/logo-nav-1x.webp") 1x, @Url.Content("~/img/logo-nav-2x.webp") 2x" type="image/webp">
+            <img src="@Url.Content("~/img/logo-nav-1x.png")"
+                 srcset="@Url.Content("~/img/logo-nav-2x.png") 2x"
+                 alt="Tía Caro" class="tc-auth-card__logo" />
+        </picture>
+        <h1>Tía Caro</h1>
+        <span class="tc-auth-card__subtitle">PANEL ADMINISTRATIVO</span>
+    </div>
+
+    <hr class="tc-auth-card__divider" />
 
     @if (ViewBag.Error is string error)
     {
-        <div class="alert alert-danger py-2">@error</div>
+        <div class="tc-auth-card__error">@error</div>
     }
 
     <form asp-area="Admin" asp-controller="Login" asp-action="Index" method="post">
-        <input type="text" name="usuario" placeholder="Usuario" class="form-control mb-2" required />
-        <input type="password" name="contrasena" placeholder="Contraseña" class="form-control mb-2" required />
-        <button type="submit" class="btn btn-primary">Entrar</button>
+        <div class="tc-auth-field">
+            <label for="usuario">Usuario</label>
+            <input type="text" id="usuario" name="usuario" placeholder="Nombre de usuario" required />
+        </div>
+
+        <div class="tc-auth-field">
+            <label for="contrasena">Contraseña</label>
+            <input type="password" id="contrasena" name="contrasena" placeholder="••••••••" required />
+        </div>
+
+        <button type="submit" class="tc-auth-submit">Entrar</button>
     </form>
 </div>

@@ -1,93 +1,494 @@
-﻿/* Estilos generales del Admin */
+﻿/* ============================================
+   Tía Caro Admin
+   ============================================ */
 :root {
-    --sidebar-bg: #212529;
-    --sidebar-text: #adb5bd;
-    --card-bg: #ffffff;
-    --body-bg: #f8f9fa;
+    --tc-carbon: #211D18;
+    --tc-carbon-soft: #2b2620;
+    --tc-stone: #F3EFE6;
+    --tc-card: #ffffff;
+    --tc-ink: #2B2420;
+    --tc-ink-muted: #8a8378;
+    --tc-mustard: #D9A441;
+    --tc-mustard-ink: #412402;
+    --tc-mustard-link: #B47A1F;
+    --tc-teal: #2F6E62;
+    --tc-teal-ink: #e1f5ee;
+    --tc-brick: #B23A2E;
+    --tc-brick-link: #993C1D;
+    --tc-border-dash: #443c33;
+    --tc-border-soft: #d8d1c2;
+    --tc-font-display: 'Fraunces', serif;
+    --tc-font-body: 'Public Sans', sans-serif;
+    --tc-font-mono: 'IBM Plex Mono', monospace;
 }
 
 body {
-    background-color: var(--body-bg);
-    font-family: 'Inter', sans-serif;
+    background-color: var(--tc-stone);
+    font-family: var(--tc-font-body);
+    color: var(--tc-ink);
 }
 
-/* Sidebar Estilo Profesional */
+:focus-visible {
+    outline: 2px solid var(--tc-mustard);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+/* ============================================
+   Sidebar
+   ============================================ */
 .sidebar {
-    width: 250px;
+    width: 226px;
     height: 100vh;
     position: fixed;
-    background: var(--sidebar-bg);
-    color: white;
-    padding: 20px;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    background: var(--tc-carbon);
+    color: var(--tc-stone);
+    padding: 22px 13px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
 }
 
-    .sidebar h4 {
+.sidebar__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 9px;
+    margin-bottom: 24px;
+}
+
+.sidebar__logo {
+    height: 30px;
+    width: auto;
+    flex-shrink: 0;
+}
+
+.sidebar h4 {
+    font-family: var(--tc-font-display);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--tc-stone);
+    margin: 0;
+    line-height: 1.1;
+    font-size: 15px;
+}
+
+.sidebar__subtitle {
+    display: block;
+    font-family: var(--tc-font-mono);
+    font-size: 9.5px;
+    color: #8a8378;
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+}
+
+.sidebar__section-label {
+    color: #6b6459;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 0 10px;
+    margin: 16px 0 5px;
+}
+
+.sidebar .nav {
+    gap: 1px;
+}
+
+.sidebar .nav-link {
+    color: #9c968a !important;
+    font-size: 13.5px;
+    font-weight: 500;
+    padding: 9px 10px;
+    margin: 0;
+    border-radius: 4px;
+    border-left: 2px solid transparent;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    transition: color 0.2s, background-color 0.2s, border-color 0.2s;
+}
+
+    .sidebar .nav-link i {
+        font-size: 14.5px;
+        width: 16px;
+        text-align: center;
+        flex-shrink: 0;
+    }
+
+    .sidebar .nav-link:hover {
+        color: var(--tc-stone) !important;
+        background: var(--tc-carbon-soft);
+    }
+
+    .sidebar .nav-link.active {
+        color: var(--tc-stone) !important;
+        background: var(--tc-carbon-soft);
+        border-left-color: var(--tc-mustard);
         font-weight: 600;
-        letter-spacing: 1px;
     }
 
-.nav-link {
-    color: var(--sidebar-text) !important;
-    padding: 12px 15px;
-    border-radius: 8px;
-    margin-bottom: 5px;
-    transition: 0.3s;
+    .sidebar .nav-link.text-danger {
+        color: #d97a70 !important;
+    }
+
+        .sidebar .nav-link.text-danger:hover {
+            color: #ffb3aa !important;
+            background: var(--tc-carbon-soft);
+            border-left-color: #d97a70;
+        }
+
+
+.sidebar .nav-link--sub {
+    font-size: 12.5px;
+    color: #9c968a !important;
 }
 
-    .nav-link:hover, .nav-link.active {
-        color: white !important;
-        background: #343a40;
+    .sidebar .nav-link--sub i {
+        font-size: 13px;
     }
 
-/* Contenido Principal */
+.sidebar__footer {
+    margin-top: auto;
+    border-top: 1px dashed var(--tc-border-dash);
+    padding-top: 11px;
+}
+
+/* ============================================
+   Main content / Topbar
+   ============================================ */
 .main-content {
-    margin-left: 250px;
-    padding: 40px;
+    margin-left: 226px;
+    padding: 30px 34px;
 }
 
-/* Tarjetas Empresariales */
-.card {
-    border-radius: 15px !important;
-    border: none !important;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
-    transition: transform 0.3s ease;
+.tc-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    position: relative;
 }
 
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 15px rgba(0,0,0,0.1) !important;
+    .tc-topbar::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-bottom: 1px dashed var(--tc-border-soft);
     }
 
-/* Botones */
-.btn-admin {
-    background-color: #212529;
-    color: white;
-    border-radius: 8px;
+    .tc-topbar h2 {
+        font-family: var(--tc-font-display);
+        font-weight: 600;
+        font-size: 26px;
+        color: var(--tc-ink);
+        margin: 0;
+    }
+
+    .tc-topbar .tc-date {
+        font-family: var(--tc-font-mono);
+        color: var(--tc-ink-muted);
+        font-size: 11.5px;
+        letter-spacing: 0.02em;
+    }
+
+.tc-topbar__right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
 }
 
-body {
-    background-color: #f8f9fa;
+.tc-user-chip {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 5px 14px 5px 5px;
+    background: var(--tc-card);
+    border-radius: 999px;
 }
 
-.sidebar {
-    width: 250px;
+.tc-user-chip__avatar {
+    width: 27px;
+    height: 27px;
+    border-radius: 50%;
+    background: var(--tc-teal);
+    color: var(--tc-teal-ink);
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tc-user-chip__name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--tc-ink);
+}
+
+/* ============================================
+   Ticket / KPI cards
+   ============================================ */
+.tc-ticket {
+    background: var(--tc-card);
+    border-radius: 6px;
+    padding: 17px 19px;
+}
+
+    .tc-ticket .tc-label {
+        color: var(--tc-ink-muted);
+        font-size: 11.5px;
+        margin-bottom: 8px;
+    }
+
+    .tc-ticket .tc-value {
+        font-family: var(--tc-font-mono);
+        font-size: 25px;
+        font-weight: 600;
+        color: var(--tc-ink);
+    }
+
+    .tc-ticket .tc-value--teal {
+        color: var(--tc-teal);
+    }
+
+    .tc-ticket .tc-value--mustard {
+        color: var(--tc-mustard);
+    }
+
+/* ============================================
+   Module cards
+   ============================================ */
+.tc-section-label {
+    color: var(--tc-ink-muted);
+    font-size: 11.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 13px;
+}
+
+.tc-section-divider {
+    border: 0;
+    border-top: 1px dashed var(--tc-border-soft);
+    margin: 30px 0 26px;
+}
+
+.tc-modulo {
+    display: block;
+    background: var(--tc-card);
+    border: 0.5px solid var(--tc-border-soft);
+    border-radius: 4px;
+    padding: 16px 18px;
+    text-decoration: none;
+    height: 100%;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+    .tc-modulo:hover {
+        border-color: #b8b0a0;
+        box-shadow: 0 2px 8px rgba(33,29,24,0.06);
+    }
+
+.tc-modulo__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 7px;
+}
+
+.tc-modulo__title {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+    .tc-modulo__title i {
+        font-size: 17px;
+        flex-shrink: 0;
+    }
+
+    .tc-modulo__title span {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--tc-ink);
+    }
+
+.tc-modulo__arrow {
+    font-size: 14px;
+    color: #c9c2b3;
+    opacity: 0;
+    transform: translateX(-3px);
+    transition: opacity 0.15s, transform 0.15s;
+}
+
+.tc-modulo:hover .tc-modulo__arrow {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.tc-modulo__body {
+    font-size: 12.5px;
+    color: var(--tc-ink-muted);
+    line-height: 1.45;
+}
+
+/* Color por categoría  */
+.tc-icon--mustard {
+    color: var(--tc-mustard-link);
+}
+
+.tc-icon--teal {
+    color: var(--tc-teal);
+}
+
+.tc-icon--carbon {
+    color: var(--tc-ink);
+}
+
+.tc-icon--brick {
+    color: var(--tc-brick-link);
+}
+
+.tc-modulo--pendiente {
+    opacity: 0.6;
+    cursor: default;
+    pointer-events: none;
+}
+
+.tc-modulo__pendiente-tag {
+    display: inline-block;
+    margin-top: 7px;
+    font-size: 11px;
+    color: #b0aa9d;
+    font-weight: 600;
+}
+
+
+/* ============================================
+   Login — sin sidebar, pantalla completa
+   ============================================ */
+.tc-auth-body {
+    background-color: var(--tc-stone);
+    margin: 0;
+}
+
+.tc-auth-page {
     height: 100vh;
-    position: fixed;
-    background: #212529;
-    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
-.main-content {
-    margin-left: 250px;
-    padding: 20px;
+.tc-auth-card {
+    width: 100%;
+    max-width: 400px;
+    background: var(--tc-card);
+    border-radius: 8px;
+    padding: 38px 36px 34px;
+    box-sizing: border-box;
 }
 
-.nav-link {
-    color: #adb5bd;
+.tc-auth-card__brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 22px;
 }
 
-    .nav-link:hover {
-        color: white;
-        background: #343a40;
+.tc-auth-card__logo {
+    height: 44px;
+    width: auto;
+    margin-bottom: 12px;
+}
+
+.tc-auth-card__brand h1 {
+    font-family: var(--tc-font-display);
+    font-weight: 600;
+    font-size: 22px;
+    color: var(--tc-ink);
+    margin: 0;
+}
+
+.tc-auth-card__subtitle {
+    display: block;
+    font-family: var(--tc-font-mono);
+    font-size: 10.5px;
+    color: var(--tc-ink-muted);
+    letter-spacing: 0.06em;
+    margin-top: 5px;
+}
+
+.tc-auth-card__divider {
+    border: 0;
+    border-top: 1px dashed var(--tc-border-soft);
+    margin: 0 0 22px;
+}
+
+.tc-auth-card__error {
+    background: #fbeae7;
+    color: var(--tc-brick-link);
+    font-size: 13px;
+    padding: 9px 12px;
+    border-radius: 4px;
+    margin-bottom: 18px;
+}
+
+.tc-auth-field {
+    margin-bottom: 18px;
+}
+
+    .tc-auth-field label {
+        display: block;
+        font-size: 11.5px;
+        font-weight: 600;
+        color: var(--tc-ink-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 7px;
+    }
+
+    .tc-auth-field input {
+        width: 100%;
+        height: 42px;
+        border: 0.5px solid var(--tc-border-soft);
+        border-radius: 4px;
+        padding: 0 13px;
+        font-size: 14.5px;
+        font-family: var(--tc-font-body);
+        background: #fdfcfa;
+        box-sizing: border-box;
+        color: var(--tc-ink);
+    }
+
+        .tc-auth-field input:focus {
+            outline: 2px solid var(--tc-mustard);
+            outline-offset: 1px;
+            border-color: var(--tc-mustard);
+        }
+
+.tc-auth-submit {
+    width: 100%;
+    height: 44px;
+    background: var(--tc-mustard);
+    color: var(--tc-mustard-ink);
+    border: none;
+    border-radius: 4px;
+    font-size: 14.5px;
+    font-weight: 600;
+    font-family: var(--tc-font-body);
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+    .tc-auth-submit:hover {
+        background: var(--tc-mustard-link);
     }

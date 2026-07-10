@@ -1,54 +1,115 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var controllerActual = ViewContext.RouteData.Values["controller"]?.ToString();
+    var actionActual = ViewContext.RouteData.Values["action"]?.ToString();
+
+    bool EsActivo(string controller) =>
+        string.Equals(controllerActual, controller, StringComparison.OrdinalIgnoreCase);
+
+    bool EsActivoAccion(string controller, string action) =>
+        EsActivo(controller) && string.Equals(actionActual, action, StringComparison.OrdinalIgnoreCase);
+}
+<!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] — Tía Caro Admin</title>
 
-    <link rel="stylesheet" href="~/css/admin/admin-style.css" asp-append-version="true" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="~/css/admin/admin-style.css" asp-append-version="true" />
     <link rel="icon" type="image/png" sizes="32x32" href="~/img/favicon-32.png" asp-append-version="true" />
-    <style>
-            body {
-                background-color: #f8f9fa;
-            }
 
-            .sidebar {
-                width: 250px;
-                height: 100vh;
-                position: fixed;
-                background: #212529;
-                color: white;
-            }
-
-            .main-content {
-                margin-left: 250px;
-                padding: 20px;
-            }
-
-            .nav-link {
-                color: #adb5bd;
-            }
-
-                .nav-link:hover {
-                    color: white;
-                    background: #343a40;
-                }
-    </style>
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
-    <div class="sidebar p-3">
-        <h4 class="text-white mb-4">Tía Caro Admin</h4>
-        <ul class="nav flex-column">
-            <li class="nav-item"><a class="nav-link" asp-area="Admin" asp-controller="Gestion" asp-action="Index"><i class="bi bi-house"></i> Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link" asp-area="Admin" asp-controller="Menu" asp-action="Index"><i class="bi bi-card-list"></i> Menú</a></li>
-            <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-graph-up"></i> Ventas</a></li>
-            <li class="nav-item"><a class="nav-link" asp-area="Admin" asp-controller="Inventario" asp-action="Index"><i class="bi bi-toggles"></i> Inventario</a></li>
-            <li class="nav-item"><a class="nav-link" asp-area="Admin" asp-controller="Promociones" asp-action="Index"><i class="bi bi-megaphone"></i> Promociones</a></li>
-            <li class="nav-item"><a class="nav-link" asp-area="Admin" asp-controller="MapaCalor" asp-action="Index"><i class="bi bi-fire"></i> Mapa de Calor</a></li>
-            <li class="nav-item"><a class="nav-link" asp-area="Admin" asp-controller="CierreCaja" asp-action="Index"><i class="bi bi-cash-coin"></i> Cierre de Caja</a></li>
-            <li class="nav-item mt-5"><a class="nav-link text-danger" asp-area="" asp-controller="Home" asp-action="Index"><i class="bi bi-box-arrow-left"></i> Salir</a></li>
+    <div class="sidebar">
+        <div class="sidebar__brand">
+            <picture>
+                <source srcset="@Url.Content("~/img/logo-nav-1x.webp") 1x, @Url.Content("~/img/logo-nav-2x.webp") 2x" type="image/webp">
+                <img src="@Url.Content("~/img/logo-nav-1x.png")"
+                     srcset="@Url.Content("~/img/logo-nav-2x.png") 2x"
+                     alt="Tía Caro" class="sidebar__logo" />
+            </picture>
+            <div>
+                <h4>Tía Caro</h4>
+                <span class="sidebar__subtitle">PANEL ADMIN</span>
+            </div>
+        </div>
 
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link @(EsActivo("Gestion") ? "active" : "")" asp-area="Admin" asp-controller="Gestion" asp-action="Index">
+                    <i class="bi bi-house"></i> Panel
+                </a>
+            </li>
         </ul>
+
+        <div class="sidebar__section-label">Operación</div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link @(EsActivo("Menu") ? "active" : "")" asp-area="Admin" asp-controller="Menu" asp-action="Index">
+                    <i class="bi bi-card-list"></i> Menú
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(EsActivo("Inventario") ? "active" : "")" asp-area="Admin" asp-controller="Inventario" asp-action="Index">
+                    <i class="bi bi-toggles"></i> Inventario
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(EsActivo("Promociones") ? "active" : "")" asp-area="Admin" asp-controller="Promociones" asp-action="Index">
+                    <i class="bi bi-megaphone"></i> Promociones
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar__section-label">Finanzas</div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link nav-link--sub @(EsActivoAccion("Finanzas", "Index") ? "active" : "")" asp-area="Admin" asp-controller="Finanzas" asp-action="Index">
+                    <i class="bi bi-receipt"></i> Movimientos
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link nav-link--sub @(EsActivoAccion("Finanzas", "Dashboard") ? "active" : "")" asp-area="Admin" asp-controller="Finanzas" asp-action="Dashboard">
+                    <i class="bi bi-bar-chart"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(EsActivo("CierreCaja") ? "active" : "")" asp-area="Admin" asp-controller="CierreCaja" asp-action="Index">
+                    <i class="bi bi-safe"></i> Cierre de Caja
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(EsActivo("MapaCalor") ? "active" : "")" asp-area="Admin" asp-controller="MapaCalor" asp-action="Index">
+                    <i class="bi bi-fire"></i> Mapa de Calor
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar__section-label">Sistema</div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link @(EsActivo("HistorialAuditoria") ? "active" : "")" asp-area="Admin" asp-controller="HistorialAuditoria" asp-action="Index">
+                    <i class="bi bi-clock-history"></i> Auditoría
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar__footer">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link text-danger" asp-area="" asp-controller="Home" asp-action="Index">
+                        <i class="bi bi-box-arrow-left"></i> Salir
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
 
     <div class="main-content">
@@ -56,7 +117,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

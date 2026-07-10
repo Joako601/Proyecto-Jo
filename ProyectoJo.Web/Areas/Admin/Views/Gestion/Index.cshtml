@@ -4,153 +4,146 @@
     Layout = "_Layout";
 }
 
-<div class="container-fluid py-4">
-    <h2 class="mb-4">Dashboard Administrativo</h2>
-
-    <div class="row g-4 mb-5">
-        <div class="col-md-3">
-            <div class="card p-3 shadow-sm border-0 bg-primary text-white">
-                <h5>Platillos Activos</h5>
-                <h2 class="mt-2">@Model.TotalPlatillos</h2>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card p-3 shadow-sm border-0 bg-success text-white">
-                <h5>Ventas Hoy</h5>
-                <h2 class="mt-2">$@Model.VentasHoy.ToString("N0")</h2>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card p-3 shadow-sm border-0 bg-warning">
-                <h5>Pendientes</h5>
-                <h2 class="mt-2">@Model.PendientesHoy</h2>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card p-3 shadow-sm border-0 bg-info text-white">
-                <h5>Opiniones</h5>
-                <h2 class="mt-2">12</h2>
-            </div>
-        </div>
+<div class="tc-topbar">
+    <div>
+        <h2>Panel administrativo</h2>
+        <span class="tc-date">@DateTime.Today.ToString("dd/MM/yyyy")</span>
     </div>
-
-    <h5 class="text-muted mb-3 fw-semibold">Módulos</h5>
-    <div class="row g-4 mb-4">
-        <div class="col-md-3">
-            <div class="card h-100 shadow-sm border-0 modulo-card">
-                <div class="card-body d-flex flex-column">
-                    <h6 class="card-title text-primary">Finanzas</h6>
-                    <p class="card-text small text-muted flex-grow-1">Ingresos, egresos y saldo del día.</p>
-                    <a asp-area="Admin" asp-controller="Finanzas" asp-action="Index" class="btn btn-sm btn-primary w-100">Administrar</a>
-                </div>
-            </div>
+    <div class="tc-topbar__right">
+        <div class="tc-user-chip">
+            <div class="tc-user-chip__avatar">J</div>
+            <span class="tc-user-chip__name">Joaquín</span>
         </div>
-        <div class="col-md-3">
-            <div class="card h-100 shadow-sm border-0 modulo-card">
-                <div class="card-body d-flex flex-column">
-                    <h6 class="card-title text-primary">Dashboard Financiero</h6>
-                    <p class="card-text small text-muted flex-grow-1">Métricas globales y tendencia por mes.</p>
-                    <a asp-area="Admin" asp-controller="Finanzas" asp-action="Dashboard" class="btn btn-sm btn-primary w-100">Ver dashboard</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card h-100 shadow-sm border-0 modulo-card">
-                <div class="card-body d-flex flex-column">
-                    <h6 class="card-title text-primary">Menú</h6>
-                    <p class="card-text small text-muted flex-grow-1">Gestión de platillos y categorías.</p>
-                    <a asp-area="Admin" asp-controller="Menu" asp-action="Index" class="btn btn-sm btn-primary w-100">Administrar</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card h-100 shadow-sm border-0 modulo-card">
-                <div class="card-body d-flex flex-column">
-                    <h6 class="card-title text-primary">Switch Inventario</h6>
-                    <p class="card-text small text-muted flex-grow-1">Pausar platillos agotados.</p>
-                    <a asp-area="Admin" asp-controller="Inventario" asp-action="Index" class="btn btn-sm btn-primary w-100">Administrar</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card h-100 shadow-sm border-0 modulo-card">
-                <div class="card-body d-flex flex-column">
-                    <h6 class="card-title text-primary">Promociones</h6>
-                    <p class="card-text small text-muted flex-grow-1">Ofertas y descuentos activos.</p>
-                    <a asp-area="Admin" asp-controller="Promociones" asp-action="Index" class="btn btn-sm btn-primary w-100">Administrar</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card h-100 shadow-sm border-0 modulo-card">
-                <div class="card-body d-flex flex-column">
-                    <h6 class="card-title text-primary">Mapa de Calor</h6>
-                    <p class="card-text small text-muted flex-grow-1">Horas pico y productos más vendidos.</p>
-                    <a asp-area="Admin" asp-controller="MapaCalor" asp-action="Index" class="btn btn-sm btn-primary w-100">Ver mapa</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card h-100 shadow-sm border-0 modulo-card">
-                <div class="card-body d-flex flex-column">
-                    <h6 class="card-title text-primary">Cierre de Caja</h6>
-                    <p class="card-text small text-muted flex-grow-1">Apertura, cierre y reporte de ventas del día.</p>
-                    <a asp-area="Admin" asp-controller="CierreCaja" asp-action="Index" class="btn btn-sm btn-primary w-100">Administrar</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card h-100 shadow-sm border-0 modulo-card">
-                <div class="card-body d-flex flex-column">
-                    <h6 class="card-title text-primary">Historial de Auditoría</h6>
-                    <p class="card-text small text-muted flex-grow-1">Registro de cambios realizados en el sistema.</p>
-                    <a asp-area="Admin" asp-controller="HistorialAuditoria" asp-action="Index" class="btn btn-sm btn-primary w-100">Ver historial</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <h5 class="text-muted mb-3 fw-semibold">Próximamente</h5>
-    <div class="row g-4">
-        @{
-            var proximamente = new List<(string T, string D)>
-            {
-                ("Semáforo Feedback", "Gestión de opiniones."),
-                ("Recetario Digital", "Cálculo de costos y rendimientos."),
-                ("Alerta de Stock", "Insumos críticos.")
-            };
-        }
-        @foreach (var f in proximamente)
-        {
-            <div class="col-md-3">
-                <div class="card h-100 shadow-sm border-0 modulo-card modulo-card--pendiente">
-                    <div class="card-body d-flex flex-column">
-                        <h6 class="card-title text-secondary">@f.T</h6>
-                        <p class="card-text small text-muted flex-grow-1">@f.D</p>
-                        <button class="btn btn-sm btn-outline-secondary w-100" disabled>Próximamente</button>
-                    </div>
-                </div>
-            </div>
-        }
     </div>
 </div>
 
-<style>
-    .modulo-card {
-        transition: transform 0.2s, box-shadow 0.2s;
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="tc-ticket">
+            <div class="tc-label">Platillos activos</div>
+            <div class="tc-value">@Model.TotalPlatillos</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="tc-ticket">
+            <div class="tc-label">Ventas hoy</div>
+            <div class="tc-value tc-value--teal">$@Model.VentasHoy.ToString("N0")</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="tc-ticket">
+            <div class="tc-label">Pendientes</div>
+            <div class="tc-value tc-value--mustard">@Model.PendientesHoy</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="tc-ticket">
+            <div class="tc-label">Opiniones</div>
+            <div class="tc-value">12</div>
+        </div>
+    </div>
+</div>
+
+<hr class="tc-section-divider" />
+
+<div class="tc-section-label">Módulos</div>
+<div class="row g-3">
+    <div class="col-md-3">
+        <a asp-area="Admin" asp-controller="Finanzas" asp-action="Index" class="tc-modulo">
+            <div class="tc-modulo__top">
+                <div class="tc-modulo__title"><i class="bi bi-cash tc-icon--mustard"></i><span>Finanzas</span></div>
+                <span class="tc-modulo__arrow">→</span>
+            </div>
+            <div class="tc-modulo__body">Ingresos y egresos del día.</div>
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a asp-area="Admin" asp-controller="Finanzas" asp-action="Dashboard" class="tc-modulo">
+            <div class="tc-modulo__top">
+                <div class="tc-modulo__title"><i class="bi bi-bar-chart tc-icon--mustard"></i><span>Dashboard financiero</span></div>
+                <span class="tc-modulo__arrow">→</span>
+            </div>
+            <div class="tc-modulo__body">Tendencias del mes.</div>
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a asp-area="Admin" asp-controller="Menu" asp-action="Index" class="tc-modulo">
+            <div class="tc-modulo__top">
+                <div class="tc-modulo__title"><i class="bi bi-card-list tc-icon--teal"></i><span>Menú</span></div>
+                <span class="tc-modulo__arrow">→</span>
+            </div>
+            <div class="tc-modulo__body">Platillos y categorías.</div>
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a asp-area="Admin" asp-controller="Inventario" asp-action="Index" class="tc-modulo">
+            <div class="tc-modulo__top">
+                <div class="tc-modulo__title"><i class="bi bi-toggles tc-icon--teal"></i><span>Inventario</span></div>
+                <span class="tc-modulo__arrow">→</span>
+            </div>
+            <div class="tc-modulo__body">Pausar platillos agotados.</div>
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a asp-area="Admin" asp-controller="Promociones" asp-action="Index" class="tc-modulo">
+            <div class="tc-modulo__top">
+                <div class="tc-modulo__title"><i class="bi bi-megaphone tc-icon--mustard"></i><span>Promociones</span></div>
+                <span class="tc-modulo__arrow">→</span>
+            </div>
+            <div class="tc-modulo__body">Ofertas y descuentos activos.</div>
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a asp-area="Admin" asp-controller="MapaCalor" asp-action="Index" class="tc-modulo">
+            <div class="tc-modulo__top">
+                <div class="tc-modulo__title"><i class="bi bi-fire tc-icon--carbon"></i><span>Mapa de calor</span></div>
+                <span class="tc-modulo__arrow">→</span>
+            </div>
+            <div class="tc-modulo__body">Horas pico y productos más vendidos.</div>
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a asp-area="Admin" asp-controller="CierreCaja" asp-action="Index" class="tc-modulo">
+            <div class="tc-modulo__top">
+                <div class="tc-modulo__title"><i class="bi bi-safe tc-icon--brick"></i><span>Cierre de caja</span></div>
+                <span class="tc-modulo__arrow">→</span>
+            </div>
+            <div class="tc-modulo__body">Apertura, cierre y reporte de ventas del día.</div>
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a asp-area="Admin" asp-controller="HistorialAuditoria" asp-action="Index" class="tc-modulo">
+            <div class="tc-modulo__top">
+                <div class="tc-modulo__title"><i class="bi bi-clock-history tc-icon--carbon"></i><span>Auditoría</span></div>
+                <span class="tc-modulo__arrow">→</span>
+            </div>
+            <div class="tc-modulo__body">Registro de cambios realizados en el sistema.</div>
+        </a>
+    </div>
+</div>
+
+<div class="tc-section-label mt-4">Próximamente</div>
+<div class="row g-3">
+    @{
+        var proximamente = new List<(string T, string D, string Icon)>
+        {
+            ("Semáforo Feedback", "Gestión de opiniones.", "bi-emoji-smile"),
+            ("Recetario Digital", "Cálculo de costos y rendimientos.", "bi-journal-text"),
+            ("Alerta de Stock", "Insumos críticos.", "bi-exclamation-triangle")
+        };
     }
-
-        .modulo-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1) !important;
-        }
-
-    .modulo-card--pendiente {
-        opacity: 0.65;
+    @foreach (var f in proximamente)
+    {
+        <div class="col-md-3">
+            <div class="tc-modulo tc-modulo--pendiente">
+                <div class="tc-modulo__top">
+                    <div class="tc-modulo__title"><i class="bi @f.Icon"></i><span>@f.T</span></div>
+                </div>
+                <div class="tc-modulo__body">
+                    @f.D
+                    <div class="tc-modulo__pendiente-tag">Próximamente</div>
+                </div>
+            </div>
+        </div>
     }
-
-        .modulo-card--pendiente:hover {
-            transform: none;
-            box-shadow: none !important;
-        }
-</style>
+</div>

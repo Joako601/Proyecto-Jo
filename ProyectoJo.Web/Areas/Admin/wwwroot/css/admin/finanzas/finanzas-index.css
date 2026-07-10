@@ -1,36 +1,33 @@
 ﻿.filtro-bar {
-    margin-bottom: 1.25rem;
+    margin-bottom: 20px;
 }
 
 .filtro-form {
     display: flex;
-    gap: 0.5rem;
+    gap: 8px;
     align-items: center;
 }
 
 .form-control-sm {
-    padding: 0.35rem 0.6rem;
-    border: 1px solid #ccc;
+    height: 34px;
+    padding: 0 10px;
+    border: 0.5px solid var(--tc-border-soft);
     border-radius: 4px;
-    font-size: 0.875rem;
-}
-
-.header-actions {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
+    font-size: 12.5px;
+    font-family: var(--tc-font-body);
+    background: #fff;
+    color: var(--tc-ink);
 }
 
 .resumen-bar {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 28px;
     flex-wrap: wrap;
-    background: #f9f9f9;
-    border: 1px solid #e0e0e0;
+    background: var(--tc-card);
     border-radius: 6px;
-    padding: 1rem 1.25rem;
-    margin-bottom: 1.5rem;
+    padding: 16px 20px;
+    margin-bottom: 24px;
 }
 
 .resumen-item {
@@ -39,58 +36,68 @@
 }
 
 .resumen-label {
-    font-size: 0.75rem;
-    color: #888;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    font-size: 10.5px;
+    color: var(--tc-ink-muted);
+    margin-bottom: 6px;
 }
 
 .resumen-valor {
-    font-size: 1.25rem;
-    font-weight: 700;
+    font-family: var(--tc-font-mono);
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--tc-ink);
 }
 
 .resumen-item--ingreso .resumen-valor {
-    color: #2a7a2a;
+    color: var(--tc-teal);
 }
 
 .resumen-item--egreso .resumen-valor {
-    color: #c0392b;
+    color: var(--tc-brick-link);
 }
 
-.resumen-item--neto .resumen-valor {
-    color: #111;
+.resumen-bar > a {
+    margin-left: auto;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--tc-mustard-link);
+    text-decoration: none;
 }
+
+    .resumen-bar > a:hover {
+        text-decoration: underline;
+    }
 
 .tag {
     display: inline-block;
-    padding: 0.2rem 0.6rem;
+    padding: 3px 8px;
     border-radius: 3px;
-    font-size: 0.75rem;
+    font-size: 10px;
     font-weight: 600;
     text-transform: uppercase;
 }
 
 .tag--ingreso {
-    background: #e8f5e9;
-    color: #2a7a2a;
+    background: #E1F5EE;
+    color: #0F6E56;
 }
 
 .tag--egreso {
-    background: #fdecea;
-    color: #c0392b;
+    background: #FCEBEB;
+    color: #A32D2D;
 }
 
 .acciones {
     display: flex;
-    gap: 0.75rem;
+    gap: 12px;
     align-items: center;
 }
 
 .link-edit {
-    color: #b5a478;
+    color: var(--tc-mustard-link);
     text-decoration: none;
-    font-size: 0.85rem;
+    font-size: 11.5px;
+    font-weight: 600;
 }
 
     .link-edit:hover {
@@ -100,10 +107,12 @@
 .link-delete {
     background: none;
     border: none;
-    color: #c0392b;
+    color: var(--tc-brick-link);
     cursor: pointer;
-    font-size: 0.85rem;
+    font-size: 11.5px;
+    font-weight: 600;
     padding: 0;
+    font-family: var(--tc-font-body);
 }
 
     .link-delete:hover {

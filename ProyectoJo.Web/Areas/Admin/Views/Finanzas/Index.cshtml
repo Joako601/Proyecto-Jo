@@ -11,19 +11,20 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-shared.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/admin//finanzas/finanzas-index.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-index.css" asp-append-version="true" />
 }
 
 <div class="admin-page">
 
     <div class="page-header">
-        <div class="header-left">
+        <div>
             <a asp-area="Admin" asp-controller="Gestion" asp-action="Index" class="back-link">← Dashboard</a>
             <h1>Finanzas</h1>
         </div>
         <div class="header-actions">
-            <a asp-action="Dashboard" class="btn-secondary">Dashboard financiero</a>
-            <a asp-action="Registrar" class="btn-primary">+ Registrar movimiento</a>
+            <a asp-action="Index" class="tc-tab active">Movimientos</a>
+            <a asp-action="Dashboard" class="tc-tab">Dashboard financiero</a>
+            <a asp-action="Registrar" class="btn-primary">Registrar movimiento</a>
         </div>
     </div>
 
@@ -60,7 +61,7 @@
                 <span class="resumen-label">Saldo neto</span>
                 <span class="resumen-valor">$@resumen.SaldoNeto.ToString("N2")</span>
             </div>
-            <a asp-action="Resumen" class="btn-secondary">Ver resumen por período</a>
+            <a asp-action="Resumen">Ver resumen por período →</a>
         </div>
     }
 

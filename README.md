@@ -269,14 +269,28 @@ respectivos controladores en `ProyectoJo.Api`.
 
 | ADR | Decisión |
 |---|---|
-| [ADR-01](./ADRs/ARD-01-Joaquin-Uriona.md) | Decisión inicial de stack/arquitectura del MVP |
-| [ADR-02](./ADRs/ARD-02-Joaquin-Uriona.md) | MVC puro y sus limitaciones anticipadas |
-| [ADR-03](./ADRs/ARD-03-Joaquin-Uriona.md) | Migración hacia Arquitectura Hexagonal |
-| [ADR-04](./ADRs/ARD-04-Joaquin-Uriona.md) | Incorporación de una API REST con Swagger |
-| [ADR-05](./ADRs/ARD-05-Joaquin-Uriona.md) | Integración de Patrones de Diseño GOF |
-| [ADR-06](./ADRs/ARD-06-Joaquin-Uriona.md) | Reemplazo de Polling por SignalR en Cocina/Recepción |
-| [ADR-07](./ADRs/ARD-07-Joaquin-Uriona.md) | Introducción de Proyecto de Tests y Estrategia de Cobertura |
+| [ADR-01](./ADRs/ADR-01-Joaquin-Uriona.md) | Decisión inicial de stack/arquitectura del MVP |
+| [ADR-02](./ADRs/ADR-02-Joaquin-Uriona.md) | MVC puro y sus limitaciones anticipadas |
+| [ADR-03](./ADRs/ADR-03-Joaquin-Uriona.md) | Migración hacia Arquitectura Hexagonal |
+| [ADR-04](./ADRs/ADR-04-Joaquin-Uriona.md) | Incorporación de una API REST con Swagger |
+| [ADR-05](./ADRs/ADR-05-Joaquin-Uriona.md) | Integración de Patrones de Diseño GOF |
+| [ADR-06](./ADRs/ADR-06-Joaquin-Uriona.md) | Reemplazo de Polling por SignalR en Cocina/Recepción |
+| [ADR-07](./ADRs/ADR-07-Joaquin-Uriona.md) | Introducción de Proyecto de Tests y Estrategia de Cobertura |
+| [ADR-08](./ADRs/ADR-08-Joaquin-Uriona.md) | Deuda técnica de `ProyectoJo.Api` |
 
+---
+
+## Deuda técnica conocida
+
+El sistema documenta su deuda técnica de forma explícita en vez de dejarla implícita en el código. El detalle completo — causa, costo de no pagarla y propuesta de solución — está en [ADR-08](./ADRs/ADR-08-Joaquin-Uriona.md).
+
+| Deuda | Tipo | Estado |
+|---|---|---|
+| `ProyectoJo.Api/Program.cs` arma las rutas de persistencia a mano (`Path.Combine` relativo, no configuración) | Infraestructura | Documentada — pendiente |
+| `JsonPedidoRepository` usa un `SemaphoreSlim` estático por proceso, no compartido entre `Web` y `Api` | Infraestructura | Documentada — pendiente |
+| `ProyectoJo.Api/Program.cs` no registra `IPedidoNotificador` ni `IPromocionService`, por lo que `PedidosController` falla en runtime al resolver `PedidoUseCase` | Accidental | Documentada — pendiente |
+
+> Ambas deudas comparten causa raíz: `Web` y `Api` componen su grafo de dependencias por separado. La solución propuesta es centralizar el registro en un método de extensión compartido (`AddProyectoJoServices`), detallado en el ADR-08.
 ---
 
 ## Uso de IA

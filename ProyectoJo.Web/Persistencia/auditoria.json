@@ -508,5 +508,25 @@
     "Entidad": "Finanza #46",
     "DetalleAntes": "Ingreso - Ventas - $25",
     "DetalleDespues": null
+  },
+  {
+    "Id": 52,
+    "FechaHora": "2026-07-10T07:36:53.4837693-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Productos",
+    "Accion": 1,
+    "Entidad": "Producto #2",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Agotado/Disponible"
+  },
+  {
+    "Id": 53,
+    "FechaHora": "2026-07-10T07:36:54.213028-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Productos",
+    "Accion": 1,
+    "Entidad": "Producto #2",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Agotado/Disponible"
   }
 ]

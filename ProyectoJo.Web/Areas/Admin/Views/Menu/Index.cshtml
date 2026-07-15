@@ -14,114 +14,110 @@
         .ToList();
 }
 
-<div class="mb-3">
-    <a asp-area="Admin" asp-controller="Gestion" asp-action="Index"
-       class="text-muted text-decoration-none">
-        <i class="bi bi-arrow-left"></i> Volver al dashboard
-    </a>
-</div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-shared.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/menu/menu.css" asp-append-version="true" />
+}
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">Menú</h2>
-    <a asp-area="Admin" asp-controller="Menu" asp-action="Agregar" class="btn btn-primary">
-        <i class="bi bi-plus-lg"></i> Agregar platillo
-    </a>
-</div>
-
-<form method="get" class="row g-2 mb-4">
-    <div class="col-md-5">
-        <input type="text" name="busqueda" value="@busqueda"
-               class="form-control" placeholder="Buscar por nombre..." />
-    </div>
-    <div class="col-md-4">
-        <select name="categoria" class="form-select">
-            <option value="">Todas las categorías</option>
-            @foreach (var cat in categorias)
-            {
-                <option value="@cat" selected="@(cat == categoriaFiltro)">@cat</option>
-            }
-        </select>
-    </div>
-    <div class="col-md-2">
-        <button type="submit" class="btn btn-outline-secondary w-100">
-            <i class="bi bi-search"></i> Filtrar
-        </button>
-    </div>
-    @if (!string.IsNullOrEmpty(busqueda) || !string.IsNullOrEmpty(categoriaFiltro))
-    {
-        <div class="col-md-1">
-            <a asp-area="Admin" asp-controller="Menu" asp-action="Index"
-               class="btn btn-outline-danger w-100" title="Limpiar filtros">
-                <i class="bi bi-x-lg"></i>
-            </a>
+<div class="admin-page">
+    <div class="page-header">
+        <div>
+            <a asp-area="Admin" asp-controller="Gestion" asp-action="Index" class="back-link">← Dashboard</a>
+            <h1>Menú</h1>
         </div>
-    }
-</form>
+        <a asp-area="Admin" asp-controller="Menu" asp-action="Agregar" class="btn-primary">
+            <i class="bi bi-plus-lg"></i>&nbsp; Agregar platillo
+        </a>
+    </div>
 
-@if (!resultado.Any())
-{
-    <p class="text-muted">No se encontraron platillos con esos filtros.</p>
-}
-else
-{
-    <table class="table table-hover align-middle">
-        <thead class="table-light">
-            <tr>
-                <th>#</th>
-                <th>Platillo</th>
-                <th>Categoría</th>
-                <th>Base</th>
-                <th>Precio</th>
-                <th class="text-center">Estado</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in resultado)
+    <div class="filtro-bar">
+        <form method="get" class="filtro-form">
+            <input type="text" name="busqueda" value="@busqueda"
+                   class="form-control-sm" placeholder="Buscar por nombre..." style="min-width:220px" />
+            <select name="categoria" class="form-control-sm">
+                <option value="">Todas las categorías</option>
+                @foreach (var cat in categorias)
+                {
+                    <option value="@cat" selected="@(cat == categoriaFiltro)">@cat</option>
+                }
+            </select>
+            <button type="submit" class="btn-secondary">
+                <i class="bi bi-search"></i>&nbsp; Filtrar
+            </button>
+            @if (!string.IsNullOrEmpty(busqueda) || !string.IsNullOrEmpty(categoriaFiltro))
             {
-                <tr>
-                    <td class="text-muted">@item.Id</td>
-                    <td>@item.Platillo</td>
-                    <td>@item.Categoria</td>
-                    <td>@item.Base</td>
-                    <td>$@item.Precio.ToString("N2")</td>
-                    <td class="text-center">
-                        <form asp-area="Admin" asp-controller="Inventario"
-                              asp-action="ToggleActivo" asp-route-id="@item.Id" method="post" class="d-inline">
-                            <input type="hidden" name="origen" value="Menu" />
-                            <button type="submit"
-                                    class="btn btn-sm @(item.Activo ? "btn-success" : "btn-outline-secondary") me-1"
-                                    title="@(item.Activo ? "Ocultar" : "Mostrar")">
-                                <i class="bi @(item.Activo ? "bi-eye" : "bi-eye-slash")"></i>
-                            </button>
-                        </form>
-                        <form asp-area="Admin" asp-controller="Inventario"
-                              asp-action="ToggleAgotado" asp-route-id="@item.Id" method="post" class="d-inline">
-                            <input type="hidden" name="origen" value="Menu" />
-                            <button type="submit"
-                                    class="btn btn-sm @(item.Agotado ? "btn-warning" : "btn-outline-secondary")"
-                                    title="@(item.Agotado ? "Disponible" : "Agotado")"
-                                @(!item.Activo ? "disabled" : "")>
-                                <i class="bi @(item.Agotado ? "bi-x-circle" : "bi-check-circle")"></i>
-                            </button>
-                        </form>
-                    </td>
-                    <td class="text-end">
-                        <a asp-area="Admin" asp-controller="Menu" asp-action="Editar"
-                           asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary me-1">
-                            <i class="bi bi-pencil"></i> Editar
-                        </a>
-                        <form asp-area="Admin" asp-controller="Menu" asp-action="Eliminar"
-                              asp-route-id="@item.Id" method="post" class="d-inline"
-                              onsubmit="return confirm('¿Eliminar @item.Platillo?')">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                <i class="bi bi-trash"></i> Eliminar
-                            </button>
-                        </form>
-                    </td>
-                </tr>
+                <a asp-area="Admin" asp-controller="Menu" asp-action="Index" class="btn-secondary" title="Limpiar filtros">
+                    <i class="bi bi-x-lg"></i>
+                </a>
             }
-        </tbody>
-    </table>
-    <p class="text-muted small">Mostrando @resultado.Count de @Model.Count platillos</p>
-}
+        </form>
+    </div>
+
+    @if (!resultado.Any())
+    {
+        <div class="empty-state">No se encontraron platillos con esos filtros.</div>
+    }
+    else
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Platillo</th>
+                    <th>Categoría</th>
+                    <th>Base</th>
+                    <th>Precio</th>
+                    <th class="text-center">Estado</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in resultado)
+                {
+                    <tr>
+                        <td style="color:var(--tc-ink-muted)">@item.Id</td>
+                        <td>@item.Platillo</td>
+                        <td><span class="chip-categoria">@item.Categoria</span></td>
+                        <td>@item.Base</td>
+                        <td style="font-family:var(--tc-font-mono)">$@item.Precio.ToString("N2")</td>
+                        <td class="text-center">
+                            <form asp-area="Admin" asp-controller="Inventario"
+                                  asp-action="ToggleActivo" asp-route-id="@item.Id" method="post" class="d-inline">
+                                <input type="hidden" name="origen" value="Menu" />
+                                <button type="submit"
+                                        class="icon-toggle @(item.Activo ? "on" : "")"
+                                        title="@(item.Activo ? "Ocultar" : "Mostrar")">
+                                    <i class="bi @(item.Activo ? "bi-eye" : "bi-eye-slash")"></i>
+                                </button>
+                            </form>
+                            <form asp-area="Admin" asp-controller="Inventario"
+                                  asp-action="ToggleAgotado" asp-route-id="@item.Id" method="post" class="d-inline">
+                                <input type="hidden" name="origen" value="Menu" />
+                                <button type="submit"
+                                        class="icon-toggle @(item.Agotado ? "warn" : "")"
+                                        title="@(item.Agotado ? "Disponible" : "Agotado")"
+                                    @(!item.Activo ? "disabled" : "")>
+                                    <i class="bi @(item.Agotado ? "bi-x-circle" : "bi-check-circle")"></i>
+                                </button>
+                            </form>
+                        </td>
+                        <td>
+                            <div class="acciones">
+                                <a asp-area="Admin" asp-controller="Menu" asp-action="Editar"
+                                   asp-route-id="@item.Id" class="link-edit">Editar</a>
+                                <form asp-area="Admin" asp-controller="Menu" asp-action="Eliminar"
+                                      asp-route-id="@item.Id" method="post"
+                                      onsubmit="return confirm('¿Eliminar @item.Platillo?')">
+                                    <button type="submit" class="link-delete">Eliminar</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <p style="font-size:11.5px;color:var(--tc-ink-muted);margin-top:12px;">
+            Mostrando @resultado.Count de @Model.Count platillos
+        </p>
+    }
+</div>

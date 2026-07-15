@@ -140,3 +140,252 @@
     background: var(--tc-card);
     border-radius: 6px;
 }
+
+/* ============================================
+   Dashboard Financiero — Tarjetas
+   ============================================ */
+.dash-metricas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.dash-card {
+    display: flex;
+    flex-direction: column;
+    padding: 18px 20px;
+    border-radius: 6px;
+    border: 0.5px solid var(--tc-border-soft);
+    background: var(--tc-card);
+}
+
+.dash-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--tc-ink-muted);
+    margin-bottom: 8px;
+}
+
+.dash-valor {
+    font-family: var(--tc-font-mono);
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--tc-ink);
+}
+
+.positivo {
+    color: var(--tc-teal);
+}
+
+.negativo {
+    color: var(--tc-brick-link);
+}
+
+.cifra-ingreso {
+    color: var(--tc-teal);
+}
+
+.cifra-egreso {
+    color: var(--tc-brick-link);
+}
+
+.cifra-positivo {
+    color: var(--tc-teal);
+    font-weight: 600;
+}
+
+.cifra-negativo {
+    color: var(--tc-brick-link);
+    font-weight: 600;
+}
+
+.seccion-titulo {
+    font-family: var(--tc-font-display);
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--tc-ink);
+    margin: 32px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed var(--tc-border-soft);
+}
+
+.categorias-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.categoria-fila {
+    display: grid;
+    grid-template-columns: 160px 1fr 100px 70px;
+    align-items: center;
+    gap: 16px;
+}
+
+.categoria-nombre {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--tc-ink);
+}
+
+.categoria-barra-wrap {
+    background: rgba(216, 209, 194, 0.35);
+    border-radius: 3px;
+    height: 8px;
+    overflow: hidden;
+}
+
+.categoria-barra {
+    background: var(--tc-brick);
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.4s ease;
+}
+
+.categoria-barra--ingreso {
+    background: var(--tc-teal);
+}
+
+.categoria-total {
+    font-family: var(--tc-font-mono);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--tc-brick-link);
+    text-align: right;
+}
+
+.categoria-total--ingreso {
+    color: var(--tc-teal);
+}
+
+.categoria-count {
+    font-size: 11px;
+    color: var(--tc-ink-muted);
+    text-align: right;
+}
+
+/* --- Gráficas --- */
+
+.grafica-card--full {
+    margin-bottom: 20px;
+}
+
+.graficas-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.grafica-card {
+    background: var(--tc-card);
+    border: 0.5px solid var(--tc-border-soft);
+    border-radius: 6px;
+    padding: 20px;
+}
+
+.chart-wrap {
+    position: relative;
+    height: 280px;
+}
+
+.chart-wrap--donut {
+    height: 260px;
+}
+
+@media (max-width: 900px) {
+    .graficas-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.badge-mes {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-mes--positivo {
+    background: var(--tc-teal-ink);
+    color: var(--tc-teal);
+}
+
+.badge-mes--negativo {
+    background: rgba(178, 58, 46, 0.1);
+    color: var(--tc-brick-link);
+}
+
+.badge-mes--vacio {
+    background: var(--tc-stone);
+    color: var(--tc-ink-muted);
+}
+
+.dash-kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.dash-card--kpi {
+    border-left: 2px solid var(--tc-mustard);
+}
+
+    .dash-card--kpi .dash-valor {
+        color: var(--tc-ink);
+    }
+
+/* --- Fila grande: Total Ingresado / Egresado / Saldo Neto --- */
+
+.dash-totales {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.dash-card--total {
+    padding: 22px;
+}
+
+    .dash-card--total .dash-label {
+        font-size: 12.5px;
+        text-transform: none;
+        letter-spacing: normal;
+        color: var(--tc-ink-muted);
+        font-weight: 600;
+    }
+
+    .dash-card--total .dash-valor {
+        font-size: 22px;
+    }
+
+.dash-movimientos-nota {
+    font-size: 11.5px;
+    color: var(--tc-ink-muted);
+    margin-bottom: 32px;
+}
+
+/* --- Fila chica: Ventas / Ticket promedio (mes pasado) --- */
+
+.dash-secundarios {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.dash-card--secundario .dash-valor {
+    font-size: 17px;
+}
+
+.dash-card--secundario .dash-sublabel {
+    font-size: 10.5px;
+    color: var(--tc-ink-muted);
+    margin-top: 4px;
+}

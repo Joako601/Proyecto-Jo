@@ -1,18 +1,22 @@
 ﻿.filtro-bar {
-    margin-bottom: 1.25rem;
+    margin-bottom: 20px;
 }
 
 .filtro-form {
     display: flex;
-    gap: 0.5rem;
+    gap: 8px;
     align-items: center;
 }
 
 .form-control-sm {
-    padding: 0.35rem 0.6rem;
-    border: 1px solid #ccc;
+    height: 34px;
+    padding: 0 10px;
+    border: 0.5px solid var(--tc-border-soft);
     border-radius: 4px;
-    font-size: 0.875rem;
+    font-size: 12.5px;
+    font-family: var(--tc-font-body);
+    background: #fff;
+    color: var(--tc-ink);
 }
 
 .header-left {
@@ -22,40 +26,12 @@
 }
 
     .header-left h1 {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: #111;
+        font-family: var(--tc-font-display);
+        font-weight: 600;
+        font-size: 24px;
+        color: var(--tc-ink);
         margin: 0;
     }
-
-.header-actions {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
-}
-
-.filtro-bar {
-    margin-bottom: 1.25rem;
-}
-
-.filtro-form {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-}
-
-.form-control-sm {
-    padding: 0.35rem 0.6rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 0.875rem;
-}
-
-.header-left {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
 
 .header-actions {
     display: flex;

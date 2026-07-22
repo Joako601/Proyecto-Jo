@@ -10,6 +10,27 @@
 
 ---
 
+## Índice
+
+- [Descripción](#descripción)
+- [Arquitectura](#arquitectura)
+- [Módulos implementados](#módulos-implementados)
+- [Estructura del repositorio](#estructura-del-repositorio)
+- [Documentación de Arquitectura (Modelo C4)](#documentación-de-arquitectura-modelo-c4)
+- [Tecnologías](#tecnologías)
+- [Requisitos previos](#requisitos-previos)
+- [Cómo ejecutar el proyecto](#cómo-ejecutar-el-proyecto)
+- [Documentación interactiva (Swagger)](#documentación-interactiva-swagger)
+- [Endpoints disponibles](#endpoints-disponibles)
+- [Integración Continua (CI/CD)](#integración-continua-cicd)
+- [Decisiones de arquitectura (ADRs)](#decisiones-de-arquitectura-adrs)
+- [Deuda técnica conocida](#deuda-técnica-conocida)
+- [Uso de IA](#uso-de-ia)
+- [Autor](#-autor)
+- [Licencia y propiedad intelectual](#-licencia-y-propiedad-intelectual)
+
+---
+
 ## Descripción
 
 Proyecto Jo' nació como una aplicación MVC monolítica y migró progresivamente hacia
@@ -137,12 +158,15 @@ ProyectoJo/
 │   ├── Controllers/              # PedidosController
 │   └── Program.cs                # Composición de dependencias + Swagger
 │
-└── ProyectoJo.Application.Tests/ # Proyecto de tests — xUnit + Moq
-    ├── UseCases/                 # Tests unitarios con mocks (ProductoUseCase,
-    │                             # FinanzaUseCase, PromocionUseCase,
-    │                             # CierreCajaUseCase, PedidoUseCase)
-    └── Infrastructure/           # Tests de integración con repos reales contra
-                                  # archivos temporales (concurrencia y escritura atómica)
+├── ProyectoJo.Application.Tests/ # Proyecto de tests — xUnit + Moq
+│   ├── UseCases/                 # Tests unitarios con mocks (ProductoUseCase,
+│   │                             # FinanzaUseCase, PromocionUseCase,
+│   │                             # CierreCajaUseCase, PedidoUseCase)
+│   └── Infrastructure/           # Tests de integración con repos reales contra
+│                                 # archivos temporales (concurrencia y escritura atómica)
+│
+└── .github/workflows/            # Pipeline de Integración Continua
+    └── ci.yml                    # Build + test automático en cada push / PR
 ```
 ---
 
@@ -178,6 +202,7 @@ La arquitectura del sistema está documentada en tres niveles de detalle bajo el
 | Autenticación | Cookie auth  |
 | Logging | Serilog (consola + archivo rotativo diario) |
 | Tests | xUnit 2.9.2 + Moq 4.20.72 — 26 tests (unitarios + integración con concurrencia real) |
+| Integración Continua | GitHub Actions — build + test automático en cada push y Pull Request |
 | Despliegue objetivo | AWS EC2 |
 
 ---
@@ -265,6 +290,39 @@ respectivos controladores en `ProyectoJo.Api`.
 
 ---
 
+## Integración Continua (CI/CD)
+
+Cada `push` a cualquier rama y cada Pull Request contra `deuda-tecnica` dispara
+un workflow de **GitHub Actions** (`.github/workflows/ci.yml`) que compila la
+solución y corre toda la suite de `ProyectoJo.Application.Tests`. Si un solo
+test falla, el check del Pull Request queda en rojo y bloquea el merge hasta
+corregirlo.
+
+```mermaid
+flowchart LR
+
+    DEV["Desarrollador"] -->|"git push"| BRANCH["Rama"]
+    DEV -->|"abre PR contra"| PR["Pull Request → deuda-tecnica"]
+
+    subgraph GH ["GitHub Actions — ci.yml"]
+        direction LR
+        S1["checkout"] --> S2["setup .NET 10"] --> S3["dotnet restore"] --> S4["dotnet build"] --> S5["dotnet test"]
+    end
+
+    BRANCH --> GH
+    PR --> GH
+
+    S5 -->|"exit 0"| GREEN["✅ Check verde"]
+    S5 -->|"exit != 0"| RED["❌ Check rojo"]
+```
+
+La decisión completa — por qué GitHub Actions, alternativas consideradas y
+consecuencias — está documentada en [ADR-09](./ADRs/ADR-09-Joaquin-Uriona.md).
+El trabajo de configuración vive en la rama [`pipeline-ci`](../../tree/pipeline-ci),
+con evidencia del check en verde en su Pull Request correspondiente.
+
+---
+
 ## Decisiones de arquitectura (ADRs)
 
 | ADR | Decisión |
@@ -277,6 +335,7 @@ respectivos controladores en `ProyectoJo.Api`.
 | [ADR-06](./ADRs/ADR-06-Joaquin-Uriona.md) | Reemplazo de Polling por SignalR en Cocina/Recepción |
 | [ADR-07](./ADRs/ADR-07-Joaquin-Uriona.md) | Introducción de Proyecto de Tests y Estrategia de Cobertura |
 | [ADR-08](./ADRs/ADR-08-Joaquin-Uriona.md) | Deuda técnica de `ProyectoJo.Api` |
+| [ADR-09](./ADRs/ADR-09-Joaquin-Uriona.md) | Pipeline de Integración Continua con GitHub Actions |
 
 ---
 
@@ -298,9 +357,10 @@ El sistema documenta su deuda técnica de forma explícita en vez de dejarla imp
 Se utilizó IA para:
 
 - Corregir redacción y ortografía de este documento
-- Generar la sintaxis Mermaid del diagrama de arquitectura
+- Generar la sintaxis Mermaid de los diagramas de arquitectura y del pipeline de CI/CD
 - Generar la estructura y el código de los tests unitarios y de integración a partir del código existente en
   `ProyectoJo.Application` y `ProyectoJo.Infrastructure`
+- Generar la estructura inicial del workflow de GitHub Actions (`ci.yml`)
 
 No se utilizó para tomar decisiones arquitectónicas ni para diseñar la solución.
 

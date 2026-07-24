@@ -641,5 +641,44 @@
     "Estado": "Pagado",
     "FechaCreacion": "2026-07-08T17:59:35.0972693Z",
     "Total": 25
+  },
+  {
+    "Id": 39,
+    "Mesa": "Para llevar",
+    "Items": [
+      {
+        "ItemId": 17,
+        "Nombre": "Nachos Campechanos",
+        "Cantidad": 1,
+        "PrecioUnitario": 195,
+        "Subtotal": 195
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-07-24T16:04:15.35168Z",
+    "Total": 195
+  },
+  {
+    "Id": 40,
+    "Mesa": "Mesa 67",
+    "Items": [
+      {
+        "ItemId": 2,
+        "Nombre": "Panucho de Huevo",
+        "Cantidad": 1,
+        "PrecioUnitario": 25,
+        "Subtotal": 25
+      },
+      {
+        "ItemId": 3,
+        "Nombre": "Panucho de Carne Asada",
+        "Cantidad": 21,
+        "PrecioUnitario": 30,
+        "Subtotal": 630
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-07-24T16:05:01.3131456Z",
+    "Total": 655
   }
 ]

@@ -22,5 +22,17 @@
     "GastosDelDia": 40,
     "NotasCierre": null,
     "Total": 660
+  },
+  {
+    "Id": 3,
+    "Estado": 1,
+    "FechaApertura": "2026-07-24T09:57:17.557562-06:00",
+    "FondoInicial": 0,
+    "NotasApertura": "20 pesos de cambio",
+    "FechaCierre": "2026-07-24T09:57:43.776688-06:00",
+    "VentasDelDia": 0,
+    "GastosDelDia": 0,
+    "NotasCierre": "20 pesos de cambio",
+    "Total": 0
   }
 ]

@@ -25,16 +25,13 @@
             <a asp-area="Admin" asp-controller="Gestion" asp-action="Index" class="back-link">← Dashboard</a>
             <h1>Menú</h1>
         </div>
-        <a asp-area="Admin" asp-controller="Menu" asp-action="Agregar" class="btn-primary">
-            <i class="bi bi-plus-lg"></i>&nbsp; Agregar platillo
-        </a>
     </div>
 
     <div class="filtro-bar">
         <form method="get" class="filtro-form">
             <input type="text" name="busqueda" value="@busqueda"
                    class="form-control-sm" placeholder="Buscar por nombre..." style="min-width:220px" />
-            <select name="categoria" class="form-control-sm">
+            <select name="categoria" class="form-control-sm" onchange="this.form.submit()">
                 <option value="">Todas las categorías</option>
                 @foreach (var cat in categorias)
                 {
@@ -51,6 +48,9 @@
                 </a>
             }
         </form>
+        <a asp-area="Admin" asp-controller="Menu" asp-action="Agregar" class="btn-primary">
+            <i class="bi bi-plus-lg"></i>&nbsp; Agregar platillo
+        </a>
     </div>
 
     @if (!resultado.Any())

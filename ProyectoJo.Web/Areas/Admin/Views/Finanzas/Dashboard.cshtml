@@ -24,6 +24,11 @@
             <a asp-area="Admin" asp-controller="Gestion" asp-action="Index" class="back-link">← Dashboard</a>
             <h1>Dashboard Financiero</h1>
         </div>
+        <div class="header-actions">
+            <a asp-action="Index" class="tc-tab">Movimientos</a>
+            <a asp-action="Dashboard" class="tc-tab active">Dashboard financiero</a>
+            <a asp-action="Registrar" class="btn-primary">Registrar movimiento</a>
+        </div>
     </div>
 
     @* Fila grande: Total Ingresado / Total Egresado / Saldo Neto *@

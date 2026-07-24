@@ -528,5 +528,95 @@
     "Entidad": "Producto #2",
     "DetalleAntes": null,
     "DetalleDespues": "Se altern\u00F3 el estado Agotado/Disponible"
+  },
+  {
+    "Id": 54,
+    "FechaHora": "2026-07-24T09:53:30.8720468-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Productos",
+    "Accion": 1,
+    "Entidad": "Producto #5",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Agotado/Disponible"
+  },
+  {
+    "Id": 55,
+    "FechaHora": "2026-07-24T09:53:34.7986696-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Productos",
+    "Accion": 1,
+    "Entidad": "Producto #5",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Agotado/Disponible"
+  },
+  {
+    "Id": 56,
+    "FechaHora": "2026-07-24T09:55:58.9265052-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #1",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
+  },
+  {
+    "Id": 57,
+    "FechaHora": "2026-07-24T09:56:04.5743516-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #1",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
+  },
+  {
+    "Id": 58,
+    "FechaHora": "2026-07-24T09:57:17.6800418-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "CierreCaja",
+    "Accion": 0,
+    "Entidad": "Caja #3",
+    "DetalleAntes": null,
+    "DetalleDespues": "Apertura con fondo inicial $0"
+  },
+  {
+    "Id": 59,
+    "FechaHora": "2026-07-24T09:57:44.5594077-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "CierreCaja",
+    "Accion": 1,
+    "Entidad": "Caja #3",
+    "DetalleAntes": null,
+    "DetalleDespues": "Cierre - Ventas: $0 - Gastos: $0"
+  },
+  {
+    "Id": 60,
+    "FechaHora": "2026-07-24T10:01:46.1291806-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Finanzas",
+    "Accion": 0,
+    "Entidad": "Finanza #46",
+    "DetalleAntes": null,
+    "DetalleDespues": "Ingreso - hola - $12"
+  },
+  {
+    "Id": 61,
+    "FechaHora": "2026-07-24T10:04:23.2106163-06:00",
+    "Usuario": "Sistema (Pedido)",
+    "Modulo": "Finanzas",
+    "Accion": 0,
+    "Entidad": "Finanza #47",
+    "DetalleAntes": null,
+    "DetalleDespues": "Ingreso - Ventas - $195"
+  },
+  {
+    "Id": 62,
+    "FechaHora": "2026-07-24T10:05:53.0877472-06:00",
+    "Usuario": "Sistema (Pedido)",
+    "Modulo": "Finanzas",
+    "Accion": 0,
+    "Entidad": "Finanza #48",
+    "DetalleAntes": null,
+    "DetalleDespues": "Ingreso - Ventas - $655"
   }
 ]

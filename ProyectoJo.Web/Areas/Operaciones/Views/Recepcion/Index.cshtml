@@ -12,6 +12,9 @@
     <meta name="request-verification-token" content="@tokenSet.RequestToken">
     <link rel="manifest" href="~/manifest.json">
     <title>Recepción — Proyecto Jo'</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/operaciones/recepcion.css" asp-append-version="true">
 </head>
 <body>
@@ -19,22 +22,35 @@
         <div class="top-bar__brand">
             <span class="top-bar__icon">🧾</span>
             <h1 class="top-bar__title">Recepción</h1>
+            <span id="estado-conexion" class="top-bar__estado"></span>
         </div>
         <a class="top-bar__salir" asp-area="Operaciones" asp-controller="Auth" asp-action="Salir">
             Cerrar sesión <span class="top-bar__empleado">(@User.Identity?.Name)</span>
         </a>
     </div>
 
+    <div class="toolbar">
+        <div class="buscador-box">
+            <span class="buscador-box__icono">🔍</span>
+            <input id="buscador" class="buscador" placeholder="Buscar platillo..." autocomplete="off">
+        </div>
+    </div>
+
+    <div id="chips-categoria" class="chips"></div>
+
     <div class="layout">
         <section class="col-menu">
-            <h2 class="seccion-titulo">Menú del negocio</h2>
-            <div id="menu-contenedor">
+            <div id="menu-grid" class="menu-grid">
                 <p class="mensaje-vacio">Cargando menú...</p>
             </div>
         </section>
 
-        <aside class="col-carrito">
-            <h2 class="seccion-titulo">Pedido actual</h2>
+        <aside id="panel-carrito" class="panel-carrito">
+            <div class="panel-carrito__header">
+                <h2 class="seccion-titulo">Pedido actual</h2>
+                <button id="cerrar-carrito" class="cerrar-carrito" aria-label="Cerrar pedido">✕</button>
+            </div>
+
             <div class="carrito-box">
                 <div class="tipo-entrega">
                     <button id="btn-mesa" class="tipo-entrega__btn tipo-entrega__btn--activo" data-tipo="mesa">
@@ -57,6 +73,16 @@
         </aside>
     </div>
 
+    <div id="carrito-overlay" class="carrito-overlay"></div>
+
+    <div id="barra-mobile" class="barra-mobile">
+        <div class="barra-mobile__info">
+            <span id="barra-mobile-items">0 items</span>
+            <span id="barra-mobile-total">$0.00</span>
+        </div>
+        <button id="btn-ver-pedido" class="barra-mobile__btn">Ver pedido</button>
+    </div>
+
     <div class="tabs">
         <button id="tab-activos" class="tabs__btn tabs__btn--activo" data-tab="activos">Pedidos activos</button>
         <button id="tab-pagados" class="tabs__btn" data-tab="pagados">Pagados</button>
@@ -66,15 +92,14 @@
         <p class="mensaje-vacio">Cargando pedidos...</p>
     </div>
 
-    
-    <div id="modal-confirmacion" style="display:none;position:fixed;inset:0;z-index:1000;align-items:center;justify-content:center;">
-        <div id="modal-overlay" style="position:absolute;inset:0;background:rgba(0,0,0,0.5);"></div>
-        <div style="position:relative;background:#fff;border-radius:12px;padding:1.5rem;max-width:420px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.2);">
-            <h3 id="modal-titulo" style="margin:0 0 1rem;font-size:1.1rem;color:#111;"></h3>
-            <p id="modal-cuerpo" style="margin:0 0 1.5rem;font-size:0.95rem;color:#444;line-height:1.5;"></p>
-            <div style="display:flex;gap:0.75rem;justify-content:flex-end;">
-                <button id="modal-cancelar" style="padding:0.5rem 1.25rem;border:1px solid #d1d5db;border-radius:8px;background:#fff;cursor:pointer;font-size:0.9rem;">Cancelar</button>
-                <button id="modal-confirmar" style="padding:0.5rem 1.25rem;border:none;border-radius:8px;background:#2563eb;color:#fff;cursor:pointer;font-size:0.9rem;">Enviar sin ellos</button>
+    <div id="modal-confirmacion" class="modal" style="display:none;">
+        <div id="modal-overlay" class="modal__overlay"></div>
+        <div class="modal__caja">
+            <h3 id="modal-titulo" class="modal__titulo"></h3>
+            <p id="modal-cuerpo" class="modal__cuerpo"></p>
+            <div class="modal__acciones">
+                <button id="modal-cancelar" class="modal__btn modal__btn--secundario">Cancelar</button>
+                <button id="modal-confirmar" class="modal__btn modal__btn--primario">Enviar sin ellos</button>
             </div>
         </div>
     </div>

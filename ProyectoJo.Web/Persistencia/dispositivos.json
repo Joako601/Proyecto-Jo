@@ -424,5 +424,11 @@
     "Estacion": "Recepcion",
     "Nombre": null,
     "FechaRegistro": "2026-07-24T16:05:40.6850291Z"
+  },
+  {
+    "Token": "WoRczxrgOTlXlQ3zFCuwRW1BkdStrMJ3jICWdEoCJE",
+    "Estacion": "Cocina",
+    "Nombre": null,
+    "FechaRegistro": "2026-07-25T02:16:23.900913Z"
   }
 ]

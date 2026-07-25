@@ -680,5 +680,35 @@
     "Estado": "Pagado",
     "FechaCreacion": "2026-07-24T16:05:01.3131456Z",
     "Total": 655
+  },
+  {
+    "Id": 41,
+    "Mesa": "Mesa 1",
+    "Items": [
+      {
+        "ItemId": 15,
+        "Nombre": "Nachos de Carne Asada",
+        "Cantidad": 4,
+        "PrecioUnitario": 195,
+        "Subtotal": 780
+      },
+      {
+        "ItemId": 16,
+        "Nombre": "Nachos de Chorizo",
+        "Cantidad": 1,
+        "PrecioUnitario": 195,
+        "Subtotal": 195
+      },
+      {
+        "ItemId": 14,
+        "Nombre": "Hamburguesa Hawaiana",
+        "Cantidad": 3,
+        "PrecioUnitario": 105,
+        "Subtotal": 315
+      }
+    ],
+    "Estado": "Pendiente",
+    "FechaCreacion": "2026-07-25T02:14:09.9039817Z",
+    "Total": 1290
   }
 ]

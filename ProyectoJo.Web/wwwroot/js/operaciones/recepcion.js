@@ -11,8 +11,8 @@
     var tipoEntrega = 'mesa';
     var tabActiva = 'activos';
     var ultimosPedidos = [];
-
-
+    var categoriaActiva = 'Todos';
+    var textoBusqueda = '';
 
     function ir(url) {
         window.location.href = url;
@@ -22,8 +22,6 @@
         var fuente = item.ingredientes || item.descripcion || '';
         return fuente.split(',').map(function (s) { return s.trim(); }).filter(function (s) { return s.length > 0; });
     }
-
-
 
     function setEstadoConexion(estado) {
         var el = document.getElementById('estado-conexion');
@@ -36,8 +34,6 @@
         el.textContent = textos[estado] || '';
     }
 
-
-
     function setTipoEntrega(tipo) {
         tipoEntrega = tipo;
         document.getElementById('btn-mesa').classList.toggle('tipo-entrega__btn--activo', tipo === 'mesa');
@@ -45,16 +41,12 @@
         document.getElementById('mesa-input').style.display = tipo === 'mesa' ? 'block' : 'none';
     }
 
-
-
     function cambiarTab(tab) {
         tabActiva = tab;
         document.getElementById('tab-activos').classList.toggle('tabs__btn--activo', tab === 'activos');
         document.getElementById('tab-pagados').classList.toggle('tabs__btn--activo', tab === 'pagados');
         renderPedidos();
     }
-
-
 
     function cargarMenu() {
         fetch('/Operaciones/Recepcion/ObtenerMenu')
@@ -66,54 +58,77 @@
             .then(function (datos) {
                 if (!datos) return;
                 menu = datos;
+                renderChips();
                 renderMenu();
             })
             .catch(function (err) {
                 console.error('Error cargando menú:', err);
-                document.getElementById('menu-contenedor').innerHTML =
-                    '<p class="mensaje-vacio" style="color:#dc2626;">No se pudo cargar el menú.</p>';
+                document.getElementById('menu-grid').innerHTML =
+                    '<p class="mensaje-vacio" style="color:var(--tc-brick);">No se pudo cargar el menú.</p>';
             });
     }
 
-    function renderMenu() {
-        var contenedor = document.getElementById('menu-contenedor');
-        contenedor.innerHTML = '';
-
-        var disponibles = menu.filter(function (i) { return i.activo; });
-        var categorias = disponibles
+    function categoriasDisponibles() {
+        return menu
+            .filter(function (i) { return i.activo; })
             .map(function (i) { return i.categoria || 'Otros'; })
             .filter(function (v, i, a) { return a.indexOf(v) === i; });
-
-        categorias.forEach(function (cat) {
-            var titulo = document.createElement('div');
-            titulo.className = 'categoria-titulo';
-            titulo.textContent = cat;
-            contenedor.appendChild(titulo);
-
-            disponibles
-                .filter(function (i) { return (i.categoria || 'Otros') === cat; })
-                .forEach(function (item) {
-                    var div = document.createElement('div');
-                    div.className = 'menu-item' + (item.agotado ? ' menu-item--agotado' : '');
-                    div.innerHTML =
-                        '<div class="menu-item__info">' +
-                        '<h3>' + item.platillo + '</h3>' +
-                        '<p class="menu-item__desc">' + (item.descripcion || '') + '</p>' +
-                        '<p class="menu-item__precio">$' + Number(item.precio).toFixed(2) + '</p>' +
-                        '</div>' +
-                        '<button class="menu-item__btn" data-item-id="' + item.id + '" ' + (item.agotado ? 'disabled' : '') + '>' +
-                        (item.agotado ? 'Agotado' : 'Agregar') +
-                        '</button>';
-                    contenedor.appendChild(div);
-                });
-        });
     }
 
+    function renderChips() {
+        var cont = document.getElementById('chips-categoria');
+        var categorias = ['Todos'].concat(categoriasDisponibles());
 
+        if (categorias.indexOf(categoriaActiva) === -1) categoriaActiva = 'Todos';
+
+        cont.innerHTML = categorias.map(function (cat) {
+            return '<button class="chip' + (cat === categoriaActiva ? ' chip--activo' : '') +
+                '" data-categoria="' + cat.replace(/"/g, '&quot;') + '">' + cat + '</button>';
+        }).join('');
+    }
+
+    function cantidadEnCarrito(itemId) {
+        return carrito
+            .filter(function (l) { return l.itemId === itemId; })
+            .reduce(function (sum, l) { return sum + l.cantidad; }, 0);
+    }
+
+    function renderMenu() {
+        var contenedor = document.getElementById('menu-grid');
+        var disponibles = menu.filter(function (i) { return i.activo; });
+
+        if (categoriaActiva !== 'Todos') {
+            disponibles = disponibles.filter(function (i) { return (i.categoria || 'Otros') === categoriaActiva; });
+        }
+
+        if (textoBusqueda) {
+            var q = textoBusqueda.toLowerCase();
+            disponibles = disponibles.filter(function (i) {
+                return (i.platillo || '').toLowerCase().indexOf(q) !== -1;
+            });
+        }
+
+        if (disponibles.length === 0) {
+            contenedor.innerHTML = '<p class="mensaje-vacio">No se encontraron platillos.</p>';
+            return;
+        }
+
+        contenedor.innerHTML = disponibles.map(function (item) {
+            var cant = cantidadEnCarrito(item.id);
+            return '<button class="menu-card' + (item.agotado ? ' menu-card--agotado' : '') +
+                '" data-item-id="' + item.id + '" ' + (item.agotado ? 'disabled' : '') + '>' +
+                (cant > 0 ? '<span class="menu-card__badge">' + cant + '</span>' : '') +
+                '<p class="menu-card__nombre">' + item.platillo + '</p>' +
+                (item.agotado
+                    ? '<p class="menu-card__agotado-label">Agotado</p>'
+                    : '<p class="menu-card__precio">$' + Number(item.precio).toFixed(2) + '</p>') +
+                '</button>';
+        }).join('');
+    }
 
     function agregarAlCarrito(itemId) {
         var item = menu.find(function (i) { return i.id === itemId; });
-        if (!item) return;
+        if (!item || item.agotado) return;
 
         var existente = carrito.find(function (c) {
             return c.itemId === itemId && c.ingredientesQuitados.length === 0;
@@ -132,12 +147,14 @@
             });
         }
         renderCarrito();
+        renderMenu();
     }
 
     function cambiarCantidad(index, delta) {
         carrito[index].cantidad += delta;
         if (carrito[index].cantidad <= 0) carrito.splice(index, 1);
         renderCarrito();
+        renderMenu();
     }
 
     function toggleIngrediente(index, ingrediente) {
@@ -151,12 +168,24 @@
     function quitarLinea(index) {
         carrito.splice(index, 1);
         renderCarrito();
+        renderMenu();
+    }
+
+    function abrirCarrito() {
+        document.getElementById('panel-carrito').classList.add('panel-carrito--abierto');
+        document.getElementById('carrito-overlay').classList.add('carrito-overlay--visible');
+    }
+
+    function cerrarCarrito() {
+        document.getElementById('panel-carrito').classList.remove('panel-carrito--abierto');
+        document.getElementById('carrito-overlay').classList.remove('carrito-overlay--visible');
     }
 
     function renderCarrito() {
         var cont = document.getElementById('carrito-lineas');
         var crearBtn = document.getElementById('crear-btn');
         var total = carrito.reduce(function (sum, l) { return sum + l.precioUnitario * l.cantidad; }, 0);
+        var items = carrito.reduce(function (sum, l) { return sum + l.cantidad; }, 0);
 
         if (carrito.length === 0) {
             cont.innerHTML = '<p class="mensaje-vacio">Aún no has agregado productos.</p>';
@@ -192,11 +221,10 @@
         }
 
         document.getElementById('total-carrito').textContent = 'Total: $' + total.toFixed(2);
+        document.getElementById('barra-mobile-items').textContent = items + (items === 1 ? ' item' : ' items');
+        document.getElementById('barra-mobile-total').textContent = '$' + total.toFixed(2);
     }
 
-
-
-    // Envía el pedido al servidor con los items recibidos (ya validados/confirmados por el usuario)
     function enviarPedido(mesaTexto, items) {
         fetch('/Operaciones/Recepcion/Crear', {
             method: 'POST',
@@ -213,10 +241,12 @@
                         mostrarModalError(data.error || 'No se pudo crear el pedido.');
                     });
                 }
-                return res.json().then(function (resultado) {
+                return res.json().then(function () {
                     carrito = [];
                     document.getElementById('mesa-input').value = '';
                     renderCarrito();
+                    renderMenu();
+                    cerrarCarrito();
                 });
             })
             .catch(function (err) {
@@ -235,7 +265,6 @@
     }
 
     function validarYMostrarModal(mesaTexto) {
-        // Pre-validación contra el menú actualizado
         var itemsDisponibles = [];
         var itemsProblema = [];
 
@@ -260,15 +289,14 @@
             }
         });
 
-        // Sin problemas: enviar directo
         if (itemsProblema.length === 0) {
             enviarPedido(mesaTexto, itemsDisponibles);
             return;
         }
 
-        // Todo el carrito está agotado/inactivo
+        var modal = document.getElementById('modal-confirmacion');
+
         if (itemsDisponibles.length === 0) {
-            var modal = document.getElementById('modal-confirmacion');
             document.getElementById('modal-titulo').textContent = 'Sin productos disponibles';
             document.getElementById('modal-cuerpo').innerHTML =
                 'Ninguno de los productos del pedido está disponible ahora mismo:<br><br>' +
@@ -282,16 +310,14 @@
             return;
         }
 
-        // Pedido parcial: mostrar qué se va y qué no, y dejar decidir
-        var modal = document.getElementById('modal-confirmacion');
         document.getElementById('modal-titulo').textContent = 'Revisá el pedido antes de enviarlo';
         document.getElementById('modal-cuerpo').innerHTML =
-            '<span style="color:#dc2626;font-weight:600;">❌ No disponibles (no se envían):</span><br>' +
+            '<span style="color:var(--tc-brick);font-weight:600;">❌ No disponibles (no se envían):</span><br>' +
             itemsProblema.map(function (p) {
                 return '&nbsp;&nbsp;• <b>' + p.nombre + '</b>: ' + p.motivo;
             }).join('<br>') +
             '<br><br>' +
-            '<span style="color:#16a34a;font-weight:600;">✅ Disponibles (se envían a cocina):</span><br>' +
+            '<span style="color:var(--tc-teal);font-weight:600;">✅ Disponibles (se envían a cocina):</span><br>' +
             itemsDisponibles.map(function (p) {
                 return '&nbsp;&nbsp;• <b>' + p.nombre + '</b> ×' + p.cantidad;
             }).join('<br>') +
@@ -318,8 +344,6 @@
 
         var mesaTexto = tipoEntrega === 'mesa' ? 'Mesa ' + mesaInput : 'Para llevar';
 
-        // Refrescar el menú desde el servidor antes de validar,
-        // para detectar cambios de agotado/activo hechos desde otro dispositivo
         fetch('/Operaciones/Recepcion/ObtenerMenu')
             .then(function (res) {
                 if (res.status === 401) { ir('/Operaciones/Auth/Login'); return null; }
@@ -329,93 +353,20 @@
             .then(function (menuActualizado) {
                 if (!menuActualizado) return;
                 menu = menuActualizado;
+                renderChips();
                 renderMenu();
                 validarYMostrarModal(mesaTexto);
             })
             .catch(function (err) {
                 console.error('Error refrescando menú:', err);
-                // Si falla el refresh, validar con el menú que tenemos en memoria
                 validarYMostrarModal(mesaTexto);
             });
-    }
-
-    function validarYMostrarModal(mesaTexto) {
-        var itemsDisponibles = [];
-        var itemsProblema = [];
-
-        carrito.forEach(function (l) {
-            var itemMenu = menu.find(function (m) { return m.id === l.itemId; });
-            var sufijo = l.ingredientesQuitados.length > 0
-                ? ' (sin ' + l.ingredientesQuitados.join(', ') + ')'
-                : '';
-            var lineaPayload = {
-                itemId: l.itemId,
-                nombre: l.nombre + sufijo,
-                cantidad: l.cantidad,
-                precioUnitario: l.precioUnitario
-            };
-
-            if (!itemMenu || !itemMenu.activo) {
-                itemsProblema.push({ nombre: l.nombre, motivo: 'Ya no está disponible en el menú' });
-            } else if (itemMenu.agotado) {
-                itemsProblema.push({ nombre: l.nombre, motivo: 'Sin stock en este momento' });
-            } else {
-                itemsDisponibles.push(lineaPayload);
-            }
-        });
-
-        // Sin problemas: enviar directo
-        if (itemsProblema.length === 0) {
-            enviarPedido(mesaTexto, itemsDisponibles);
-            return;
-        }
-
-        // Todo el carrito está agotado/inactivo: modal de error sin opción de confirmar
-        if (itemsDisponibles.length === 0) {
-            document.getElementById('modal-titulo').textContent = 'Sin productos disponibles';
-            document.getElementById('modal-cuerpo').innerHTML =
-                'Ninguno de los productos del pedido está disponible ahora mismo:<br><br>' +
-                itemsProblema.map(function (p) {
-                    return '• <b>' + p.nombre + '</b>: ' + p.motivo;
-                }).join('<br>') +
-                '<br><br>Revisá el menú y armá el pedido de nuevo.';
-            document.getElementById('modal-confirmar').style.display = 'none';
-            document.getElementById('modal-cancelar').textContent = 'Cerrar';
-            document.getElementById('modal-confirmacion').style.display = 'flex';
-            return;
-        }
-
-        // Pedido parcial: mostrar qué se va y qué no, dejar decidir
-        document.getElementById('modal-titulo').textContent = 'Revisá el pedido antes de enviarlo';
-        document.getElementById('modal-cuerpo').innerHTML =
-            '<span style="color:#dc2626;font-weight:600;">❌ No disponibles (no se envían):</span><br>' +
-            itemsProblema.map(function (p) {
-                return '&nbsp;&nbsp;• <b>' + p.nombre + '</b>: ' + p.motivo;
-            }).join('<br>') +
-            '<br><br>' +
-            '<span style="color:#16a34a;font-weight:600;">✅ Disponibles (se envían a cocina):</span><br>' +
-            itemsDisponibles.map(function (p) {
-                return '&nbsp;&nbsp;• <b>' + p.nombre + '</b> ×' + p.cantidad;
-            }).join('<br>') +
-            '<br><br>¿Confirmás el pedido <b>solo con los productos disponibles</b>, o preferís cancelar y editar el carrito?';
-        document.getElementById('modal-confirmar').style.display = '';
-        document.getElementById('modal-confirmar').textContent = 'Confirmar y enviar';
-        document.getElementById('modal-cancelar').textContent = 'Cancelar y editar';
-
-        document.getElementById('modal-confirmar').onclick = function () {
-            cerrarModal();
-            enviarPedido(mesaTexto, itemsDisponibles);
-        };
-
-        document.getElementById('modal-confirmacion').style.display = 'flex';
     }
 
     function cerrarModal() {
         document.getElementById('modal-confirmacion').style.display = 'none';
         document.getElementById('modal-confirmar').onclick = null;
     }
-
-
 
     function cargarPedidos() {
         fetch('/Operaciones/Recepcion/ObtenerPedidos')
@@ -486,7 +437,6 @@
                     alert('No se pudo marcar como pagado (código ' + res.status + ').');
                     return;
                 }
-
             })
             .catch(function (err) {
                 console.error('Error marcando pagado:', err);
@@ -494,20 +444,13 @@
             });
     }
 
-
-
     var connection = new signalR.HubConnectionBuilder()
         .withUrl('/hubs/pedidos')
         .withAutomaticReconnect()
         .build();
 
-    connection.on('PedidoNuevo', function (pedido) {
-        cargarPedidos();
-    });
-
-    connection.on('PedidoActualizado', function (pedido) {
-        cargarPedidos();
-    });
+    connection.on('PedidoNuevo', function () { cargarPedidos(); });
+    connection.on('PedidoActualizado', function () { cargarPedidos(); });
 
     connection.onreconnecting(function () {
         setEstadoConexion('reconectando');
@@ -534,13 +477,18 @@
             });
     }
 
-
-
     document.addEventListener('click', function (e) {
         var t = e.target;
+        var tarjeta = t.closest('.menu-card');
 
-        if (t.matches('.menu-item__btn') && t.dataset.itemId) {
-            agregarAlCarrito(Number(t.dataset.itemId));
+        if (tarjeta && tarjeta.dataset.itemId && !tarjeta.disabled) {
+            agregarAlCarrito(Number(tarjeta.dataset.itemId));
+            return;
+        }
+        if (t.matches('.chip') && t.dataset.categoria) {
+            categoriaActiva = t.dataset.categoria;
+            renderChips();
+            renderMenu();
             return;
         }
         if (t.matches('[data-accion="restar"]')) {
@@ -575,6 +523,14 @@
             cargarPedidos();
             return;
         }
+        if (t.matches('#btn-ver-pedido')) {
+            abrirCarrito();
+            return;
+        }
+        if (t.matches('#cerrar-carrito') || t.matches('#carrito-overlay')) {
+            cerrarCarrito();
+            return;
+        }
         if (t.matches('#modal-cancelar') || t.matches('#modal-overlay')) {
             cerrarModal();
             return;
@@ -588,7 +544,12 @@
         }
     });
 
-
+    document.addEventListener('input', function (e) {
+        if (e.target.matches('#buscador')) {
+            textoBusqueda = e.target.value.trim();
+            renderMenu();
+        }
+    });
 
     setTipoEntrega('mesa');
     cambiarTab('activos');

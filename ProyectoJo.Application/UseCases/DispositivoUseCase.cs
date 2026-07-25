@@ -33,7 +33,11 @@ namespace ProyectoJo.Application.UseCases
 			return await _repository.ObtenerPorTokenAsync(token);
 		}
 
-		
+		public async Task<List<DispositivoOperaciones>> ObtenerTodosAsync()
+		{
+			return await _repository.ObtenerTodosAsync();
+		}
+
 		private static string GenerarToken()
 		{
 			return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32))

@@ -1,0 +1,133 @@
+﻿:root {
+	--tc-carbon: #211D18;
+	--tc-stone: #F3EFE6;
+	--tc-card: #ffffff;
+	--tc-ink: #2B2420;
+	--tc-ink-muted: #8a8378;
+	--tc-mustard: #D9A441;
+	--tc-mustard-ink: #412402;
+	--tc-teal: #2F6E62;
+	--tc-teal-ink: #e1f5ee;
+	--tc-brick: #B23A2E;
+	--tc-border-soft: #d8d1c2;
+	--tc-font-display: 'Fraunces', serif;
+	--tc-font-body: 'Public Sans', sans-serif;
+}
+
+body {
+	background-color: var(--tc-stone) !important;
+	font-family: var(--tc-font-body);
+	color: var(--tc-ink);
+}
+
+.op-topbar {
+	background: var(--tc-carbon);
+	color: var(--tc-stone);
+	padding: 12px 20px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.op-topbar__brand {
+	font-family: var(--tc-font-display);
+	font-weight: 600;
+	font-size: 1.05rem;
+}
+
+.op-topbar__brand-sep {
+	opacity: 0.5;
+	margin: 0 2px;
+}
+
+.op-topbar__link {
+	color: var(--tc-stone);
+	opacity: 0.85;
+	text-decoration: none;
+	font-size: 0.85rem;
+}
+
+	.op-topbar__link:hover {
+		opacity: 1;
+		color: var(--tc-mustard);
+	}
+
+.card {
+	border: 1px solid var(--tc-border-soft) !important;
+	border-radius: 14px !important;
+	box-shadow: none !important;
+}
+
+	.card h4 {
+		font-family: var(--tc-font-display);
+		color: var(--tc-carbon);
+	}
+
+.btn-tactil {
+	min-height: 56px;
+	font-size: 1.1rem;
+	font-weight: 600;
+	border-radius: 10px !important;
+}
+
+.btn-success {
+	background-color: var(--tc-teal) !important;
+	border-color: var(--tc-teal) !important;
+	color: var(--tc-teal-ink) !important;
+}
+
+.btn-outline-primary,
+.btn-outline-warning {
+	color: var(--tc-ink) !important;
+	border-color: var(--tc-border-soft) !important;
+}
+
+.btn-check:checked + .btn-outline-primary {
+	background-color: var(--tc-teal) !important;
+	border-color: var(--tc-teal) !important;
+	color: var(--tc-teal-ink) !important;
+}
+
+.btn-check:checked + .btn-outline-warning {
+	background-color: var(--tc-mustard) !important;
+	border-color: var(--tc-mustard) !important;
+	color: var(--tc-mustard-ink) !important;
+}
+
+.btn-outline-secondary.tecla-pin {
+	border-color: var(--tc-border-soft) !important;
+	color: var(--tc-ink) !important;
+}
+
+	.btn-outline-secondary.tecla-pin:hover {
+		background-color: var(--tc-stone) !important;
+	}
+
+.btn-outline-danger {
+	border-color: var(--tc-border-soft) !important;
+	color: var(--tc-brick) !important;
+}
+
+.badge.bg-primary {
+	background-color: var(--tc-teal) !important;
+	color: var(--tc-teal-ink) !important;
+}
+
+.badge.bg-warning {
+	background-color: var(--tc-mustard) !important;
+	color: var(--tc-mustard-ink) !important;
+}
+
+.badge.bg-secondary {
+	background-color: var(--tc-ink-muted) !important;
+}
+
+.alert-danger {
+	background-color: #fbe9e7 !important;
+	border-color: var(--tc-brick) !important;
+	color: var(--tc-brick) !important;
+}
+
+.pin-dot {
+	border-color: var(--tc-border-soft) !important;
+}

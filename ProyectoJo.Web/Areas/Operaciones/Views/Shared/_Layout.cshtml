@@ -5,49 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>@ViewData["Title"] — Proyecto Jo' Operaciones</title>
     <link rel="manifest" href="~/manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="icon" type="image/png" sizes="32x32" href="~/img/favicon-32.png" asp-append-version="true" />
-    <style>
-            body {
-                background-color: #f4f1ec;
-                -webkit-tap-highlight-color: transparent;
-                user-select: none;
-            }
-
-            .op-navbar {
-                background: #212529;
-                color: white;
-                padding: 12px 20px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-                .op-navbar .badge-estacion {
-                    font-size: 0.95rem;
-                    padding: 6px 14px;
-                }
-
-            .btn-tactil {
-                min-height: 56px;
-                font-size: 1.1rem;
-                font-weight: 600;
-            }
-    </style>
+    <link rel="stylesheet" href="~/css/operaciones/operaciones-auth.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
-    @if (User.Identity?.IsAuthenticated == true)
-    {
-        <div class="op-navbar">
-            <span><i class="bi bi-person-badge"></i> @User.Identity.Name</span>
-            <span class="badge bg-secondary badge-estacion">@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</span>
-            <a class="btn btn-sm btn-outline-light" asp-area="Operaciones" asp-controller="Auth" asp-action="Salir">
-                <i class="bi bi-box-arrow-right"></i> Salir
-            </a>
-        </div>
-    }
+    <div class="op-topbar">
+        <span class="op-topbar__brand">Proyecto Jo' <span class="op-topbar__brand-sep">·</span> Operaciones</span>
+        @if (ViewData["VolverTexto"] is string volverTexto)
+        {
+            <a class="op-topbar__link" href="@ViewData["VolverUrl"]">@volverTexto</a>
+        }
+    </div>
 
     <div class="container-fluid p-3">
         @RenderBody()

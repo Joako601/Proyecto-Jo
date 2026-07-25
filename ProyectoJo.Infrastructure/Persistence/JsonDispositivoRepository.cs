@@ -41,9 +41,23 @@ namespace ProyectoJo.Infrastructure.Persistence
 			try
 			{
 				var todos = await LeerAsync();
+				dispositivo.Id = todos.Count == 0 ? 1 : todos.Max(d => d.Id) + 1;
 				todos.Add(dispositivo);
 				await PersistirAsync(todos);
 				return dispositivo;
+			}
+			finally
+			{
+				_lock.Release();
+			}
+		}
+
+		public async Task<List<DispositivoOperaciones>> ObtenerTodosAsync()
+		{
+			await _lock.WaitAsync();
+			try
+			{
+				return await LeerAsync();
 			}
 			finally
 			{

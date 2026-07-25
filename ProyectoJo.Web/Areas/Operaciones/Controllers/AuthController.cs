@@ -60,7 +60,8 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 			var claims = new List<Claim>
 			{
 				new Claim(ClaimTypes.Name, empleado.Nombre),
-				new Claim(ClaimTypes.Role, empleado.Rol.ToString())
+				new Claim(ClaimTypes.Role, empleado.Rol.ToString()),
+				new Claim("Dispositivo", dispositivo.Nombre ?? string.Empty)
 			};
 
 			var identity = new ClaimsIdentity(claims, "OperacionesCookieAuth");

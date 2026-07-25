@@ -6,5 +6,6 @@ namespace ProyectoJo.Application.Ports.In
 	{
 		Task<DispositivoOperaciones> EmparejarAsync(RolEmpleado estacion, string nombre);
 		Task<DispositivoOperaciones?> ReconocerAsync(string token);
+		Task<List<DispositivoOperaciones>> ObtenerTodosAsync();
 	}
 }

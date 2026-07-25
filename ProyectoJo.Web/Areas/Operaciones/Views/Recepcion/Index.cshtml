@@ -22,6 +22,10 @@
         <div class="top-bar__brand">
             <span class="top-bar__icon">🧾</span>
             <h1 class="top-bar__title">Recepción</h1>
+            @if (User.FindFirst("Dispositivo")?.Value is string nombreDisp && !string.IsNullOrWhiteSpace(nombreDisp))
+            {
+                <span class="top-bar__dispositivo">@nombreDisp</span>
+            }
             <span id="estado-conexion" class="top-bar__estado"></span>
         </div>
         <a class="top-bar__salir" asp-area="Operaciones" asp-controller="Auth" asp-action="Salir">

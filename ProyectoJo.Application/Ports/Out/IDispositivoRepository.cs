@@ -6,5 +6,6 @@ namespace ProyectoJo.Application.Ports.Out
 	{
 		Task<DispositivoOperaciones?> ObtenerPorTokenAsync(string token);
 		Task<DispositivoOperaciones> RegistrarAsync(DispositivoOperaciones dispositivo);
+		Task<List<DispositivoOperaciones>> ObtenerTodosAsync();
 	}
 }

@@ -2,6 +2,7 @@
 {
 	public class DispositivoOperaciones
 	{
+		public int Id { get; set; }
 		public string Token { get; set; } = string.Empty;
 		public RolEmpleado Estacion { get; set; }
 		public string Nombre { get; set; } = string.Empty;

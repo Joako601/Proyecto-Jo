@@ -23,8 +23,8 @@
 <body style="display: flex; flex-direction: column; min-height: 100vh;">
 
     <header>
-        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom py-3">
-            <div class="container-fluid px-5">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom py-3">
+            <div class="container-fluid px-3 px-lg-5">
 
                 <a class="navbar-brand" asp-controller="Home" asp-action="Index">
                     <picture>
@@ -35,7 +35,12 @@
                     </picture>
                 </a>
 
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarPrincipal"
+                        aria-controls="navbarPrincipal" aria-expanded="false" aria-label="Abrir menú de navegación">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="navbar-collapse collapse justify-content-end" id="navbarPrincipal">
                     <ul class="navbar-nav text-uppercase" style="font-size: 0.75rem; letter-spacing: 2px; font-weight: 600;">
                         <li class="nav-item"><a class="nav-link text-dark px-3" asp-controller="Home" asp-action="Index">Inicio</a></li>
                         <li class="nav-item"><a class="nav-link text-dark px-3" asp-controller="Menu" asp-action="Index">Menú</a></li>

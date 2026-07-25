@@ -65,38 +65,40 @@
         </div>
     }
 
-    <table class="admin-table">
-        <thead>
-            <tr>
-                <th>Fecha</th>
-                <th>Tipo</th>
-                <th>Categoría</th>
-                <th>Descripción</th>
-                <th>Monto</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
                 <tr>
-                    <td>@item.Fecha.ToString("dd/MM/yyyy")</td>
-                    <td>
-                        <span class="tag tag--@item.Tipo.ToString().ToLower()">@item.Tipo</span>
-                    </td>
-                    <td>@item.Categoria</td>
-                    <td>@item.Descripcion</td>
-                    <td>$@item.Monto.ToString("N2")</td>
-                    <td class="acciones">
-                        <a asp-action="Editar" asp-route-id="@item.Id" class="link-edit">Editar</a>
-                        <form asp-action="Eliminar" asp-route-id="@item.Id" method="post" class="form-eliminar">
-                            <button type="submit" class="link-delete">Eliminar</button>
-                        </form>
-                    </td>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Categoría</th>
+                    <th>Descripción</th>
+                    <th>Monto</th>
+                    <th>Acciones</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td data-label="Fecha">@item.Fecha.ToString("dd/MM/yyyy")</td>
+                        <td data-label="Tipo">
+                            <span class="tag tag--@item.Tipo.ToString().ToLower()">@item.Tipo</span>
+                        </td>
+                        <td data-label="Categoría">@item.Categoria</td>
+                        <td data-label="Descripción">@item.Descripcion</td>
+                        <td data-label="Monto">$@item.Monto.ToString("N2")</td>
+                        <td data-label="Acciones" class="acciones">
+                            <a asp-action="Editar" asp-route-id="@item.Id" class="link-edit">Editar</a>
+                            <form asp-action="Eliminar" asp-route-id="@item.Id" method="post" class="form-eliminar">
+                                <button type="submit" class="link-delete">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
     @if (!Model.Any())
     {

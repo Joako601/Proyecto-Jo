@@ -150,3 +150,78 @@
 		.btn-regresar-yerba:hover::after {
 			width: 100%;
 		}
+
+/* ============================================= */
+/* --- Responsivo: tablets --- */
+/* ============================================= */
+@media (max-width: 991.98px) {
+	.detalle-container {
+		padding: 50px 0;
+	}
+
+	.platillo-wrapper {
+		grid-template-columns: 1fr;
+	}
+
+	.platillo-visual {
+		min-height: 320px;
+	}
+
+		.platillo-visual span {
+			font-size: 6rem;
+		}
+
+	.platillo-info {
+		padding: 2.5rem !important;
+	}
+
+	.titulo-premium {
+		font-size: 2.6rem !important;
+	}
+
+	.ficha-tecnica {
+		grid-template-columns: 1fr 1fr;
+		gap: 1.5rem;
+	}
+}
+
+/* ============================================= */
+/* --- Responsivo: celulares --- */
+/* ============================================= */
+@media (max-width: 575.98px) {
+	.detalle-container {
+		padding: 30px 0;
+	}
+
+	.platillo-visual {
+		min-height: 240px;
+	}
+
+		.platillo-visual span {
+			font-size: 4rem;
+		}
+
+	.platillo-info {
+		padding: 1.75rem !important;
+	}
+
+	.titulo-premium {
+		font-size: 2rem !important;
+	}
+
+	.precio-premium {
+		font-size: 1.4rem;
+	}
+
+	.descripcion-premium {
+		font-size: 1rem;
+		line-height: 1.7;
+		margin-bottom: 2rem;
+	}
+
+	.ficha-tecnica {
+		grid-template-columns: 1fr 1fr;
+		gap: 1.25rem;
+		margin-bottom: 2.5rem;
+	}
+}

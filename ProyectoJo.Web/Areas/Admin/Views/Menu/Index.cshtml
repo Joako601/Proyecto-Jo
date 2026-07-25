@@ -59,63 +59,65 @@
     }
     else
     {
-        <table class="admin-table">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Platillo</th>
-                    <th>Categoría</th>
-                    <th>Base</th>
-                    <th>Precio</th>
-                    <th class="text-center">Estado</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in resultado)
-                {
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
                     <tr>
-                        <td style="color:var(--tc-ink-muted)">@item.Id</td>
-                        <td>@item.Platillo</td>
-                        <td><span class="chip-categoria">@item.Categoria</span></td>
-                        <td>@item.Base</td>
-                        <td style="font-family:var(--tc-font-mono)">$@item.Precio.ToString("N2")</td>
-                        <td class="text-center">
-                            <form asp-area="Admin" asp-controller="Inventario"
-                                  asp-action="ToggleActivo" asp-route-id="@item.Id" method="post" class="d-inline">
-                                <input type="hidden" name="origen" value="Menu" />
-                                <button type="submit"
-                                        class="icon-toggle @(item.Activo ? "on" : "")"
-                                        title="@(item.Activo ? "Ocultar" : "Mostrar")">
-                                    <i class="bi @(item.Activo ? "bi-eye" : "bi-eye-slash")"></i>
-                                </button>
-                            </form>
-                            <form asp-area="Admin" asp-controller="Inventario"
-                                  asp-action="ToggleAgotado" asp-route-id="@item.Id" method="post" class="d-inline">
-                                <input type="hidden" name="origen" value="Menu" />
-                                <button type="submit"
-                                        class="icon-toggle @(item.Agotado ? "warn" : "")"
-                                        title="@(item.Agotado ? "Disponible" : "Agotado")"
-                                    @(!item.Activo ? "disabled" : "")>
-                                    <i class="bi @(item.Agotado ? "bi-x-circle" : "bi-check-circle")"></i>
-                                </button>
-                            </form>
-                        </td>
-                        <td>
-                            <div class="acciones">
-                                <a asp-area="Admin" asp-controller="Menu" asp-action="Editar"
-                                   asp-route-id="@item.Id" class="link-edit">Editar</a>
-                                <form asp-area="Admin" asp-controller="Menu" asp-action="Eliminar"
-                                      asp-route-id="@item.Id" method="post"
-                                      onsubmit="return confirm('¿Eliminar @item.Platillo?')">
-                                    <button type="submit" class="link-delete">Eliminar</button>
-                                </form>
-                            </div>
-                        </td>
+                        <th>#</th>
+                        <th>Platillo</th>
+                        <th>Categoría</th>
+                        <th>Base</th>
+                        <th>Precio</th>
+                        <th class="text-center">Estado</th>
+                        <th></th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var item in resultado)
+                    {
+                        <tr>
+                            <td data-label="#" style="color:var(--tc-ink-muted)">@item.Id</td>
+                            <td data-label="Platillo">@item.Platillo</td>
+                            <td data-label="Categoría"><span class="chip-categoria">@item.Categoria</span></td>
+                            <td data-label="Base">@item.Base</td>
+                            <td data-label="Precio" style="font-family:var(--tc-font-mono)">$@item.Precio.ToString("N2")</td>
+                            <td data-label="Estado" class="text-center">
+                                <form asp-area="Admin" asp-controller="Inventario"
+                                      asp-action="ToggleActivo" asp-route-id="@item.Id" method="post" class="d-inline">
+                                    <input type="hidden" name="origen" value="Menu" />
+                                    <button type="submit"
+                                            class="icon-toggle @(item.Activo ? "on" : "")"
+                                            title="@(item.Activo ? "Ocultar" : "Mostrar")">
+                                        <i class="bi @(item.Activo ? "bi-eye" : "bi-eye-slash")"></i>
+                                    </button>
+                                </form>
+                                <form asp-area="Admin" asp-controller="Inventario"
+                                      asp-action="ToggleAgotado" asp-route-id="@item.Id" method="post" class="d-inline">
+                                    <input type="hidden" name="origen" value="Menu" />
+                                    <button type="submit"
+                                            class="icon-toggle @(item.Agotado ? "warn" : "")"
+                                            title="@(item.Agotado ? "Disponible" : "Agotado")"
+                                        @(!item.Activo ? "disabled" : "")>
+                                        <i class="bi @(item.Agotado ? "bi-x-circle" : "bi-check-circle")"></i>
+                                    </button>
+                                </form>
+                            </td>
+                            <td data-label="Acciones">
+                                <div class="acciones">
+                                    <a asp-area="Admin" asp-controller="Menu" asp-action="Editar"
+                                       asp-route-id="@item.Id" class="link-edit">Editar</a>
+                                    <form asp-area="Admin" asp-controller="Menu" asp-action="Eliminar"
+                                          asp-route-id="@item.Id" method="post"
+                                          onsubmit="return confirm('¿Eliminar @item.Platillo?')">
+                                        <button type="submit" class="link-delete">Eliminar</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
         <p style="font-size:11.5px;color:var(--tc-ink-muted);margin-top:12px;">
             Mostrando @resultado.Count de @Model.Count platillos
         </p>

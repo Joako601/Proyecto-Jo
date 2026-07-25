@@ -40,25 +40,19 @@
 /* --- LISTA EDITORIAL DE PLATILLOS (CARTAS SUTILES) --- */
 .item-module {
     padding: 3.5rem 5rem;
-    /* 1. Contraste base: Un fondo blanco muy suave para que no flote en el vacío */
     background-color: rgba(255, 255, 255, 0.4);
-    /* 2. Estructura: Un borde casi imperceptible que define la carta */
     border: 1px solid rgba(0, 0, 0, 0.03);
     display: block;
     text-decoration: none;
     color: inherit;
-    /* 3. Separación: Margen inferior para que se vean como bloques independientes */
     margin: 0 auto 30px auto;
     max-width: 900px;
     transition: all 0.5s ease;
 }
 
     .item-module:hover {
-        /* Al pasar el mouse, la carta se vuelve más blanca y sólida */
         background-color: rgba(255, 255, 255, 0.95);
-        /* Una sombra levísima para dar profundidad */
         box-shadow: 0 15px 40px rgba(0, 0, 0, 0.04);
-        /* Un levantamiento vertical milimétrico (mucho más elegante que el lateral) */
         transform: translateY(-3px);
         border-color: rgba(0, 0, 0, 0.06);
     }
@@ -180,11 +174,10 @@
     position: relative;
     padding-bottom: 6px;
     display: inline-block;
-    color: #222 !important; /* Forzamos el negro para que no cambie */
-    transition: none; /* Quitamos transición al texto para que sea instantáneo */
+    color: #222 !important;
+    transition: none;
 }
 
-    /* La primera línea (Fija - Base) */
     .ver-experiencia-link::after {
         content: '';
         position: absolute;
@@ -195,7 +188,6 @@
         background-color: #b5a478;
     }
 
-    /* La segunda línea (Animada - Superior) */
     .ver-experiencia-link::before {
         content: '';
         position: absolute;
@@ -204,18 +196,15 @@
         width: 100%;
         height: 1.5px;
         background-color: #b5a478;
-        /* Estado inicial: invisible a la izquierda */
         transform: scaleX(0);
         transform-origin: left;
         transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* Animación: Solo afecta a la línea ::before */
     .ver-experiencia-link:hover::before {
         transform: scaleX(1);
     }
 
-    /* Quitamos cualquier efecto de opacidad o cambio de color en el hover global */
     .ver-experiencia-link:hover {
         color: #222 !important;
         text-decoration: none;
@@ -223,12 +212,12 @@
     }
 
 /* ============================================= */
-/* --- Botones de Filtro Minimalistas (ÚNICA definición, con scroll horizontal) --- */
+/* --- Botones de Filtro Minimalistas --- */
 /* ============================================= */
 
 .menu-filters-wrapper {
     position: relative;
-    overflow: hidden; /* evita que el wrapper agrande el ancho de toda la página */
+    overflow: hidden;
 }
 
 .menu-filters {
@@ -237,13 +226,13 @@
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     gap: 1.2rem;
-    padding: 0.5rem 2rem; /* espacio lateral para que el degradado no tape el primer/último botón */
+    padding: 0.5rem 2rem;
     justify-content: flex-start;
-    scrollbar-width: none; /* Firefox: oculta la barra de scroll */
+    scrollbar-width: none;
 }
 
     .menu-filters::-webkit-scrollbar {
-        display: none; /* Chrome/Safari: oculta la barra de scroll */
+        display: none;
     }
 
 .filter-btn {
@@ -259,17 +248,15 @@
     transition: all 0.3s ease;
     cursor: pointer;
     border-bottom: 2px solid transparent;
-    flex: 0 0 auto; /* evita que los botones se compriman */
-    white-space: nowrap; /* texto en una sola línea */
+    flex: 0 0 auto;
+    white-space: nowrap;
 }
 
-    /* Efecto hover minimalista */
     .filter-btn:hover, .filter-btn.active {
         color: #222;
         border-bottom: 2px solid #b5a478;
     }
 
-/* Sombras en los bordes para indicar que hay más contenido al deslizar */
 .menu-filters-wrapper::before,
 .menu-filters-wrapper::after {
     content: "";
@@ -292,7 +279,7 @@
 }
 
 /* ============================================= */
-/* --- Paginación del Menú (estilo minimalista) --- */
+/* --- Paginación del Menú --- */
 /* ============================================= */
 
 .menu-pagination {
@@ -342,9 +329,83 @@
         border-bottom: 2px solid transparent;
     }
 
-    /* Anterior / Siguiente un poco más discretos que los números */
     .menu-pagination .page-item:first-child .page-link,
     .menu-pagination .page-item:last-child .page-link {
         font-size: 0.65rem;
         letter-spacing: 1.5px;
     }
+
+/* ============================================= */
+/* --- Responsivo: tablets --- */
+/* ============================================= */
+@media (max-width: 991.98px) {
+    .menu-section {
+        padding: 70px 0;
+    }
+
+    .menu-header {
+        margin-bottom: 60px;
+    }
+
+    .menu-title {
+        font-size: 3.2rem;
+    }
+
+    .item-module {
+        padding: 2rem 2rem;
+    }
+
+    .item-title {
+        font-size: 1.7rem;
+    }
+}
+
+/* ============================================= */
+/* --- Responsivo: celulares --- */
+/* ============================================= */
+@media (max-width: 575.98px) {
+    .menu-section {
+        padding: 50px 0;
+    }
+
+    .menu-header {
+        margin-bottom: 40px;
+    }
+
+    .menu-title {
+        font-size: 2.3rem;
+    }
+
+    .item-module {
+        padding: 1.5rem 1.25rem;
+        margin: 0 auto 18px auto;
+    }
+
+    .item-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .item-title {
+        font-size: 1.35rem;
+    }
+
+    .item-price {
+        font-size: 1rem;
+    }
+
+    .item-description {
+        line-height: 1.6;
+    }
+
+    .menu-filters {
+        padding: 0.5rem 1.25rem;
+        gap: 0.8rem;
+    }
+
+    .menu-pagination {
+        gap: 0.75rem;
+        margin-top: 2.5rem;
+    }
+}

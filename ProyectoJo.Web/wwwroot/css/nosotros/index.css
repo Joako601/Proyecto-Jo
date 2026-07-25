@@ -112,9 +112,25 @@
             width: 100%;
         }
 
+        .nosotros-seccion .nosotros-foto-wrap {
+            order: 1;
+        }
+
+        .nosotros-seccion .nosotros-texto-wrap {
+            order: 2;
+        }
+
     .nosotros-foto {
         height: 300px;
     }
+
+    .nosotros-texto {
+        padding: 2rem 1.5rem;
+    }
+
+        .nosotros-texto h3 {
+            font-size: 1.7rem;
+        }
 }
 
 /* --- PLACEHOLDER "PRÓXIMAMENTE" (mientras llegan las fotos reales del equipo) --- */

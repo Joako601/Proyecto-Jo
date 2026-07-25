@@ -18,25 +18,25 @@
 </div>
 
 <div class="row g-3 mb-4">
-    <div class="col-md-3">
+    <div class="col-6 col-lg-3">
         <div class="tc-ticket">
             <div class="tc-label">Platillos activos</div>
             <div class="tc-value">@Model.TotalPlatillos</div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-6 col-lg-3">
         <div class="tc-ticket">
             <div class="tc-label">Ventas hoy</div>
             <div class="tc-value tc-value--teal">$@Model.VentasHoy.ToString("N0")</div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-6 col-lg-3">
         <div class="tc-ticket">
             <div class="tc-label">Pendientes</div>
             <div class="tc-value tc-value--mustard">@Model.PendientesHoy</div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-6 col-lg-3">
         <div class="tc-ticket">
             <div class="tc-label">Opiniones</div>
             <div class="tc-value">12</div>
@@ -48,7 +48,7 @@
 
 <div class="tc-section-label">Módulos</div>
 <div class="row g-3">
-    <div class="col-md-3">
+    <div class="col-6 col-lg-3">
         <a asp-area="Admin" asp-controller="Finanzas" asp-action="Index" class="tc-modulo">
             <div class="tc-modulo__top">
                 <div class="tc-modulo__title"><i class="bi bi-cash tc-icon--mustard"></i><span>Finanzas</span></div>
@@ -57,7 +57,7 @@
             <div class="tc-modulo__body">Ingresos y egresos del día.</div>
         </a>
     </div>
-    <div class="col-md-3">
+    <div class="col-6 col-lg-3">
         <a asp-area="Admin" asp-controller="Finanzas" asp-action="Dashboard" class="tc-modulo">
             <div class="tc-modulo__top">
                 <div class="tc-modulo__title"><i class="bi bi-bar-chart tc-icon--mustard"></i><span>Dashboard financiero</span></div>
@@ -66,7 +66,7 @@
             <div class="tc-modulo__body">Tendencias del mes.</div>
         </a>
     </div>
-    <div class="col-md-3">
+    <div class="col-6 col-lg-3">
         <a asp-area="Admin" asp-controller="Menu" asp-action="Index" class="tc-modulo">
             <div class="tc-modulo__top">
                 <div class="tc-modulo__title"><i class="bi bi-card-list tc-icon--teal"></i><span>Menú</span></div>
@@ -75,7 +75,7 @@
             <div class="tc-modulo__body">Platillos y categorías.</div>
         </a>
     </div>
-    <div class="col-md-3">
+    <div class="col-6 col-lg-3">
         <a asp-area="Admin" asp-controller="Inventario" asp-action="Index" class="tc-modulo">
             <div class="tc-modulo__top">
                 <div class="tc-modulo__title"><i class="bi bi-toggles tc-icon--teal"></i><span>Inventario</span></div>
@@ -84,7 +84,7 @@
             <div class="tc-modulo__body">Pausar platillos agotados.</div>
         </a>
     </div>
-    <div class="col-md-3">
+    <div class="col-6 col-lg-3">
         <a asp-area="Admin" asp-controller="Promociones" asp-action="Index" class="tc-modulo">
             <div class="tc-modulo__top">
                 <div class="tc-modulo__title"><i class="bi bi-megaphone tc-icon--mustard"></i><span>Promociones</span></div>
@@ -93,7 +93,7 @@
             <div class="tc-modulo__body">Ofertas y descuentos activos.</div>
         </a>
     </div>
-    <div class="col-md-3">
+    <div class="col-6 col-lg-3">
         <a asp-area="Admin" asp-controller="MapaCalor" asp-action="Index" class="tc-modulo">
             <div class="tc-modulo__top">
                 <div class="tc-modulo__title"><i class="bi bi-fire tc-icon--carbon"></i><span>Mapa de calor</span></div>
@@ -102,7 +102,7 @@
             <div class="tc-modulo__body">Horas pico y productos más vendidos.</div>
         </a>
     </div>
-    <div class="col-md-3">
+    <div class="col-6 col-lg-3">
         <a asp-area="Admin" asp-controller="CierreCaja" asp-action="Index" class="tc-modulo">
             <div class="tc-modulo__top">
                 <div class="tc-modulo__title"><i class="bi bi-safe tc-icon--brick"></i><span>Cierre de caja</span></div>
@@ -111,7 +111,7 @@
             <div class="tc-modulo__body">Apertura, cierre y reporte de ventas del día.</div>
         </a>
     </div>
-    <div class="col-md-3">
+    <div class="col-6 col-lg-3">
         <a asp-area="Admin" asp-controller="HistorialAuditoria" asp-action="Index" class="tc-modulo">
             <div class="tc-modulo__top">
                 <div class="tc-modulo__title"><i class="bi bi-clock-history tc-icon--carbon"></i><span>Auditoría</span></div>
@@ -134,7 +134,7 @@
     }
     @foreach (var f in proximamente)
     {
-        <div class="col-md-3">
+        <div class="col-6 col-lg-3">
             <div class="tc-modulo tc-modulo--pendiente">
                 <div class="tc-modulo__top">
                     <div class="tc-modulo__title"><i class="bi @f.Icon"></i><span>@f.T</span></div>

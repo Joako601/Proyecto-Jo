@@ -39,35 +39,37 @@
         </div>
     }
 
-    <table class="admin-table">
-        <thead>
-            <tr>
-                <th>Apertura</th>
-                <th>Cierre</th>
-                <th>Fondo inicial</th>
-                <th>Ventas</th>
-                <th>Gastos</th>
-                <th>Total</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var caja in Model)
-            {
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
                 <tr>
-                    <td>@caja.FechaApertura.ToString("dd/MM/yyyy HH:mm")</td>
-                    <td>@(caja.FechaCierre?.ToString("dd/MM/yyyy HH:mm") ?? "—")</td>
-                    <td>$@caja.FondoInicial.ToString("N2")</td>
-                    <td>$@caja.VentasDelDia.ToString("N2")</td>
-                    <td>$@caja.GastosDelDia.ToString("N2")</td>
-                    <td>$@caja.Total.ToString("N2")</td>
-                    <td>
-                        <span class="tag--@caja.Estado.ToString().ToLower()">@caja.Estado</span>
-                    </td>
+                    <th>Apertura</th>
+                    <th>Cierre</th>
+                    <th>Fondo inicial</th>
+                    <th>Ventas</th>
+                    <th>Gastos</th>
+                    <th>Total</th>
+                    <th>Estado</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var caja in Model)
+                {
+                    <tr>
+                        <td data-label="Apertura">@caja.FechaApertura.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td data-label="Cierre">@(caja.FechaCierre?.ToString("dd/MM/yyyy HH:mm") ?? "—")</td>
+                        <td data-label="Fondo inicial">$@caja.FondoInicial.ToString("N2")</td>
+                        <td data-label="Ventas">$@caja.VentasDelDia.ToString("N2")</td>
+                        <td data-label="Gastos">$@caja.GastosDelDia.ToString("N2")</td>
+                        <td data-label="Total">$@caja.Total.ToString("N2")</td>
+                        <td data-label="Estado">
+                            <span class="tag--@caja.Estado.ToString().ToLower()">@caja.Estado</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
     @if (!Model.Any())
     {

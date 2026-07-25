@@ -22,29 +22,31 @@
         </a>
     </div>
 
-    <table class="admin-table">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Estación</th>
-                <th>Registrado el</th>
-                <th>Token</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var d in Model)
-            {
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
                 <tr>
-                    <td>@(string.IsNullOrWhiteSpace(d.Nombre) ? "(sin nombre)" : d.Nombre)</td>
-                    <td>
-                        <span class="tag--@d.Estacion.ToString().ToLower()">@d.Estacion</span>
-                    </td>
-                    <td>@d.FechaRegistro.ToString("dd/MM/yyyy HH:mm")</td>
-                    <td>••••@(d.Token.Length >= 6 ? d.Token[^6..] : d.Token)</td>
+                    <th>Nombre</th>
+                    <th>Estación</th>
+                    <th>Registrado el</th>
+                    <th>Token</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var d in Model)
+                {
+                    <tr>
+                        <td data-label="Nombre">@(string.IsNullOrWhiteSpace(d.Nombre) ? "(sin nombre)" : d.Nombre)</td>
+                        <td data-label="Estación">
+                            <span class="tag--@d.Estacion.ToString().ToLower()">@d.Estacion</span>
+                        </td>
+                        <td data-label="Registrado el">@d.FechaRegistro.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td data-label="Token">••••@(d.Token.Length >= 6 ? d.Token[^6..] : d.Token)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
     @if (!Model.Any())
     {

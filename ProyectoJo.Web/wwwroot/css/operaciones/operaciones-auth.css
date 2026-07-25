@@ -131,3 +131,85 @@ body {
 .pin-dot {
 	border-color: var(--tc-border-soft) !important;
 }
+
+.emparejar-card {
+	max-width: 440px;
+	width: 100%;
+}
+
+.emparejar-eyebrow {
+	margin: 0 0 4px;
+	font-size: 0.7rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--tc-ink-muted);
+	font-weight: 600;
+}
+
+.emparejar-titulo {
+	font-family: var(--tc-font-display);
+	font-size: 1.35rem;
+	font-weight: 600;
+	color: var(--tc-carbon);
+}
+
+.estacion-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 10px;
+}
+
+.estacion-tile {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+	padding: 18px 10px;
+	border: 1px solid var(--tc-border-soft);
+	border-radius: 10px;
+	cursor: pointer;
+	background: var(--tc-card);
+	transition: border-color 0.12s, background 0.12s;
+}
+
+.estacion-tile__icono {
+	font-size: 1.3rem;
+	color: var(--tc-ink-muted);
+}
+
+.estacion-tile__nombre {
+	font-weight: 600;
+	font-size: 0.85rem;
+	color: var(--tc-ink);
+}
+
+.btn-check:checked + .estacion-tile {
+	border: 2px solid var(--tc-teal);
+	background: var(--tc-teal-ink);
+}
+
+	.btn-check:checked + .estacion-tile .estacion-tile__icono,
+	.btn-check:checked + .estacion-tile .estacion-tile__nombre {
+		color: #1c463d;
+	}
+
+.emparejar-separador {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 14px 0;
+}
+
+	.emparejar-separador::before,
+	.emparejar-separador::after {
+		content: "";
+		flex: 1;
+		height: 1px;
+		background: var(--tc-border-soft);
+	}
+
+	.emparejar-separador span {
+		font-size: 0.72rem;
+		color: var(--tc-ink-muted);
+		white-space: nowrap;
+	}

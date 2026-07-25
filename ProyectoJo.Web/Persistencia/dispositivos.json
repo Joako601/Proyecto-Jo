@@ -509,5 +509,12 @@
     "Estacion": "Recepcion",
     "Nombre": "PRUEBA-1",
     "FechaRegistro": "2026-07-25T02:37:20.6099025Z"
+  },
+  {
+    "Id": 2,
+    "Token": "31g1FlXwyrMDaimE3GzPSZQ8KN0G2GRK877XG75CBg",
+    "Estacion": "Recepcion",
+    "Nombre": "PRUEBA-1",
+    "FechaRegistro": "2026-07-25T02:46:13.9868716Z"
   }
 ]

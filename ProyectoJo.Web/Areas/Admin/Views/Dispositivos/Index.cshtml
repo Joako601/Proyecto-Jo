@@ -2,10 +2,12 @@
 @{
     ViewData["Title"] = "Dispositivos";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    var claveConfigurada = ViewBag.ClaveConfigurada is bool cc && cc;
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-shared.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/dispositivos/dispositivos.css" asp-append-version="true" />
 }
 
 <div class="admin-page">
@@ -48,5 +50,47 @@
     {
         <p class="empty-state">Todavía no se emparejó ningún dispositivo.</p>
     }
+
+    <div class="clave-supervisor">
+        <h2 class="clave-supervisor__titulo">Clave de supervisor</h2>
+
+        @if (!claveConfigurada)
+        {
+            <div class="clave-supervisor__aviso">
+                <i class="bi bi-exclamation-triangle"></i>
+                Todavía no hay clave configurada. Sin ella no se pueden emparejar dispositivos desde el kiosco.
+            </div>
+        }
+
+        @if (TempData["ErrorClave"] is string errorClave)
+        {
+            <div class="clave-supervisor__mensaje clave-supervisor__mensaje--error">@errorClave</div>
+        }
+        @if (TempData["ExitoClave"] is string exitoClave)
+        {
+            <div class="clave-supervisor__mensaje clave-supervisor__mensaje--exito">@exitoClave</div>
+        }
+
+        <form method="post" asp-area="Admin" asp-controller="Dispositivos" asp-action="CambiarClaveSupervisor">
+            @if (claveConfigurada)
+            {
+                <div class="clave-supervisor__campo">
+                    <label>Clave actual</label>
+                    <input type="password" name="claveActual" autocomplete="off" />
+                </div>
+            }
+            <div class="clave-supervisor__campo">
+                <label>Clave nueva</label>
+                <input type="password" name="claveNueva" autocomplete="off" minlength="6" required />
+            </div>
+            <div class="clave-supervisor__campo">
+                <label>Confirmar clave nueva</label>
+                <input type="password" name="confirmarClaveNueva" autocomplete="off" minlength="6" required />
+            </div>
+            <button type="submit" class="btn-primary">
+                @(claveConfigurada ? "Cambiar clave" : "Configurar clave")
+            </button>
+        </form>
+    </div>
 
 </div>

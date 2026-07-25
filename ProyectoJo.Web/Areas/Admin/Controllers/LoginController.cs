@@ -17,17 +17,18 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 			_authService = authService;
 		}
 
-		public IActionResult Index(bool bloqueado = false)
+		public IActionResult Index(bool bloqueado = false, string? returnUrl = null)
 		{
 			if (bloqueado)
 				ViewBag.Error = "Demasiados intentos. Espera un momento antes de volver a intentar.";
 
+			ViewBag.ReturnUrl = (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl)) ? returnUrl : null;
 			return View();
 		}
 
 		[HttpPost]
 		[EnableRateLimiting("login-admin")]
-		public async Task<IActionResult> Index(string usuario, string contrasena)
+		public async Task<IActionResult> Index(string usuario, string contrasena, string? returnUrl = null)
 		{
 			if (!_authService.ValidarCredenciales(usuario, contrasena))
 			{
@@ -45,6 +46,9 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 			var principal = new ClaimsPrincipal(identity);
 
 			await HttpContext.SignInAsync("JoCookieAuth", principal);
+
+			if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+				return Redirect(returnUrl);
 
 			return RedirectToAction("Index", "Gestion", new { area = "Admin" });
 		}

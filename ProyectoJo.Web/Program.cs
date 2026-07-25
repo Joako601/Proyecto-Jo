@@ -42,6 +42,7 @@ var rutaDispositivos = Path.Combine(rutaPersistencia, "dispositivos.json");
 var rutaPedidos = Path.Combine(rutaPersistencia, "pedidos.json");
 var rutaCierresCaja = Path.Combine(rutaPersistencia, "cierres-caja.json");
 var rutaAuditoria = Path.Combine(rutaPersistencia, "auditoria.json");
+var rutaSupervisorClave = Path.Combine(rutaPersistencia, "supervisor-clave.json");
 
 builder.Services.AddScoped<IProductoRepository>(_ => new JsonProductRepository(rutaMenu));
 builder.Services.AddScoped<IFinanzaRepository>(_ => new JsonFinanzaRepository(rutaFinanzas));
@@ -57,6 +58,9 @@ builder.Services.AddScoped<IEmpleadoAuthService, EmpleadoAuthUseCase>();
 
 builder.Services.AddScoped<IDispositivoRepository>(_ => new JsonDispositivoRepository(rutaDispositivos));
 builder.Services.AddScoped<IDispositivoService, DispositivoUseCase>();
+
+builder.Services.AddScoped<ISupervisorClaveRepository>(_ => new JsonSupervisorClaveRepository(rutaSupervisorClave));
+builder.Services.AddScoped<ISupervisorAuthService, SupervisorAuthUseCase>();
 
 builder.Services.AddScoped<IPedidoRepository>(_ => new JsonPedidoRepository(rutaPedidos));
 builder.Services.AddScoped<IPedidoService, PedidoUseCase>();
@@ -82,9 +86,13 @@ builder.Services.AddRateLimiter(options =>
 		var path = context.HttpContext.Request.Path.Value ?? "";
 
 
-		var destino = path.Contains("/Operaciones/Auth/Login", StringComparison.OrdinalIgnoreCase)
-			? "/Operaciones/Auth/Login?bloqueado=true"
-			: "/Admin/Login?bloqueado=true";
+		string destino;
+		if (path.Contains("/Operaciones/Auth/LoginSupervisor", StringComparison.OrdinalIgnoreCase))
+			destino = "/Operaciones/Auth/LoginSupervisor?bloqueado=true";
+		else if (path.Contains("/Operaciones/Auth/Login", StringComparison.OrdinalIgnoreCase))
+			destino = "/Operaciones/Auth/Login?bloqueado=true";
+		else
+			destino = "/Admin/Login?bloqueado=true";
 
 
 		context.HttpContext.Response.StatusCode = StatusCodes.Status302Found;
@@ -94,6 +102,16 @@ builder.Services.AddRateLimiter(options =>
 	};
 
 	options.AddPolicy("login-pin", httpContext =>
+		RateLimitPartition.GetFixedWindowLimiter(
+			partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "desconocido",
+			factory: _ => new FixedWindowRateLimiterOptions
+			{
+				PermitLimit = 5,
+				Window = TimeSpan.FromMinutes(1),
+				QueueLimit = 0
+			}));
+
+	options.AddPolicy("login-supervisor", httpContext =>
 		RateLimitPartition.GetFixedWindowLimiter(
 			partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "desconocido",
 			factory: _ => new FixedWindowRateLimiterOptions
@@ -127,6 +145,18 @@ builder.Services.AddAuthentication("JoCookieAuth")
 	.AddCookie("JoCookieAuth", options => {
 		options.LoginPath = "/Admin/Login";
 		options.AccessDeniedPath = "/Admin/AccesoDenegado";
+		options.Cookie.Name = "Jo.Admin";
+		options.ExpireTimeSpan = TimeSpan.FromMinutes(45);
+		options.SlidingExpiration = true;
+	})
+	.AddCookie("SupervisorAuth", options => {
+		// Esquema propio de Operaciones, completamente separado de "JoCookieAuth".
+		// Una clave de supervisor filtrada no da acceso al panel Admin, y viceversa.
+		options.LoginPath = "/Operaciones/Auth/LoginSupervisor";
+		options.AccessDeniedPath = "/Operaciones/Auth/LoginSupervisor";
+		options.Cookie.Name = "Jo.Supervisor";
+		options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+		options.SlidingExpiration = false;
 	})
 	.AddCookie("OperacionesCookieAuth", options => {
 		options.LoginPath = "/Operaciones/Auth/Login";

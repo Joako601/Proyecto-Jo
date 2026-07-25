@@ -516,5 +516,19 @@
     "Estacion": "Recepcion",
     "Nombre": "PRUEBA-1",
     "FechaRegistro": "2026-07-25T02:46:13.9868716Z"
+  },
+  {
+    "Id": 3,
+    "Token": "qk1E4LRl6Yl2haflpTilcoiQkAM6V4y0SVFkWeHZw",
+    "Estacion": "Cocina",
+    "Nombre": "PRUEBA-12",
+    "FechaRegistro": "2026-07-25T03:19:17.4374756Z"
+  },
+  {
+    "Id": 4,
+    "Token": "AosCQaPA4iBAxWRfrtKx4Wh37aPAGLeoJwEhjxMsXFA",
+    "Estacion": "Recepcion",
+    "Nombre": null,
+    "FechaRegistro": "2026-07-25T03:19:40.3673374Z"
   }
 ]

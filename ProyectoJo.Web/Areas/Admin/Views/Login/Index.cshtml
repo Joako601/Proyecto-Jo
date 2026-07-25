@@ -23,6 +23,10 @@
     }
 
     <form asp-area="Admin" asp-controller="Login" asp-action="Index" method="post">
+        @if (ViewBag.ReturnUrl is string returnUrl)
+        {
+            <input type="hidden" name="returnUrl" value="@returnUrl" />
+        }
         <div class="tc-auth-field">
             <label for="usuario">Usuario</label>
             <input type="text" id="usuario" name="usuario" placeholder="Nombre de usuario" required />

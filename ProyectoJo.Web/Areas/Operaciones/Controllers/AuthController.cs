@@ -13,11 +13,16 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 	{
 		private readonly IEmpleadoAuthService _empleadoAuthService;
 		private readonly IDispositivoService _dispositivoService;
+		private readonly ISupervisorAuthService _supervisorAuthService;
 
-		public AuthController(IEmpleadoAuthService empleadoAuthService, IDispositivoService dispositivoService)
+		public AuthController(
+			IEmpleadoAuthService empleadoAuthService,
+			IDispositivoService dispositivoService,
+			ISupervisorAuthService supervisorAuthService)
 		{
 			_empleadoAuthService = empleadoAuthService;
 			_dispositivoService = dispositivoService;
+			_supervisorAuthService = supervisorAuthService;
 		}
 
 		public async Task<IActionResult> Login(bool bloqueado = false)
@@ -79,13 +84,45 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 				: RedirectToAction("Index", "Recepcion");
 		}
 
+		// GET /Operaciones/Auth/LoginSupervisor
+		public IActionResult LoginSupervisor(bool bloqueado = false)
+		{
+			ViewBag.Bloqueado = bloqueado;
+			if (bloqueado)
+				ViewBag.Error = "Demasiados intentos. Espera un momento antes de volver a intentar.";
+
+			return View();
+		}
+
+		// POST /Operaciones/Auth/LoginSupervisor
+		[HttpPost]
+		[EnableRateLimiting("login-supervisor")]
+		public async Task<IActionResult> LoginSupervisor(string clave)
+		{
+			if (!await _supervisorAuthService.ValidarClaveAsync(clave))
+			{
+				ViewBag.Error = "Clave incorrecta";
+				return View();
+			}
+
+			var identity = new ClaimsIdentity(
+				new[] { new Claim(ClaimTypes.Name, "Supervisor") },
+				"SupervisorAuth");
+			var principal = new ClaimsPrincipal(identity);
+
+			await HttpContext.SignInAsync("SupervisorAuth", principal,
+				new AuthenticationProperties { IsPersistent = false });
+
+			return RedirectToAction("Emparejar");
+		}
+
 		// GET /Operaciones/Auth/Emparejar
-		[Authorize(AuthenticationSchemes = "JoCookieAuth")]
+		[Authorize(AuthenticationSchemes = "SupervisorAuth")]
 		public IActionResult Emparejar() => View();
 
 		// POST /Operaciones/Auth/Emparejar
 		[HttpPost]
-		[Authorize(AuthenticationSchemes = "JoCookieAuth")]
+		[Authorize(AuthenticationSchemes = "SupervisorAuth")]
 		public async Task<IActionResult> Emparejar(RolEmpleado estacion, string nombre)
 		{
 			var dispositivo = await _dispositivoService.EmparejarAsync(estacion, nombre);
@@ -98,7 +135,16 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 				SameSite = SameSiteMode.Lax
 			});
 
+			await HttpContext.SignOutAsync("SupervisorAuth");
+
 			return RedirectToAction("Login");
+		}
+
+		// GET /Operaciones/Auth/SalirSupervisor
+		public async Task<IActionResult> SalirSupervisor()
+		{
+			await HttpContext.SignOutAsync("SupervisorAuth");
+			return RedirectToAction("LoginSupervisor");
 		}
 
 		public async Task<IActionResult> Salir()

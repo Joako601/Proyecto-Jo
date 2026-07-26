@@ -105,6 +105,20 @@
     const campoPlatillos = document.getElementById('campo-platillos');
     const campoAplicarPlatillos = document.getElementById('campo-aplicar-platillos');
     const chkAplicarPlatillos = document.getElementById('aplicarPlatillos');
+    const campoSubTipoDescuento = document.getElementById('campo-sub-tipo-descuento');
+    const subTipoDescuento = document.getElementById('subTipoDescuento');
+    const valorDescuentoUnidad = document.getElementById('valorDescuentoUnidad');
+
+    function actualizarUnidadValorDescuento() {
+        if (!valorDescuentoUnidad || !tipoSelect) return;
+        if (tipoSelect.value === 'Porcentaje') {
+            valorDescuentoUnidad.textContent = '(%)';
+        } else if (tipoSelect.value === 'MontoFijo') {
+            valorDescuentoUnidad.textContent = '($)';
+        } else {
+            valorDescuentoUnidad.textContent = '';
+        }
+    }
 
     function actualizarCampos() {
         if (!tipoSelect) return;
@@ -114,12 +128,16 @@
         if (esAnuncio) {
             if (campoAplicarPlatillos) campoAplicarPlatillos.style.display = '';
             if (campoPlatillos) campoPlatillos.style.display = aplicarAPlatillos ? '' : 'none';
-            if (campoDescuento) campoDescuento.style.display = aplicarAPlatillos ? '' : 'none';
+            if (campoSubTipoDescuento) campoSubTipoDescuento.style.display = aplicarAPlatillos ? '' : 'none';
+            if (campoDescuento) campoDescuento.style.display = 'none';
         } else {
             if (campoAplicarPlatillos) campoAplicarPlatillos.style.display = 'none';
+            if (campoSubTipoDescuento) campoSubTipoDescuento.style.display = 'none';
             if (campoPlatillos) campoPlatillos.style.display = '';
             if (campoDescuento) campoDescuento.style.display = '';
         }
+
+        actualizarUnidadValorDescuento();
     }
 
     if (tipoSelect) {
@@ -129,6 +147,14 @@
 
     if (chkAplicarPlatillos) {
         chkAplicarPlatillos.addEventListener('change', actualizarCampos);
+    }
+
+    if (subTipoDescuento) {
+        subTipoDescuento.addEventListener('change', function () {
+            if (!subTipoDescuento.value) return;
+            tipoSelect.value = subTipoDescuento.value;
+            actualizarCampos();
+        });
     }
 
     // ---------- Siempre activa / fechas ----------

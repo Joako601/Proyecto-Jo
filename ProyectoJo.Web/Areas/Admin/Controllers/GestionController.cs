@@ -11,11 +11,13 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 	{
 		private readonly IProductoService _productoService;
 		private readonly IFinanzaService _finanzaService;
+		private readonly IOpinionService _opinionService;
 
-		public GestionController(IProductoService productoService, IFinanzaService finanzaService)
+		public GestionController(IProductoService productoService, IFinanzaService finanzaService, IOpinionService opinionService)
 		{
 			_productoService = productoService;
 			_finanzaService = finanzaService;
+			_opinionService = opinionService;
 		}
 
 		public IActionResult Index()
@@ -26,7 +28,8 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 			{
 				TotalPlatillos = _productoService.ObtenerMenu().Count,
 				VentasHoy = resumenHoy.TotalIngresos,
-				PendientesHoy = 0 
+				PendientesHoy = 0,
+				TotalOpiniones = _opinionService.ContarTotal()
 			};
 
 			return View(vm);

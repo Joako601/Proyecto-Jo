@@ -1,0 +1,95 @@
+﻿@model ProyectoJo.Domain.Entities.OpinionCliente
+@{
+    ViewData["Title"] = "Editar opinión";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    var platillos = ViewBag.Platillos as List<ProyectoJo.Domain.Entities.Item> ?? new();
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-shared.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-form.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/opiniones/opiniones.css" asp-append-version="true" />
+}
+
+<div class="admin-form opiniones-admin-form">
+    <div class="form-header">
+        <a asp-area="Admin" asp-controller="Opiniones" asp-action="Index" class="back-link">← Volver a opiniones</a>
+        <h1>Editar opinión</h1>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert-error">
+            @Html.ValidationSummary(false, "", new { @class = "validation-summary-errors" })
+        </div>
+    }
+
+    <form asp-area="Admin" asp-controller="Opiniones" asp-action="Editar" method="post" id="formOpinion">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="form-group">
+            <label asp-for="ItemId">Platillo (opcional)</label>
+            <select asp-for="ItemId" class="form-control">
+                <option value="">General — no ligada a un platillo</option>
+                @foreach (var item in platillos)
+                {
+                    <option value="@item.Id" selected="@(item.Id == Model.ItemId)">@item.Platillo</option>
+                }
+            </select>
+            <span asp-validation-for="ItemId" class="field-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="NombreCliente">Nombre del cliente (opcional)</label>
+            <input asp-for="NombreCliente" class="form-control" placeholder="Ej: Marta G." />
+        </div>
+
+        <div class="form-group">
+            <label>Calificación</label>
+            <div class="estrellas-picker" id="estrellasPicker" data-valor="@Model.Calificacion.ToString(System.Globalization.CultureInfo.InvariantCulture)">
+                <i class="bi bi-star estrella" data-posicion="1"></i>
+                <i class="bi bi-star estrella" data-posicion="2"></i>
+                <i class="bi bi-star estrella" data-posicion="3"></i>
+                <i class="bi bi-star estrella" data-posicion="4"></i>
+                <i class="bi bi-star estrella" data-posicion="5"></i>
+                <span class="estrellas-valor" id="estrellasValorTexto">Sin calificar</span>
+            </div>
+            <input asp-for="Calificacion" type="hidden" id="inputCalificacion" />
+            <span asp-validation-for="Calificacion" class="field-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label>Semáforo</label>
+            <div class="semaforo-picker">
+                <label class="semaforo-opcion semaforo-opcion--verde">
+                    <input type="radio" name="Estado" value="Verde" required checked="@(Model.Estado == ProyectoJo.Domain.Entities.EstadoSemaforo.Verde)" />
+                    <span class="semaforo-punto"></span> Verde
+                </label>
+                <label class="semaforo-opcion semaforo-opcion--amarillo">
+                    <input type="radio" name="Estado" value="Amarillo" required checked="@(Model.Estado == ProyectoJo.Domain.Entities.EstadoSemaforo.Amarillo)" />
+                    <span class="semaforo-punto"></span> Amarillo
+                </label>
+                <label class="semaforo-opcion semaforo-opcion--rojo">
+                    <input type="radio" name="Estado" value="Rojo" required checked="@(Model.Estado == ProyectoJo.Domain.Entities.EstadoSemaforo.Rojo)" />
+                    <span class="semaforo-punto"></span> Rojo
+                </label>
+            </div>
+            <span asp-validation-for="Estado" class="field-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Comentario">Comentario</label>
+            <textarea asp-for="Comentario" class="form-control" rows="4">@Model.Comentario</textarea>
+            <span asp-validation-for="Comentario" class="field-error"></span>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Guardar cambios</button>
+            <a asp-area="Admin" asp-controller="Opiniones" asp-action="Index" class="btn-cancel">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="~/js/opiniones-form.js" asp-append-version="true"></script>
+}

@@ -938,5 +938,15 @@
     "Entidad": "Receta #1 - Panucho de Pavo",
     "DetalleAntes": "Costo por porci\u00F3n: $22",
     "DetalleDespues": "Costo por porci\u00F3n: $22"
+  },
+  {
+    "Id": 95,
+    "FechaHora": "2026-07-26T09:10:52.6646164-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Sem\u00E1foro Feedback",
+    "Accion": 0,
+    "Entidad": "Opini\u00F3n #1 - Opini\u00F3n general",
+    "DetalleAntes": null,
+    "DetalleDespues": "3.0 estrellas - Rojo"
   }
 ]

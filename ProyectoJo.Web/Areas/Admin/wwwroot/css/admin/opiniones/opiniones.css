@@ -1,0 +1,281 @@
+﻿/* ============================================================
+   Index — resumen de semáforo (KPI cards)
+   ============================================================ */
+.resumen-semaforo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.resumen-semaforo-card {
+    border-left: 3px solid var(--tc-border-soft);
+}
+
+.resumen-semaforo-card--verde {
+    border-left-color: #2FAE79;
+}
+
+    .resumen-semaforo-card--verde .dash-valor {
+        color: #0F6E56;
+    }
+
+.resumen-semaforo-card--amarillo {
+    border-left-color: #E0A83B;
+}
+
+    .resumen-semaforo-card--amarillo .dash-valor {
+        color: var(--tc-mustard-ink);
+    }
+
+.resumen-semaforo-card--rojo {
+    border-left-color: #C24444;
+}
+
+    .resumen-semaforo-card--rojo .dash-valor {
+        color: #A32D2D;
+    }
+
+/* ============================================================
+   Index — filtro y acciones 
+   ============================================================ */
+.filtro-bar {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.filtro-form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+    .filtro-form .form-control-sm {
+        height: 34px;
+        padding: 0 10px;
+        border: 0.5px solid var(--tc-border-soft);
+        border-radius: 4px;
+        font-size: 12.5px;
+        font-family: var(--tc-font-body);
+        background: #fff;
+        color: var(--tc-ink);
+    }
+
+.acciones {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.link-edit {
+    color: var(--tc-mustard-link);
+    text-decoration: none;
+    font-size: 11.5px;
+    font-weight: 600;
+}
+
+    .link-edit:hover {
+        text-decoration: underline;
+    }
+
+.link-delete {
+    background: none;
+    border: none;
+    color: var(--tc-brick-link);
+    cursor: pointer;
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 0;
+    font-family: var(--tc-font-body);
+}
+
+    .link-delete:hover {
+        text-decoration: underline;
+    }
+
+.celda-comentario {
+    max-width: 320px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ============================================================
+   Index — estrellas (solo lectura) y punto de semáforo
+   ============================================================ */
+.estrellas-display {
+    color: var(--tc-mustard);
+    font-size: 13px;
+    letter-spacing: 1px;
+}
+
+.estrellas-numero {
+    font-family: var(--tc-font-mono);
+    font-size: 11px;
+    color: var(--tc-ink-muted);
+    margin-left: 4px;
+}
+
+.semaforo-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.semaforo-dot--verde {
+    background: #2FAE79;
+}
+
+.semaforo-dot--amarillo {
+    background: #E0A83B;
+}
+
+.semaforo-dot--rojo {
+    background: #C24444;
+}
+
+/* ============================================================
+   Agregar / Editar 
+   ============================================================ */
+.opiniones-admin-form {
+    max-width: 640px;
+}
+
+    .opiniones-admin-form .form-header {
+        margin-bottom: 28px;
+    }
+
+    .opiniones-admin-form .form-group {
+        margin-bottom: 1.4rem;
+    }
+
+/* ============================================================
+   Selector de estrellas (clickeable, medias estrellas)
+   ============================================================ */
+.estrellas-picker {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 14px;
+    border: 0.5px solid var(--tc-border-soft);
+    border-radius: 4px;
+    background: #fdfcfa;
+    width: fit-content;
+}
+
+    .estrellas-picker .estrella {
+        position: relative;
+        font-size: 24px;
+        color: #d8d1c2;
+        cursor: pointer;
+        transition: color 0.1s ease;
+    }
+
+        .estrellas-picker .estrella.estrella--llena {
+            color: var(--tc-mustard);
+        }
+
+        .estrellas-picker .estrella.estrella--media {
+            color: var(--tc-mustard);
+        }
+
+.estrellas-valor {
+    margin-left: 10px;
+    font-size: 12.5px;
+    color: var(--tc-ink-muted);
+    font-family: var(--tc-font-mono);
+    white-space: nowrap;
+}
+
+/* ============================================================
+   Selector de semáforo (radios estilizados como chips)
+   ============================================================ */
+.semaforo-picker {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.semaforo-opcion {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: 0.5px solid var(--tc-border-soft);
+    border-radius: 20px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--tc-ink-muted);
+    cursor: pointer;
+    background: #fdfcfa;
+    transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+    .semaforo-opcion input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+.semaforo-punto {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--tc-border-soft);
+}
+
+.semaforo-opcion--verde .semaforo-punto {
+    background: #2FAE79;
+}
+
+.semaforo-opcion--amarillo .semaforo-punto {
+    background: #E0A83B;
+}
+
+.semaforo-opcion--rojo .semaforo-punto {
+    background: #C24444;
+}
+
+.semaforo-opcion:has(input:checked),
+.semaforo-opcion.activo {
+    color: var(--tc-ink);
+    background: var(--tc-card);
+}
+
+.semaforo-opcion--verde:has(input:checked),
+.semaforo-opcion--verde.activo {
+    border-color: #9FE1CB;
+    background: #E1F5EE;
+}
+
+.semaforo-opcion--amarillo:has(input:checked),
+.semaforo-opcion--amarillo.activo {
+    border-color: #FAC775;
+    background: #FAEEDA;
+}
+
+.semaforo-opcion--rojo:has(input:checked),
+.semaforo-opcion--rojo.activo {
+    border-color: #F0B8B8;
+    background: #FCEBEB;
+}
+
+@media (max-width: 575.98px) {
+    .resumen-semaforo {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .celda-comentario {
+        max-width: none;
+        white-space: normal;
+    }
+}

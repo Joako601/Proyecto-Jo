@@ -1,0 +1,180 @@
+﻿@model List<ProyectoJo.Application.DTOs.OpinionDto>
+@using ProyectoJo.Domain.Entities
+
+@{
+    ViewData["Title"] = "Semáforo Feedback";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+
+    var busqueda = Context.Request.Query["busqueda"].ToString();
+    var estadoFiltro = Context.Request.Query["estado"].ToString();
+
+    var totalVerde = Model.Count(o => o.Estado == EstadoSemaforo.Verde);
+    var totalAmarillo = Model.Count(o => o.Estado == EstadoSemaforo.Amarillo);
+    var totalRojo = Model.Count(o => o.Estado == EstadoSemaforo.Rojo);
+
+    var resultado = Model
+        .Where(o => string.IsNullOrEmpty(busqueda)
+            || (o.Platillo ?? "").Contains(busqueda, StringComparison.OrdinalIgnoreCase)
+            || (o.NombreCliente ?? "").Contains(busqueda, StringComparison.OrdinalIgnoreCase)
+            || o.Comentario.Contains(busqueda, StringComparison.OrdinalIgnoreCase))
+        .Where(o => string.IsNullOrEmpty(estadoFiltro) || o.Estado.ToString() == estadoFiltro)
+        .ToList();
+
+    const int PorPagina = 12;
+    var totalPaginas = (int)Math.Ceiling(resultado.Count / (double)PorPagina);
+    var paginaActual = int.TryParse(Context.Request.Query["pagina"], out var p) ? p : 1;
+    if (paginaActual < 1) paginaActual = 1;
+    if (totalPaginas > 0 && paginaActual > totalPaginas) paginaActual = totalPaginas;
+
+    var paginado = resultado
+        .Skip((paginaActual - 1) * PorPagina)
+        .Take(PorPagina)
+        .ToList();
+
+    var desdeItem = resultado.Any() ? ((paginaActual - 1) * PorPagina) + 1 : 0;
+    var hastaItem = ((paginaActual - 1) * PorPagina) + paginado.Count;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-shared.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/opiniones/opiniones.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/paginador/paginador.css" asp-append-version="true" />
+}
+
+<div class="admin-page">
+
+    <div class="page-header">
+        <div>
+            <a asp-area="Admin" asp-controller="Gestion" asp-action="Index" class="back-link">← Dashboard</a>
+            <h1>Semáforo Feedback</h1>
+        </div>
+    </div>
+
+    <div class="resumen-semaforo">
+        <div class="dash-card resumen-semaforo-card resumen-semaforo-card--verde">
+            <div class="dash-label">Verde</div>
+            <div class="dash-valor">@totalVerde</div>
+        </div>
+        <div class="dash-card resumen-semaforo-card resumen-semaforo-card--amarillo">
+            <div class="dash-label">Amarillo</div>
+            <div class="dash-valor">@totalAmarillo</div>
+        </div>
+        <div class="dash-card resumen-semaforo-card resumen-semaforo-card--rojo">
+            <div class="dash-label">Rojo</div>
+            <div class="dash-valor">@totalRojo</div>
+        </div>
+    </div>
+
+    <div class="filtro-bar">
+        <form method="get" class="filtro-form">
+            <input type="text" name="busqueda" value="@busqueda"
+                   class="form-control-sm" placeholder="Buscar por platillo, cliente o comentario..." style="min-width:240px" />
+            <select name="estado" class="form-control-sm" onchange="this.form.submit()">
+                <option value="">Todos los estados</option>
+                <option value="Verde" selected="@(estadoFiltro == "Verde")">Verde</option>
+                <option value="Amarillo" selected="@(estadoFiltro == "Amarillo")">Amarillo</option>
+                <option value="Rojo" selected="@(estadoFiltro == "Rojo")">Rojo</option>
+            </select>
+            <button type="submit" class="btn-secondary">
+                <i class="bi bi-search"></i>&nbsp; Filtrar
+            </button>
+            @if (!string.IsNullOrEmpty(busqueda) || !string.IsNullOrEmpty(estadoFiltro))
+            {
+                <a asp-area="Admin" asp-controller="Opiniones" asp-action="Index" class="btn-secondary" title="Limpiar filtros">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+            }
+        </form>
+        <a asp-area="Admin" asp-controller="Opiniones" asp-action="Agregar" class="btn-primary">
+            <i class="bi bi-plus-lg"></i>&nbsp; Nueva opinión
+        </a>
+    </div>
+
+    @if (!resultado.Any())
+    {
+        <div class="empty-state">
+            @if (!Model.Any())
+            {
+                <text>Todavía no cargaste ninguna opinión. Empezá agregando una desde "Nueva opinión".</text>
+            }
+            else
+            {
+                <text>No se encontraron opiniones con esos filtros.</text>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Platillo</th>
+                        <th>Cliente</th>
+                        <th>Calificación</th>
+                        <th class="text-center">Semáforo</th>
+                        <th>Comentario</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var o in paginado)
+                    {
+                        var llenas = (int)Math.Floor(o.Calificacion);
+                        var tieneMedia = (o.Calificacion - llenas) >= 0.5m;
+                        var estadoClase = o.Estado == EstadoSemaforo.Verde ? "semaforo-dot--verde"
+                            : o.Estado == EstadoSemaforo.Amarillo ? "semaforo-dot--amarillo"
+                            : "semaforo-dot--rojo";
+
+                        <tr>
+                            <td data-label="Fecha" style="white-space:nowrap">@o.Fecha.ToString("dd/MM/yyyy")</td>
+                            <td data-label="Platillo">@(o.Platillo ?? "General")</td>
+                            <td data-label="Cliente">@(string.IsNullOrWhiteSpace(o.NombreCliente) ? "—" : o.NombreCliente)</td>
+                            <td data-label="Calificación">
+                                <span class="estrellas-display">
+                                    @for (int s = 1; s <= 5; s++)
+                                    {
+                                        if (s <= llenas)
+                                        {
+                                            <i class="bi bi-star-fill"></i>
+                                        }
+                                        else if (s == llenas + 1 && tieneMedia)
+                                        {
+                                            <i class="bi bi-star-half"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-star"></i>
+                                        }
+                                    }
+                                </span>
+                                <span class="estrellas-numero">(@o.Calificacion.ToString("0.0"))</span>
+                            </td>
+                            <td data-label="Semáforo" class="text-center">
+                                <span class="semaforo-dot @estadoClase" title="@o.Estado"></span>
+                            </td>
+                            <td data-label="Comentario" class="celda-comentario">@o.Comentario</td>
+                            <td data-label="Acciones">
+                                <div class="acciones">
+                                    <a asp-area="Admin" asp-controller="Opiniones" asp-action="Editar"
+                                       asp-route-id="@o.Id" class="link-edit">Editar</a>
+                                    <form asp-area="Admin" asp-controller="Opiniones" asp-action="Eliminar"
+                                          asp-route-id="@o.Id" method="post"
+                                          onsubmit="return confirm('¿Eliminar esta opinión?')">
+                                        <button type="submit" class="link-delete">Eliminar</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <p class="paginador-resumen">
+            Mostrando @desdeItem–@hastaItem de @resultado.Count opiniones
+        </p>
+        @await Html.PartialAsync("_Paginador", (paginaActual, totalPaginas))
+    }
+
+</div>

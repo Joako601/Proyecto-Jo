@@ -44,6 +44,7 @@ var rutaCierresCaja = Path.Combine(rutaPersistencia, "cierres-caja.json");
 var rutaAuditoria = Path.Combine(rutaPersistencia, "auditoria.json");
 var rutaSupervisorClave = Path.Combine(rutaPersistencia, "supervisor-clave.json");
 var rutaRecetas = Path.Combine(rutaPersistencia, "recetas.json");
+var rutaOpiniones = Path.Combine(rutaPersistencia, "opiniones.json");
 
 builder.Services.AddScoped<IProductoRepository>(_ => new JsonProductRepository(rutaMenu));
 builder.Services.AddScoped<IFinanzaRepository>(_ => new JsonFinanzaRepository(rutaFinanzas));
@@ -76,6 +77,9 @@ builder.Services.AddScoped<IPedidoNotificador, SignalRPedidoNotificador>();
 
 builder.Services.AddScoped<IRecetaRepository>(_ => new JsonRecetaRepository(rutaRecetas));
 builder.Services.AddScoped<IRecetaService, RecetaUseCase>();
+
+builder.Services.AddScoped<IOpinionRepository>(_ => new JsonOpinionRepository(rutaOpiniones));
+builder.Services.AddScoped<IOpinionService, OpinionUseCase>();
 
 
 builder.Services.AddSignalR();

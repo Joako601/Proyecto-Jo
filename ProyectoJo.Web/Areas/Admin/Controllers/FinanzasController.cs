@@ -16,6 +16,14 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 			_finanzaService = finanzaService;
 		}
 
+		private List<string> ObtenerCategorias() =>
+			_finanzaService.ObtenerTodos()
+				.Select(f => f.Categoria)
+				.Where(c => !string.IsNullOrWhiteSpace(c))
+				.Distinct(StringComparer.OrdinalIgnoreCase)
+				.OrderBy(c => c)
+				.ToList();
+
 		// GET: /Admin/Finanzas
 		public IActionResult Index(int? mes, int? anio)
 		{
@@ -37,13 +45,21 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		}
 
 		// GET: /Admin/Finanzas/Registrar
-		public IActionResult Registrar() => View();
+		public IActionResult Registrar()
+		{
+			ViewBag.Categorias = ObtenerCategorias();
+			return View();
+		}
 
 		// POST: /Admin/Finanzas/Registrar
 		[HttpPost]
 		public IActionResult Registrar(Finanza finanza)
 		{
-			if (!ModelState.IsValid) return View(finanza);
+			if (!ModelState.IsValid)
+			{
+				ViewBag.Categorias = ObtenerCategorias();
+				return View(finanza);
+			}
 			_finanzaService.RegistrarMovimiento(finanza, User.Identity?.Name ?? "Desconocido");
 			return RedirectToAction("Index");
 		}
@@ -52,14 +68,20 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		public IActionResult Editar(int id)
 		{
 			var finanza = _finanzaService.ObtenerPorId(id);
-			return finanza == null ? NotFound() : View(finanza);
+			if (finanza == null) return NotFound();
+			ViewBag.Categorias = ObtenerCategorias();
+			return View(finanza);
 		}
 
 		// POST: /Admin/Finanzas/Editar
 		[HttpPost]
 		public IActionResult Editar(Finanza finanza)
 		{
-			if (!ModelState.IsValid) return View(finanza);
+			if (!ModelState.IsValid)
+			{
+				ViewBag.Categorias = ObtenerCategorias();
+				return View(finanza);
+			}
 			var actualizado = _finanzaService.Editar(finanza, User.Identity?.Name ?? "Desconocido");
 			if (!actualizado) return NotFound();
 			return RedirectToAction("Index");

@@ -30,7 +30,15 @@
         </div>
         <div class="form-group">
             <label asp-for="Categoria">Categoría</label>
-            <input asp-for="Categoria" type="text" class="form-control"
+            <select id="selectCategoria" name="Categoria" class="form-control">
+                <option value="">Seleccioná una categoría...</option>
+                @foreach (var cat in (List<string>)ViewBag.Categorias)
+                {
+                    <option value="@cat">@cat</option>
+                }
+                <option value="__nueva__">+ Crear nueva categoría...</option>
+            </select>
+            <input id="inputCategoriaNueva" class="form-control mt-2" style="display:none;"
                    placeholder="Ej. Insumos, Renta, Venta" />
             <span asp-validation-for="Categoria" class="field-error"></span>
         </div>
@@ -53,4 +61,5 @@
 
 @section Scripts {
     <script src="~/js/finanzas.js" asp-append-version="true"></script>
+    <script src="~/js/menu-categoria-form.js" asp-append-version="true"></script>
 }

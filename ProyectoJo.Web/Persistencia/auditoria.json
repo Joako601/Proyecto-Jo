@@ -898,5 +898,25 @@
     "Entidad": "Producto #2",
     "DetalleAntes": null,
     "DetalleDespues": "Se altern\u00F3 el estado Activo/Inactivo"
+  },
+  {
+    "Id": 91,
+    "FechaHora": "2026-07-26T01:02:58.9964229-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #1",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
+  },
+  {
+    "Id": 92,
+    "FechaHora": "2026-07-26T01:03:00.5712256-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #1",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
   }
 ]

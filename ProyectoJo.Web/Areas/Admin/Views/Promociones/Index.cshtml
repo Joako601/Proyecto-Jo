@@ -11,31 +11,114 @@
     <link rel="stylesheet" href="~/css/admin/promociones/promociones.css" asp-append-version="true" />
 }
 
-<div class="mb-3">
-    <a asp-area="Admin" asp-controller="Gestion" asp-action="Index" class="text-muted text-decoration-none">
-        <i class="bi bi-arrow-left"></i> Volver al dashboard
-    </a>
+<div class="admin-page">
+
+    <div class="page-header">
+        <div>
+            <a asp-area="Admin" asp-controller="Gestion" asp-action="Index" class="back-link">← Dashboard</a>
+            <h1>Promociones</h1>
+        </div>
+        <a asp-area="Admin" asp-controller="Promociones" asp-action="Agregar" class="btn-primary">
+            <i class="bi bi-plus-lg"></i>&nbsp; Nueva promoción
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="empty-state">Aún no hay promociones creadas.</div>
+    }
+    else
+    {
+        var activas = Model.Where(p => vigentes.Contains(p.Id)).ToList();
+        var noActivas = Model.Where(p => !vigentes.Contains(p.Id)).ToList();
+
+        @foreach (var (titulo, items) in new[] { ("Promociones activas", activas), ("Promociones no activas", noActivas) })
+        {
+            var banners = items.Where(p => p.TipoDescuento == ProyectoJo.Domain.Entities.TipoDescuento.Ninguno).ToList();
+            var descuentos = items.Where(p => p.TipoDescuento != ProyectoJo.Domain.Entities.TipoDescuento.Ninguno).ToList();
+
+            <h2 class="promo-seccion-titulo">
+                @titulo <span class="promo-seccion-count">(@items.Count)</span>
+            </h2>
+
+            @if (!items.Any())
+            {
+                <p class="empty-state">No hay promociones en esta categoría.</p>
+            }
+            else
+            {
+                @if (banners.Any())
+                {
+                    <p class="promo-subtitulo">Banners del menú</p>
+                    <div class="table-responsive">
+                        <table class="admin-table promo-table promo-table--banner">
+                            <colgroup>
+                                <col class="col-id" />
+                                <col class="col-imagen" />
+                                <col class="col-titulo" />
+                                <col class="col-vigencia" />
+                                <col class="col-estado" />
+                                <col class="col-acciones" />
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Imagen</th>
+                                    <th>Título</th>
+                                    <th>Vigencia</th>
+                                    <th class="text-center">Estado</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var promo in banners)
+                                {
+                                    @await Html.PartialAsync("_FilaPromocion", (Promo: promo, EsVigente: vigentes.Contains(promo.Id), EsBanner: true))
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+
+                @if (descuentos.Any())
+                {
+                    <p class="promo-subtitulo">Promociones de descuento</p>
+                    <div class="table-responsive">
+                        <table class="admin-table promo-table promo-table--descuento">
+                            <colgroup>
+                                <col class="col-id" />
+                                <col class="col-titulo" />
+                                <col class="col-tipo" />
+                                <col class="col-aplica" />
+                                <col class="col-vigencia" />
+                                <col class="col-estado" />
+                                <col class="col-acciones" />
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Título</th>
+                                    <th>Tipo</th>
+                                    <th>Aplica a</th>
+                                    <th>Vigencia</th>
+                                    <th class="text-center">Estado</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var promo in descuentos)
+                                {
+                                    @await Html.PartialAsync("_FilaPromocion", (Promo: promo, EsVigente: vigentes.Contains(promo.Id), EsBanner: false))
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            }
+        }
+    }
+
 </div>
-
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">Promociones</h2>
-    <a asp-area="Admin" asp-controller="Promociones" asp-action="Agregar" class="btn-primary">
-        Nueva promoción
-    </a>
-</div>
-
-@if (!Model.Any())
-{
-    <p class="text-muted">Aún no hay promociones creadas.</p>
-}
-else
-{
-    var activas = Model.Where(p => vigentes.Contains(p.Id)).ToList();
-    var noActivas = Model.Where(p => !vigentes.Contains(p.Id)).ToList();
-
-    @await Html.PartialAsync("_TablaPromociones", (Titulo: "Promociones activas", Items: activas, Vigentes: vigentes))
-    @await Html.PartialAsync("_TablaPromociones", (Titulo: "Promociones no activas", Items: noActivas, Vigentes: vigentes))
-}
 
 <!-- Modal: resolver promoción fuera de fecha -->
 <div class="modal fade" id="modalVigenciaPromo" tabindex="-1" aria-hidden="true">
@@ -47,42 +130,42 @@ else
             </div>
             <div class="modal-body">
                 <div id="modalVigenciaPaso1">
-                    <p class="text-muted small mb-3">
+                    <p class="modal-hint">
                         <strong id="modalVigenciaNombre"></strong> está fuera de su rango de fechas, por eso no
                         figura como activa. ¿Qué querés hacer?
                     </p>
-                    <div class="d-grid gap-2">
-                        <button type="button" class="btn-secondary w-100 justify-content-center" id="btnMostrarCambiarFecha">
+                    <div class="modal-acciones-stack">
+                        <button type="button" class="btn-secondary" id="btnMostrarCambiarFecha">
                             Cambiar fecha
                         </button>
                         <form id="formHacerPermanente" asp-area="Admin" asp-controller="Promociones"
                               asp-action="HacerPermanente" method="post">
                             <input type="hidden" name="id" id="permanenteId" />
-                            <button type="submit" class="btn-primary w-100 justify-content-center">
+                            <button type="submit" class="btn-primary">
                                 Hacerla permanente
                             </button>
                         </form>
                     </div>
                 </div>
                 <div id="modalVigenciaPaso2" class="d-none">
-                    <p class="text-muted small mb-3">
+                    <p class="modal-hint">
                         Elegí las nuevas fechas de vigencia para <strong id="modalVigenciaNombre2"></strong>.
                     </p>
                     <form asp-area="Admin" asp-controller="Promociones" asp-action="ActualizarFecha" method="post">
                         <input type="hidden" name="id" id="fechaId" />
-                        <div class="mb-2">
-                            <label class="form-label small">Fecha inicio</label>
+                        <div class="form-group">
+                            <label class="form-label">Fecha inicio</label>
                             <input type="date" name="fechaInicio" id="inputFechaInicio" class="form-control-sm w-100" />
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label small">Fecha fin</label>
+                        <div class="form-group">
+                            <label class="form-label">Fecha fin</label>
                             <input type="date" name="fechaFin" id="inputFechaFin" class="form-control-sm w-100" />
                         </div>
-                        <div class="d-flex gap-2">
-                            <button type="button" class="btn-secondary flex-fill justify-content-center" id="btnVolverPaso1">
+                        <div class="modal-acciones-row">
+                            <button type="button" class="btn-secondary" id="btnVolverPaso1">
                                 Volver
                             </button>
-                            <button type="submit" class="btn-primary flex-fill justify-content-center">
+                            <button type="submit" class="btn-primary">
                                 Guardar fecha
                             </button>
                         </div>

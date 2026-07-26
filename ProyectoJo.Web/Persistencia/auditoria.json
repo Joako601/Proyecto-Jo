@@ -978,5 +978,15 @@
     "Entidad": "Producto #1 - Panucho de Pavo",
     "DetalleAntes": "Panucho de Pavo - $25",
     "DetalleDespues": "Panucho de Pavo - $25"
+  },
+  {
+    "Id": 99,
+    "FechaHora": "2026-07-26T15:00:13.1071421-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 0,
+    "Entidad": "Promoci\u00F3n #3 - adwda",
+    "DetalleAntes": null,
+    "DetalleDespues": "adwda - MontoFijo 10"
   }
 ]

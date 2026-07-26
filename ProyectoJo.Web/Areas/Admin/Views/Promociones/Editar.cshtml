@@ -5,7 +5,6 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
     var platillos = (ViewBag.Platillos as List<ProyectoJo.Domain.Entities.Item>) ?? new List<ProyectoJo.Domain.Entities.Item>();
     var esPermanente = Model.FechaInicio == null && Model.FechaFin == null;
-    var tieneDescuento = Model.TipoDescuento != ProyectoJo.Domain.Entities.TipoDescuento.Ninguno;
 }
 
 @section Styles {
@@ -34,6 +33,14 @@
             <textarea asp-for="Descripcion" class="form-control" rows="2"></textarea>
             <span asp-validation-for="Descripcion" class="field-error"></span>
         </div>
+
+        <input type="hidden" asp-for="TipoDescuento" id="TipoDescuento" />
+
+        @{
+            var tipoUiInicial = Model.TipoDescuento == ProyectoJo.Domain.Entities.TipoDescuento.Ninguno
+                ? "Banner"
+                : Model.TipoDescuento.ToString();
+        }
 
         <div class="form-group" id="campo-imagen">
             <label asp-for="ImagenUrl">
@@ -66,6 +73,36 @@
         </div>
 
         <div class="form-group">
+            <label for="tipoDescuentoUi">Tipo de descuento</label>
+            <select id="tipoDescuentoUi" class="form-control">
+                <option value="Banner" selected="@(tipoUiInicial == "Banner")">Banner</option>
+                <option value="Porcentaje" selected="@(tipoUiInicial == "Porcentaje")">Porcentaje (%)</option>
+                <option value="MontoFijo" selected="@(tipoUiInicial == "MontoFijo")">Monto fijo ($)</option>
+            </select>
+        </div>
+
+        <div class="form-check form-switch tc-switch-row" id="campo-aplicar-platillos">
+            <input class="form-check-input" type="checkbox" id="aplicarDescuento" />
+            <label for="aplicarDescuento">Aplicar también a platillos específicos</label>
+        </div>
+
+        <div class="form-group" id="campo-tipo-descuento-real">
+            <label for="tipoDescuentoReal">¿También querés aplicar un descuento?</label>
+            <select id="tipoDescuentoReal" class="form-control">
+                <option value="Porcentaje">Porcentaje (%)</option>
+                <option value="MontoFijo">Monto fijo ($)</option>
+            </select>
+        </div>
+
+        <div class="form-group" id="campo-descuento">
+            <label asp-for="ValorDescuento">
+                Valor del descuento <span id="valorDescuentoUnidad" class="text-muted"></span>
+            </label>
+            <input asp-for="ValorDescuento" type="number" step="0.01" class="form-control" />
+            <span asp-validation-for="ValorDescuento" class="field-error"></span>
+        </div>
+
+        <div class="form-group">
             <label>Platillos a los que aplica</label>
             <div class="promo-checklist">
                 @if (!platillos.Any())
@@ -89,29 +126,6 @@
         </div>
 
         <hr class="promo-divider" />
-
-        <input type="hidden" asp-for="TipoDescuento" id="TipoDescuento" />
-
-        <div class="form-check form-switch tc-switch-row">
-            <input class="form-check-input" type="checkbox" id="aplicarDescuento" checked="@tieneDescuento" />
-            <label for="aplicarDescuento">¿Aplicar un descuento a esta promoción?</label>
-        </div>
-
-        <div class="form-group" id="campo-tipo-descuento-real">
-            <label for="tipoDescuentoReal">Tipo de descuento</label>
-            <select id="tipoDescuentoReal" class="form-control">
-                <option value="Porcentaje" selected="@(Model.TipoDescuento == ProyectoJo.Domain.Entities.TipoDescuento.Porcentaje)">Porcentaje (%)</option>
-                <option value="MontoFijo" selected="@(Model.TipoDescuento == ProyectoJo.Domain.Entities.TipoDescuento.MontoFijo)">Monto fijo ($)</option>
-            </select>
-        </div>
-
-        <div class="form-group" id="campo-descuento">
-            <label asp-for="ValorDescuento">
-                Valor del descuento <span id="valorDescuentoUnidad" class="text-muted"></span>
-            </label>
-            <input asp-for="ValorDescuento" type="number" step="0.01" class="form-control" />
-            <span asp-validation-for="ValorDescuento" class="field-error"></span>
-        </div>
 
         <div class="row">
             <div class="col-md-6 form-group">

@@ -99,51 +99,72 @@
         });
     }
 
-    // ---------- Descuento: switch independiente de imagen/platillos ----------
-    // El campo real que usa el backend es el hidden #TipoDescuento. El switch
-    // "aplicarDescuento" y el select "tipoDescuentoReal" son solo UI: entre los
-    // dos deciden qué valor tiene ese hidden. La imagen y los platillos nunca
-    // dependen de esto, así que no se tocan acá.
+    // ---------- Tipo de descuento ----------
+    // "tipoDescuentoUi" (Banner / Porcentaje / MontoFijo) es la selección
+    // principal. Si eligen Porcentaje o MontoFijo ahí, ese es el descuento y
+    // el input de valor aparece directo. Si eligen Banner, se muestra el
+    // bloque de imagen del banner (label, dropzone, URL y vista previa), y
+    // además puede aparecer el switch "Aplicar también a platillos
+    // específicos": si lo activan, eligen ahí un tipo de descuento
+    // (Porcentaje/MontoFijo) para esos platillos puntuales, y recién ahí
+    // aparece el input de valor.
+    const tipoDescuentoUiSelect = document.getElementById('tipoDescuentoUi');
+    const tipoDescuentoHidden = document.getElementById('TipoDescuento');
+    const campoImagen = document.getElementById('campo-imagen');
+    const campoAplicarPlatillos = document.getElementById('campo-aplicar-platillos');
     const chkAplicarDescuento = document.getElementById('aplicarDescuento');
     const campoTipoReal = document.getElementById('campo-tipo-descuento-real');
     const tipoDescuentoRealSelect = document.getElementById('tipoDescuentoReal');
-    const tipoDescuentoHidden = document.getElementById('TipoDescuento');
     const campoDescuento = document.getElementById('campo-descuento');
     const valorDescuentoUnidad = document.getElementById('valorDescuentoUnidad');
 
-    function actualizarUnidad() {
-        if (!valorDescuentoUnidad || !tipoDescuentoRealSelect) return;
-        if (tipoDescuentoRealSelect.value === 'Porcentaje') {
-            valorDescuentoUnidad.textContent = '(%)';
-        } else if (tipoDescuentoRealSelect.value === 'MontoFijo') {
-            valorDescuentoUnidad.textContent = '($)';
-        } else {
-            valorDescuentoUnidad.textContent = '';
+    function actualizarTipoDescuento() {
+        if (!tipoDescuentoUiSelect) return;
+        const tipoUi = tipoDescuentoUiSelect.value; // Banner | Porcentaje | MontoFijo
+        const esBanner = tipoUi === 'Banner';
+        const aplicaAPlatillos = !!(chkAplicarDescuento && chkAplicarDescuento.checked);
+
+        // El bloque de imagen del banner solo se muestra si el tipo es Banner
+        if (campoImagen) campoImagen.style.display = esBanner ? '' : 'none';
+
+        // El switch "aplicar a platillos específicos" solo tiene sentido con Banner
+        if (campoAplicarPlatillos) campoAplicarPlatillos.style.display = esBanner ? '' : 'none';
+        if (!esBanner && chkAplicarDescuento) chkAplicarDescuento.checked = false;
+
+        // El segundo select (Porcentaje/MontoFijo) solo aparece con Banner + switch activado
+        const mostrarTipoReal = esBanner && aplicaAPlatillos;
+        if (campoTipoReal) campoTipoReal.style.display = mostrarTipoReal ? '' : 'none';
+
+        // Tipo efectivo: el elegido arriba si no es Banner, o el del segundo select si aplica a platillos
+        let tipoEfectivo = 'Ninguno';
+        if (!esBanner) {
+            tipoEfectivo = tipoUi;
+        } else if (aplicaAPlatillos) {
+            tipoEfectivo = tipoDescuentoRealSelect ? tipoDescuentoRealSelect.value : 'Porcentaje';
+        }
+
+        if (tipoDescuentoHidden) tipoDescuentoHidden.value = tipoEfectivo;
+
+        const mostrarValor = tipoEfectivo !== 'Ninguno';
+        if (campoDescuento) campoDescuento.style.display = mostrarValor ? '' : 'none';
+
+        if (valorDescuentoUnidad) {
+            valorDescuentoUnidad.textContent = tipoEfectivo === 'Porcentaje' ? '(%)'
+                : tipoEfectivo === 'MontoFijo' ? '($)'
+                    : '';
         }
     }
 
-    function actualizarDescuento() {
-        const aplica = !!(chkAplicarDescuento && chkAplicarDescuento.checked);
-
-        if (campoTipoReal) campoTipoReal.style.display = aplica ? '' : 'none';
-        if (campoDescuento) campoDescuento.style.display = aplica ? '' : 'none';
-
-        if (tipoDescuentoHidden) {
-            tipoDescuentoHidden.value = aplica
-                ? (tipoDescuentoRealSelect ? tipoDescuentoRealSelect.value : 'Porcentaje')
-                : 'Ninguno';
-        }
-
-        actualizarUnidad();
+    if (tipoDescuentoUiSelect) {
+        tipoDescuentoUiSelect.addEventListener('change', actualizarTipoDescuento);
     }
-
     if (chkAplicarDescuento) {
-        chkAplicarDescuento.addEventListener('change', actualizarDescuento);
+        chkAplicarDescuento.addEventListener('change', actualizarTipoDescuento);
     }
     if (tipoDescuentoRealSelect) {
-        tipoDescuentoRealSelect.addEventListener('change', actualizarDescuento);
+        tipoDescuentoRealSelect.addEventListener('change', actualizarTipoDescuento);
     }
-    actualizarDescuento();
+    actualizarTipoDescuento();
 
     // ---------- Siempre activa / fechas ----------
     const siempreActiva = document.getElementById('siempreActiva');

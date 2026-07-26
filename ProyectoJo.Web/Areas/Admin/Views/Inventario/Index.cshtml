@@ -39,7 +39,7 @@
                     <option value="@cat" selected="@(cat == categoriaFiltro)">@cat</option>
                 }
             </select>
-            <button type="submit" class="btn-secondary">Filtrar</button>
+            <button type="submit" class="btn-primary">Filtrar</button>
             @if (!string.IsNullOrEmpty(busqueda) || !string.IsNullOrEmpty(categoriaFiltro))
             {
                 <a asp-area="Admin" asp-controller="Inventario" asp-action="Index" class="btn-secondary" title="Limpiar filtros">
@@ -50,7 +50,14 @@
     </div>
 
     <div class="table-responsive">
-        <table class="admin-table">
+        <table class="admin-table inv-table">
+            <colgroup>
+                <col class="col-platillo" />
+                <col class="col-categoria" />
+                <col class="col-precio" />
+                <col class="col-visible" />
+                <col class="col-disponible" />
+            </colgroup>
             <thead>
                 <tr>
                     <th>Platillo</th>

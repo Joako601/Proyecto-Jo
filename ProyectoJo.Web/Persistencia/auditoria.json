@@ -838,5 +838,25 @@
     "Entidad": "Promoci\u00F3n #2",
     "DetalleAntes": null,
     "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
+  },
+  {
+    "Id": 85,
+    "FechaHora": "2026-07-25T20:50:11.864091-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Productos",
+    "Accion": 1,
+    "Entidad": "Producto #1",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Agotado/Disponible"
+  },
+  {
+    "Id": 86,
+    "FechaHora": "2026-07-25T20:50:12.7431461-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Productos",
+    "Accion": 1,
+    "Entidad": "Producto #1",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Agotado/Disponible"
   }
 ]

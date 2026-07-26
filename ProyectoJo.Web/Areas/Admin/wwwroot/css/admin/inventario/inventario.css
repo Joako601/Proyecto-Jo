@@ -1,11 +1,42 @@
 ﻿/* ============================================
+   Inventario — Tabla
+   ============================================ */
+.inv-table {
+    table-layout: fixed;
+}
+
+    .inv-table col.col-platillo {
+        width: 26%;
+    }
+
+    .inv-table col.col-categoria {
+        width: 16%;
+    }
+
+    .inv-table col.col-precio {
+        width: 12%;
+    }
+
+    .inv-table col.col-visible,
+    .inv-table col.col-disponible {
+        width: 23%;
+    }
+
+
+@media (min-width: 768px) {
+    .inv-table td.acciones {
+        display: table-cell;
+    }
+}
+
+/* ============================================
    Inventario — Switch de disponibilidad
    ============================================ */
 .inv-switches {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    justify-content: flex-end;
+    justify-content: flex-start;
 }
 
 .inv-switch {

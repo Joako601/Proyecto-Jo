@@ -918,5 +918,25 @@
     "Entidad": "Promoci\u00F3n #1",
     "DetalleAntes": null,
     "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
+  },
+  {
+    "Id": 93,
+    "FechaHora": "2026-07-26T01:42:58.8874862-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Recetario",
+    "Accion": 0,
+    "Entidad": "Receta #1 - Panucho de Pavo",
+    "DetalleAntes": null,
+    "DetalleDespues": "Costo por porci\u00F3n: $22"
+  },
+  {
+    "Id": 94,
+    "FechaHora": "2026-07-26T01:45:50.7276398-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Recetario",
+    "Accion": 1,
+    "Entidad": "Receta #1 - Panucho de Pavo",
+    "DetalleAntes": "Costo por porci\u00F3n: $22",
+    "DetalleDespues": "Costo por porci\u00F3n: $22"
   }
 ]

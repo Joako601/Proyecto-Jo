@@ -5,6 +5,14 @@
     const selectItem = document.querySelector('select[name="ItemId"]');
     const inputRendimiento = document.getElementById('inputRendimiento');
 
+    const UNIDADES = [
+        { value: 'Kilogramo', label: 'kg' },
+        { value: 'Gramo', label: 'g' },
+        { value: 'Litro', label: 'l' },
+        { value: 'Mililitro', label: 'ml' },
+        { value: 'Unidad', label: 'un' },
+    ];
+
     if (!tabla || !tbody) return;
 
     function siguienteIndice() {
@@ -14,10 +22,17 @@
     function crearFila(indice) {
         const tr = document.createElement('tr');
         tr.className = 'fila-ingrediente';
+
+        const opciones = UNIDADES.map(u => `<option value="${u.value}">${u.label}</option>`).join('');
+
         tr.innerHTML = `
             <td><input name="Ingredientes[${indice}].Nombre" class="form-control-sm" placeholder="Ej: Harina" /></td>
             <td><input name="Ingredientes[${indice}].Cantidad" class="form-control-sm input-cantidad" type="number" step="0.01" min="0" /></td>
-            <td><input name="Ingredientes[${indice}].Unidad" class="form-control-sm" placeholder="kg, g, ml, un" /></td>
+            <td>
+                <select name="Ingredientes[${indice}].Unidad" class="form-control-sm">
+                    ${opciones}
+                </select>
+            </td>
             <td><input name="Ingredientes[${indice}].CostoUnitario" class="form-control-sm input-costo" type="number" step="0.01" min="0" /></td>
             <td class="subtotal-celda">$0.00</td>
             <td><button type="button" class="link-delete btn-quitar-fila">Quitar</button></td>
@@ -27,8 +42,8 @@
 
     function reindexarFilas() {
         tbody.querySelectorAll('.fila-ingrediente').forEach((fila, i) => {
-            fila.querySelectorAll('input').forEach(input => {
-                input.name = input.name.replace(/Ingredientes\[\d+\]/, `Ingredientes[${i}]`);
+            fila.querySelectorAll('input, select').forEach(campo => {
+                campo.name = campo.name.replace(/Ingredientes\[\d+\]/, `Ingredientes[${i}]`);
             });
         });
     }
@@ -83,6 +98,7 @@
     });
 
     tabla.addEventListener('input', recalcularTodo);
+    tabla.addEventListener('change', recalcularTodo);
     selectItem?.addEventListener('change', recalcularTodo);
     inputRendimiento?.addEventListener('input', recalcularTodo);
 

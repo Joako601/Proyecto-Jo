@@ -18,6 +18,8 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 			_productoService = productoService;
 		}
 
+
+
 		// GET: /Admin/Recetario
 		public IActionResult Index()
 		{
@@ -34,6 +36,8 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 			return View(new Receta { Ingredientes = new List<IngredienteReceta> { new() } });
 		}
 
+
+
 		// POST: /Admin/Recetario/Agregar
 		[HttpPost]
 		public IActionResult Agregar(Receta receta)
@@ -42,9 +46,17 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 				.Where(i => !string.IsNullOrWhiteSpace(i.Nombre))
 				.ToList();
 
-			if (!ModelState.IsValid || !receta.Ingredientes.Any())
+			var item = _productoService.ObtenerPorId(receta.ItemId);
+			if (item is not null)
+			{
+				receta.NombreReceta = item.Platillo;
+			}
+
+			if (!ModelState.IsValid || item is null || !receta.Ingredientes.Any())
 			{
 				ViewBag.Platillos = _productoService.ObtenerTodos().ToList();
+				if (item is null)
+					ModelState.AddModelError(nameof(Receta.ItemId), "Seleccioná un platillo del menú.");
 				if (!receta.Ingredientes.Any())
 					ModelState.AddModelError("", "Agregá al menos un ingrediente.");
 				return View(receta);
@@ -72,9 +84,17 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 				.Where(i => !string.IsNullOrWhiteSpace(i.Nombre))
 				.ToList();
 
-			if (!ModelState.IsValid || !receta.Ingredientes.Any())
+			var item = _productoService.ObtenerPorId(receta.ItemId);
+			if (item is not null)
+			{
+				receta.NombreReceta = item.Platillo;
+			}
+
+			if (!ModelState.IsValid || item is null || !receta.Ingredientes.Any())
 			{
 				ViewBag.Platillos = _productoService.ObtenerTodos().ToList();
+				if (item is null)
+					ModelState.AddModelError(nameof(Receta.ItemId), "Seleccioná un platillo del menú.");
 				if (!receta.Ingredientes.Any())
 					ModelState.AddModelError("", "Agregá al menos un ingrediente.");
 				return View(receta);

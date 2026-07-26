@@ -30,34 +30,112 @@
 }
 
 /* ============================================================
-   Agregar / Editar — tabla de ingredientes
+   Agregar / Editar 
+   ============================================================ */
+.receta-admin-form {
+    max-width: 760px;
+}
+
+    .receta-admin-form .form-header {
+        margin-bottom: 28px;
+    }
+
+    .receta-admin-form .form-group {
+        margin-bottom: 1.4rem;
+    }
+
+.promo-hint {
+    display: block;
+    margin-top: 2px;
+    font-size: 11px;
+    color: var(--tc-ink-muted);
+}
+
+/* ============================================================
+   Tabla de ingredientes
    ============================================================ */
 .receta-ingredientes-table {
-    margin-bottom: 10px;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 4px 0 14px;
+    border: 0.5px solid var(--tc-border-soft);
+    border-radius: 6px;
+    overflow: hidden;
 }
 
     .receta-ingredientes-table th {
         font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--tc-ink-muted);
+        font-weight: 600;
+        text-align: left;
+        padding: 10px 12px;
+        background: var(--tc-card);
+        border-bottom: 0.5px solid var(--tc-border-soft);
     }
 
     .receta-ingredientes-table td {
-        padding: 6px 10px;
+        padding: 10px 12px;
+        border-bottom: 0.5px solid var(--tc-border-soft);
+        vertical-align: middle;
+    }
+
+    .receta-ingredientes-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .receta-ingredientes-table tr.fila-ingrediente:hover {
+        background: #fdfcf9;
     }
 
     .receta-ingredientes-table .form-control-sm {
         width: 100%;
+        height: 36px;
+        padding: 0 10px;
+        border: 0.5px solid var(--tc-border-soft);
+        border-radius: 4px;
+        font-size: 13.5px;
+        font-family: var(--tc-font-body);
+        background: #fdfcfa;
+        color: var(--tc-ink);
+        box-sizing: border-box;
     }
+
+        .receta-ingredientes-table .form-control-sm:focus {
+            outline: 2px solid var(--tc-mustard);
+            outline-offset: 1px;
+            border-color: var(--tc-mustard);
+        }
 
 .subtotal-celda {
     font-family: var(--tc-font-mono);
-    font-size: 12px;
+    font-size: 12.5px;
     color: var(--tc-ink-muted);
     white-space: nowrap;
 }
 
+.link-delete {
+    background: none;
+    border: none;
+    padding: 4px 6px;
+    font-size: 11px;
+    color: var(--tc-brick-link);
+    cursor: pointer;
+}
+
+    .link-delete:hover {
+        text-decoration: underline;
+    }
+
+#btnAgregarIngrediente {
+    margin-top: 4px;
+}
+
 .form-row {
     display: flex;
-    gap: 16px;
+    gap: 20px;
 }
 
     .form-row .form-group {
@@ -74,15 +152,15 @@
     background: var(--tc-card);
     border: 0.5px solid var(--tc-border-soft);
     border-radius: 6px;
-    padding: 16px;
-    margin: 16px 0 24px;
+    padding: 18px 20px;
+    margin: 20px 0 28px;
 }
 
     .receta-resumen-costo .resumen-item {
         display: flex;
         flex-direction: column;
         gap: 4px;
-        min-width: 140px;
+        min-width: 150px;
     }
 
     .receta-resumen-costo .resumen-label {
@@ -94,7 +172,7 @@
 
     .receta-resumen-costo .resumen-valor {
         font-family: var(--tc-font-mono);
-        font-size: 16px;
+        font-size: 17px;
         font-weight: 600;
         color: var(--tc-ink);
     }
@@ -104,4 +182,72 @@
         flex-direction: column;
         gap: 0;
     }
+
+    .receta-ingredientes-table {
+        display: block;
+        overflow-x: auto;
+    }
 }
+
+/* ============================================================
+   Index — filtro y acciones (mismo patrón visual que Menú)
+   ============================================================ */
+.filtro-bar {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.filtro-form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+    .filtro-form .form-control-sm {
+        height: 34px;
+        padding: 0 10px;
+        border: 0.5px solid var(--tc-border-soft);
+        border-radius: 4px;
+        font-size: 12.5px;
+        font-family: var(--tc-font-body);
+        background: #fff;
+        color: var(--tc-ink);
+    }
+
+.acciones {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.link-edit {
+    color: var(--tc-mustard-link);
+    text-decoration: none;
+    font-size: 11.5px;
+    font-weight: 600;
+}
+
+    .link-edit:hover {
+        text-decoration: underline;
+    }
+
+.link-delete {
+    background: none;
+    border: none;
+    color: var(--tc-brick-link);
+    cursor: pointer;
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 0;
+    font-family: var(--tc-font-body);
+}
+
+    .link-delete:hover {
+        text-decoration: underline;
+    }

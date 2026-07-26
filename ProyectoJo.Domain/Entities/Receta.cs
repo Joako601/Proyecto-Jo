@@ -6,7 +6,9 @@
 		public int ItemId { get; set; }
 		public string NombreReceta { get; set; } = string.Empty;
 		public int Rendimiento { get; set; } = 1;
+
 		public string UnidadRendimiento { get; set; } = "porciones";
+
 		public List<IngredienteReceta> Ingredientes { get; set; } = new();
 		public string? Notas { get; set; }
 		public DateTime FechaActualizacion { get; set; } = DateTime.Now;

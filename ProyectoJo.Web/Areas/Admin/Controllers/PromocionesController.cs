@@ -89,5 +89,23 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 			_promocionService.ToggleActiva(id, User.Identity?.Name ?? "Desconocido");
 			return RedirectToAction("Index");
 		}
+
+		// POST: /Admin/Promociones/ActualizarFecha
+		[HttpPost]
+		public IActionResult ActualizarFecha(int id, DateTime? fechaInicio, DateTime? fechaFin)
+		{
+			var actualizado = _promocionService.ActualizarFecha(id, fechaInicio, fechaFin, User.Identity?.Name ?? "Desconocido");
+			if (!actualizado) return NotFound();
+			return RedirectToAction("Index");
+		}
+
+		// POST: /Admin/Promociones/HacerPermanente/5
+		[HttpPost]
+		public IActionResult HacerPermanente(int id)
+		{
+			var actualizado = _promocionService.HacerPermanente(id, User.Identity?.Name ?? "Desconocido");
+			if (!actualizado) return NotFound();
+			return RedirectToAction("Index");
+		}
 	}
 }

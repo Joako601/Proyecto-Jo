@@ -628,5 +628,215 @@
     "Entidad": "Finanza #49",
     "DetalleAntes": null,
     "DetalleDespues": "Ingreso - Ventas - $1290"
+  },
+  {
+    "Id": 64,
+    "FechaHora": "2026-07-25T19:58:56.458847-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #2",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
+  },
+  {
+    "Id": 65,
+    "FechaHora": "2026-07-25T20:02:46.7671095-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #1 - Combo Familiar",
+    "DetalleAntes": "Combo Familiar - Porcentaje 15",
+    "DetalleDespues": "Combo Familiar - Porcentaje 15"
+  },
+  {
+    "Id": 66,
+    "FechaHora": "2026-07-25T20:07:43.0379667-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #1",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
+  },
+  {
+    "Id": 67,
+    "FechaHora": "2026-07-25T20:07:44.9841892-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #1",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
+  },
+  {
+    "Id": 68,
+    "FechaHora": "2026-07-25T20:08:07.1943878-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #1 - Combo Familiar",
+    "DetalleAntes": "Combo Familiar - Porcentaje 15",
+    "DetalleDespues": "Combo Familiar - Porcentaje 15"
+  },
+  {
+    "Id": 69,
+    "FechaHora": "2026-07-25T20:08:10.5380137-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #2",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
+  },
+  {
+    "Id": 70,
+    "FechaHora": "2026-07-25T20:08:14.1222787-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #2",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
+  },
+  {
+    "Id": 71,
+    "FechaHora": "2026-07-25T20:08:15.8881272-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #2",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
+  },
+  {
+    "Id": 72,
+    "FechaHora": "2026-07-25T20:08:17.3964697-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #2",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
+  },
+  {
+    "Id": 73,
+    "FechaHora": "2026-07-25T20:08:18.3021754-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #1",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
+  },
+  {
+    "Id": 74,
+    "FechaHora": "2026-07-25T20:08:19.8688228-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #1",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
+  },
+  {
+    "Id": 75,
+    "FechaHora": "2026-07-25T20:08:22.4433629-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #1",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
+  },
+  {
+    "Id": 76,
+    "FechaHora": "2026-07-25T20:08:23.6592856-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #2",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
+  },
+  {
+    "Id": 77,
+    "FechaHora": "2026-07-25T20:08:33.3697955-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #1 - Combo Familiar",
+    "DetalleAntes": "Combo Familiar - Porcentaje 15",
+    "DetalleDespues": "Combo Familiar - Porcentaje 15"
+  },
+  {
+    "Id": 78,
+    "FechaHora": "2026-07-25T20:14:14.3186828-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #1",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
+  },
+  {
+    "Id": 79,
+    "FechaHora": "2026-07-25T20:14:24.3296396-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #1 - Combo Familiar",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se convirti\u00F3 en promoci\u00F3n permanente (sin fechas de vigencia)"
+  },
+  {
+    "Id": 80,
+    "FechaHora": "2026-07-25T20:14:25.8935032-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #2",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
+  },
+  {
+    "Id": 81,
+    "FechaHora": "2026-07-25T20:14:26.852178-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #2",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
+  },
+  {
+    "Id": 82,
+    "FechaHora": "2026-07-25T20:14:31.0809042-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #2",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
+  },
+  {
+    "Id": 83,
+    "FechaHora": "2026-07-25T20:14:42.5976687-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #2 - panuchos",
+    "DetalleAntes": "panuchos - MontoFijo 5",
+    "DetalleDespues": "panuchos - MontoFijo 5"
+  },
+  {
+    "Id": 84,
+    "FechaHora": "2026-07-25T20:14:44.108566-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #2",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
   }
 ]

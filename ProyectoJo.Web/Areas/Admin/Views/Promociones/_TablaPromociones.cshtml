@@ -1,0 +1,68 @@
+﻿@model (string Titulo, List<ProyectoJo.Domain.Entities.Promocion> Items, HashSet<int> Vigentes)
+
+@{
+    var banners = Model.Items.Where(p => p.TipoDescuento == ProyectoJo.Domain.Entities.TipoDescuento.Ninguno).ToList();
+    var descuentos = Model.Items.Where(p => p.TipoDescuento != ProyectoJo.Domain.Entities.TipoDescuento.Ninguno).ToList();
+}
+
+<h5 class="promo-seccion-titulo">
+    @Model.Titulo <span class="promo-seccion-count">(@Model.Items.Count)</span>
+</h5>
+
+@if (!Model.Items.Any())
+{
+    <p class="text-muted small mb-4">No hay promociones en esta categoría.</p>
+}
+else
+{
+    @if (banners.Any())
+    {
+        <p class="text-muted text-uppercase mb-3" style="font-size: 0.7rem; letter-spacing: 2px;">Banners del menú</p>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-5">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Imagen</th>
+                        <th>Título</th>
+                        <th>Vigencia</th>
+                        <th class="text-center">Estado</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var promo in banners)
+                    {
+                        @await Html.PartialAsync("_FilaPromocion", (Promo: promo, EsVigente: Model.Vigentes.Contains(promo.Id), EsBanner: true))
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @if (descuentos.Any())
+    {
+        <p class="text-muted text-uppercase mb-3" style="font-size: 0.7rem; letter-spacing: 2px;">Promociones de descuento</p>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-5">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Título</th>
+                        <th>Tipo</th>
+                        <th>Aplica a</th>
+                        <th>Vigencia</th>
+                        <th class="text-center">Estado</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var promo in descuentos)
+                    {
+                        @await Html.PartialAsync("_FilaPromocion", (Promo: promo, EsVigente: Model.Vigentes.Contains(promo.Id), EsBanner: false))
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}

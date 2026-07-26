@@ -1,0 +1,85 @@
+﻿@model (ProyectoJo.Domain.Entities.Promocion Promo, bool EsVigente, bool EsBanner)
+
+@{
+    var promo = Model.Promo;
+}
+
+<tr>
+    <td data-label="#" class="text-muted">@promo.Id</td>
+
+    @if (Model.EsBanner)
+    {
+        <td data-label="Imagen">
+            @if (!string.IsNullOrEmpty(promo.ImagenUrl))
+            {
+                <img src="@promo.ImagenUrl" alt="@promo.Titulo" class="promo-thumbnail" />
+            }
+            else
+            {
+                <span class="promo-no-image">Sin imagen</span>
+            }
+        </td>
+    }
+
+    <td data-label="Título">@promo.Titulo</td>
+
+    @if (!Model.EsBanner)
+    {
+        <td data-label="Tipo">
+            @(promo.TipoDescuento == ProyectoJo.Domain.Entities.TipoDescuento.Porcentaje
+                ? $"-{promo.ValorDescuento}%"
+                : $"-${promo.ValorDescuento}")
+        </td>
+        <td data-label="Aplica a">@(promo.ItemIds.Any() ? $"{promo.ItemIds.Count} platillo(s)" : "Todos")</td>
+    }
+
+    <td data-label="Vigencia" class="small text-muted">
+        @(promo.FechaInicio?.ToString("dd/MM/yyyy") ?? "—") al @(promo.FechaFin?.ToString("dd/MM/yyyy") ?? "—")
+    </td>
+
+    <td data-label="Estado" class="text-center">
+        @if (Model.EsVigente)
+        {
+            <form asp-area="Admin" asp-controller="Promociones" asp-action="ToggleActiva"
+                  asp-route-id="@promo.Id" method="post" class="d-inline">
+                <button type="submit" class="btn-estado btn-estado--on" title="Desactivar">
+                    <i class="bi bi-toggle-on"></i>
+                </button>
+            </form>
+        }
+        else if (promo.Activa)
+        {
+            <button type="button" class="btn-estado btn-estado--fecha"
+                    data-id="@promo.Id"
+                    data-titulo="@promo.Titulo"
+                    data-fecha-inicio="@(promo.FechaInicio?.ToString("yyyy-MM-dd"))"
+                    data-fecha-fin="@(promo.FechaFin?.ToString("yyyy-MM-dd"))"
+                    title="Fuera de fecha — click para resolver">
+                <i class="bi bi-calendar-x"></i>
+            </button>
+        }
+        else
+        {
+            <form asp-area="Admin" asp-controller="Promociones" asp-action="ToggleActiva"
+                  asp-route-id="@promo.Id" method="post" class="d-inline">
+                <button type="submit" class="btn-estado btn-estado--off" title="Activar">
+                    <i class="bi bi-toggle-off"></i>
+                </button>
+            </form>
+        }
+    </td>
+
+    <td data-label="Acciones" class="text-end">
+        <a asp-area="Admin" asp-controller="Promociones" asp-action="Editar"
+           asp-route-id="@promo.Id" class="btn btn-sm btn-outline-secondary me-1">
+            <i class="bi bi-pencil"></i> Editar
+        </a>
+        <form asp-area="Admin" asp-controller="Promociones" asp-action="Eliminar"
+              asp-route-id="@promo.Id" method="post" class="d-inline"
+              onsubmit="return confirm('¿Eliminar @promo.Titulo?')">
+            <button type="submit" class="btn btn-sm btn-outline-danger">
+                <i class="bi bi-trash"></i>
+            </button>
+        </form>
+    </td>
+</tr>

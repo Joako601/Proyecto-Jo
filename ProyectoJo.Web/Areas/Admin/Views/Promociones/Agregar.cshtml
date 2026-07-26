@@ -7,121 +7,120 @@
 }
 
 @section Styles {
-    
-    <link rel="stylesheet" href="~/Areas/Admin/css/admin/promociones/promociones.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-shared.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-form.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/promociones/promociones.css" asp-append-version="true" />
 }
 
-<div class="mb-4">
-    <a asp-area="Admin" asp-controller="Promociones" asp-action="Index" class="text-muted text-decoration-none">
-        <i class="bi bi-arrow-left"></i> Volver a promociones
-    </a>
-</div>
-
-<h2 class="mb-4">Nueva promoción</h2>
-
-<div class="row">
-    <div class="col-md-8">
-        <form asp-area="Admin" asp-controller="Promociones" asp-action="Agregar" method="post">
-
-            <div class="mb-3">
-                <label asp-for="Titulo" class="form-label">Título</label>
-                <input asp-for="Titulo" class="form-control" placeholder="Ej. 2x1 en Panuchos" />
-                <span asp-validation-for="Titulo" class="text-danger small"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Descripcion" class="form-label">Descripción</label>
-                <textarea asp-for="Descripcion" class="form-control" rows="2"></textarea>
-                <span asp-validation-for="Descripcion" class="text-danger small"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="ImagenUrl" class="form-label">
-                    Imagen del banner
-                    <span class="text-muted fw-normal small ms-1">(URL pública, opcional)</span>
-                </label>
-                <input asp-for="ImagenUrl" class="form-control"
-                       placeholder="https://ejemplo.com/imagen-promo.jpg"
-                       id="ImagenUrl" />
-                <small class="text-muted">Si no agregas imagen, el banner usará el color de acento del sitio.</small>
-                <span asp-validation-for="ImagenUrl" class="text-danger small"></span>
-
-                <div class="banner-preview-wrapper mt-2">
-                    <img id="banner-preview-img" class="banner-preview-img" src="" alt="Vista previa" hidden />
-                    <div id="banner-preview-placeholder" class="banner-preview-placeholder">
-                        <i class="bi bi-image"></i>
-                        Vista previa del banner
-                    </div>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Tipo de descuento</label>
-                <select asp-for="TipoDescuento" class="form-select">
-                    <option value="Ninguno">Ninguno (solo anuncio / banner)</option>
-                    <option value="Porcentaje">Porcentaje (%)</option>
-                    <option value="MontoFijo">Monto fijo ($)</option>
-                </select>
-                <span asp-validation-for="TipoDescuento" class="text-danger small"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="ValorDescuento" class="form-label">Valor del descuento</label>
-                <input asp-for="ValorDescuento" type="number" step="0.01" class="form-control"
-                       placeholder="Solo si elegiste % o monto fijo" />
-                <span asp-validation-for="ValorDescuento" class="text-danger small"></span>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Platillos a los que aplica</label>
-                <div class="border rounded p-2" style="max-height: 220px; overflow-y: auto;">
-                    @if (!platillos.Any())
-                    {
-                        <p class="text-muted small mb-0">No hay platillos disponibles.</p>
-                    }
-                    else
-                    {
-                        @foreach (var item in platillos)
-                        {
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="ItemIds" value="@item.Id" id="item-@item.Id" />
-                                <label class="form-check-label" for="item-@item.Id">@item.Platillo (@item.Categoria)</label>
-                            </div>
-                        }
-                    }
-                </div>
-                <small class="text-muted">Si no marcas ningún platillo, la promoción se muestra como anuncio general en el menú.</small>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label asp-for="FechaInicio" class="form-label">Fecha inicio (opcional)</label>
-                    <input asp-for="FechaInicio" type="date" class="form-control" />
-                    <span asp-validation-for="FechaInicio" class="text-danger small"></span>
-                </div>
-                <div class="col-md-6">
-                    <label asp-for="FechaFin" class="form-label">Fecha fin (opcional)</label>
-                    <input asp-for="FechaFin" type="date" class="form-control" />
-                    <span asp-validation-for="FechaFin" class="text-danger small"></span>
-                </div>
-            </div>
-
-            <div class="form-check form-switch mb-4">
-                <input class="form-check-input" type="checkbox" asp-for="Activa" checked />
-                <label asp-for="Activa" class="form-check-label">Activa</label>
-            </div>
-
-            <button type="submit" class="btn btn-primary">
-                <i class="bi bi-plus-lg"></i> Crear promoción
-            </button>
-        </form>
+<div class="admin-form promo-form" style="max-width: 640px;">
+    <div class="form-header">
+        <a asp-area="Admin" asp-controller="Promociones" asp-action="Index" class="back-link">← Volver a promociones</a>
+        <h1>Nueva promoción</h1>
     </div>
+
+    <form asp-area="Admin" asp-controller="Promociones" asp-action="Agregar" method="post">
+
+        <div class="form-group">
+            <label asp-for="Titulo">Título</label>
+            <input asp-for="Titulo" class="form-control" placeholder="Ej. 2x1 en Panuchos" />
+            <span asp-validation-for="Titulo" class="field-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Descripcion">Descripción</label>
+            <textarea asp-for="Descripcion" class="form-control" rows="2"></textarea>
+            <span asp-validation-for="Descripcion" class="field-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="ImagenUrl">
+                Imagen del banner
+                <span class="text-muted fw-normal" style="text-transform:none; letter-spacing:0;">(URL pública, opcional)</span>
+            </label>
+            <input asp-for="ImagenUrl" class="form-control"
+                   placeholder="https://ejemplo.com/imagen-promo.jpg"
+                   id="ImagenUrl" />
+            <span class="promo-hint">Si no agregás imagen, el banner usará el color de acento del sitio.</span>
+            <span asp-validation-for="ImagenUrl" class="field-error"></span>
+
+            <div class="banner-preview-wrapper mt-2">
+                <img id="banner-preview-img" class="banner-preview-img" src="" alt="Vista previa" hidden />
+                <div id="banner-preview-placeholder" class="banner-preview-placeholder">
+                    <i class="bi bi-image"></i>
+                    Vista previa del banner
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Tipo de descuento</label>
+            <select asp-for="TipoDescuento" class="form-control">
+                <option value="Ninguno">Ninguno (solo anuncio / banner)</option>
+                <option value="Porcentaje">Porcentaje (%)</option>
+                <option value="MontoFijo">Monto fijo ($)</option>
+            </select>
+            <span asp-validation-for="TipoDescuento" class="field-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="ValorDescuento">Valor del descuento</label>
+            <input asp-for="ValorDescuento" type="number" step="0.01" class="form-control"
+                   placeholder="Solo si elegiste % o monto fijo" />
+            <span asp-validation-for="ValorDescuento" class="field-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label>Platillos a los que aplica</label>
+            <div class="promo-checklist">
+                @if (!platillos.Any())
+                {
+                    <p class="text-muted small mb-0">No hay platillos disponibles.</p>
+                }
+                else
+                {
+                    @foreach (var item in platillos)
+                    {
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="ItemIds" value="@item.Id" id="item-@item.Id" />
+                            <label class="form-check-label" for="item-@item.Id">@item.Platillo (@item.Categoria)</label>
+                        </div>
+                    }
+                }
+            </div>
+            <span class="promo-hint">Si no marcás ningún platillo, la promoción se muestra como anuncio general en el menú.</span>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label asp-for="FechaInicio">Fecha inicio</label>
+                <input asp-for="FechaInicio" type="date" class="form-control" id="FechaInicio" />
+                <span asp-validation-for="FechaInicio" class="field-error"></span>
+            </div>
+            <div class="col-md-6 form-group">
+                <label asp-for="FechaFin">Fecha fin</label>
+                <input asp-for="FechaFin" type="date" class="form-control" id="FechaFin" />
+                <span asp-validation-for="FechaFin" class="field-error"></span>
+            </div>
+        </div>
+
+        <div class="form-check form-switch tc-switch-row">
+            <input class="form-check-input" type="checkbox" id="siempreActiva" checked />
+            <label for="siempreActiva">Siempre activa (sin fecha de vencimiento)</label>
+        </div>
+
+        <div class="form-check form-switch tc-switch-row">
+            <input class="form-check-input" type="checkbox" asp-for="Activa" checked />
+            <label asp-for="Activa">Activa</label>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Crear promoción</button>
+            <a asp-area="Admin" asp-controller="Promociones" asp-action="Index" class="btn-cancel">Cancelar</a>
+        </div>
+    </form>
 </div>
 
 @section Scripts {
-   
     <partial name="_ValidationScriptsPartial" />
-    
-    <script src="~/Areas/Admin/js/promociones-form.js" asp-append-version="true"></script>
-
+    <script src="~/js/promociones-form.js" asp-append-version="true"></script>
 }

@@ -7,7 +7,8 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/Areas/Admin/wwwroot/css/admin/promociones/promociones.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-shared.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/promociones/promociones.css" asp-append-version="true" />
 }
 
 <div class="mb-3">
@@ -18,8 +19,8 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="mb-0">Promociones</h2>
-    <a asp-area="Admin" asp-controller="Promociones" asp-action="Agregar" class="btn btn-primary">
-        <i class="bi bi-plus-lg"></i> Nueva promoción
+    <a asp-area="Admin" asp-controller="Promociones" asp-action="Agregar" class="btn-primary">
+        Nueva promoción
     </a>
 </div>
 
@@ -29,141 +30,69 @@
 }
 else
 {
-    var banners = Model.Where(p => p.TipoDescuento == ProyectoJo.Domain.Entities.TipoDescuento.Ninguno).ToList();
-    var descuentos = Model.Where(p => p.TipoDescuento != ProyectoJo.Domain.Entities.TipoDescuento.Ninguno).ToList();
+    var activas = Model.Where(p => vigentes.Contains(p.Id)).ToList();
+    var noActivas = Model.Where(p => !vigentes.Contains(p.Id)).ToList();
 
-    @if (banners.Any())
-    {
-        <p class="text-muted text-uppercase mb-3" style="font-size: 0.7rem; letter-spacing: 2px;">Banners del menú</p>
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-5">
-                <thead class="table-light">
-                    <tr>
-                        <th>#</th>
-                        <th>Imagen</th>
-                        <th>Título</th>
-                        <th>Vigencia</th>
-                        <th class="text-center">Estado</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var promo in banners)
-                    {
-                        <tr>
-                            <td data-label="#" class="text-muted">@promo.Id</td>
-                            <td data-label="Imagen">
-                                @if (!string.IsNullOrEmpty(promo.ImagenUrl))
-                                {
-                                    <img src="@promo.ImagenUrl" alt="@promo.Titulo" class="promo-thumbnail" />
-                                }
-                                else
-                                {
-                                    <span class="promo-no-image">Sin imagen</span>
-                                }
-                            </td>
-                            <td data-label="Título">
-                                @promo.Titulo
-                                @if (vigentes.Contains(promo.Id))
-                                {
-                                    <span class="badge bg-success ms-1">Vigente</span>
-                                }
-                            </td>
-                            <td data-label="Vigencia" class="small text-muted">
-                                @(promo.FechaInicio?.ToString("dd/MM/yyyy") ?? "—") al @(promo.FechaFin?.ToString("dd/MM/yyyy") ?? "—")
-                            </td>
-                            <td data-label="Estado" class="text-center">
-                                <form asp-area="Admin" asp-controller="Promociones" asp-action="ToggleActiva"
-                                      asp-route-id="@promo.Id" method="post" class="d-inline">
-                                    <button type="submit"
-                                            class="btn btn-sm @(promo.Activa ? "btn-success" : "btn-outline-secondary")">
-                                        <i class="bi @(promo.Activa ? "bi-toggle-on" : "bi-toggle-off")"></i>
-                                    </button>
-                                </form>
-                            </td>
-                            <td data-label="Acciones" class="text-end">
-                                <a asp-area="Admin" asp-controller="Promociones" asp-action="Editar"
-                                   asp-route-id="@promo.Id" class="btn btn-sm btn-outline-secondary me-1">
-                                    <i class="bi bi-pencil"></i> Editar
-                                </a>
-                                <form asp-area="Admin" asp-controller="Promociones" asp-action="Eliminar"
-                                      asp-route-id="@promo.Id" method="post" class="d-inline"
-                                      onsubmit="return confirm('¿Eliminar @promo.Titulo?')">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
+    @await Html.PartialAsync("_TablaPromociones", (Titulo: "Promociones activas", Items: activas, Vigentes: vigentes))
+    @await Html.PartialAsync("_TablaPromociones", (Titulo: "Promociones no activas", Items: noActivas, Vigentes: vigentes))
+}
 
-    @if (descuentos.Any())
-    {
-        <p class="text-muted text-uppercase mb-3" style="font-size: 0.7rem; letter-spacing: 2px;">Promociones de descuento</p>
-        <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>#</th>
-                        <th>Título</th>
-                        <th>Tipo</th>
-                        <th>Aplica a</th>
-                        <th>Vigencia</th>
-                        <th class="text-center">Estado</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var promo in descuentos)
-                    {
-                        <tr>
-                            <td data-label="#" class="text-muted">@promo.Id</td>
-                            <td data-label="Título">
-                                @promo.Titulo
-                                @if (vigentes.Contains(promo.Id))
-                                {
-                                    <span class="badge bg-success ms-1">Vigente</span>
-                                }
-                            </td>
-                            <td data-label="Tipo">
-                                @(promo.TipoDescuento == ProyectoJo.Domain.Entities.TipoDescuento.Porcentaje
-                                    ? $"-{promo.ValorDescuento}%"
-                                    : $"-${promo.ValorDescuento}")
-                            </td>
-                            <td data-label="Aplica a">@(promo.ItemIds.Any() ? $"{promo.ItemIds.Count} platillo(s)" : "Todos")</td>
-                            <td data-label="Vigencia" class="small text-muted">
-                                @(promo.FechaInicio?.ToString("dd/MM/yyyy") ?? "—") al @(promo.FechaFin?.ToString("dd/MM/yyyy") ?? "—")
-                            </td>
-                            <td data-label="Estado" class="text-center">
-                                <form asp-area="Admin" asp-controller="Promociones" asp-action="ToggleActiva"
-                                      asp-route-id="@promo.Id" method="post" class="d-inline">
-                                    <button type="submit"
-                                            class="btn btn-sm @(promo.Activa ? "btn-success" : "btn-outline-secondary")">
-                                        <i class="bi @(promo.Activa ? "bi-toggle-on" : "bi-toggle-off")"></i>
-                                    </button>
-                                </form>
-                            </td>
-                            <td data-label="Acciones" class="text-end">
-                                <a asp-area="Admin" asp-controller="Promociones" asp-action="Editar"
-                                   asp-route-id="@promo.Id" class="btn btn-sm btn-outline-secondary me-1">
-                                    <i class="bi bi-pencil"></i> Editar
-                                </a>
-                                <form asp-area="Admin" asp-controller="Promociones" asp-action="Eliminar"
-                                      asp-route-id="@promo.Id" method="post" class="d-inline"
-                                      onsubmit="return confirm('¿Eliminar @promo.Titulo?')">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+<!-- Modal: resolver promoción fuera de fecha -->
+<div class="modal fade" id="modalVigenciaPromo" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Promoción fuera de vigencia</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalVigenciaPaso1">
+                    <p class="text-muted small mb-3">
+                        <strong id="modalVigenciaNombre"></strong> está fuera de su rango de fechas, por eso no
+                        figura como activa. ¿Qué querés hacer?
+                    </p>
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn-secondary w-100 justify-content-center" id="btnMostrarCambiarFecha">
+                            Cambiar fecha
+                        </button>
+                        <form id="formHacerPermanente" asp-area="Admin" asp-controller="Promociones"
+                              asp-action="HacerPermanente" method="post">
+                            <input type="hidden" name="id" id="permanenteId" />
+                            <button type="submit" class="btn-primary w-100 justify-content-center">
+                                Hacerla permanente
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div id="modalVigenciaPaso2" class="d-none">
+                    <p class="text-muted small mb-3">
+                        Elegí las nuevas fechas de vigencia para <strong id="modalVigenciaNombre2"></strong>.
+                    </p>
+                    <form asp-area="Admin" asp-controller="Promociones" asp-action="ActualizarFecha" method="post">
+                        <input type="hidden" name="id" id="fechaId" />
+                        <div class="mb-2">
+                            <label class="form-label small">Fecha inicio</label>
+                            <input type="date" name="fechaInicio" id="inputFechaInicio" class="form-control-sm w-100" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small">Fecha fin</label>
+                            <input type="date" name="fechaFin" id="inputFechaFin" class="form-control-sm w-100" />
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn-secondary flex-fill justify-content-center" id="btnVolverPaso1">
+                                Volver
+                            </button>
+                            <button type="submit" class="btn-primary flex-fill justify-content-center">
+                                Guardar fecha
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-    }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/promociones-index.js" asp-append-version="true"></script>
 }

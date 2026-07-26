@@ -120,5 +120,50 @@ namespace ProyectoJo.Application.UseCases
 				detalleDespues: "Se alternó el estado Activa/Inactiva"
 			);
 		}
+
+		public bool ActualizarFecha(int id, DateTime? fechaInicio, DateTime? fechaFin, string usuario)
+		{
+			var promocion = _repository.ObtenerPorId(id);
+			if (promocion is null) return false;
+
+			var inicioAnterior = promocion.FechaInicio;
+			var finAnterior = promocion.FechaFin;
+
+			promocion.FechaInicio = fechaInicio;
+			promocion.FechaFin = fechaFin;
+			_repository.Editar(promocion);
+
+			_auditoriaService.RegistrarAccion(
+				usuario: usuario,
+				modulo: "Promociones",
+				accion: TipoAccionAuditoria.Edicion,
+				entidad: $"Promoción #{id} - {promocion.Titulo}",
+				detalleAntes: $"Vigencia: {inicioAnterior?.ToString("dd/MM/yyyy") ?? "—"} al {finAnterior?.ToString("dd/MM/yyyy") ?? "—"}",
+				detalleDespues: $"Vigencia: {fechaInicio?.ToString("dd/MM/yyyy") ?? "—"} al {fechaFin?.ToString("dd/MM/yyyy") ?? "—"}"
+			);
+
+			return true;
+		}
+
+		public bool HacerPermanente(int id, string usuario)
+		{
+			var promocion = _repository.ObtenerPorId(id);
+			if (promocion is null) return false;
+
+			promocion.FechaInicio = null;
+			promocion.FechaFin = null;
+			promocion.Activa = true;
+			_repository.Editar(promocion);
+
+			_auditoriaService.RegistrarAccion(
+				usuario: usuario,
+				modulo: "Promociones",
+				accion: TipoAccionAuditoria.Edicion,
+				entidad: $"Promoción #{id} - {promocion.Titulo}",
+				detalleDespues: "Se convirtió en promoción permanente (sin fechas de vigencia)"
+			);
+
+			return true;
+		}
 	}
 }

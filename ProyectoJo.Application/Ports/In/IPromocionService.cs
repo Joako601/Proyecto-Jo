@@ -15,6 +15,9 @@ namespace ProyectoJo.Application.Ports.In
 		bool Eliminar(int id, string usuario);
 		void ToggleActiva(int id, string usuario);
 
+		bool ActualizarFecha(int id, DateTime? fechaInicio, DateTime? fechaFin, string usuario);
+		bool HacerPermanente(int id, string usuario);
+
 		bool EstaVigente(Promocion promocion);
 		decimal CalcularPrecioFinal(Item item);
 	}

@@ -73,11 +73,12 @@
         </div>
 
         <div class="form-group">
-            <label for="tipoDescuentoUi">Tipo de descuento</label>
+            <label for="tipoDescuentoUi">Tipo de promoción</label>
             <select id="tipoDescuentoUi" class="form-control">
-                <option value="Banner" selected="@(tipoUiInicial == "Banner")">Banner</option>
-                <option value="Porcentaje" selected="@(tipoUiInicial == "Porcentaje")">Porcentaje (%)</option>
-                <option value="MontoFijo" selected="@(tipoUiInicial == "MontoFijo")">Monto fijo ($)</option>
+                <option value="" disabled>Elegí una promoción</option>
+                <option value="Banner" selected="@(tipoUiInicial == "Banner")">Banner / anuncio general</option>
+                <option value="Porcentaje" selected="@(tipoUiInicial == "Porcentaje")">Descuento por porcentaje (%)</option>
+                <option value="MontoFijo" selected="@(tipoUiInicial == "MontoFijo")">Descuento fijo ($)</option>
             </select>
         </div>
 
@@ -89,8 +90,8 @@
         <div class="form-group" id="campo-tipo-descuento-real">
             <label for="tipoDescuentoReal">¿También querés aplicar un descuento?</label>
             <select id="tipoDescuentoReal" class="form-control">
-                <option value="Porcentaje">Porcentaje (%)</option>
-                <option value="MontoFijo">Monto fijo ($)</option>
+                <option value="Porcentaje">Descuento por porcentaje (%)</option>
+                <option value="MontoFijo">Descuento fijo ($)</option>
             </select>
         </div>
 
@@ -102,7 +103,7 @@
             <span asp-validation-for="ValorDescuento" class="field-error"></span>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="campo-platillos">
             <label>Platillos a los que aplica</label>
             <div class="promo-checklist">
                 @if (!platillos.Any())
@@ -122,7 +123,6 @@
                     }
                 }
             </div>
-            <span class="promo-hint">Si no marcás ningún platillo, la promoción se muestra como anuncio general en el menú.</span>
         </div>
 
         <hr class="promo-divider" />

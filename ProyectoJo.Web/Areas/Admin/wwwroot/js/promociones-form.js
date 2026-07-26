@@ -100,14 +100,6 @@
     }
 
     // ---------- Tipo de descuento ----------
-    // "tipoDescuentoUi" (Banner / Porcentaje / MontoFijo) es la selección
-    // principal. Si eligen Porcentaje o MontoFijo ahí, ese es el descuento y
-    // el input de valor aparece directo. Si eligen Banner, se muestra el
-    // bloque de imagen del banner (label, dropzone, URL y vista previa), y
-    // además puede aparecer el switch "Aplicar también a platillos
-    // específicos": si lo activan, eligen ahí un tipo de descuento
-    // (Porcentaje/MontoFijo) para esos platillos puntuales, y recién ahí
-    // aparece el input de valor.
     const tipoDescuentoUiSelect = document.getElementById('tipoDescuentoUi');
     const tipoDescuentoHidden = document.getElementById('TipoDescuento');
     const campoImagen = document.getElementById('campo-imagen');
@@ -116,13 +108,26 @@
     const campoTipoReal = document.getElementById('campo-tipo-descuento-real');
     const tipoDescuentoRealSelect = document.getElementById('tipoDescuentoReal');
     const campoDescuento = document.getElementById('campo-descuento');
+    const campoPlatillos = document.getElementById('campo-platillos');
     const valorDescuentoUnidad = document.getElementById('valorDescuentoUnidad');
 
     function actualizarTipoDescuento() {
         if (!tipoDescuentoUiSelect) return;
-        const tipoUi = tipoDescuentoUiSelect.value; // Banner | Porcentaje | MontoFijo
+        const tipoUi = tipoDescuentoUiSelect.value; // '' | Banner | Porcentaje | MontoFijo
+        const sinElegir = tipoUi === '';
         const esBanner = tipoUi === 'Banner';
         const aplicaAPlatillos = !!(chkAplicarDescuento && chkAplicarDescuento.checked);
+
+        // Mientras no se elija ningún tipo, se ocultan todos los campos condicionales
+        if (sinElegir) {
+            if (campoImagen) campoImagen.style.display = 'none';
+            if (campoAplicarPlatillos) campoAplicarPlatillos.style.display = 'none';
+            if (campoTipoReal) campoTipoReal.style.display = 'none';
+            if (campoDescuento) campoDescuento.style.display = 'none';
+            if (campoPlatillos) campoPlatillos.style.display = 'none';
+            if (tipoDescuentoHidden) tipoDescuentoHidden.value = 'Ninguno';
+            return;
+        }
 
         // El bloque de imagen del banner solo se muestra si el tipo es Banner
         if (campoImagen) campoImagen.style.display = esBanner ? '' : 'none';
@@ -134,6 +139,11 @@
         // El segundo select (Porcentaje/MontoFijo) solo aparece con Banner + switch activado
         const mostrarTipoReal = esBanner && aplicaAPlatillos;
         if (campoTipoReal) campoTipoReal.style.display = mostrarTipoReal ? '' : 'none';
+
+        // El checklist de platillos aparece si el tipo elegido es un descuento directo
+        // (Porcentaje/MontoFijo), o si es Banner y activaron el switch de aplicar a platillos
+        const mostrarPlatillos = !esBanner || (esBanner && aplicaAPlatillos);
+        if (campoPlatillos) campoPlatillos.style.display = mostrarPlatillos ? '' : 'none';
 
         // Tipo efectivo: el elegido arriba si no es Banner, o el del segundo select si aplica a platillos
         let tipoEfectivo = 'Ninguno';

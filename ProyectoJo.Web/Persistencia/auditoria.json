@@ -858,5 +858,45 @@
     "Entidad": "Producto #1",
     "DetalleAntes": null,
     "DetalleDespues": "Se altern\u00F3 el estado Agotado/Disponible"
+  },
+  {
+    "Id": 87,
+    "FechaHora": "2026-07-25T21:16:10.9530423-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Productos",
+    "Accion": 1,
+    "Entidad": "Producto #2",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Agotado/Disponible"
+  },
+  {
+    "Id": 88,
+    "FechaHora": "2026-07-25T21:16:17.4315054-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Productos",
+    "Accion": 1,
+    "Entidad": "Producto #2",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Agotado/Disponible"
+  },
+  {
+    "Id": 89,
+    "FechaHora": "2026-07-25T21:16:19.3018155-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Productos",
+    "Accion": 1,
+    "Entidad": "Producto #2",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activo/Inactivo"
+  },
+  {
+    "Id": 90,
+    "FechaHora": "2026-07-25T21:16:20.8643414-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Productos",
+    "Accion": 1,
+    "Entidad": "Producto #2",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activo/Inactivo"
   }
 ]

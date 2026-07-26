@@ -12,11 +12,26 @@
         .Where(i => string.IsNullOrEmpty(busqueda) || i.Platillo.Contains(busqueda, StringComparison.OrdinalIgnoreCase))
         .Where(i => string.IsNullOrEmpty(categoriaFiltro) || i.Categoria == categoriaFiltro)
         .ToList();
+
+    const int PorPagina = 12;
+    var totalPaginas = (int)Math.Ceiling(resultado.Count / (double)PorPagina);
+    var paginaActual = int.TryParse(Context.Request.Query["pagina"], out var p) ? p : 1;
+    if (paginaActual < 1) paginaActual = 1;
+    if (totalPaginas > 0 && paginaActual > totalPaginas) paginaActual = totalPaginas;
+
+    var paginado = resultado
+        .Skip((paginaActual - 1) * PorPagina)
+        .Take(PorPagina)
+        .ToList();
+
+    var desdeItem = resultado.Any() ? ((paginaActual - 1) * PorPagina) + 1 : 0;
+    var hastaItem = ((paginaActual - 1) * PorPagina) + paginado.Count;
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-shared.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin/menu/menu.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/paginador/paginador.css" asp-append-version="true" />
 }
 
 <div class="admin-page">
@@ -73,7 +88,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in resultado)
+                    @foreach (var item in paginado)
                     {
                         <tr>
                             <td data-label="#" style="color:var(--tc-ink-muted)">@item.Id</td>
@@ -118,8 +133,9 @@
                 </tbody>
             </table>
         </div>
-        <p style="font-size:11.5px;color:var(--tc-ink-muted);margin-top:12px;">
-            Mostrando @resultado.Count de @Model.Count platillos
+        <p class="paginador-resumen">
+            Mostrando @desdeItem–@hastaItem de @resultado.Count platillos
         </p>
+        @await Html.PartialAsync("_Paginador", (paginaActual, totalPaginas))
     }
 </div>

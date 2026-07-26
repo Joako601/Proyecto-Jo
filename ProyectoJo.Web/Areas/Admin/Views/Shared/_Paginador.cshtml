@@ -1,0 +1,59 @@
+﻿@model (int PaginaActual, int TotalPaginas)
+@{
+    var paginaActual = Model.PaginaActual;
+    var totalPaginas = Model.TotalPaginas;
+
+    // Reconstruye la query actual preservando filtros existentes (busqueda, categoria, modulo, desde, hasta, etc.)
+    Func<int, string> urlPagina = p =>
+    {
+        var parametros = Context.Request.Query
+            .Where(q => !string.Equals(q.Key, "pagina", StringComparison.OrdinalIgnoreCase))
+            .SelectMany(q => q.Value.Select(v => $"{Uri.EscapeDataString(q.Key)}={Uri.EscapeDataString(v ?? "")}"))
+            .ToList();
+        parametros.Add($"pagina={p}");
+        return "?" + string.Join("&", parametros);
+    };
+
+    int inicio = Math.Max(1, paginaActual - 2);
+    int fin = Math.Min(totalPaginas, paginaActual + 2);
+}
+
+@if (totalPaginas > 1)
+{
+    <nav class="paginador" aria-label="Paginación">
+        <a class="paginador-btn @(paginaActual <= 1 ? "disabled" : "")"
+           href="@(paginaActual > 1 ? urlPagina(paginaActual - 1) : "#")"
+           aria-label="Página anterior">
+            <i class="bi bi-chevron-left"></i>
+        </a>
+
+        @if (inicio > 1)
+        {
+            <a class="paginador-num" href="@urlPagina(1)">1</a>
+            if (inicio > 2)
+            {
+                <span class="paginador-ellipsis">…</span>
+            }
+        }
+
+        @for (int p = inicio; p <= fin; p++)
+        {
+            <a class="paginador-num @(p == paginaActual ? "active" : "")" href="@urlPagina(p)">@p</a>
+        }
+
+        @if (fin < totalPaginas)
+        {
+            if (fin < totalPaginas - 1)
+            {
+                <span class="paginador-ellipsis">…</span>
+            }
+            <a class="paginador-num" href="@urlPagina(totalPaginas)">@totalPaginas</a>
+        }
+
+        <a class="paginador-btn @(paginaActual >= totalPaginas ? "disabled" : "")"
+           href="@(paginaActual < totalPaginas ? urlPagina(paginaActual + 1) : "#")"
+           aria-label="Página siguiente">
+            <i class="bi bi-chevron-right"></i>
+        </a>
+    </nav>
+}

@@ -27,81 +27,98 @@
 
     var cultura = new System.Globalization.CultureInfo("es-MX");
     var etiquetaMesActual = cultura.DateTimeFormat.GetMonthName(mesActual) + " " + anioActual;
+
+    var maxCantidadTop = Model.TopProductos.Any() ? Model.TopProductos.Max(p => p.CantidadVendida) : 0;
+
+    var totalPedidosSemana = Model.VentasPorDiaSemana.Sum(d => d.CantidadPedidos);
+    var totalVendidoSemana = Model.VentasPorDiaSemana.Sum(d => d.TotalVendido);
+
+    // Solo tiene sentido "ver horas" de un día puntual cuando estamos parados
+    // sobre una semana concreta (Por semana), no en el acumulado Histórico.
+    Func<DayOfWeek, DateTime> fechaDelDia = dow =>
+        Enumerable.Range(0, 7).Select(i => Model.InicioSemana.AddDays(i)).First(d => d.DayOfWeek == dow);
 }
 
-<div class="mb-3">
-    <a asp-area="Admin" asp-controller="Gestion" asp-action="Index"
-       class="text-muted text-decoration-none">
-        <i class="bi bi-arrow-left"></i> Volver al dashboard
-    </a>
-</div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-shared.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/mapacalor/mapacalor.css" asp-append-version="true" />
+}
 
-<div class="container-fluid py-4">
-    <h2 class="mb-1">Mapa de Calor de Ventas</h2>
-    <p class="text-muted mb-4">Horas pico y productos más vendidos, en base a pedidos pagados.</p>
+<div class="admin-page">
 
-    <div class="row g-4 mb-4">
-        <div class="col-md-4">
-            <div class="card p-3 shadow-sm border-0 bg-primary text-white">
-                <h6>Pedidos del día seleccionado</h6>
-                <h2 class="mt-2">@Model.TotalPedidos</h2>
-            </div>
+    <div class="page-header">
+        <div>
+            <a asp-area="Admin" asp-controller="Gestion" asp-action="Index" class="back-link">← Dashboard</a>
+            <h1>Mapa de Calor de Ventas</h1>
         </div>
-        <div class="col-md-4">
-            <div class="card p-3 shadow-sm border-0 bg-success text-white">
-                <h6>Total Vendido (día seleccionado)</h6>
-                <h2 class="mt-2">$@Model.TotalVendido.ToString("N0")</h2>
-            </div>
+    </div>
+    <p class="mc-subtitulo">Horas pico y productos más vendidos, en base a pedidos pagados.</p>
+
+    <div class="dash-totales">
+        <div class="dash-card dash-card--total">
+            <div class="dash-label">Pedidos del día seleccionado</div>
+            <div class="dash-valor">@Model.TotalPedidos</div>
         </div>
-        <div class="col-md-4">
-            <div class="card p-3 shadow-sm border-0 bg-warning">
-                <h6>Día que más vende (histórico)</h6>
-                <h2 class="mt-2">@(diaMasVendedor?.Etiqueta ?? "—")</h2>
-            </div>
+        <div class="dash-card dash-card--total">
+            <div class="dash-label">Total vendido (día seleccionado)</div>
+            <div class="dash-valor positivo">$@Model.TotalVendido.ToString("N0")</div>
+        </div>
+        <div class="dash-card dash-card--total dash-card--kpi">
+            <div class="dash-label">Día que más vende (histórico)</div>
+            <div class="dash-valor">@(diaMasVendedor?.Etiqueta ?? "—")</div>
         </div>
     </div>
 
     <div id="seccion-horas" class="row g-4 mb-4 align-items-stretch">
-        <div class="col-lg-8 d-flex">
-            <div class="card shadow-sm border-0 p-4 flex-fill d-flex flex-column">
-                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                    <h5 class="mb-0">Pedidos por hora del día</h5>
+        <div class="col-lg-8 d-flex mc-col-chart">
+            <div class="grafica-card flex-fill d-flex flex-column">
+                <div class="mc-card-header">
+                    <h5 class="mc-card-titulo">Pedidos por hora del día</h5>
                     <form method="get" asp-area="Admin" asp-controller="MapaCalor" asp-action="Index"
-                          class="d-flex align-items-center gap-2" data-scroll-target="seccion-horas">
+                          class="mc-fecha-form" data-scroll-target="seccion-horas">
                         <input type="hidden" name="semanaHistorico" value="@Model.SemanaHistoricoCompleto.ToString().ToLower()" />
                         <input type="hidden" name="semanaOffset" value="@Model.SemanaOffset" />
                         <input type="hidden" name="anioMeses" value="@anioActual" />
                         <input type="hidden" name="mesDetalle" value="@mesActual" />
-                        <label for="fecha" class="small text-muted mb-0">Día:</label>
-                        <input type="date" id="fecha" name="fecha" class="form-control form-control-sm"
+                        <label for="fecha" class="mc-fecha-label">Día:</label>
+                        <input type="date" id="fecha" name="fecha" class="form-control-sm"
                                value="@Model.FechaSeleccionada.ToString("yyyy-MM-dd")"
                                onchange="this.form.submit()" />
                     </form>
                 </div>
-                <div class="flex-fill">
+                <div class="chart-wrap flex-fill">
                     <canvas id="graficaHoraspico"></canvas>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-4 d-flex">
-            <div class="card shadow-sm border-0 p-4 flex-fill d-flex flex-column">
-                <h5 class="mb-3">Top 10 productos más vendidos</h5>
+        <div class="col-lg-4 d-flex mc-col-detalle">
+            <div class="grafica-card flex-fill d-flex flex-column">
+                <h5 class="mc-card-titulo">Top 10 productos más vendidos</h5>
                 @if (!Model.TopProductos.Any())
                 {
-                    <p class="text-muted small">Aún no hay pedidos pagados para mostrar.</p>
+                    <p class="mc-empty">Aún no hay pedidos pagados para mostrar.</p>
                 }
                 else
                 {
-                    <ol class="list-group list-group-flush flex-fill">
-                        @foreach (var producto in Model.TopProductos)
+                    <div class="mc-top-lista">
+                        @for (int i = 0; i < Model.TopProductos.Count; i++)
                         {
-                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                <span>@producto.Nombre</span>
-                                <span class="badge bg-primary rounded-pill">@producto.CantidadVendida</span>
-                            </li>
+                            var producto = Model.TopProductos[i];
+                            var porcentaje = maxCantidadTop > 0 ? (producto.CantidadVendida * 100.0 / maxCantidadTop) : 0;
+                            var claseIntensidad = i < 3 ? "mc-top-barra--hot" : "mc-top-barra--warm";
+                            <div class="mc-top-item">
+                                <span class="mc-top-rank">@(i + 1)</span>
+                                <div class="mc-top-info">
+                                    <span class="mc-top-nombre">@producto.Nombre</span>
+                                    <div class="mc-top-barra-wrap">
+                                        <div class="mc-top-barra @claseIntensidad" style="width:@(porcentaje.ToString("0.##"))%"></div>
+                                    </div>
+                                </div>
+                                <span class="mc-top-cant">@producto.CantidadVendida</span>
+                            </div>
                         }
-                    </ol>
+                    </div>
                 }
             </div>
         </div>
@@ -109,25 +126,25 @@
 
     <div class="row g-4 mb-4">
         <div class="col-12">
-            <div class="card shadow-sm border-0 p-4">
-                <button class="btn btn-sm btn-outline-secondary mb-3" type="button"
+            <div class="grafica-card">
+                <button class="btn-secondary mc-toggle-historial" type="button"
                         data-bs-toggle="collapse" data-bs-target="#historialDias">
                     Ver historial por día <i class="bi bi-chevron-down"></i>
                 </button>
                 <div class="collapse" id="historialDias">
                     @if (!Model.HistorialPorDia.Any())
                     {
-                        <p class="text-muted small">Aún no hay historial de ventas.</p>
+                        <p class="mc-empty">Aún no hay historial de ventas.</p>
                     }
                     else
                     {
                         <div class="table-responsive">
-                            <table class="table table-sm align-middle">
+                            <table class="admin-table">
                                 <thead>
                                     <tr>
                                         <th>Fecha</th>
-                                        <th class="text-end">Pedidos</th>
-                                        <th class="text-end">Total Vendido</th>
+                                        <th>Pedidos</th>
+                                        <th>Total Vendido</th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -135,10 +152,10 @@
                                     @foreach (var dia in Model.HistorialPorDia)
                                     {
                                         <tr>
-                                            <td>@dia.Etiqueta</td>
-                                            <td class="text-end">@dia.CantidadPedidos</td>
-                                            <td class="text-end">$@dia.TotalVendido.ToString("N0")</td>
-                                            <td class="text-end">
+                                            <td data-label="Fecha">@dia.Etiqueta</td>
+                                            <td data-label="Pedidos">@dia.CantidadPedidos</td>
+                                            <td data-label="Total Vendido">$@dia.TotalVendido.ToString("N0")</td>
+                                            <td data-label="">
                                                 <a asp-area="Admin" asp-controller="MapaCalor" asp-action="Index"
                                                    asp-route-fecha="@dia.Fecha.ToString("yyyy-MM-dd")"
                                                    asp-route-semanaHistorico="@Model.SemanaHistoricoCompleto.ToString().ToLower()"
@@ -146,7 +163,7 @@
                                                    asp-route-anioMeses="@anioActual"
                                                    asp-route-mesDetalle="@mesActual"
                                                    asp-route-scroll="seccion-horas"
-                                                   class="btn btn-sm btn-outline-primary">Ver horas</a>
+                                                   class="btn-secondary">Ver horas</a>
                                             </td>
                                         </tr>
                                     }
@@ -161,12 +178,12 @@
 
     <div id="seccion-semana" class="row g-4 mb-4">
         <div class="col-12">
-            <div class="card shadow-sm border-0 p-4">
-                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
-                    <h5 class="mb-0">Ventas por día de la semana</h5>
+            <div class="grafica-card">
+                <div class="mc-card-header">
+                    <h5 class="mc-card-titulo">Ventas por día de la semana</h5>
 
-                    <div class="d-flex align-items-center gap-2 flex-wrap">
-                        <div class="btn-group btn-group-sm" role="group">
+                    <div class="mc-nav flex-wrap">
+                        <div class="mc-tabs">
                             <a asp-area="Admin" asp-controller="MapaCalor" asp-action="Index"
                                asp-route-fecha="@Model.FechaSeleccionada.ToString("yyyy-MM-dd")"
                                asp-route-semanaHistorico="true"
@@ -174,7 +191,7 @@
                                asp-route-anioMeses="@anioActual"
                                asp-route-mesDetalle="@mesActual"
                                asp-route-scroll="seccion-semana"
-                               class="btn @(Model.SemanaHistoricoCompleto ? "btn-primary" : "btn-outline-primary")">
+                               class="mc-tab @(Model.SemanaHistoricoCompleto ? "active" : "")">
                                 Histórico
                             </a>
                             <a asp-area="Admin" asp-controller="MapaCalor" asp-action="Index"
@@ -184,14 +201,14 @@
                                asp-route-anioMeses="@anioActual"
                                asp-route-mesDetalle="@mesActual"
                                asp-route-scroll="seccion-semana"
-                               class="btn @(!Model.SemanaHistoricoCompleto ? "btn-primary" : "btn-outline-primary")">
+                               class="mc-tab @(!Model.SemanaHistoricoCompleto ? "active" : "")">
                                 Por semana
                             </a>
                         </div>
 
                         @if (!Model.SemanaHistoricoCompleto)
                         {
-                            <div class="btn-group btn-group-sm" role="group">
+                            <div class="mc-nav">
                                 <a asp-area="Admin" asp-controller="MapaCalor" asp-action="Index"
                                    asp-route-fecha="@Model.FechaSeleccionada.ToString("yyyy-MM-dd")"
                                    asp-route-semanaHistorico="false"
@@ -199,8 +216,8 @@
                                    asp-route-anioMeses="@anioActual"
                                    asp-route-mesDetalle="@mesActual"
                                    asp-route-scroll="seccion-semana"
-                                   class="btn btn-outline-secondary">&larr;</a>
-                                <span class="btn btn-light disabled">@etiquetaRangoSemana</span>
+                                   class="mc-nav-btn"><i class="bi bi-chevron-left"></i></a>
+                                <span class="mc-nav-chip">@etiquetaRangoSemana</span>
                                 <a asp-area="Admin" asp-controller="MapaCalor" asp-action="Index"
                                    asp-route-fecha="@Model.FechaSeleccionada.ToString("yyyy-MM-dd")"
                                    asp-route-semanaHistorico="false"
@@ -208,36 +225,68 @@
                                    asp-route-anioMeses="@anioActual"
                                    asp-route-mesDetalle="@mesActual"
                                    asp-route-scroll="seccion-semana"
-                                   class="btn btn-outline-secondary">&rarr;</a>
+                                   class="mc-nav-btn"><i class="bi bi-chevron-right"></i></a>
                             </div>
                         }
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="col-lg-7">
-                        <canvas id="graficaDiasSemana" height="120"></canvas>
+                    <div class="col-lg-7 mc-col-chart">
+                        <div class="chart-wrap chart-wrap--donut">
+                            <canvas id="graficaDiasSemana"></canvas>
+                        </div>
                     </div>
-                    <div class="col-lg-5">
-                        <table class="table table-sm align-middle mt-2">
-                            <thead>
-                                <tr>
-                                    <th>Día</th>
-                                    <th class="text-end">Pedidos</th>
-                                    <th class="text-end">Total Vendido</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var dia in Model.VentasPorDiaSemana)
-                                {
-                                    <tr class="@(dia.DiaSemana == diaMasVendedor?.DiaSemana ? "table-success" : "")">
-                                        <td>@dia.Etiqueta</td>
-                                        <td class="text-end">@dia.CantidadPedidos</td>
-                                        <td class="text-end">$@dia.TotalVendido.ToString("N0")</td>
+                    <div class="col-lg-5 mc-col-detalle">
+                        <div class="table-responsive">
+                            <table class="admin-table mt-2">
+                                <thead>
+                                    <tr>
+                                        <th>Día</th>
+                                        <th>Pedidos</th>
+                                        <th>Total Vendido</th>
+                                        @if (!Model.SemanaHistoricoCompleto)
+                                        {
+                                            <th></th>
+                                        }
                                     </tr>
-                                }
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach (var dia in Model.VentasPorDiaSemana)
+                                    {
+                                        <tr class="@(dia.DiaSemana == diaMasVendedor?.DiaSemana ? "mc-fila--destacada" : "")">
+                                            <td data-label="Día">@dia.Etiqueta</td>
+                                            <td data-label="Pedidos">@dia.CantidadPedidos</td>
+                                            <td data-label="Total Vendido">$@dia.TotalVendido.ToString("N0")</td>
+                                            @if (!Model.SemanaHistoricoCompleto)
+                                            {
+                                                <td data-label="" class="acciones">
+                                                    <a asp-area="Admin" asp-controller="MapaCalor" asp-action="Index"
+                                                       asp-route-fecha="@fechaDelDia(dia.DiaSemana).ToString("yyyy-MM-dd")"
+                                                       asp-route-semanaHistorico="false"
+                                                       asp-route-semanaOffset="@Model.SemanaOffset"
+                                                       asp-route-anioMeses="@anioActual"
+                                                       asp-route-mesDetalle="@mesActual"
+                                                       asp-route-scroll="seccion-horas"
+                                                       class="btn-secondary">Ver horas</a>
+                                                </td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr class="mc-fila--total">
+                                        <td data-label="">Total</td>
+                                        <td data-label="Pedidos">@totalPedidosSemana</td>
+                                        <td data-label="Total Vendido">$@totalVendidoSemana.ToString("N0")</td>
+                                        @if (!Model.SemanaHistoricoCompleto)
+                                        {
+                                            <td data-label=""></td>
+                                        }
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -246,63 +295,65 @@
 
     <div id="seccion-mes" class="row g-4">
         <div class="col-12">
-            <div class="card shadow-sm border-0 p-4">
-                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
-                    <h5 class="mb-0">Ventas por mes</h5>
+            <div class="grafica-card">
+                <div class="mc-card-header">
+                    <h5 class="mc-card-titulo">Ventas por mes</h5>
 
-                    <div class="d-flex align-items-center gap-2">
-                        <div class="btn-group btn-group-sm" role="group">
-                            <a asp-area="Admin" asp-controller="MapaCalor" asp-action="Index"
-                               asp-route-fecha="@Model.FechaSeleccionada.ToString("yyyy-MM-dd")"
-                               asp-route-semanaHistorico="@Model.SemanaHistoricoCompleto.ToString().ToLower()"
-                               asp-route-semanaOffset="@Model.SemanaOffset"
-                               asp-route-anioMeses="@anioMesAnterior"
-                               asp-route-mesDetalle="@mesAnterior"
-                               asp-route-scroll="seccion-mes"
-                               class="btn btn-outline-secondary">&larr;</a>
-                            <span class="btn btn-light disabled" style="min-width:140px">@etiquetaMesActual</span>
-                            <a asp-area="Admin" asp-controller="MapaCalor" asp-action="Index"
-                               asp-route-fecha="@Model.FechaSeleccionada.ToString("yyyy-MM-dd")"
-                               asp-route-semanaHistorico="@Model.SemanaHistoricoCompleto.ToString().ToLower()"
-                               asp-route-semanaOffset="@Model.SemanaOffset"
-                               asp-route-anioMeses="@anioMesSiguiente"
-                               asp-route-mesDetalle="@mesSiguiente"
-                               asp-route-scroll="seccion-mes"
-                               class="btn btn-outline-secondary @(esHoy ? "disabled" : "")">&rarr;</a>
-                        </div>
+                    <div class="mc-nav">
+                        <a asp-area="Admin" asp-controller="MapaCalor" asp-action="Index"
+                           asp-route-fecha="@Model.FechaSeleccionada.ToString("yyyy-MM-dd")"
+                           asp-route-semanaHistorico="@Model.SemanaHistoricoCompleto.ToString().ToLower()"
+                           asp-route-semanaOffset="@Model.SemanaOffset"
+                           asp-route-anioMeses="@anioMesAnterior"
+                           asp-route-mesDetalle="@mesAnterior"
+                           asp-route-scroll="seccion-mes"
+                           class="mc-nav-btn"><i class="bi bi-chevron-left"></i></a>
+                        <span class="mc-nav-chip">@etiquetaMesActual</span>
+                        <a asp-area="Admin" asp-controller="MapaCalor" asp-action="Index"
+                           asp-route-fecha="@Model.FechaSeleccionada.ToString("yyyy-MM-dd")"
+                           asp-route-semanaHistorico="@Model.SemanaHistoricoCompleto.ToString().ToLower()"
+                           asp-route-semanaOffset="@Model.SemanaOffset"
+                           asp-route-anioMeses="@anioMesSiguiente"
+                           asp-route-mesDetalle="@mesSiguiente"
+                           asp-route-scroll="seccion-mes"
+                           class="mc-nav-btn @(esHoy ? "disabled" : "")"><i class="bi bi-chevron-right"></i></a>
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="col-lg-7">
-                        <canvas id="graficaMeses" height="120"></canvas>
+                    <div class="col-lg-7 mc-col-chart">
+                        <div class="chart-wrap">
+                            <canvas id="graficaMeses"></canvas>
+                        </div>
                     </div>
-                    <div class="col-lg-5">
+                    <div class="col-lg-5 mc-col-detalle">
                         @if (!Model.DiasDelMesSeleccionado.Any())
                         {
-                            <p class="text-muted small mt-2">No hay ventas registradas en @etiquetaMesActual.</p>
+                            <p class="mc-empty">No hay ventas registradas en @etiquetaMesActual.</p>
                         }
                         else
                         {
-                            <table class="table table-sm align-middle mt-2">
-                                <thead>
-                                    <tr>
-                                        <th>Fecha</th>
-                                        <th class="text-end">Pedidos</th>
-                                        <th class="text-end">Total Vendido</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var dia in Model.DiasDelMesSeleccionado)
-                                    {
+                            <div class="table-responsive">
+                                <table class="admin-table mt-2">
+                                    <thead>
                                         <tr>
-                                            <td>@dia.Etiqueta</td>
-                                            <td class="text-end">@dia.CantidadPedidos</td>
-                                            <td class="text-end">$@dia.TotalVendido.ToString("N0")</td>
+                                            <th>Fecha</th>
+                                            <th>Pedidos</th>
+                                            <th>Total Vendido</th>
                                         </tr>
-                                    }
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var dia in Model.DiasDelMesSeleccionado)
+                                        {
+                                            <tr>
+                                                <td data-label="Fecha">@dia.Etiqueta</td>
+                                                <td data-label="Pedidos">@dia.CantidadPedidos</td>
+                                                <td data-label="Total Vendido">$@dia.TotalVendido.ToString("N0")</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
                         }
                     </div>
                 </div>
@@ -314,58 +365,62 @@
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
-    (function () {
-        'use strict';
+        (function() {
+            'use strict';
 
-        // Scroll suave a la sección indicada en ?scroll=
-        var params = new URLSearchParams(window.location.search);
-        var scrollTarget = params.get('scroll');
-        if (scrollTarget) {
-            var el = document.getElementById(scrollTarget);
-            if (el) {
-                requestAnimationFrame(function () {
-                    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                });
+            var tcTeal = 'rgba(47, 110, 98, 0.85)';
+            var tcMustard = 'rgba(217, 164, 65, 0.85)';
+            var tcBrick = 'rgba(178, 58, 46, 0.85)';
+
+            // Scroll suave a la sección indicada en ?scroll=
+            var params = new URLSearchParams(window.location.search);
+            var scrollTarget = params.get('scroll');
+            if (scrollTarget) {
+                var el = document.getElementById(scrollTarget);
+                if (el) {
+                    requestAnimationFrame(function() {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    });
+                }
             }
-        }
 
-        // Formularios con data-scroll-target inyectan ?scroll= al hacer submit
-        document.querySelectorAll('form[data-scroll-target]').forEach(function (form) {
-            form.addEventListener('submit', function () {
-                var hidden = document.createElement('input');
-                hidden.type = 'hidden';
-                hidden.name = 'scroll';
-                hidden.value = form.dataset.scrollTarget;
-                form.appendChild(hidden);
+            // Formularios con data-scroll-target inyectan ?scroll= al hacer submit
+            document.querySelectorAll('form[data-scroll-target]').forEach(function(form) {
+                form.addEventListener('submit', function() {
+                    var hidden = document.createElement('input');
+                    hidden.type = 'hidden';
+                    hidden.name = 'scroll';
+                    hidden.value = form.dataset.scrollTarget;
+                    form.appendChild(hidden);
+                });
             });
-        });
 
-        new Chart(document.getElementById('graficaHoraspico'), {
-            type: 'bar',
-            data: {
-                labels: @Html.Raw(etiquetasHoras),
-                datasets: [{ label: 'Pedidos pagados', data: @Html.Raw(dataPedidosPorHora), backgroundColor: 'rgba(13, 110, 253, 0.7)', borderRadius: 4 }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
-        });
+            new Chart(document.getElementById('graficaHoraspico'), {
+                type: 'bar',
+                data: {
+                    labels: @Html.Raw(etiquetasHoras),
+                    datasets: [{ label: 'Pedidos pagados', data: @Html.Raw(dataPedidosPorHora), backgroundColor: tcTeal, borderRadius: 4 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+            });
 
-        new Chart(document.getElementById('graficaDiasSemana'), {
-            type: 'bar',
-            data: {
-                labels: @Html.Raw(etiquetasDiasSemana),
-                datasets: [{ label: 'Pedidos pagados', data: @Html.Raw(dataPedidosPorDiaSemana), backgroundColor: 'rgba(255, 193, 7, 0.8)', borderRadius: 4 }]
-            },
-            options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
-        });
+            new Chart(document.getElementById('graficaDiasSemana'), {
+                type: 'bar',
+                data: {
+                    labels: @Html.Raw(etiquetasDiasSemana),
+                    datasets: [{ label: 'Pedidos pagados', data: @Html.Raw(dataPedidosPorDiaSemana), backgroundColor: tcMustard, borderRadius: 4 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+            });
 
-        new Chart(document.getElementById('graficaMeses'), {
-            type: 'bar',
-            data: {
-                labels: @Html.Raw(etiquetasMeses),
-                datasets: [{ label: 'Pedidos pagados', data: @Html.Raw(dataPedidosPorMes), backgroundColor: 'rgba(25, 135, 84, 0.8)', borderRadius: 4 }]
-            },
-            options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
-        });
-    }());
+            new Chart(document.getElementById('graficaMeses'), {
+                type: 'bar',
+                data: {
+                    labels: @Html.Raw(etiquetasMeses),
+                    datasets: [{ label: 'Pedidos pagados', data: @Html.Raw(dataPedidosPorMes), backgroundColor: tcBrick, borderRadius: 4 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+            });
+        }());
     </script>
 }

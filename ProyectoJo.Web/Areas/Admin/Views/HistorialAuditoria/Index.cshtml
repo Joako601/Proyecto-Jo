@@ -2,11 +2,28 @@
 @{
     ViewData["Title"] = "Historial de Auditoría";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+
+    var historial = Model.ToList();
+
+    const int PorPagina = 15;
+    var totalPaginas = (int)Math.Ceiling(historial.Count / (double)PorPagina);
+    var paginaActual = int.TryParse(Context.Request.Query["pagina"], out var p) ? p : 1;
+    if (paginaActual < 1) paginaActual = 1;
+    if (totalPaginas > 0 && paginaActual > totalPaginas) paginaActual = totalPaginas;
+
+    var paginado = historial
+        .Skip((paginaActual - 1) * PorPagina)
+        .Take(PorPagina)
+        .ToList();
+
+    var desdeItem = historial.Any() ? ((paginaActual - 1) * PorPagina) + 1 : 0;
+    var hastaItem = ((paginaActual - 1) * PorPagina) + paginado.Count;
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-shared.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin/auditoria/auditoria.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/paginador/paginador.css" asp-append-version="true" />
 }
 
 <div class="admin-page">
@@ -47,7 +64,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var registro in Model)
+                @foreach (var registro in paginado)
                 {
                     <tr>
                         <td data-label="Fecha y hora">@registro.FechaHora.ToString("dd/MM/yyyy HH:mm")</td>
@@ -83,9 +100,16 @@
         </table>
     </div>
 
-    @if (!Model.Any())
+    @if (!historial.Any())
     {
         <p class="empty-state">No hay registros de auditoría todavía.</p>
+    }
+    else
+    {
+        <p class="paginador-resumen">
+            Mostrando @desdeItem–@hastaItem de @historial.Count registros
+        </p>
+        @await Html.PartialAsync("_Paginador", (paginaActual, totalPaginas))
     }
 
 </div>

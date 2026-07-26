@@ -63,18 +63,17 @@
             </p>
             <div class="menu-filters-wrapper">
                 <div class="menu-filters text-center">
-                    <button class="filter-btn active" data-filter="todos">Todos</button>
-                    <button class="filter-btn" data-filter="panuchos">Panuchos</button>
-                    <button class="filter-btn" data-filter="salbutes">Salbutes</button>
-                    <button class="filter-btn" data-filter="tortas">Tortas</button>
-                    <button class="filter-btn" data-filter="caldos">Caldos</button>
-                    <button class="filter-btn" data-filter="hamburguesas">Hamburguesas</button>
-                    <button class="filter-btn" data-filter="nachos">Nachos</button>
-                    <button class="filter-btn" data-filter="burros">Burros</button>
-                    <button class="filter-btn" data-filter="empanadas">Empanadas</button>
-                    <button class="filter-btn" data-filter="tamales">Tamales</button>
-                    <button class="filter-btn" data-filter="polcanes">Polcanes</button>
-                    <button class="filter-btn" data-filter="bebidas">Bebidas</button>
+                    <a class="filter-btn @(string.IsNullOrEmpty((string)ViewBag.CategoriaActual) ? "active" : "")"
+                       asp-action="Index" asp-route-categoria="">
+                        Todos
+                    </a>
+                    @foreach (var cat in (List<string>)ViewBag.Categorias)
+                    {
+                        <a class="filter-btn @(cat == (string)ViewBag.CategoriaActual ? "active" : "")"
+                           asp-action="Index" asp-route-categoria="@cat">
+                            @cat
+                        </a>
+                    }
                 </div>
             </div>
         </div>
@@ -186,7 +185,3 @@
         </nav>
     }
 </div>
-
-@section Scripts {
-    <script src="~/js/filtrosMenu.js" asp-append-version="true"></script>
-}

@@ -267,29 +267,48 @@
     function validarYMostrarModal(mesaTexto) {
         var itemsDisponibles = [];
         var itemsProblema = [];
+        var itemsAjustados = [];
 
         carrito.forEach(function (l) {
             var itemMenu = menu.find(function (m) { return m.id === l.itemId; });
             var sufijo = l.ingredientesQuitados.length > 0
                 ? ' (sin ' + l.ingredientesQuitados.join(', ') + ')'
                 : '';
-            var lineaPayload = {
-                itemId: l.itemId,
-                nombre: l.nombre + sufijo,
-                cantidad: l.cantidad,
-                precioUnitario: l.precioUnitario
-            };
 
             if (!itemMenu || !itemMenu.activo) {
                 itemsProblema.push({ nombre: l.nombre, motivo: 'Ya no está disponible en el menú' });
-            } else if (itemMenu.agotado) {
-                itemsProblema.push({ nombre: l.nombre, motivo: 'Sin stock en este momento' });
-            } else {
-                itemsDisponibles.push(lineaPayload);
+                return;
             }
+
+            if (itemMenu.agotado) {
+                itemsProblema.push({ nombre: l.nombre, motivo: 'Sin stock en este momento' });
+                return;
+            }
+
+            var cantidadFinal = l.cantidad;
+
+            if (itemMenu.stockMaximo != null && l.cantidad > itemMenu.stockMaximo) {
+                if (itemMenu.stockMaximo <= 0) {
+                    itemsProblema.push({ nombre: l.nombre, motivo: 'Sin stock en este momento' });
+                    return;
+                }
+                itemsAjustados.push({
+                    nombre: l.nombre,
+                    cantidadSolicitada: l.cantidad,
+                    cantidadFinal: itemMenu.stockMaximo
+                });
+                cantidadFinal = itemMenu.stockMaximo;
+            }
+
+            itemsDisponibles.push({
+                itemId: l.itemId,
+                nombre: l.nombre + sufijo,
+                cantidad: cantidadFinal,
+                precioUnitario: l.precioUnitario
+            });
         });
 
-        if (itemsProblema.length === 0) {
+        if (itemsProblema.length === 0 && itemsAjustados.length === 0) {
             enviarPedido(mesaTexto, itemsDisponibles);
             return;
         }
@@ -310,18 +329,38 @@
             return;
         }
 
-        document.getElementById('modal-titulo').textContent = 'Revisá el pedido antes de enviarlo';
-        document.getElementById('modal-cuerpo').innerHTML =
-            '<span style="color:var(--tc-brick);font-weight:600;">❌ No disponibles (no se envían):</span><br>' +
-            itemsProblema.map(function (p) {
-                return '&nbsp;&nbsp;• <b>' + p.nombre + '</b>: ' + p.motivo;
-            }).join('<br>') +
-            '<br><br>' +
-            '<span style="color:var(--tc-teal);font-weight:600;">✅ Disponibles (se envían a cocina):</span><br>' +
+        var bloques = [];
+
+        if (itemsProblema.length > 0) {
+            bloques.push(
+                '<span style="color:var(--tc-brick);font-weight:600;">❌ No disponibles (no se envían):</span><br>' +
+                itemsProblema.map(function (p) {
+                    return '&nbsp;&nbsp;• <b>' + p.nombre + '</b>: ' + p.motivo;
+                }).join('<br>')
+            );
+        }
+
+        if (itemsAjustados.length > 0) {
+            bloques.push(
+                '<span style="color:var(--tc-mustard);font-weight:600;">⚠️ Cantidad ajustada por stock:</span><br>' +
+                itemsAjustados.map(function (p) {
+                    return '&nbsp;&nbsp;• <b>' + p.nombre + '</b>: pediste ' + p.cantidadSolicitada +
+                        ', solo se puede preparar <b>' + p.cantidadFinal + '</b>';
+                }).join('<br>')
+            );
+        }
+
+        bloques.push(
+            '<span style="color:var(--tc-teal);font-weight:600;">✅ Se envían a cocina:</span><br>' +
             itemsDisponibles.map(function (p) {
                 return '&nbsp;&nbsp;• <b>' + p.nombre + '</b> ×' + p.cantidad;
-            }).join('<br>') +
-            '<br><br>¿Confirmás el pedido <b>solo con los productos disponibles</b>, o preferís cancelar y editar el carrito?';
+            }).join('<br>')
+        );
+
+        document.getElementById('modal-titulo').textContent = 'Revisá el pedido antes de enviarlo';
+        document.getElementById('modal-cuerpo').innerHTML =
+            bloques.join('<br><br>') +
+            '<br><br>¿Confirmás el pedido con estos ajustes, o preferís cancelar y editar el carrito?';
         document.getElementById('modal-confirmar').style.display = '';
         document.getElementById('modal-confirmar').textContent = 'Confirmar y enviar';
         document.getElementById('modal-cancelar').textContent = 'Cancelar y editar';

@@ -119,5 +119,74 @@ namespace ProyectoJo.Application.UseCases
 
 			return $"Stock insuficiente para preparar este pedido. {detalle}";
 		}
+
+		public int SincronizarDesdeMenu(IEnumerable<Item> menu, string usuario)
+		{
+			var existentes = _repository.ObtenerTodos()
+				.Select(i => i.Nombre.Trim().ToLowerInvariant())
+				.ToHashSet();
+
+			var nombresDelMenu = menu
+				.SelectMany(item => (item.Ingredientes ?? string.Empty).Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
+				.Select(n => n.Trim())
+				.Where(n => n.Length > 0)
+				.GroupBy(n => n.ToLowerInvariant())
+				.Select(g => g.First()) // conserva la primera variante de capitalización encontrada
+				.ToList();
+
+			var nuevos = 0;
+			foreach (var nombre in nombresDelMenu)
+			{
+				if (existentes.Contains(nombre.ToLowerInvariant())) continue;
+
+				var insumo = new Insumo
+				{
+					Nombre = nombre,
+					Unidad = UnidadIngrediente.Unidad,
+					StockActual = 0,
+					StockMinimo = 0,
+					Activo = true
+				};
+
+				_repository.Agregar(insumo);
+				existentes.Add(nombre.ToLowerInvariant());
+				nuevos++;
+			}
+
+			if (nuevos > 0)
+			{
+				_auditoriaService.RegistrarAccion(
+					usuario: usuario,
+					modulo: "Insumos",
+					accion: TipoAccionAuditoria.Creacion,
+					entidad: "Sincronización desde menú",
+					detalleDespues: $"{nuevos} insumo(s) nuevo(s) creado(s) a partir de los ingredientes del menú"
+				);
+			}
+
+			return nuevos;
+		}
+
+		public int? ObtenerMaximoDisponible(Item item)
+		{
+			var nombres = (item.Ingredientes ?? string.Empty)
+				.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
+			if (nombres.Length == 0) return null;
+
+			var insumos = _repository.ObtenerTodos();
+			int? maximo = null;
+
+			foreach (var nombre in nombres)
+			{
+				var insumo = insumos.FirstOrDefault(i =>
+					string.Equals(i.Nombre.Trim(), nombre.Trim(), StringComparison.OrdinalIgnoreCase));
+
+				var disponible = insumo is null ? 0 : (int)Math.Floor(insumo.StockActual);
+				if (maximo is null || disponible < maximo) maximo = disponible;
+			}
+
+			return maximo;
+		}	
 	}
 }

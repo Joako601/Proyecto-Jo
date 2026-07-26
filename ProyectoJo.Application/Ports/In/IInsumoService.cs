@@ -1,5 +1,4 @@
 ﻿using ProyectoJo.Domain.Entities;
-using ProyectoJo.Application.Ports.Out;
 
 namespace ProyectoJo.Application.Ports.In
 {
@@ -13,5 +12,9 @@ namespace ProyectoJo.Application.Ports.In
 		bool Reponer(int id, decimal cantidad, string usuario);
 
 		Task<string?> VerificarYDescontarAsync(List<ItemPedido> items, Func<int, Receta?> obtenerRecetaPorItemId);
+
+		int SincronizarDesdeMenu(IEnumerable<Item> menu, string usuario);
+
+		int? ObtenerMaximoDisponible(Item item);
 	}
 }

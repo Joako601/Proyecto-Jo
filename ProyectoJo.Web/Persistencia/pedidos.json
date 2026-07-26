@@ -710,5 +710,37 @@
     "Estado": "Pagado",
     "FechaCreacion": "2026-07-25T02:14:09.9039817Z",
     "Total": 1290
+  },
+  {
+    "Id": 42,
+    "Mesa": "Para llevar",
+    "Items": [
+      {
+        "ItemId": 14,
+        "Nombre": "Hamburguesa Hawaiana",
+        "Cantidad": 1,
+        "PrecioUnitario": 105,
+        "Subtotal": 105
+      }
+    ],
+    "Estado": "Pendiente",
+    "FechaCreacion": "2026-07-26T16:00:32.5326188Z",
+    "Total": 105
+  },
+  {
+    "Id": 43,
+    "Mesa": "Para llevar",
+    "Items": [
+      {
+        "ItemId": 5,
+        "Nombre": "Salbute de Huevo",
+        "Cantidad": 1,
+        "PrecioUnitario": 25,
+        "Subtotal": 25
+      }
+    ],
+    "Estado": "Pendiente",
+    "FechaCreacion": "2026-07-26T16:10:48.4856948Z",
+    "Total": 25
   }
 ]

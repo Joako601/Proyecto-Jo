@@ -948,5 +948,25 @@
     "Entidad": "Opini\u00F3n #1 - Opini\u00F3n general",
     "DetalleAntes": null,
     "DetalleDespues": "3.0 estrellas - Rojo"
+  },
+  {
+    "Id": 96,
+    "FechaHora": "2026-07-26T09:59:37.5912601-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Insumos",
+    "Accion": 0,
+    "Entidad": "Insumo #3 - Queso",
+    "DetalleAntes": null,
+    "DetalleDespues": "Stock inicial: 0 Gramo"
+  },
+  {
+    "Id": 97,
+    "FechaHora": "2026-07-26T10:10:20.1213209-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Insumos",
+    "Accion": 0,
+    "Entidad": "Sincronizaci\u00F3n desde men\u00FA",
+    "DetalleAntes": null,
+    "DetalleDespues": "41 insumo(s) nuevo(s) creado(s) a partir de los ingredientes del men\u00FA"
   }
 ]

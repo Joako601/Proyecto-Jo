@@ -138,28 +138,13 @@
             <div class="tc-modulo__body">Gestión de opiniones de clientes.</div>
         </a>
     </div>
-</div>
-
-<div class="tc-section-label mt-4">Próximamente</div>
-<div class="row g-3">
-    @{
-        var proximamente = new List<(string T, string D, string Icon)>
-        {
-            ("Alerta de Stock", "Insumos críticos.", "bi-exclamation-triangle")
-        };
-    }
-    @foreach (var f in proximamente)
-    {
-        <div class="col-6 col-lg-3">
-            <div class="tc-modulo tc-modulo--pendiente">
-                <div class="tc-modulo__top">
-                    <div class="tc-modulo__title"><i class="bi @f.Icon"></i><span>@f.T</span></div>
-                </div>
-                <div class="tc-modulo__body">
-                    @f.D
-                    <div class="tc-modulo__pendiente-tag">Próximamente</div>
-                </div>
+    <div class="col-6 col-lg-3">
+        <a asp-area="Admin" asp-controller="Insumos" asp-action="Index" class="tc-modulo">
+            <div class="tc-modulo__top">
+                <div class="tc-modulo__title"><i class="bi bi-exclamation-triangle tc-icon--brick"></i><span>Alerta de Stock</span></div>
+                <span class="tc-modulo__arrow">→</span>
             </div>
-        </div>
-    }
+            <div class="tc-modulo__body">Insumos críticos y reposición.</div>
+        </a>
+    </div>
 </div>

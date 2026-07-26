@@ -1,0 +1,93 @@
+﻿@model List<ProyectoJo.Domain.Entities.Insumo>
+@{
+    ViewData["Title"] = "Alerta de Stock";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-shared.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/inventario/inventario.css" asp-append-version="true" />
+}
+
+<div class="admin-page">
+
+    <div class="page-header">
+        <div>
+            <a asp-area="Admin" asp-controller="Gestion" asp-action="Index" class="back-link">← Dashboard</a>
+            <h1>Alerta de Stock</h1>
+        </div>
+        <div class="d-flex gap-2">
+            <form asp-area="Admin" asp-controller="Insumos" asp-action="SincronizarDesdeMenu" method="post">
+                <button type="submit" class="btn-secondary">
+                    <i class="bi bi-arrow-repeat"></i> Sincronizar desde menú
+                </button>
+            </form>
+            <a asp-area="Admin" asp-controller="Insumos" asp-action="Crear" class="btn-primary">
+                <i class="bi bi-plus-lg"></i> Nuevo insumo
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["MensajeSincronizacion"] != null)
+    {
+        <div class="alert-error" style="background:var(--tc-teal-100,#e6f4f1); border-color:var(--tc-teal,#2f6f62); color:var(--tc-teal-900,#1c443b);">
+            @TempData["MensajeSincronizacion"]
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <p class="empty-state">Todavía no cargaste ningún insumo. Probá "Sincronizar desde menú" para partir de los ingredientes ya declarados en tus platillos.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="admin-table inv-table">
+                <thead>
+                    <tr>
+                        <th>Insumo</th>
+                        <th>Stock actual</th>
+                        <th>Stock mínimo</th>
+                        <th>Unidad</th>
+                        <th>Estado</th>
+                        <th>Reponer</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var insumo in Model)
+                    {
+                        var estadoClase = insumo.Agotado ? "tc-value--brick" : insumo.StockBajo ? "tc-value--mustard" : "tc-value--teal";
+                        var estadoTexto = insumo.Agotado ? "Agotado" : insumo.StockBajo ? "Stock bajo" : "OK";
+
+                        <tr class="@(!insumo.Activo ? "inv-fila--inactiva" : "")">
+                            <td data-label="Insumo" class="inv-nombre">@insumo.Nombre</td>
+                            <td data-label="Stock actual">@insumo.StockActual.ToString("0.##")</td>
+                            <td data-label="Stock mínimo">@insumo.StockMinimo.ToString("0.##")</td>
+                            <td data-label="Unidad">@insumo.Unidad</td>
+                            <td data-label="Estado">
+                                <span class="tc-value @estadoClase" style="font-size:.85rem;">@estadoTexto</span>
+                            </td>
+                            <td data-label="Reponer" class="acciones">
+                                <form asp-area="Admin" asp-controller="Insumos" asp-action="Reponer" method="post" class="d-flex gap-1">
+                                    <input type="hidden" name="id" value="@insumo.Id" />
+                                    <input type="number" name="cantidad" min="0.01" step="0.01" class="form-control-sm" style="width:90px;" placeholder="Cant." required />
+                                    <button type="submit" class="btn-secondary" title="Reponer stock"><i class="bi bi-plus-circle"></i></button>
+                                </form>
+                            </td>
+                            <td data-label="" class="acciones">
+                                <a asp-area="Admin" asp-controller="Insumos" asp-action="Editar" asp-route-id="@insumo.Id" class="btn-secondary" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form asp-area="Admin" asp-controller="Insumos" asp-action="Eliminar" asp-route-id="@insumo.Id" method="post" class="d-inline"
+                                      onsubmit="return confirm('¿Eliminar este insumo?');">
+                                    <button type="submit" class="btn-secondary" title="Eliminar"><i class="bi bi-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

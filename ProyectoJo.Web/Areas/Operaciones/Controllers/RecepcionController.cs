@@ -11,26 +11,53 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 	{
 		private readonly IPedidoService _pedidoService;
 		private readonly IProductoService _productoService;
+		private readonly IInsumoService _insumoService;
 		private readonly ILogger<RecepcionController> _logger;
 
-		public RecepcionController(IPedidoService pedidoService, IProductoService productoService, ILogger<RecepcionController> logger)
+		public RecepcionController(
+			IPedidoService pedidoService,
+			IProductoService productoService,
+			IInsumoService insumoService,
+			ILogger<RecepcionController> logger)
 		{
 			_pedidoService = pedidoService;
 			_productoService = productoService;
+			_insumoService = insumoService;
 			_logger = logger;
 		}
 
 		// GET /Operaciones/Recepcion
 		public IActionResult Index() => View();
 
-		// GET /Operaciones/Recepcion/ObtenerMenu 
+		// GET /Operaciones/Recepcion/ObtenerMenu
 		[HttpGet]
 		public IActionResult ObtenerMenu()
 		{
 			try
 			{
 				var menu = _productoService.ObtenerMenu();
-				return Json(menu);
+
+				var menuConStock = menu.Select(item =>
+				{
+					var stockMaximo = _insumoService.ObtenerMaximoDisponible(item);
+					return new
+					{
+						item.Id,
+						item.Platillo,
+						item.Categoria,
+						item.Precio,
+						item.Descripcion,
+						item.Base,
+						item.Activo,
+						item.ImagenUrl,
+						item.Ingredientes,
+						// Agotado real: manual (Admin) O sin stock de algún ingrediente
+						Agotado = item.Agotado || stockMaximo == 0,
+						StockMaximo = stockMaximo
+					};
+				});
+
+				return Json(menuConStock);
 			}
 			catch (Exception ex)
 			{

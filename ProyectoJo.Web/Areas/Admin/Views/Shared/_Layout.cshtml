@@ -75,6 +75,11 @@
                     <i class="bi bi-megaphone"></i> Promociones
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link @(EsActivo("Insumos") ? "active" : "")" asp-area="Admin" asp-controller="Insumos" asp-action="Index">
+                    <i class="bi bi-exclamation-triangle"></i> Alerta de Stock
+                </a>
+            </li>
         </ul>
 
         <div class="sidebar__section-label">Finanzas</div>

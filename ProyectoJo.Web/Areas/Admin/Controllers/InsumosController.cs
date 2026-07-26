@@ -10,10 +10,12 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 	public class InsumosController : Controller
 	{
 		private readonly IInsumoService _insumoService;
+		private readonly IProductoService _productoService;
 
-		public InsumosController(IInsumoService insumoService)
+		public InsumosController(IInsumoService insumoService, IProductoService productoService)
 		{
 			_insumoService = insumoService;
+			_productoService = productoService;
 		}
 
 		// GET: /Admin/Insumos
@@ -68,6 +70,20 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		public IActionResult Eliminar(int id)
 		{
 			_insumoService.Eliminar(id, User.Identity?.Name ?? "Desconocido");
+			return RedirectToAction(nameof(Index));
+		}
+
+		// POST: /Admin/Insumos/SincronizarDesdeMenu
+		[HttpPost]
+		public IActionResult SincronizarDesdeMenu()
+		{
+			var menu = _productoService.ObtenerMenu();
+			var nuevos = _insumoService.SincronizarDesdeMenu(menu, User.Identity?.Name ?? "Desconocido");
+
+			TempData["MensajeSincronizacion"] = nuevos > 0
+				? $"Se crearon {nuevos} insumo(s) nuevo(s) a partir del menú."
+				: "El menú no tiene ingredientes nuevos para sincronizar.";
+
 			return RedirectToAction(nameof(Index));
 		}
 	}

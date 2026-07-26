@@ -8,7 +8,34 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
     margin-bottom: 16px;
+}
+
+@media (max-width: 575.98px) {
+    .page-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .header-actions {
+        gap: 8px;
+    }
+
+        .header-actions .tc-tab {
+            flex: 1 1 auto;
+            text-align: center;
+            padding: 8px 6px;
+        }
+
+    .btn-primary {
+        margin-left: 0;
+        width: 100%;
+        justify-content: center;
+        order: 2;
+        margin-top: 4px;
+    }
 }
 
 .back-link {
@@ -35,6 +62,7 @@
 .header-actions {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 2px;
 }
 
@@ -264,6 +292,34 @@
     font-size: 11px;
     color: var(--tc-ink-muted);
     text-align: right;
+}
+
+@media (max-width: 575.98px) {
+    .categoria-fila {
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+            "nombre nombre"
+            "barra barra"
+            "total count";
+        row-gap: 6px;
+    }
+
+    .categoria-nombre {
+        grid-area: nombre;
+    }
+
+    .categoria-barra-wrap {
+        grid-area: barra;
+    }
+
+    .categoria-total {
+        grid-area: total;
+        text-align: left;
+    }
+
+    .categoria-count {
+        grid-area: count;
+    }
 }
 
 /* --- Gráficas --- */

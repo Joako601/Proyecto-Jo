@@ -6,6 +6,7 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-shared.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/auditoria/auditoria.css" asp-append-version="true" />
 }
 
 <div class="admin-page">
@@ -18,58 +19,69 @@
     </div>
 
     <form method="get" asp-action="Index" class="admin-filtros">
-        <input type="text" name="modulo" value="@Context.Request.Query["modulo"]" placeholder="Módulo (ej. Finanzas)" />
-        <input type="date" name="desde" value="@Context.Request.Query["desde"]" />
-        <input type="date" name="hasta" value="@Context.Request.Query["hasta"]" />
+        <div class="admin-filtros__campo">
+            <label for="filtroModulo">Módulo</label>
+            <input type="text" id="filtroModulo" name="modulo" value="@Context.Request.Query["modulo"]" placeholder="ej. Finanzas" />
+        </div>
+        <div class="admin-filtros__campo">
+            <label for="filtroDesde">Desde</label>
+            <input type="date" id="filtroDesde" name="desde" value="@Context.Request.Query["desde"]" />
+        </div>
+        <div class="admin-filtros__campo">
+            <label for="filtroHasta">Hasta</label>
+            <input type="date" id="filtroHasta" name="hasta" value="@Context.Request.Query["hasta"]" />
+        </div>
         <button type="submit" class="btn-primary">Filtrar</button>
     </form>
 
-    <table class="admin-table">
-        <thead>
-            <tr>
-                <th>Fecha y hora</th>
-                <th>Usuario</th>
-                <th>Módulo</th>
-                <th>Acción</th>
-                <th>Entidad</th>
-                <th>Detalle</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var registro in Model)
-            {
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
                 <tr>
-                    <td>@registro.FechaHora.ToString("dd/MM/yyyy HH:mm")</td>
-                    <td>@registro.Usuario</td>
-                    <td>@registro.Modulo</td>
-                    <td>
-                        <span class="tag--@registro.Accion.ToString().ToLower()">@registro.Accion</span>
-                    </td>
-                    <td>@registro.Entidad</td>
-                    <td>
-                        @if (!string.IsNullOrWhiteSpace(registro.DetalleAntes) || !string.IsNullOrWhiteSpace(registro.DetalleDespues))
-                        {
-                            <details>
-                                <summary>Ver cambios</summary>
-                                @if (!string.IsNullOrWhiteSpace(registro.DetalleAntes))
-                                {
-                                    <p><strong>Antes:</strong> @registro.DetalleAntes</p>
-                                }
-                                @if (!string.IsNullOrWhiteSpace(registro.DetalleDespues))
-                                {
-                                    <p><strong>Después:</strong> @registro.DetalleDespues</p>
-                                }
-                            </details>
-                        }
-                        else
-                        {
-                            <span>—</span>
-                        }
-                    </td>
+                    <th>Fecha y hora</th>
+                    <th>Usuario</th>
+                    <th>Módulo</th>
+                    <th>Acción</th>
+                    <th>Entidad</th>
+                    <th>Detalle</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var registro in Model)
+                {
+                    <tr>
+                        <td data-label="Fecha y hora">@registro.FechaHora.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td data-label="Usuario">@registro.Usuario</td>
+                        <td data-label="Módulo">@registro.Modulo</td>
+                        <td data-label="Acción">
+                            <span class="tag--@registro.Accion.ToString().ToLower()">@registro.Accion</span>
+                        </td>
+                        <td data-label="Entidad">@registro.Entidad</td>
+                        <td data-label="Detalle">
+                            @if (!string.IsNullOrWhiteSpace(registro.DetalleAntes) || !string.IsNullOrWhiteSpace(registro.DetalleDespues))
+                            {
+                                <details>
+                                    <summary>Ver cambios</summary>
+                                    @if (!string.IsNullOrWhiteSpace(registro.DetalleAntes))
+                                    {
+                                        <p><strong>Antes:</strong> @registro.DetalleAntes</p>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(registro.DetalleDespues))
+                                    {
+                                        <p><strong>Después:</strong> @registro.DetalleDespues</p>
+                                    }
+                                </details>
+                            }
+                            else
+                            {
+                                <span>—</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
     @if (!Model.Any())
     {

@@ -243,12 +243,18 @@ body {
     .main-content {
         padding: 16px;
     }
+
+    .tc-user-chip {
+        padding: 5px;
+    }
+
+    .tc-user-chip__name {
+        display: none;
+    }
 }
 
 /* ============================================
-   Tablas del panel: en desktop/tablet ancha son
-   tablas normales; en celular se REDISTRIBUYEN
-   como tarjetas apiladas (no se fuerza el scroll)
+   Tablas del panel
    ============================================ */
 .table-responsive {
     -webkit-overflow-scrolling: touch;
@@ -274,14 +280,26 @@ body {
         }
 
     .tc-topbar {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
+        flex-wrap: wrap;
+        row-gap: 10px;
+        column-gap: 12px;
+        padding-bottom: 16px;
     }
 
+        .tc-topbar > div:first-child {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
     .tc-topbar__right {
-        width: 100%;
-        justify-content: space-between;
+        flex: 0 0 auto;
+    }
+
+    .tc-user-chip__name {
+        max-width: 90px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     /* --- Conversión de tabla a tarjetas --- */
@@ -558,7 +576,7 @@ body {
 
 
 /* ============================================
-   Login — sin sidebar, pantalla completa
+   Login 
    ============================================ */
 .tc-auth-body {
     background-color: var(--tc-stone);

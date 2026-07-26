@@ -1,0 +1,69 @@
+﻿/* ============================================
+   Inventario — Switch de disponibilidad
+   ============================================ */
+.inv-switches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.inv-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 0.5px solid var(--tc-border-soft);
+    background: #fff;
+    color: var(--tc-ink-muted);
+    font-size: 11.5px;
+    font-weight: 600;
+    font-family: var(--tc-font-body);
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+    .inv-switch:hover {
+        border-color: #b8b0a0;
+    }
+
+    .inv-switch:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+.inv-switch--on {
+    background: var(--tc-teal-ink);
+    border-color: var(--tc-teal);
+    color: var(--tc-teal);
+}
+
+.inv-switch--warn {
+    background: rgba(217, 164, 65, 0.15);
+    border-color: var(--tc-mustard);
+    color: var(--tc-mustard-link);
+}
+
+.inv-fila--inactiva {
+    opacity: 0.55;
+}
+
+.inv-nombre {
+    font-weight: 600;
+    color: var(--tc-ink);
+}
+
+.inv-nota {
+    font-family: var(--tc-font-mono);
+    color: var(--tc-ink-muted);
+    font-size: 12px;
+    margin-top: 12px;
+}
+
+@media (max-width: 575.98px) {
+    .inv-switches {
+        justify-content: flex-start;
+    }
+}

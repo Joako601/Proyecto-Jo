@@ -119,42 +119,44 @@
 
     @* Tabla tendencia mensual *@
     <h2 class="seccion-titulo">Tendencia mensual</h2>
-    <table class="admin-table">
-        <thead>
-            <tr>
-                <th>Mes</th>
-                <th>Ingresos</th>
-                <th>Egresos</th>
-                <th>Saldo neto</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var t in Model.UltimosSeisMeses)
-            {
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
                 <tr>
-                    <td>@t.Etiqueta</td>
-                    <td class="cifra-ingreso">$@t.Ingresos.ToString("N2")</td>
-                    <td class="cifra-egreso">$@t.Egresos.ToString("N2")</td>
-                    <td class="@(t.SaldoNeto >= 0 ? "cifra-positivo" : "cifra-negativo")">$@t.SaldoNeto.ToString("N2")</td>
-                    <td>
-                        @if (t.Ingresos == 0 && t.Egresos == 0)
-                        {
-                            <span class="badge-mes badge-mes--vacio">Sin movimientos</span>
-                        }
-                        else if (t.SaldoNeto >= 0)
-                        {
-                            <span class="badge-mes badge-mes--positivo">✓ Positivo</span>
-                        }
-                        else
-                        {
-                            <span class="badge-mes badge-mes--negativo">✕ Negativo</span>
-                        }
-                    </td>
+                    <th>Mes</th>
+                    <th>Ingresos</th>
+                    <th>Egresos</th>
+                    <th>Saldo neto</th>
+                    <th>Estado</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var t in Model.UltimosSeisMeses)
+                {
+                    <tr>
+                        <td data-label="Mes">@t.Etiqueta</td>
+                        <td data-label="Ingresos" class="cifra-ingreso">$@t.Ingresos.ToString("N2")</td>
+                        <td data-label="Egresos" class="cifra-egreso">$@t.Egresos.ToString("N2")</td>
+                        <td data-label="Saldo neto" class="@(t.SaldoNeto >= 0 ? "cifra-positivo" : "cifra-negativo")">$@t.SaldoNeto.ToString("N2")</td>
+                        <td data-label="Estado">
+                            @if (t.Ingresos == 0 && t.Egresos == 0)
+                            {
+                                <span class="badge-mes badge-mes--vacio">Sin movimientos</span>
+                            }
+                            else if (t.SaldoNeto >= 0)
+                            {
+                                <span class="badge-mes badge-mes--positivo">✓ Positivo</span>
+                            }
+                            else
+                            {
+                                <span class="badge-mes badge-mes--negativo">✕ Negativo</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
     @* Top categorías con barra *@
     <h2 class="seccion-titulo">Top 5 categorías con más egresos</h2>

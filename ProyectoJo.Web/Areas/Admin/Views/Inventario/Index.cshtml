@@ -14,89 +14,91 @@
         .ToList();
 }
 
-<div class="mb-3">
-    <a asp-area="Admin" asp-controller="Gestion" asp-action="Index"
-       class="text-muted text-decoration-none">
-        <i class="bi bi-arrow-left"></i> Volver al dashboard
-    </a>
-</div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-shared.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-index.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/inventario/inventario.css" asp-append-version="true" />
+}
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">Switch Inventario</h2>
-</div>
+<div class="admin-page">
 
-<form method="get" class="row g-2 mb-4">
-    <div class="col-md-5">
-        <input type="text" name="busqueda" value="@busqueda"
-               class="form-control" placeholder="Buscar por nombre..." />
-    </div>
-    <div class="col-md-4">
-        <select name="categoria" class="form-select">
-            <option value="">Todas las categorías</option>
-            @foreach (var cat in categorias)
-            {
-                <option value="@cat" selected="@(cat == categoriaFiltro)">@cat</option>
-            }
-        </select>
-    </div>
-    <div class="col-md-2">
-        <button type="submit" class="btn btn-outline-secondary w-100">
-            <i class="bi bi-search"></i> Filtrar
-        </button>
-    </div>
-    @if (!string.IsNullOrEmpty(busqueda) || !string.IsNullOrEmpty(categoriaFiltro))
-    {
-        <div class="col-md-1">
-            <a asp-area="Admin" asp-controller="Inventario" asp-action="Index"
-               class="btn btn-outline-danger w-100" title="Limpiar filtros">
-                <i class="bi bi-x-lg"></i>
-            </a>
+    <div class="page-header">
+        <div>
+            <a asp-area="Admin" asp-controller="Gestion" asp-action="Index" class="back-link">← Dashboard</a>
+            <h1>Switch Inventario</h1>
         </div>
-    }
-</form>
+    </div>
 
-<table class="table table-hover align-middle">
-    <thead class="table-light">
-        <tr>
-            <th>Platillo</th>
-            <th>Categoría</th>
-            <th>Precio</th>
-            <th class="text-center">Visible en menú</th>
-            <th class="text-center">Disponibilidad</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in resultado)
-        {
-            <tr class="@(!item.Activo ? "table-secondary text-muted" : "")">
-                <td>@item.Platillo</td>
-                <td>@item.Categoria</td>
-                <td>$@item.Precio.ToString("N2")</td>
-                <td class="text-center">
-                    <form asp-area="Admin" asp-controller="Inventario"
-                          asp-action="ToggleActivo" asp-route-id="@item.Id" method="post">
-                        <input type="hidden" name="origen" value="Inventario" />
-                        <button type="submit"
-                                class="btn btn-sm @(item.Activo ? "btn-success" : "btn-outline-secondary")">
-                            <i class="bi @(item.Activo ? "bi-eye" : "bi-eye-slash")"></i>
-                            @(item.Activo ? "Activo" : "Oculto")
-                        </button>
-                    </form>
-                </td>
-                <td class="text-center">
-                    <form asp-area="Admin" asp-controller="Inventario"
-                          asp-action="ToggleAgotado" asp-route-id="@item.Id" method="post">
-                        <input type="hidden" name="origen" value="Inventario" />
-                        <button type="submit"
-                                class="btn btn-sm @(item.Agotado ? "btn-warning" : "btn-outline-secondary")"
-                                @(!item.Activo ? "disabled" : "")>
-                            <i class="bi @(item.Agotado ? "bi-x-circle" : "bi-check-circle")"></i>
-                            @(item.Agotado ? "Agotado" : "Disponible")
-                        </button>
-                    </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-<p class="text-muted small">Mostrando @resultado.Count de @Model.Count() platillos</p>
+    <div class="filtro-bar">
+        <form method="get" class="filtro-form">
+            <input type="text" name="busqueda" value="@busqueda" class="form-control-sm" placeholder="Buscar por nombre..." />
+            <select name="categoria" class="form-control-sm">
+                <option value="">Todas las categorías</option>
+                @foreach (var cat in categorias)
+                {
+                    <option value="@cat" selected="@(cat == categoriaFiltro)">@cat</option>
+                }
+            </select>
+            <button type="submit" class="btn-secondary">Filtrar</button>
+            @if (!string.IsNullOrEmpty(busqueda) || !string.IsNullOrEmpty(categoriaFiltro))
+            {
+                <a asp-area="Admin" asp-controller="Inventario" asp-action="Index" class="btn-secondary" title="Limpiar filtros">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+            }
+        </form>
+    </div>
+
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Platillo</th>
+                    <th>Categoría</th>
+                    <th>Precio</th>
+                    <th>Visible en menú</th>
+                    <th>Disponibilidad</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in resultado)
+                {
+                    <tr class="@(!item.Activo ? "inv-fila--inactiva" : "")">
+                        <td data-label="Platillo" class="inv-nombre">@item.Platillo</td>
+                        <td data-label="Categoría">@item.Categoria</td>
+                        <td data-label="Precio">$@item.Precio.ToString("N2")</td>
+                        <td data-label="Visible en menú" class="acciones">
+                            <div class="inv-switches">
+                                <form asp-area="Admin" asp-controller="Inventario"
+                                      asp-action="ToggleActivo" asp-route-id="@item.Id" method="post">
+                                    <input type="hidden" name="origen" value="Inventario" />
+                                    <button type="submit" class="inv-switch @(item.Activo ? "inv-switch--on" : "")">
+                                        <i class="bi @(item.Activo ? "bi-eye" : "bi-eye-slash")"></i>
+                                        @(item.Activo ? "Activo" : "Oculto")
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                        <td data-label="Disponibilidad" class="acciones">
+                            <div class="inv-switches">
+                                <form asp-area="Admin" asp-controller="Inventario"
+                                      asp-action="ToggleAgotado" asp-route-id="@item.Id" method="post">
+                                    <input type="hidden" name="origen" value="Inventario" />
+                                    <button type="submit"
+                                            class="inv-switch @(item.Agotado ? "inv-switch--warn" : "")"
+                                        @(!item.Activo ? "disabled" : "")>
+                                        <i class="bi @(item.Agotado ? "bi-x-circle" : "bi-check-circle")"></i>
+                                        @(item.Agotado ? "Agotado" : "Disponible")
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <p class="inv-nota">Mostrando @resultado.Count de @Model.Count() platillos</p>
+
+</div>

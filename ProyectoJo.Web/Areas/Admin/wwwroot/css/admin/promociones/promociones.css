@@ -437,6 +437,12 @@
     font-weight: 600;
 }
 
+.promo-divider {
+    border: none;
+    border-top: 1px dashed var(--tc-border-soft, #c9bfa8);
+    margin: 20px 0;
+}
+
 /* ============================================================
    Responsivo
    ============================================================ */

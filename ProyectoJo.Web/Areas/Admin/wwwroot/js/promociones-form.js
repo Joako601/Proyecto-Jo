@@ -99,63 +99,51 @@
         });
     }
 
-    // ---------- Mostrar/ocultar según Tipo de descuento ----------
-    const tipoSelect = document.getElementById('TipoDescuento');
+    // ---------- Descuento: switch independiente de imagen/platillos ----------
+    // El campo real que usa el backend es el hidden #TipoDescuento. El switch
+    // "aplicarDescuento" y el select "tipoDescuentoReal" son solo UI: entre los
+    // dos deciden qué valor tiene ese hidden. La imagen y los platillos nunca
+    // dependen de esto, así que no se tocan acá.
+    const chkAplicarDescuento = document.getElementById('aplicarDescuento');
+    const campoTipoReal = document.getElementById('campo-tipo-descuento-real');
+    const tipoDescuentoRealSelect = document.getElementById('tipoDescuentoReal');
+    const tipoDescuentoHidden = document.getElementById('TipoDescuento');
     const campoDescuento = document.getElementById('campo-descuento');
-    const campoPlatillos = document.getElementById('campo-platillos');
-    const campoAplicarPlatillos = document.getElementById('campo-aplicar-platillos');
-    const chkAplicarPlatillos = document.getElementById('aplicarPlatillos');
-    const campoSubTipoDescuento = document.getElementById('campo-sub-tipo-descuento');
-    const subTipoDescuento = document.getElementById('subTipoDescuento');
     const valorDescuentoUnidad = document.getElementById('valorDescuentoUnidad');
 
-    function actualizarUnidadValorDescuento() {
-        if (!valorDescuentoUnidad || !tipoSelect) return;
-        if (tipoSelect.value === 'Porcentaje') {
+    function actualizarUnidad() {
+        if (!valorDescuentoUnidad || !tipoDescuentoRealSelect) return;
+        if (tipoDescuentoRealSelect.value === 'Porcentaje') {
             valorDescuentoUnidad.textContent = '(%)';
-        } else if (tipoSelect.value === 'MontoFijo') {
+        } else if (tipoDescuentoRealSelect.value === 'MontoFijo') {
             valorDescuentoUnidad.textContent = '($)';
         } else {
             valorDescuentoUnidad.textContent = '';
         }
     }
 
-    function actualizarCampos() {
-        if (!tipoSelect) return;
-        const esAnuncio = tipoSelect.value === 'Ninguno';
-        const aplicarAPlatillos = !!(chkAplicarPlatillos && chkAplicarPlatillos.checked);
+    function actualizarDescuento() {
+        const aplica = !!(chkAplicarDescuento && chkAplicarDescuento.checked);
 
-        if (esAnuncio) {
-            if (campoAplicarPlatillos) campoAplicarPlatillos.style.display = '';
-            if (campoPlatillos) campoPlatillos.style.display = aplicarAPlatillos ? '' : 'none';
-            if (campoSubTipoDescuento) campoSubTipoDescuento.style.display = aplicarAPlatillos ? '' : 'none';
-            if (campoDescuento) campoDescuento.style.display = 'none';
-        } else {
-            if (campoAplicarPlatillos) campoAplicarPlatillos.style.display = 'none';
-            if (campoSubTipoDescuento) campoSubTipoDescuento.style.display = 'none';
-            if (campoPlatillos) campoPlatillos.style.display = '';
-            if (campoDescuento) campoDescuento.style.display = '';
+        if (campoTipoReal) campoTipoReal.style.display = aplica ? '' : 'none';
+        if (campoDescuento) campoDescuento.style.display = aplica ? '' : 'none';
+
+        if (tipoDescuentoHidden) {
+            tipoDescuentoHidden.value = aplica
+                ? (tipoDescuentoRealSelect ? tipoDescuentoRealSelect.value : 'Porcentaje')
+                : 'Ninguno';
         }
 
-        actualizarUnidadValorDescuento();
+        actualizarUnidad();
     }
 
-    if (tipoSelect) {
-        tipoSelect.addEventListener('change', actualizarCampos);
-        actualizarCampos();
+    if (chkAplicarDescuento) {
+        chkAplicarDescuento.addEventListener('change', actualizarDescuento);
     }
-
-    if (chkAplicarPlatillos) {
-        chkAplicarPlatillos.addEventListener('change', actualizarCampos);
+    if (tipoDescuentoRealSelect) {
+        tipoDescuentoRealSelect.addEventListener('change', actualizarDescuento);
     }
-
-    if (subTipoDescuento) {
-        subTipoDescuento.addEventListener('change', function () {
-            if (!subTipoDescuento.value) return;
-            tipoSelect.value = subTipoDescuento.value;
-            actualizarCampos();
-        });
-    }
+    actualizarDescuento();
 
     // ---------- Siempre activa / fechas ----------
     const siempreActiva = document.getElementById('siempreActiva');

@@ -5,7 +5,7 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
     var platillos = (ViewBag.Platillos as List<ProyectoJo.Domain.Entities.Item>) ?? new List<ProyectoJo.Domain.Entities.Item>();
     var esPermanente = Model.FechaInicio == null && Model.FechaFin == null;
-    var esAnuncioConPlatillos = Model.TipoDescuento == ProyectoJo.Domain.Entities.TipoDescuento.Ninguno && Model.ItemIds != null && Model.ItemIds.Any();
+    var tieneDescuento = Model.TipoDescuento != ProyectoJo.Domain.Entities.TipoDescuento.Ninguno;
 }
 
 @section Styles {
@@ -66,36 +66,6 @@
         </div>
 
         <div class="form-group">
-            <label>Tipo de descuento</label>
-            <select asp-for="TipoDescuento" id="TipoDescuento" class="form-control">
-                <option value="Ninguno">Banner</option>
-                <option value="Porcentaje">Porcentaje (%)</option>
-                <option value="MontoFijo">Pesos ($)</option>
-            </select>
-            <span asp-validation-for="TipoDescuento" class="field-error"></span>
-        </div>
-
-        <div class="form-group" id="campo-descuento">
-            <label asp-for="ValorDescuento">Valor del descuento <span id="valorDescuentoUnidad" class="text-muted"></span></label>
-            <input asp-for="ValorDescuento" type="number" step="0.01" class="form-control" />
-            <span asp-validation-for="ValorDescuento" class="field-error"></span>
-        </div>
-
-        <div class="form-check form-switch tc-switch-row" id="campo-aplicar-platillos">
-            <input class="form-check-input" type="checkbox" id="aplicarPlatillos" />
-            <label for="aplicarPlatillos">Aplicar también a platillos específicos</label>
-        </div>
-
-        <div class="form-group" id="campo-sub-tipo-descuento">
-            <label for="subTipoDescuento">¿También querés aplicar un descuento?</label>
-            <select id="subTipoDescuento" class="form-control">
-                <option value="">Solo mostrar platillos (sin descuento)</option>
-                <option value="Porcentaje">Porcentaje (%)</option>
-                <option value="MontoFijo">Monto fijo ($)</option>
-            </select>
-        </div>
-
-        <div class="form-group" id="campo-platillos">
             <label>Platillos a los que aplica</label>
             <div class="promo-checklist">
                 @if (!platillos.Any())
@@ -116,6 +86,31 @@
                 }
             </div>
             <span class="promo-hint">Si no marcás ningún platillo, la promoción se muestra como anuncio general en el menú.</span>
+        </div>
+
+        <hr class="promo-divider" />
+
+        <input type="hidden" asp-for="TipoDescuento" id="TipoDescuento" />
+
+        <div class="form-check form-switch tc-switch-row">
+            <input class="form-check-input" type="checkbox" id="aplicarDescuento" checked="@tieneDescuento" />
+            <label for="aplicarDescuento">¿Aplicar un descuento a esta promoción?</label>
+        </div>
+
+        <div class="form-group" id="campo-tipo-descuento-real">
+            <label for="tipoDescuentoReal">Tipo de descuento</label>
+            <select id="tipoDescuentoReal" class="form-control">
+                <option value="Porcentaje" selected="@(Model.TipoDescuento == ProyectoJo.Domain.Entities.TipoDescuento.Porcentaje)">Porcentaje (%)</option>
+                <option value="MontoFijo" selected="@(Model.TipoDescuento == ProyectoJo.Domain.Entities.TipoDescuento.MontoFijo)">Monto fijo ($)</option>
+            </select>
+        </div>
+
+        <div class="form-group" id="campo-descuento">
+            <label asp-for="ValorDescuento">
+                Valor del descuento <span id="valorDescuentoUnidad" class="text-muted"></span>
+            </label>
+            <input asp-for="ValorDescuento" type="number" step="0.01" class="form-control" />
+            <span asp-validation-for="ValorDescuento" class="field-error"></span>
         </div>
 
         <div class="row">

@@ -12,12 +12,27 @@
         .Where(i => string.IsNullOrEmpty(busqueda) || i.Platillo.Contains(busqueda, StringComparison.OrdinalIgnoreCase))
         .Where(i => string.IsNullOrEmpty(categoriaFiltro) || i.Categoria == categoriaFiltro)
         .ToList();
+
+    const int PorPagina = 12;
+    var totalPaginas = (int)Math.Ceiling(resultado.Count / (double)PorPagina);
+    var paginaActual = int.TryParse(Context.Request.Query["pagina"], out var p) ? p : 1;
+    if (paginaActual < 1) paginaActual = 1;
+    if (totalPaginas > 0 && paginaActual > totalPaginas) paginaActual = totalPaginas;
+
+    var paginado = resultado
+        .Skip((paginaActual - 1) * PorPagina)
+        .Take(PorPagina)
+        .ToList();
+
+    var desdeItem = resultado.Any() ? ((paginaActual - 1) * PorPagina) + 1 : 0;
+    var hastaItem = ((paginaActual - 1) * PorPagina) + paginado.Count;
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-shared.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-index.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin/inventario/inventario.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/paginador/paginador.css" asp-append-version="true" />
 }
 
 <div class="admin-page">
@@ -49,63 +64,72 @@
         </form>
     </div>
 
-    <div class="table-responsive">
-        <table class="admin-table inv-table">
-            <colgroup>
-                <col class="col-platillo" />
-                <col class="col-categoria" />
-                <col class="col-precio" />
-                <col class="col-visible" />
-                <col class="col-disponible" />
-            </colgroup>
-            <thead>
-                <tr>
-                    <th>Platillo</th>
-                    <th>Categoría</th>
-                    <th>Precio</th>
-                    <th>Visible en menú</th>
-                    <th>Disponibilidad</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in resultado)
-                {
-                    <tr class="@(!item.Activo ? "inv-fila--inactiva" : "")">
-                        <td data-label="Platillo" class="inv-nombre">@item.Platillo</td>
-                        <td data-label="Categoría">@item.Categoria</td>
-                        <td data-label="Precio">$@item.Precio.ToString("N2")</td>
-                        <td data-label="Visible en menú" class="acciones">
-                            <div class="inv-switches">
-                                <form asp-area="Admin" asp-controller="Inventario"
-                                      asp-action="ToggleActivo" asp-route-id="@item.Id" method="post">
-                                    <input type="hidden" name="origen" value="Inventario" />
-                                    <button type="submit" class="inv-switch @(item.Activo ? "inv-switch--on" : "")">
-                                        <i class="bi @(item.Activo ? "bi-eye" : "bi-eye-slash")"></i>
-                                        @(item.Activo ? "Activo" : "Oculto")
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                        <td data-label="Disponibilidad" class="acciones">
-                            <div class="inv-switches">
-                                <form asp-area="Admin" asp-controller="Inventario"
-                                      asp-action="ToggleAgotado" asp-route-id="@item.Id" method="post">
-                                    <input type="hidden" name="origen" value="Inventario" />
-                                    <button type="submit"
-                                            class="inv-switch @(item.Agotado ? "inv-switch--warn" : "")"
-                                        @(!item.Activo ? "disabled" : "")>
-                                        <i class="bi @(item.Agotado ? "bi-x-circle" : "bi-check-circle")"></i>
-                                        @(item.Agotado ? "Agotado" : "Disponible")
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
+    @if (!resultado.Any())
+    {
+        <p class="empty-state">No se encontraron platillos con esos filtros.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="admin-table inv-table">
+                <colgroup>
+                    <col class="col-platillo" />
+                    <col class="col-categoria" />
+                    <col class="col-precio" />
+                    <col class="col-visible" />
+                    <col class="col-disponible" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>Platillo</th>
+                        <th>Categoría</th>
+                        <th>Precio</th>
+                        <th>Visible en menú</th>
+                        <th>Disponibilidad</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-
-    <p class="inv-nota">Mostrando @resultado.Count de @Model.Count() platillos</p>
+                </thead>
+                <tbody>
+                    @foreach (var item in paginado)
+                    {
+                        <tr class="@(!item.Activo ? "inv-fila--inactiva" : "")">
+                            <td data-label="Platillo" class="inv-nombre">@item.Platillo</td>
+                            <td data-label="Categoría">@item.Categoria</td>
+                            <td data-label="Precio">$@item.Precio.ToString("N2")</td>
+                            <td data-label="Visible en menú" class="acciones">
+                                <div class="inv-switches">
+                                    <form asp-area="Admin" asp-controller="Inventario"
+                                          asp-action="ToggleActivo" asp-route-id="@item.Id" method="post">
+                                        <input type="hidden" name="origen" value="Inventario" />
+                                        <button type="submit" class="inv-switch @(item.Activo ? "inv-switch--on" : "")">
+                                            <i class="bi @(item.Activo ? "bi-eye" : "bi-eye-slash")"></i>
+                                            @(item.Activo ? "Activo" : "Oculto")
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                            <td data-label="Disponibilidad" class="acciones">
+                                <div class="inv-switches">
+                                    <form asp-area="Admin" asp-controller="Inventario"
+                                          asp-action="ToggleAgotado" asp-route-id="@item.Id" method="post">
+                                        <input type="hidden" name="origen" value="Inventario" />
+                                        <button type="submit"
+                                                class="inv-switch @(item.Agotado ? "inv-switch--warn" : "")"
+                                            @(!item.Activo ? "disabled" : "")>
+                                            <i class="bi @(item.Agotado ? "bi-x-circle" : "bi-check-circle")"></i>
+                                            @(item.Agotado ? "Agotado" : "Disponible")
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <p class="paginador-resumen">
+            Mostrando @desdeItem–@hastaItem de @resultado.Count platillos
+        </p>
+        @await Html.PartialAsync("_Paginador", (paginaActual, totalPaginas))
+    }
 
 </div>

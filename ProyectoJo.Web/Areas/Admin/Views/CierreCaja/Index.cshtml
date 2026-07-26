@@ -3,11 +3,28 @@
     ViewData["Title"] = "Cierre de Caja";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
     var cajaAbierta = ViewBag.CajaAbierta as ProyectoJo.Domain.Entities.CierreCaja;
+
+    var resultado = Model.ToList();
+
+    const int PorPagina = 12;
+    var totalPaginas = (int)Math.Ceiling(resultado.Count / (double)PorPagina);
+    var paginaActual = int.TryParse(Context.Request.Query["pagina"], out var p) ? p : 1;
+    if (paginaActual < 1) paginaActual = 1;
+    if (totalPaginas > 0 && paginaActual > totalPaginas) paginaActual = totalPaginas;
+
+    var paginado = resultado
+        .Skip((paginaActual - 1) * PorPagina)
+        .Take(PorPagina)
+        .ToList();
+
+    var desdeItem = resultado.Any() ? ((paginaActual - 1) * PorPagina) + 1 : 0;
+    var hastaItem = ((paginaActual - 1) * PorPagina) + paginado.Count;
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-shared.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin/cierre-caja/cierre-caja.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/paginador/paginador.css" asp-append-version="true" />
 }
 
 <div class="admin-page">
@@ -39,41 +56,47 @@
         </div>
     }
 
-    <div class="table-responsive">
-        <table class="admin-table">
-            <thead>
-                <tr>
-                    <th>Apertura</th>
-                    <th>Cierre</th>
-                    <th>Fondo inicial</th>
-                    <th>Ventas</th>
-                    <th>Gastos</th>
-                    <th>Total</th>
-                    <th>Estado</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var caja in Model)
-                {
-                    <tr>
-                        <td data-label="Apertura">@caja.FechaApertura.ToString("dd/MM/yyyy HH:mm")</td>
-                        <td data-label="Cierre">@(caja.FechaCierre?.ToString("dd/MM/yyyy HH:mm") ?? "—")</td>
-                        <td data-label="Fondo inicial">$@caja.FondoInicial.ToString("N2")</td>
-                        <td data-label="Ventas">$@caja.VentasDelDia.ToString("N2")</td>
-                        <td data-label="Gastos">$@caja.GastosDelDia.ToString("N2")</td>
-                        <td data-label="Total">$@caja.Total.ToString("N2")</td>
-                        <td data-label="Estado">
-                            <span class="tag--@caja.Estado.ToString().ToLower()">@caja.Estado</span>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-
-    @if (!Model.Any())
+    @if (!resultado.Any())
     {
         <p class="empty-state">Todavía no hay registros de caja.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Apertura</th>
+                        <th>Cierre</th>
+                        <th>Fondo inicial</th>
+                        <th>Ventas</th>
+                        <th>Gastos</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var caja in paginado)
+                    {
+                        <tr>
+                            <td data-label="Apertura">@caja.FechaApertura.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td data-label="Cierre">@(caja.FechaCierre?.ToString("dd/MM/yyyy HH:mm") ?? "—")</td>
+                            <td data-label="Fondo inicial">$@caja.FondoInicial.ToString("N2")</td>
+                            <td data-label="Ventas">$@caja.VentasDelDia.ToString("N2")</td>
+                            <td data-label="Gastos">$@caja.GastosDelDia.ToString("N2")</td>
+                            <td data-label="Total">$@caja.Total.ToString("N2")</td>
+                            <td data-label="Estado">
+                                <span class="tag--@caja.Estado.ToString().ToLower()">@caja.Estado</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <p class="paginador-resumen">
+            Mostrando @desdeItem–@hastaItem de @resultado.Count registros
+        </p>
+        @await Html.PartialAsync("_Paginador", (paginaActual, totalPaginas))
     }
 
 </div>

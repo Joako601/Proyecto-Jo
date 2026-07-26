@@ -1,0 +1,129 @@
+﻿@model List<ProyectoJo.Application.DTOs.RendimientoRecetaDto>
+
+@{
+    ViewData["Title"] = "Recetario Digital";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+
+    var busqueda = Context.Request.Query["busqueda"].ToString();
+
+    var resultado = Model
+        .Where(r => string.IsNullOrEmpty(busqueda) || r.Platillo.Contains(busqueda, StringComparison.OrdinalIgnoreCase))
+        .OrderBy(r => r.Platillo)
+        .ToList();
+
+    const int PorPagina = 12;
+    var totalPaginas = (int)Math.Ceiling(resultado.Count / (double)PorPagina);
+    var paginaActual = int.TryParse(Context.Request.Query["pagina"], out var p) ? p : 1;
+    if (paginaActual < 1) paginaActual = 1;
+    if (totalPaginas > 0 && paginaActual > totalPaginas) paginaActual = totalPaginas;
+
+    var paginado = resultado
+        .Skip((paginaActual - 1) * PorPagina)
+        .Take(PorPagina)
+        .ToList();
+
+    var desdeItem = resultado.Any() ? ((paginaActual - 1) * PorPagina) + 1 : 0;
+    var hastaItem = ((paginaActual - 1) * PorPagina) + paginado.Count;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-shared.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/recetario/recetario.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/paginador/paginador.css" asp-append-version="true" />
+}
+
+<div class="admin-page">
+
+    <div class="page-header">
+        <div>
+            <a asp-area="Admin" asp-controller="Gestion" asp-action="Index" class="back-link">← Dashboard</a>
+            <h1>Recetario Digital</h1>
+        </div>
+    </div>
+
+    <div class="filtro-bar">
+        <form method="get" class="filtro-form">
+            <input type="text" name="busqueda" value="@busqueda"
+                   class="form-control-sm" placeholder="Buscar por platillo..." style="min-width:220px" />
+            <button type="submit" class="btn-secondary">
+                <i class="bi bi-search"></i>&nbsp; Filtrar
+            </button>
+            @if (!string.IsNullOrEmpty(busqueda))
+            {
+                <a asp-area="Admin" asp-controller="Recetario" asp-action="Index" class="btn-secondary" title="Limpiar filtro">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+            }
+        </form>
+        <a asp-area="Admin" asp-controller="Recetario" asp-action="Agregar" class="btn-primary">
+            <i class="bi bi-plus-lg"></i>&nbsp; Nueva receta
+        </a>
+    </div>
+
+    @if (!resultado.Any())
+    {
+        <div class="empty-state">
+            @if (!Model.Any())
+            {
+                <text>Todavía no cargaste ninguna receta. Empezá agregando una desde "Nueva receta".</text>
+            }
+            else
+            {
+                <text>No se encontraron recetas con esa búsqueda.</text>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Platillo</th>
+                        <th>Costo total</th>
+                        <th>Costo x porción</th>
+                        <th>Precio de venta</th>
+                        <th>Margen</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in paginado)
+                    {
+                        var margenClase = r.MargenPorcentual >= 60 ? "margen--bueno"
+                            : r.MargenPorcentual >= 30 ? "margen--medio"
+                            : "margen--bajo";
+
+                        <tr>
+                            <td data-label="Platillo">@r.Platillo</td>
+                            <td data-label="Costo total" style="font-family:var(--tc-font-mono)">$@r.CostoTotal.ToString("N2")</td>
+                            <td data-label="Costo x porción" style="font-family:var(--tc-font-mono)">$@r.CostoPorPorcion.ToString("N2")</td>
+                            <td data-label="Precio de venta" style="font-family:var(--tc-font-mono)">$@r.PrecioVenta.ToString("N2")</td>
+                            <td data-label="Margen">
+                                <span class="chip-margen @margenClase">
+                                    @r.MargenPorcentual.ToString("N1")% ($@r.MargenPorPorcion.ToString("N2"))
+                                </span>
+                            </td>
+                            <td data-label="Acciones">
+                                <div class="acciones">
+                                    <a asp-area="Admin" asp-controller="Recetario" asp-action="Editar"
+                                       asp-route-id="@r.RecetaId" class="link-edit">Editar</a>
+                                    <form asp-area="Admin" asp-controller="Recetario" asp-action="Eliminar"
+                                          asp-route-id="@r.RecetaId" method="post"
+                                          onsubmit="return confirm('¿Eliminar la receta de @r.Platillo?')">
+                                        <button type="submit" class="link-delete">Eliminar</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <p class="paginador-resumen">
+            Mostrando @desdeItem–@hastaItem de @resultado.Count recetas
+        </p>
+        @await Html.PartialAsync("_Paginador", (paginaActual, totalPaginas))
+    }
+
+</div>

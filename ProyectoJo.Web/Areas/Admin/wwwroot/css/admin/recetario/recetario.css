@@ -1,0 +1,107 @@
+﻿/* ============================================================
+   Index — chip de margen
+   ============================================================ */
+.chip-margen {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-family: var(--tc-font-mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    border: 0.5px solid transparent;
+}
+
+.margen--bueno {
+    background: var(--tc-teal-ink);
+    border-color: #9FE1CB;
+    color: #0F6E56;
+}
+
+.margen--medio {
+    background: #FAEEDA;
+    border-color: #FAC775;
+    color: var(--tc-mustard-ink);
+}
+
+.margen--bajo {
+    background: #FCEBEB;
+    border-color: #F0B8B8;
+    color: #A32D2D;
+}
+
+/* ============================================================
+   Agregar / Editar — tabla de ingredientes
+   ============================================================ */
+.receta-ingredientes-table {
+    margin-bottom: 10px;
+}
+
+    .receta-ingredientes-table th {
+        font-size: 10px;
+    }
+
+    .receta-ingredientes-table td {
+        padding: 6px 10px;
+    }
+
+    .receta-ingredientes-table .form-control-sm {
+        width: 100%;
+    }
+
+.subtotal-celda {
+    font-family: var(--tc-font-mono);
+    font-size: 12px;
+    color: var(--tc-ink-muted);
+    white-space: nowrap;
+}
+
+.form-row {
+    display: flex;
+    gap: 16px;
+}
+
+    .form-row .form-group {
+        flex: 1;
+    }
+
+/* ============================================================
+   Resumen de costo/margen en vivo
+   ============================================================ */
+.receta-resumen-costo {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    background: var(--tc-card);
+    border: 0.5px solid var(--tc-border-soft);
+    border-radius: 6px;
+    padding: 16px;
+    margin: 16px 0 24px;
+}
+
+    .receta-resumen-costo .resumen-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 140px;
+    }
+
+    .receta-resumen-costo .resumen-label {
+        font-size: 10.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--tc-ink-muted);
+    }
+
+    .receta-resumen-costo .resumen-valor {
+        font-family: var(--tc-font-mono);
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--tc-ink);
+    }
+
+@media (max-width: 575.98px) {
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+}

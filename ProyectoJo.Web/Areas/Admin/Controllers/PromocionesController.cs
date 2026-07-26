@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using ProyectoJo.Application.Ports.In;
 using ProyectoJo.Domain.Entities;
@@ -11,11 +12,19 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 	{
 		private readonly IPromocionService _promocionService;
 		private readonly IProductoService _productoService;
+		private readonly IWebHostEnvironment _entorno;
 
-		public PromocionesController(IPromocionService promocionService, IProductoService productoService)
+		private static readonly string[] ExtensionesPermitidas = { ".jpg", ".jpeg", ".png", ".webp", ".gif" };
+		private const long TamanoMaximoBytes = 5 * 1024 * 1024; // 5 MB
+
+		public PromocionesController(
+			IPromocionService promocionService,
+			IProductoService productoService,
+			IWebHostEnvironment entorno)
 		{
 			_promocionService = promocionService;
 			_productoService = productoService;
+			_entorno = entorno;
 		}
 
 		// GET: /Admin/Promociones
@@ -106,6 +115,35 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 			var actualizado = _promocionService.HacerPermanente(id, User.Identity?.Name ?? "Desconocido");
 			if (!actualizado) return NotFound();
 			return RedirectToAction("Index");
+		}
+
+		// POST: /Admin/Promociones/SubirImagen
+		[HttpPost]
+		public async Task<IActionResult> SubirImagen(IFormFile archivo)
+		{
+			if (archivo == null || archivo.Length == 0)
+				return BadRequest(new { error = "No se recibió ningún archivo." });
+
+			var extension = Path.GetExtension(archivo.FileName).ToLowerInvariant();
+			if (!ExtensionesPermitidas.Contains(extension))
+				return BadRequest(new { error = "Formato no permitido. Usá JPG, PNG, WEBP o GIF." });
+
+			if (archivo.Length > TamanoMaximoBytes)
+				return BadRequest(new { error = "La imagen no puede superar los 5 MB." });
+
+			var carpeta = Path.Combine(_entorno.WebRootPath, "uploads", "promociones");
+			Directory.CreateDirectory(carpeta);
+
+			var nombreArchivo = $"{Guid.NewGuid()}{extension}";
+			var rutaFisica = Path.Combine(carpeta, nombreArchivo);
+
+			using (var stream = new FileStream(rutaFisica, FileMode.Create))
+			{
+				await archivo.CopyToAsync(stream);
+			}
+
+			var urlRelativa = $"/uploads/promociones/{nombreArchivo}";
+			return Json(new { url = urlRelativa });
 		}
 	}
 }

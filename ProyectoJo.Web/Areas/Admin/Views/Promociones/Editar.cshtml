@@ -5,6 +5,7 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
     var platillos = (ViewBag.Platillos as List<ProyectoJo.Domain.Entities.Item>) ?? new List<ProyectoJo.Domain.Entities.Item>();
     var esPermanente = Model.FechaInicio == null && Model.FechaFin == null;
+    var esAnuncioConPlatillos = Model.TipoDescuento == ProyectoJo.Domain.Entities.TipoDescuento.Ninguno && Model.ItemIds != null && Model.ItemIds.Any();
 }
 
 @section Styles {
@@ -34,13 +35,23 @@
             <span asp-validation-for="Descripcion" class="field-error"></span>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="campo-imagen">
             <label asp-for="ImagenUrl">
                 Imagen del banner
-                <span class="text-muted fw-normal" style="text-transform:none; letter-spacing:0;">(URL pública, opcional)</span>
+                <span class="text-muted fw-normal" style="text-transform:none; letter-spacing:0;">(opcional)</span>
             </label>
-            <input asp-for="ImagenUrl" class="form-control"
-                   placeholder="https://ejemplo.com/imagen-promo.jpg"
+
+            <div class="banner-dropzone" id="banner-dropzone">
+                <input type="file" id="banner-file-input" accept="image/*" hidden />
+                <i class="bi bi-cloud-arrow-up"></i>
+                <p class="banner-dropzone__texto">
+                    Arrastrá una imagen acá o <span class="banner-dropzone__link">hacé clic para elegir un archivo</span>
+                </p>
+            </div>
+            <span class="promo-hint" id="banner-upload-status"></span>
+
+            <input asp-for="ImagenUrl" class="form-control mt-2"
+                   placeholder="...o pegá una URL pública: https://ejemplo.com/imagen-promo.jpg"
                    id="ImagenUrl" />
             <span class="promo-hint">Si no agregás imagen, el banner usará el color de acento del sitio.</span>
             <span asp-validation-for="ImagenUrl" class="field-error"></span>
@@ -56,21 +67,26 @@
 
         <div class="form-group">
             <label>Tipo de descuento</label>
-            <select asp-for="TipoDescuento" class="form-control">
-                <option value="Ninguno">Ninguno (solo anuncio / banner)</option>
+            <select asp-for="TipoDescuento" id="TipoDescuento" class="form-control">
+                <option value="Ninguno">Anuncio (solo banner, sin descuento)</option>
                 <option value="Porcentaje">Porcentaje (%)</option>
-                <option value="MontoFijo">Monto fijo ($)</option>
+                <option value="MontoFijo">Pesos ($)</option>
             </select>
             <span asp-validation-for="TipoDescuento" class="field-error"></span>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="campo-descuento">
             <label asp-for="ValorDescuento">Valor del descuento</label>
             <input asp-for="ValorDescuento" type="number" step="0.01" class="form-control" />
             <span asp-validation-for="ValorDescuento" class="field-error"></span>
         </div>
 
-        <div class="form-group">
+        <div class="form-check form-switch tc-switch-row" id="campo-aplicar-platillos">
+            <input class="form-check-input" type="checkbox" id="aplicarPlatillos" checked="@esAnuncioConPlatillos" />
+            <label for="aplicarPlatillos">Aplicar también a platillos específicos</label>
+        </div>
+
+        <div class="form-group" id="campo-platillos">
             <label>Platillos a los que aplica</label>
             <div class="promo-checklist">
                 @if (!platillos.Any())

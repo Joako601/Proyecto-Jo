@@ -83,21 +83,21 @@ namespace ProyectoJo.Infrastructure.Persistence
 			}
 		}
 
-		public async Task<(Pedido? Anterior, Pedido? Actualizado)> CambiarEstadoAtomicoAsync(int id, EstadoPedido nuevoEstado)
+		public async Task<(Pedido? Anterior, Pedido? Actualizado, string? MotivoRechazo)> CambiarEstadoAtomicoAsync(
+	int id,
+	EstadoPedido nuevoEstado,
+	Func<Pedido, Task<string?>>? validarAntesDeAplicar = null)
 		{
 			await _lock.WaitAsync();
 			try
 			{
 				var todos = await LeerAsync();
 				var index = todos.FindIndex(p => p.Id == id);
-				if (index == -1) return (null, null);
+				if (index == -1) return (null, null, null);
 
 				var anterior = todos[index];
-				var estadoAnterior = anterior.Estado; 
-				anterior.Estado = nuevoEstado;
-				await EscribirAtomicoAsync(todos);
+				var estadoAnterior = anterior.Estado;
 
-				
 				var anteriorSnapshot = new Pedido
 				{
 					Id = anterior.Id,
@@ -107,7 +107,17 @@ namespace ProyectoJo.Infrastructure.Persistence
 					Items = anterior.Items
 				};
 
-				return (anteriorSnapshot, anterior);
+				if (validarAntesDeAplicar is not null)
+				{
+					var motivoRechazo = await validarAntesDeAplicar(anteriorSnapshot);
+					if (motivoRechazo is not null)
+						return (anteriorSnapshot, null, motivoRechazo);
+				}
+
+				anterior.Estado = nuevoEstado;
+				await EscribirAtomicoAsync(todos);
+
+				return (anteriorSnapshot, anterior, null);
 			}
 			finally
 			{

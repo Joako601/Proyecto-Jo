@@ -14,6 +14,8 @@ namespace ProyectoJo.Application.UseCases
 		private readonly IPedidoNotificador _notificador;
 		private readonly IProductoService _productoService;
 		private readonly IPromocionService _promocionService;
+		private readonly IInsumoService _insumoService;
+		private readonly IRecetaService _recetaService;
 		private readonly ILogger<PedidoUseCase> _logger;
 
 		public PedidoUseCase(
@@ -22,6 +24,8 @@ namespace ProyectoJo.Application.UseCases
 			IPedidoNotificador notificador,
 			IProductoService productoService,
 			IPromocionService promocionService,
+			IInsumoService insumoService,
+			IRecetaService recetaService,
 			ILogger<PedidoUseCase> logger)
 		{
 			_repository = repository;
@@ -29,6 +33,8 @@ namespace ProyectoJo.Application.UseCases
 			_notificador = notificador;
 			_productoService = productoService;
 			_promocionService = promocionService;
+			_insumoService = insumoService;
+			_recetaService = recetaService;
 			_logger = logger;
 		}
 
@@ -110,10 +116,25 @@ namespace ProyectoJo.Application.UseCases
 			return precioFinal < 0 ? 0 : Math.Round(precioFinal, 2);
 		}
 
-		public async Task<Pedido?> CambiarEstadoAsync(int id, EstadoPedido nuevoEstado)
+		public async Task<ResultadoCambiarEstado> CambiarEstadoAsync(int id, EstadoPedido nuevoEstado)
 		{
-			var (pedidoAntes, actualizado) = await _repository.CambiarEstadoAtomicoAsync(id, nuevoEstado);
-			if (pedidoAntes is null) return null;
+			Func<Pedido, Task<string?>>? validador = null;
+
+			if (nuevoEstado == EstadoPedido.Preparado)
+			{
+				validador = pedido => _insumoService.VerificarYDescontarAsync(
+					pedido.Items,
+					itemId => _recetaService.ObtenerPorItemId(itemId));
+			}
+
+			var (pedidoAntes, actualizado, motivoRechazo) =
+				await _repository.CambiarEstadoAtomicoAsync(id, nuevoEstado, validador);
+
+			if (pedidoAntes is null)
+				return new ResultadoCambiarEstado { NoEncontrado = true };
+
+			if (motivoRechazo is not null)
+				return new ResultadoCambiarEstado { Exitoso = false, MotivoRechazo = motivoRechazo, Pedido = pedidoAntes };
 
 			var yaEstabaPagado = pedidoAntes.Estado == EstadoPedido.Pagado;
 
@@ -142,7 +163,7 @@ namespace ProyectoJo.Application.UseCases
 				catch (Exception ex) { _logger.LogError(ex, "Error notificando cambio de estado del Pedido #{PedidoId}", id); }
 			}
 
-			return actualizado;
+			return new ResultadoCambiarEstado { Exitoso = true, Pedido = actualizado };
 		}
 
 		public async Task<List<Pedido>> ObtenerParaCocinaAsync()

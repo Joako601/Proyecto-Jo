@@ -1,0 +1,18 @@
+﻿[
+    {
+        "Id": 1,
+        "Nombre": "harina",
+        "Unidad": 0,
+        "StockActual": 10,
+        "StockMinimo": 2,
+        "Activo": true
+    },
+    {
+        "Id": 2,
+        "Nombre": "carne",
+        "Unidad": 4,
+        "StockActual": 10,
+        "StockMinimo": 2,
+        "Activo": true
+    }
+]

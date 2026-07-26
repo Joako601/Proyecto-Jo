@@ -82,9 +82,12 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 		{
 			try
 			{
-				var actualizado = await _pedidoService.CambiarEstadoAsync(id, EstadoPedido.Pagado);
-				if (actualizado is null) return NotFound($"Pedido #{id} no encontrado.");
-				return Json(actualizado);
+				var resultado = await _pedidoService.CambiarEstadoAsync(id, EstadoPedido.Pagado);
+
+				if (resultado.NoEncontrado) return NotFound($"Pedido #{id} no encontrado.");
+				if (!resultado.Exitoso) return Conflict(new { error = resultado.MotivoRechazo });
+
+				return Json(resultado.Pedido);
 			}
 			catch (Exception ex)
 			{

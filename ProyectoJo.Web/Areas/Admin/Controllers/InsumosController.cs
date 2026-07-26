@@ -1,0 +1,74 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using ProyectoJo.Application.Ports.In;
+using ProyectoJo.Domain.Entities;
+
+namespace ProyectoJo.Web.Areas.Admin.Controllers
+{
+	[Area("Admin")]
+	[Authorize(AuthenticationSchemes = "JoCookieAuth")]
+	public class InsumosController : Controller
+	{
+		private readonly IInsumoService _insumoService;
+
+		public InsumosController(IInsumoService insumoService)
+		{
+			_insumoService = insumoService;
+		}
+
+		// GET: /Admin/Insumos
+		public IActionResult Index()
+		{
+			var insumos = _insumoService.ObtenerTodos()
+				.OrderBy(i => i.Nombre)
+				.ToList();
+			return View(insumos);
+		}
+
+		// GET: /Admin/Insumos/Crear
+		public IActionResult Crear() => View(new Insumo());
+
+		// POST: /Admin/Insumos/Crear
+		[HttpPost]
+		public IActionResult Crear(Insumo insumo)
+		{
+			if (!ModelState.IsValid) return View(insumo);
+			_insumoService.Agregar(insumo, User.Identity?.Name ?? "Desconocido");
+			return RedirectToAction(nameof(Index));
+		}
+
+		// GET: /Admin/Insumos/Editar/5
+		public IActionResult Editar(int id)
+		{
+			var insumo = _insumoService.ObtenerPorId(id);
+			if (insumo is null) return NotFound();
+			return View(insumo);
+		}
+
+		// POST: /Admin/Insumos/Editar/5
+		[HttpPost]
+		public IActionResult Editar(Insumo insumo)
+		{
+			if (!ModelState.IsValid) return View(insumo);
+			var actualizado = _insumoService.Editar(insumo, User.Identity?.Name ?? "Desconocido");
+			if (!actualizado) return NotFound();
+			return RedirectToAction(nameof(Index));
+		}
+
+		// POST: /Admin/Insumos/Reponer
+		[HttpPost]
+		public IActionResult Reponer(int id, decimal cantidad)
+		{
+			_insumoService.Reponer(id, cantidad, User.Identity?.Name ?? "Desconocido");
+			return RedirectToAction(nameof(Index));
+		}
+
+		// POST: /Admin/Insumos/Eliminar/5
+		[HttpPost]
+		public IActionResult Eliminar(int id)
+		{
+			_insumoService.Eliminar(id, User.Identity?.Name ?? "Desconocido");
+			return RedirectToAction(nameof(Index));
+		}
+	}
+}

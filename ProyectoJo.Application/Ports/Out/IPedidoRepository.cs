@@ -6,5 +6,8 @@ public interface IPedidoRepository
 	Task<Pedido?> ObtenerPorIdAsync(int id);
 	Task<Pedido> GuardarAsync(Pedido pedido);
 	Task<Pedido?> ActualizarAsync(Pedido pedido);
-	Task<(Pedido? Anterior, Pedido? Actualizado)> CambiarEstadoAtomicoAsync(int id, EstadoPedido nuevoEstado);
+	Task<(Pedido? Anterior, Pedido? Actualizado, string? MotivoRechazo)> CambiarEstadoAtomicoAsync(
+		int id,
+		EstadoPedido nuevoEstado,
+		Func<Pedido, Task<string?>>? validarAntesDeAplicar = null);
 }

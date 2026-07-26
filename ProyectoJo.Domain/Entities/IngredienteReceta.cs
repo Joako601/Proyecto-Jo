@@ -11,7 +11,8 @@
 
 	public class IngredienteReceta
 	{
-		public string Nombre { get; set; } = string.Empty;
+		public int InsumoId { get; set; }
+		public string Nombre { get; set; } = string.Empty; 
 		public decimal Cantidad { get; set; }
 		public UnidadIngrediente Unidad { get; set; }
 		public decimal CostoUnitario { get; set; }

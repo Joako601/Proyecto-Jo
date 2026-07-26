@@ -46,9 +46,12 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 				return BadRequest(new { error = $"Estado inválido: '{nuevoEstado}'" });
 			try
 			{
-				var actualizado = await _pedidoService.CambiarEstadoAsync(id, estado);
-				if (actualizado is null) return NotFound(new { error = $"Pedido #{id} no encontrado." });
-				return Json(actualizado);
+				var resultado = await _pedidoService.CambiarEstadoAsync(id, estado);
+
+				if (resultado.NoEncontrado) return NotFound(new { error = $"Pedido #{id} no encontrado." });
+				if (!resultado.Exitoso) return Conflict(new { error = resultado.MotivoRechazo });
+
+				return Json(resultado.Pedido);
 			}
 			catch (Exception ex)
 			{

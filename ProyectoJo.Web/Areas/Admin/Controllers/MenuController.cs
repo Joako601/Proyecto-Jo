@@ -16,6 +16,14 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 			_productoService = productoService;
 		}
 
+		private List<string> ObtenerCategorias() =>
+			_productoService.ObtenerTodos()
+				.Select(i => i.Categoria)
+				.Where(c => !string.IsNullOrWhiteSpace(c))
+				.Distinct(StringComparer.OrdinalIgnoreCase)
+				.OrderBy(c => c)
+				.ToList();
+
 		// GET: /Admin/Menu
 		public IActionResult Index()
 		{
@@ -24,13 +32,21 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		}
 
 		// GET: /Admin/Menu/Agregar
-		public IActionResult Agregar() => View();
+		public IActionResult Agregar()
+		{
+			ViewBag.Categorias = ObtenerCategorias();
+			return View();
+		}
 
 		// POST: /Admin/Menu/Agregar
 		[HttpPost]
 		public IActionResult Agregar(Item item)
 		{
-			if (!ModelState.IsValid) return View(item);
+			if (!ModelState.IsValid)
+			{
+				ViewBag.Categorias = ObtenerCategorias();
+				return View(item);
+			}
 			_productoService.AgregarItem(item, User.Identity?.Name ?? "Desconocido");
 			return RedirectToAction("Index");
 		}
@@ -39,15 +55,20 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		public IActionResult Editar(int id)
 		{
 			var item = _productoService.ObtenerPorId(id);
-			return item == null ? NotFound() : View(item);
+			if (item == null) return NotFound();
+			ViewBag.Categorias = ObtenerCategorias();
+			return View(item);
 		}
 
-		// POST: /Admin/Menu/Editar
 		// POST: /Admin/Menu/Editar
 		[HttpPost]
 		public IActionResult Editar(Item item)
 		{
-			if (!ModelState.IsValid) return View(item);
+			if (!ModelState.IsValid)
+			{
+				ViewBag.Categorias = ObtenerCategorias();
+				return View(item);
+			}
 			var actualizado = _productoService.EditarItem(item, User.Identity?.Name ?? "Desconocido");
 			if (!actualizado) return NotFound();
 			return RedirectToAction("Index");

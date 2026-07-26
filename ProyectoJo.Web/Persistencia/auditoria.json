@@ -968,5 +968,15 @@
     "Entidad": "Sincronizaci\u00F3n desde men\u00FA",
     "DetalleAntes": null,
     "DetalleDespues": "41 insumo(s) nuevo(s) creado(s) a partir de los ingredientes del men\u00FA"
+  },
+  {
+    "Id": 98,
+    "FechaHora": "2026-07-26T11:28:56.1425082-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Productos",
+    "Accion": 1,
+    "Entidad": "Producto #1 - Panucho de Pavo",
+    "DetalleAntes": "Panucho de Pavo - $25",
+    "DetalleDespues": "Panucho de Pavo - $25"
   }
 ]

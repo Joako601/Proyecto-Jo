@@ -32,9 +32,16 @@ namespace ProyectoJo.Infrastructure.Persistence
 			lock (_lock) { return ObtenerCache(); }
 		}
 
-		public void GuardarMenu(List<Item> menu)
+		public void ActualizarItem(Item item)
 		{
-			lock (_lock) { PersistirSinCandado(menu); }
+			lock (_lock)
+			{
+				var menu = ObtenerCache();
+				var index = menu.FindIndex(i => i.Id == item.Id);
+				if (index < 0) return;
+				menu[index] = item;
+				PersistirSinCandado(menu);
+			}
 		}
 
 		public void AgregarItem(Item item)
@@ -85,7 +92,7 @@ namespace ProyectoJo.Infrastructure.Persistence
 			}
 		}
 
-		
+
 		private List<Item> ObtenerCache()
 		{
 			_cache ??= LeerDesdeDisco();

@@ -7,7 +7,7 @@ namespace ProyectoJo.Application.Ports.Out
 		IEnumerable<Item> ObtenerTodos();
 		IEnumerable<Item> ObtenerPorCategoria(string categoria);
 		List<Item> ObtenerMenu();
-		void GuardarMenu(List<Item> menu);
+		void ActualizarItem(Item item);
 		void AgregarItem(Item item);
 		Item? ObtenerPorId(int id);
 		void Eliminar(int id);

@@ -28,8 +28,6 @@ namespace ProyectoJo.Application.UseCases
 		public List<Item> ObtenerMenu() =>
 			_repository.ObtenerMenu().Where(i => i.Activo).ToList();
 
-		public void GuardarMenu(List<Item> menu) => _repository.GuardarMenu(menu);
-
 		public void AgregarItem(Item item, string usuario)
 		{
 			_repository.AgregarItem(item);
@@ -65,20 +63,17 @@ namespace ProyectoJo.Application.UseCases
 
 		public bool EditarItem(Item item, string usuario)
 		{
-			var menu = _repository.ObtenerMenu();
-			var anterior = menu.FirstOrDefault(i => i.Id == item.Id);
-			var index = menu.FindIndex(i => i.Id == item.Id);
-			if (index < 0) return false;
+			var anterior = _repository.ObtenerPorId(item.Id);
+			if (anterior is null) return false;
 
-			menu[index] = item;
-			_repository.GuardarMenu(menu);
+			_repository.ActualizarItem(item);
 
 			_auditoriaService.RegistrarAccion(
 				usuario: usuario,
 				modulo: "Productos",
 				accion: TipoAccionAuditoria.Edicion,
 				entidad: $"Producto #{item.Id} - {item.Platillo}",
-				detalleAntes: $"{anterior!.Platillo} - ${anterior.Precio}",
+				detalleAntes: $"{anterior.Platillo} - ${anterior.Precio}",
 				detalleDespues: $"{item.Platillo} - ${item.Precio}"
 			);
 

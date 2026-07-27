@@ -8,5 +8,17 @@
 		public EstadoPedido Estado { get; set; } = EstadoPedido.Pendiente;
 		public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
 		public decimal Total => Items.Sum(i => i.Subtotal);
+		public bool PuedeTransicionarA(EstadoPedido nuevoEstado)
+		{
+			return (Estado, nuevoEstado) switch
+			{
+				(EstadoPedido.Pendiente, EstadoPedido.Preparado) => true,
+				(EstadoPedido.Pendiente, EstadoPedido.Pagado) => true,
+				(EstadoPedido.Pendiente, EstadoPedido.Cancelado) => true,
+				(EstadoPedido.Preparado, EstadoPedido.Pagado) => true,
+				(EstadoPedido.Preparado, EstadoPedido.Cancelado) => true,
+				_ => false
+			};
+		}
 	}
 }

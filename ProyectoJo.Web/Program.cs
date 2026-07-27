@@ -153,6 +153,15 @@ builder.Services.AddControllersWithViews(options =>
 		options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
 	});
 
+// Sin esto, el filtro global de arriba solo valida el token vía campo de
+// formulario "__RequestVerificationToken". Los fetch() de cocina.js/recepcion.js
+// mandan el token en un header (JSON y form-urlencoded por igual), así que hay
+// que decirle al middleware que también lo busque ahí.
+builder.Services.AddAntiforgery(options =>
+{
+	options.HeaderName = "RequestVerificationToken";
+});
+
 builder.Services.AddAuthentication("JoCookieAuth")
 	.AddCookie("JoCookieAuth", options => {
 		options.LoginPath = "/Admin/Login";

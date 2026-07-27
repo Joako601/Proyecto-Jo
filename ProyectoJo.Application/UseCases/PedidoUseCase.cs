@@ -144,14 +144,24 @@ namespace ProyectoJo.Application.UseCases
 
 		public async Task<ResultadoCambiarEstado> CambiarEstadoAsync(int id, EstadoPedido nuevoEstado)
 		{
-			Func<Pedido, Task<string?>>? validador = null;
-
-			if (nuevoEstado == EstadoPedido.Preparado)
+			Func<Pedido, Task<string?>> validador = async pedido =>
 			{
-				validador = pedido => _insumoService.VerificarYDescontarAsync(
-					pedido.Items,
-					itemId => _recetaService.ObtenerPorItemId(itemId));
-			}
+				// Se valida contra el estado real leído dentro del lock del
+				// repositorio, no contra una copia leída antes: dos requests
+				// casi simultáneas (Cocina y Recepción) no pueden colarse una
+				// transición inválida aprovechando una ventana de carrera.
+				if (!pedido.PuedeTransicionarA(nuevoEstado))
+					return $"No se puede cambiar el pedido de '{pedido.Estado}' a '{nuevoEstado}'.";
+
+				if (nuevoEstado == EstadoPedido.Preparado)
+				{
+					return await _insumoService.VerificarYDescontarAsync(
+						pedido.Items,
+						itemId => _recetaService.ObtenerPorItemId(itemId));
+				}
+
+				return null;
+			};
 
 			var (pedidoAntes, actualizado, motivoRechazo) =
 				await _repository.CambiarEstadoAtomicoAsync(id, nuevoEstado, validador);

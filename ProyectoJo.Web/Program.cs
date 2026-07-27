@@ -85,6 +85,10 @@ builder.Services.AddScoped<IOpinionService, OpinionUseCase>();
 builder.Services.AddScoped<IInsumoRepository>(_ => new JsonInsumoRepository(rutaInsumos));
 builder.Services.AddScoped<IInsumoService, InsumoUseCase>();
 
+builder.Services.AddScoped<IPedidoRepository>(_ => new JsonPedidoRepository(rutaPedidos));
+builder.Services.AddScoped<IPedidoService, PedidoUseCase>();
+builder.Services.AddScoped<IReporteService, ReporteUseCase>();
+
 
 builder.Services.AddSignalR();
 

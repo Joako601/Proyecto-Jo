@@ -8,11 +8,11 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 	[Authorize(AuthenticationSchemes = "JoCookieAuth")]
 	public class MapaCalorController : Controller
 	{
-		private readonly IPedidoService _pedidoService;
+		private readonly IReporteService _reporteService;
 
-		public MapaCalorController(IPedidoService pedidoService)
+		public MapaCalorController(IReporteService reporteService)
 		{
-			_pedidoService = pedidoService;
+			_reporteService = reporteService;
 		}
 
 
@@ -24,7 +24,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 			int? anioMeses = null,
 			int? mesDetalle = null)
 		{
-			var resumen = await _pedidoService.ObtenerMapaCalorAsync(
+			var resumen = await _reporteService.ObtenerMapaCalorAsync(
 				fecha, null, semanaHistorico, semanaOffset, anioMeses, mesDetalle);
 
 			return View(resumen);

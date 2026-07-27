@@ -16,16 +16,17 @@
             <a asp-area="Admin" asp-controller="Gestion" asp-action="Index" class="back-link">← Dashboard</a>
             <h1>Alerta de Stock</h1>
         </div>
-        <div class="d-flex gap-2">
-            <form asp-area="Admin" asp-controller="Insumos" asp-action="SincronizarDesdeMenu" method="post">
-                <button type="submit" class="btn-secondary">
-                    <i class="bi bi-arrow-repeat"></i> Sincronizar desde menú
-                </button>
-            </form>
-            <a asp-area="Admin" asp-controller="Insumos" asp-action="Crear" class="btn-primary">
-                <i class="bi bi-plus-lg"></i> Nuevo insumo
-            </a>
-        </div>
+    </div>
+
+    <div class="filtro-bar filtro-bar--solo">
+        <form asp-area="Admin" asp-controller="Insumos" asp-action="SincronizarDesdeMenu" method="post">
+            <button type="submit" class="btn-secondary">
+                <i class="bi bi-arrow-repeat"></i> Sincronizar desde menú
+            </button>
+        </form>
+        <a asp-area="Admin" asp-controller="Insumos" asp-action="Crear" class="btn-primary">
+            <i class="bi bi-plus-lg"></i> Nuevo insumo
+        </a>
     </div>
 
     @if (TempData["MensajeSincronizacion"] != null)

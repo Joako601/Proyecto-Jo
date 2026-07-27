@@ -7,35 +7,10 @@
 .page-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: center;
     flex-wrap: wrap;
     gap: 12px;
     margin-bottom: 16px;
-}
-
-@media (max-width: 575.98px) {
-    .page-header {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .header-actions {
-        gap: 8px;
-    }
-
-        .header-actions .tc-tab {
-            flex: 1 1 auto;
-            text-align: center;
-            padding: 8px 6px;
-        }
-
-    .btn-primary {
-        margin-left: 0;
-        width: 100%;
-        justify-content: center;
-        order: 2;
-        margin-top: 4px;
-    }
 }
 
 .back-link {
@@ -104,6 +79,34 @@
     .btn-primary:hover {
         background: var(--tc-carbon-soft);
         color: var(--tc-stone);
+    }
+
+/* ============================================
+   Botón de acción principal del header (grande)
+   Clase nueva y exclusiva — no choca con ningún
+   .btn-primary duplicado de otros módulos.
+   ============================================ */
+.tc-btn-header {
+    height: 56px !important;
+    padding: 0 28px !important;
+    background: var(--tc-carbon) !important;
+    color: var(--tc-stone) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    font-family: var(--tc-font-body) !important;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-left: 14px;
+}
+
+    .tc-btn-header:hover {
+        background: var(--tc-carbon-soft) !important;
+        color: var(--tc-stone) !important;
     }
 
 .btn-secondary {
@@ -444,4 +447,35 @@
     font-size: 10.5px;
     color: var(--tc-ink-muted);
     margin-top: 4px;
+}
+
+/* ============================================
+   Responsivo — Header de página (tabs + botón)
+   ============================================ */
+@media (max-width: 991.98px) {
+    .page-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .header-actions {
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+        .header-actions .tc-tab {
+            flex: 1 1 auto;
+            text-align: center;
+            padding: 8px 6px;
+        }
+
+    .page-header .btn-primary,
+    .page-header .tc-btn-header {
+        flex: 1 1 100%;
+        order: 2;
+        margin-top: 4px;
+        margin-left: 0;
+        width: 100%;
+        justify-content: center;
+    }
 }

@@ -34,11 +34,16 @@
             <a asp-area="Admin" asp-controller="Gestion" asp-action="Index" class="back-link">← Dashboard</a>
             <h1>Cierre de Caja</h1>
         </div>
-        @if (cajaAbierta is null)
-        {
-            <a asp-action="Abrir" class="btn-primary">+ Abrir caja</a>
-        }
     </div>
+
+    @if (cajaAbierta is null)
+    {
+        <div class="filtro-bar filtro-bar--solo">
+            <a asp-action="Abrir" class="btn-primary">
+                <i class="bi bi-plus-lg"></i>&nbsp; Abrir caja
+            </a>
+        </div>
+    }
 
     @if (TempData["Error"] != null)
     {

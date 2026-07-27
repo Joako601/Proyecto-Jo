@@ -27,8 +27,13 @@
         <div class="header-actions">
             <a asp-action="Index" class="tc-tab">Movimientos</a>
             <a asp-action="Dashboard" class="tc-tab active">Dashboard financiero</a>
-            <a asp-action="Registrar" class="btn-primary">Registrar movimiento</a>
         </div>
+    </div>
+
+    <div class="filtro-bar filtro-bar--solo">
+        <a asp-action="Registrar" class="btn-primary">
+            <i class="bi bi-plus-lg"></i>&nbsp; Registrar movimiento
+        </a>
     </div>
 
     @* Fila grande: Total Ingresado / Total Egresado / Saldo Neto *@

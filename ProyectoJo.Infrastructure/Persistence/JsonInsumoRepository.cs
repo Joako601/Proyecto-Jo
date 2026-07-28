@@ -43,6 +43,28 @@ namespace ProyectoJo.Infrastructure.Persistence
 			finally { _lock.Release(); }
 		}
 
+		public void AgregarRango(IEnumerable<Insumo> insumos)
+		{
+			var lista = insumos as ICollection<Insumo> ?? insumos.ToList();
+			if (lista.Count == 0) return;
+
+			_lock.Wait();
+			try
+			{
+				var todos = Leer();
+				var siguienteId = todos.Any() ? todos.Max(i => i.Id) + 1 : 1;
+
+				foreach (var insumo in lista)
+				{
+					insumo.Id = siguienteId++;
+					todos.Add(insumo);
+				}
+
+				EscribirAtomico(todos);
+			}
+			finally { _lock.Release(); }
+		}
+
 		public bool Editar(Insumo insumo)
 		{
 			_lock.Wait();

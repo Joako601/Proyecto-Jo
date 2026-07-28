@@ -134,37 +134,31 @@ namespace ProyectoJo.Application.UseCases
 				.Select(g => g.First())
 				.ToList();
 
-			var nuevos = 0;
-			foreach (var nombre in nombresDelMenu)
-			{
-				if (existentes.Contains(nombre.ToLowerInvariant())) continue;
-
-				var insumo = new Insumo
+			var nuevosInsumos = nombresDelMenu
+				.Where(nombre => !existentes.Contains(nombre.ToLowerInvariant()))
+				.Select(nombre => new Insumo
 				{
 					Nombre = nombre,
 					Unidad = UnidadIngrediente.Unidad,
 					StockActual = 0,
 					StockMinimo = 0,
 					Activo = true
-				};
+				})
+				.ToList();
 
-				_repository.Agregar(insumo);
-				existentes.Add(nombre.ToLowerInvariant());
-				nuevos++;
-			}
+			if (nuevosInsumos.Count == 0) return 0;
 
-			if (nuevos > 0)
-			{
-				_auditoriaService.RegistrarAccion(
-					usuario: usuario,
-					modulo: "Insumos",
-					accion: TipoAccionAuditoria.Creacion,
-					entidad: "Sincronización desde menú",
-					detalleDespues: $"{nuevos} insumo(s) nuevo(s) creado(s) a partir de los ingredientes del menú"
-				);
-			}
+			_repository.AgregarRango(nuevosInsumos);
 
-			return nuevos;
+			_auditoriaService.RegistrarAccion(
+				usuario: usuario,
+				modulo: "Insumos",
+				accion: TipoAccionAuditoria.Creacion,
+				entidad: "Sincronización desde menú",
+				detalleDespues: $"{nuevosInsumos.Count} insumo(s) nuevo(s) creado(s) a partir de los ingredientes del menú"
+			);
+
+			return nuevosInsumos.Count;
 		}
 
 		public int? ObtenerMaximoDisponible(Item item)

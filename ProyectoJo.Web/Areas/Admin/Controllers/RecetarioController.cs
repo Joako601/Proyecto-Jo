@@ -30,8 +30,12 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		// GET: /Admin/Recetario/Agregar
 		public IActionResult Agregar()
 		{
+			var itemIdsConReceta = _recetaService.ObtenerTodas()
+				.Select(r => r.ItemId)
+				.ToHashSet();
+
 			ViewBag.Platillos = _productoService.ObtenerTodos()
-				.Where(i => _recetaService.ObtenerPorItemId(i.Id) == null)
+				.Where(i => !itemIdsConReceta.Contains(i.Id))
 				.ToList();
 			return View(new Receta { Ingredientes = new List<IngredienteReceta> { new() } });
 		}

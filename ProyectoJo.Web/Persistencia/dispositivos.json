@@ -544,5 +544,12 @@
     "Estacion": "Recepcion",
     "Nombre": null,
     "FechaRegistro": "2026-07-26T03:17:53.8849367Z"
+  },
+  {
+    "Id": 7,
+    "Token": "j206YcKsUWQtcDfJsqK2GM5R5jqNBfJJEGQ5andl9CI",
+    "Estacion": "Recepcion",
+    "Nombre": null,
+    "FechaRegistro": "2026-07-27T19:03:12.513456Z"
   }
 ]

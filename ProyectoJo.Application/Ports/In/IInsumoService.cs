@@ -16,5 +16,8 @@ namespace ProyectoJo.Application.Ports.In
 		int SincronizarDesdeMenu(IEnumerable<Item> menu, string usuario);
 
 		int? ObtenerMaximoDisponible(Item item);
+		int? ObtenerMaximoDisponible(Item item, IReadOnlyDictionary<string, Insumo> insumosPorNombre);
+
+		Dictionary<string, Insumo> ObtenerIndicePorNombre();
 	}
 }

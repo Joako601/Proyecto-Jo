@@ -131,7 +131,7 @@ namespace ProyectoJo.Application.UseCases
 				.Select(n => n.Trim())
 				.Where(n => n.Length > 0)
 				.GroupBy(n => n.ToLowerInvariant())
-				.Select(g => g.First()) // conserva la primera variante de capitalización encontrada
+				.Select(g => g.First())
 				.ToList();
 
 			var nuevos = 0;
@@ -169,24 +169,38 @@ namespace ProyectoJo.Application.UseCases
 
 		public int? ObtenerMaximoDisponible(Item item)
 		{
+
+			return ObtenerMaximoDisponible(item, ObtenerIndicePorNombre());
+		}
+
+		public int? ObtenerMaximoDisponible(Item item, IReadOnlyDictionary<string, Insumo> insumosPorNombre)
+		{
 			var nombres = (item.Ingredientes ?? string.Empty)
 				.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
 
 			if (nombres.Length == 0) return null;
 
-			var insumos = _repository.ObtenerTodos();
 			int? maximo = null;
 
 			foreach (var nombre in nombres)
 			{
-				var insumo = insumos.FirstOrDefault(i =>
-					string.Equals(i.Nombre.Trim(), nombre.Trim(), StringComparison.OrdinalIgnoreCase));
+				var disponible = insumosPorNombre.TryGetValue(nombre.Trim(), out var insumo)
+					? (int)Math.Floor(insumo.StockActual)
+					: 0;
 
-				var disponible = insumo is null ? 0 : (int)Math.Floor(insumo.StockActual);
 				if (maximo is null || disponible < maximo) maximo = disponible;
 			}
 
 			return maximo;
-		}	
+		}
+
+		public Dictionary<string, Insumo> ObtenerIndicePorNombre()
+		{
+			var indice = new Dictionary<string, Insumo>(StringComparer.OrdinalIgnoreCase);
+			foreach (var insumo in _repository.ObtenerTodos())
+				indice[insumo.Nombre.Trim()] = insumo;
+
+			return indice;
+		}
 	}
 }

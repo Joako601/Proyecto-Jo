@@ -988,5 +988,25 @@
     "Entidad": "Promoci\u00F3n #3 - adwda",
     "DetalleAntes": null,
     "DetalleDespues": "adwda - MontoFijo 10"
+  },
+  {
+    "Id": 100,
+    "FechaHora": "2026-07-27T13:09:34.209899-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #1 - Combo Familiar",
+    "DetalleAntes": "Combo Familiar - Porcentaje 15",
+    "DetalleDespues": "Combo Familiar - Porcentaje 15"
+  },
+  {
+    "Id": 101,
+    "FechaHora": "2026-07-27T13:10:07.638073-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #1 - Combo Familiar",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se convirti\u00F3 en promoci\u00F3n permanente (sin fechas de vigencia)"
   }
 ]

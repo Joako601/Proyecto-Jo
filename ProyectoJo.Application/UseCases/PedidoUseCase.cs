@@ -54,9 +54,10 @@ namespace ProyectoJo.Application.UseCases
 			var lineasDescartadas = new List<LineaDescartada>();
 			var lineasAjustadas = new List<LineaAjustada>();
 
-			// 1 sola lectura de cada catálogo (y ahora cacheada, casi gratis) en vez de N por línea
+
 			var menu = _productoService.ObtenerTodos().ToDictionary(i => i.Id);
 			var promosVigentes = _promocionService.ObtenerVigentes().ToList();
+			var insumosPorNombre = _insumoService.ObtenerIndicePorNombre();
 
 			foreach (var linea in pedido.Items)
 			{
@@ -78,10 +79,7 @@ namespace ProyectoJo.Application.UseCases
 					continue;
 				}
 
-				// Verificación autoritativa de stock por ingredientes: el cliente puede
-				// haber mandado una cantidad que ya no es válida (el stock pudo cambiar
-				// entre que Recepción armó el carrito y apretó "Crear pedido").
-				var stockMaximo = _insumoService.ObtenerMaximoDisponible(item);
+				var stockMaximo = _insumoService.ObtenerMaximoDisponible(item, insumosPorNombre);
 				if (stockMaximo.HasValue)
 				{
 					if (stockMaximo.Value <= 0)
@@ -145,10 +143,7 @@ namespace ProyectoJo.Application.UseCases
 		{
 			Func<Pedido, Task<string?>> validador = async pedido =>
 			{
-				// Se valida contra el estado real leído dentro del lock del
-				// repositorio, no contra una copia leída antes: dos requests
-				// casi simultáneas (Cocina y Recepción) no pueden colarse una
-				// transición inválida aprovechando una ventana de carrera.
+
 				if (!pedido.PuedeTransicionarA(nuevoEstado))
 					return $"No se puede cambiar el pedido de '{pedido.Estado}' a '{nuevoEstado}'.";
 

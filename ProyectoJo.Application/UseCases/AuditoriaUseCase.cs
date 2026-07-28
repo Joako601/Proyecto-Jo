@@ -32,9 +32,7 @@ namespace ProyectoJo.Application.UseCases
 
 		public List<RegistroAuditoria> ObtenerHistorial(string? modulo = null, DateTime? desde = null, DateTime? hasta = null)
 		{
-			var registros = _auditoriaRepository.ObtenerTodos()
-				.OrderByDescending(r => r.FechaHora)
-				.AsEnumerable();
+			var registros = _auditoriaRepository.ObtenerTodos().AsEnumerable();
 
 			if (!string.IsNullOrWhiteSpace(modulo))
 				registros = registros.Where(r => string.Equals(r.Modulo, modulo, StringComparison.OrdinalIgnoreCase));
@@ -45,7 +43,7 @@ namespace ProyectoJo.Application.UseCases
 			if (hasta.HasValue)
 				registros = registros.Where(r => r.FechaHora.Date <= hasta.Value.Date);
 
-			return registros.ToList();
+			return registros.OrderByDescending(r => r.FechaHora).ToList();
 		}
 	}
 }

@@ -7,8 +7,8 @@ namespace ProyectoJo.Application.Ports.Out
 		IEnumerable<Promocion> ObtenerTodas();
 		Promocion? ObtenerPorId(int id);
 		void Agregar(Promocion promocion);
-		void Editar(Promocion promocion);
-		void Eliminar(int id);
-		void ToggleActiva(int id);
+		bool Editar(Promocion promocion);
+		bool Eliminar(int id);
+		bool ToggleActiva(int id);
 	}
 }

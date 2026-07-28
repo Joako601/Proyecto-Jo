@@ -10,8 +10,8 @@ namespace ProyectoJo.Application.Ports.Out
 		void ActualizarItem(Item item);
 		void AgregarItem(Item item);
 		Item? ObtenerPorId(int id);
-		void Eliminar(int id);
-		void ToggleActivo(int id);
-		void ToggleAgotado(int id);
+		bool Eliminar(int id);
+		bool ToggleActivo(int id);
+		bool ToggleAgotado(int id);
 	}
 }

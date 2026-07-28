@@ -13,7 +13,7 @@ namespace ProyectoJo.Application.Ports.In
 		void Agregar(Promocion promocion, string usuario);
 		bool Editar(Promocion promocion, string usuario);
 		bool Eliminar(int id, string usuario);
-		void ToggleActiva(int id, string usuario);
+		bool ToggleActiva(int id, string usuario);
 
 		bool ActualizarFecha(int id, DateTime? fechaInicio, DateTime? fechaFin, string usuario);
 		bool HacerPermanente(int id, string usuario);

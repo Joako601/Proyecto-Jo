@@ -38,35 +38,44 @@ namespace ProyectoJo.Infrastructure.Persistence
 			}
 		}
 
-		public void Editar(Promocion promocion)
+		public bool Editar(Promocion promocion)
 		{
 			lock (_lock)
 			{
 				var promociones = ObtenerCache();
 				var index = promociones.FindIndex(p => p.Id == promocion.Id);
-				if (index >= 0) promociones[index] = promocion;
+				if (index < 0) return false;
+
+				promociones[index] = promocion;
 				PersistirSinCandado(promociones);
+				return true;
 			}
 		}
 
-		public void Eliminar(int id)
+		public bool Eliminar(int id)
 		{
 			lock (_lock)
 			{
 				var promociones = ObtenerCache();
-				promociones.RemoveAll(p => p.Id == id);
+				var eliminadas = promociones.RemoveAll(p => p.Id == id);
+				if (eliminadas == 0) return false;
+
 				PersistirSinCandado(promociones);
+				return true;
 			}
 		}
 
-		public void ToggleActiva(int id)
+		public bool ToggleActiva(int id)
 		{
 			lock (_lock)
 			{
 				var promociones = ObtenerCache();
 				var promo = promociones.Find(p => p.Id == id);
-				if (promo != null) promo.Activa = !promo.Activa;
+				if (promo is null) return false;
+
+				promo.Activa = !promo.Activa;
 				PersistirSinCandado(promociones);
+				return true;
 			}
 		}
 

@@ -11,7 +11,7 @@ namespace ProyectoJo.Application.Ports.In
 		Item? ObtenerPorId(int id);
 		bool Eliminar(int id, string usuario);
 		bool EditarItem(Item item, string usuario);
-		void ToggleActivo(int id, string usuario);
-		void ToggleAgotado(int id, string usuario);
+		bool ToggleActivo(int id, string usuario);
+		bool ToggleAgotado(int id, string usuario);
 	}
 }

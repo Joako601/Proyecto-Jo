@@ -95,7 +95,9 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		[HttpPost]
 		public IActionResult ToggleActiva(int id)
 		{
-			_promocionService.ToggleActiva(id, User.Identity?.Name ?? "Desconocido");
+			var cambiado = _promocionService.ToggleActiva(id, User.Identity?.Name ?? "Desconocido");
+			if (!cambiado) return NotFound();
+
 			return RedirectToAction("Index");
 		}
 

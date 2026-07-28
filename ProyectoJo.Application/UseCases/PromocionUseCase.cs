@@ -83,7 +83,8 @@ namespace ProyectoJo.Application.UseCases
 			var anterior = _repository.ObtenerPorId(promocion.Id);
 			if (anterior is null) return false;
 
-			_repository.Editar(promocion);
+			var actualizado = _repository.Editar(promocion);
+			if (!actualizado) return false;
 
 			_auditoriaService.RegistrarAccion(
 				usuario: usuario,
@@ -102,7 +103,8 @@ namespace ProyectoJo.Application.UseCases
 			var promocion = _repository.ObtenerPorId(id);
 			if (promocion is null) return false;
 
-			_repository.Eliminar(id);
+			var eliminado = _repository.Eliminar(id);
+			if (!eliminado) return false;
 
 			_auditoriaService.RegistrarAccion(
 				usuario: usuario,
@@ -115,9 +117,10 @@ namespace ProyectoJo.Application.UseCases
 			return true;
 		}
 
-		public void ToggleActiva(int id, string usuario)
+		public bool ToggleActiva(int id, string usuario)
 		{
-			_repository.ToggleActiva(id);
+			var cambiado = _repository.ToggleActiva(id);
+			if (!cambiado) return false;
 
 			_auditoriaService.RegistrarAccion(
 				usuario: usuario,
@@ -126,6 +129,8 @@ namespace ProyectoJo.Application.UseCases
 				entidad: $"Promoción #{id}",
 				detalleDespues: "Se alternó el estado Activa/Inactiva"
 			);
+
+			return true;
 		}
 
 		public bool ActualizarFecha(int id, DateTime? fechaInicio, DateTime? fechaFin, string usuario)
@@ -138,7 +143,8 @@ namespace ProyectoJo.Application.UseCases
 
 			promocion.FechaInicio = fechaInicio;
 			promocion.FechaFin = fechaFin;
-			_repository.Editar(promocion);
+			var actualizado = _repository.Editar(promocion);
+			if (!actualizado) return false;
 
 			_auditoriaService.RegistrarAccion(
 				usuario: usuario,
@@ -160,7 +166,8 @@ namespace ProyectoJo.Application.UseCases
 			promocion.FechaInicio = null;
 			promocion.FechaFin = null;
 			promocion.Activa = true;
-			_repository.Editar(promocion);
+			var actualizado = _repository.Editar(promocion);
+			if (!actualizado) return false;
 
 			_auditoriaService.RegistrarAccion(
 				usuario: usuario,

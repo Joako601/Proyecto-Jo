@@ -48,7 +48,8 @@ namespace ProyectoJo.Application.UseCases
 			var item = _repository.ObtenerPorId(id);
 			if (item is null) return false;
 
-			_repository.Eliminar(id);
+			var eliminado = _repository.Eliminar(id);
+			if (!eliminado) return false;
 
 			_auditoriaService.RegistrarAccion(
 				usuario: usuario,
@@ -80,9 +81,10 @@ namespace ProyectoJo.Application.UseCases
 			return true;
 		}
 
-		public void ToggleActivo(int id, string usuario)
+		public bool ToggleActivo(int id, string usuario)
 		{
-			_repository.ToggleActivo(id);
+			var cambiado = _repository.ToggleActivo(id);
+			if (!cambiado) return false;
 
 			_auditoriaService.RegistrarAccion(
 				usuario: usuario,
@@ -91,11 +93,14 @@ namespace ProyectoJo.Application.UseCases
 				entidad: $"Producto #{id}",
 				detalleDespues: "Se alternó el estado Activo/Inactivo"
 			);
+
+			return true;
 		}
 
-		public void ToggleAgotado(int id, string usuario)
+		public bool ToggleAgotado(int id, string usuario)
 		{
-			_repository.ToggleAgotado(id);
+			var cambiado = _repository.ToggleAgotado(id);
+			if (!cambiado) return false;
 
 			_auditoriaService.RegistrarAccion(
 				usuario: usuario,
@@ -104,6 +109,8 @@ namespace ProyectoJo.Application.UseCases
 				entidad: $"Producto #{id}",
 				detalleDespues: "Se alternó el estado Agotado/Disponible"
 			);
+
+			return true;
 		}
 	}
 }

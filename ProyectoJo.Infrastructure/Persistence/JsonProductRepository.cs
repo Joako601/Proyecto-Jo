@@ -60,35 +60,44 @@ namespace ProyectoJo.Infrastructure.Persistence
 			lock (_lock) { return ObtenerCache().Find(i => i.Id == id); }
 		}
 
-		public void Eliminar(int id)
+		public bool Eliminar(int id)
 		{
 			lock (_lock)
 			{
 				var menu = ObtenerCache();
-				menu.RemoveAll(i => i.Id == id);
+				var eliminados = menu.RemoveAll(i => i.Id == id);
+				if (eliminados == 0) return false;
+
 				PersistirSinCandado(menu);
+				return true;
 			}
 		}
 
-		public void ToggleActivo(int id)
+		public bool ToggleActivo(int id)
 		{
 			lock (_lock)
 			{
 				var menu = ObtenerCache();
 				var item = menu.Find(i => i.Id == id);
-				if (item != null) item.Activo = !item.Activo;
+				if (item is null) return false;
+
+				item.Activo = !item.Activo;
 				PersistirSinCandado(menu);
+				return true;
 			}
 		}
 
-		public void ToggleAgotado(int id)
+		public bool ToggleAgotado(int id)
 		{
 			lock (_lock)
 			{
 				var menu = ObtenerCache();
 				var item = menu.Find(i => i.Id == id);
-				if (item != null) item.Agotado = !item.Agotado;
+				if (item is null) return false;
+
+				item.Agotado = !item.Agotado;
 				PersistirSinCandado(menu);
+				return true;
 			}
 		}
 

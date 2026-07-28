@@ -1008,5 +1008,15 @@
     "Entidad": "Promoci\u00F3n #1 - Combo Familiar",
     "DetalleAntes": null,
     "DetalleDespues": "Se convirti\u00F3 en promoci\u00F3n permanente (sin fechas de vigencia)"
+  },
+  {
+    "Id": 102,
+    "FechaHora": "2026-07-27T20:01:36.4122302-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Finanzas",
+    "Accion": 0,
+    "Entidad": "Finanza #50",
+    "DetalleAntes": null,
+    "DetalleDespues": "Ingreso - venta - $1"
   }
 ]

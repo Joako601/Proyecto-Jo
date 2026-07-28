@@ -8,5 +8,6 @@ namespace ProyectoJo.Application.DTOs
 		public bool Exitoso { get; set; }
 		public string? MotivoRechazo { get; set; }
 		public bool NoEncontrado { get; set; }
+		public string? AdvertenciaRegistroFinanciero { get; set; }
 	}
 }

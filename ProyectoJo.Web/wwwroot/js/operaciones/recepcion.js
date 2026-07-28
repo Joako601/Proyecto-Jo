@@ -471,10 +471,16 @@
             body: 'id=' + id
         })
             .then(function (res) {
-                if (res.status === 401) { ir('/Operaciones/Auth/Login'); return; }
+                if (res.status === 401) { ir('/Operaciones/Auth/Login'); return null; }
                 if (!res.ok) {
                     alert('No se pudo marcar como pagado (código ' + res.status + ').');
-                    return;
+                    return null;
+                }
+                return res.json();
+            })
+            .then(function (data) {
+                if (data && data.advertencia) {
+                    alert(data.advertencia);
                 }
             })
             .catch(function (err) {

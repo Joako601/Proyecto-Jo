@@ -167,6 +167,7 @@ namespace ProyectoJo.Application.UseCases
 				return new ResultadoCambiarEstado { Exitoso = false, MotivoRechazo = motivoRechazo, Pedido = pedidoAntes };
 
 			var yaEstabaPagado = pedidoAntes.Estado == EstadoPedido.Pagado;
+			string? advertenciaRegistroFinanciero = null;
 
 			if (actualizado is not null && nuevoEstado == EstadoPedido.Pagado && !yaEstabaPagado)
 			{
@@ -184,6 +185,8 @@ namespace ProyectoJo.Application.UseCases
 				catch (Exception ex)
 				{
 					_logger.LogError(ex, "Error registrando finanza para el Pedido #{PedidoId}", id);
+					advertenciaRegistroFinanciero =
+						"El pedido se marcó como pagado, pero el movimiento de caja no pudo registrarse. Verificar Finanzas manualmente.";
 				}
 			}
 
@@ -193,7 +196,12 @@ namespace ProyectoJo.Application.UseCases
 				catch (Exception ex) { _logger.LogError(ex, "Error notificando cambio de estado del Pedido #{PedidoId}", id); }
 			}
 
-			return new ResultadoCambiarEstado { Exitoso = true, Pedido = actualizado };
+			return new ResultadoCambiarEstado
+			{
+				Exitoso = true,
+				Pedido = actualizado,
+				AdvertenciaRegistroFinanciero = advertenciaRegistroFinanciero
+			};
 		}
 
 		public async Task<List<Pedido>> ObtenerParaCocinaAsync()

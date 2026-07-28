@@ -51,7 +51,6 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 						item.Activo,
 						item.ImagenUrl,
 						item.Ingredientes,
-						// Agotado real: manual (Admin) O sin stock de algún ingrediente
 						Agotado = item.Agotado || stockMaximo == 0,
 						StockMaximo = stockMaximo
 					};
@@ -114,7 +113,10 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 				if (resultado.NoEncontrado) return NotFound($"Pedido #{id} no encontrado.");
 				if (!resultado.Exitoso) return Conflict(new { error = resultado.MotivoRechazo });
 
-				return Json(resultado.Pedido);
+				if (resultado.AdvertenciaRegistroFinanciero is not null)
+					_logger.LogWarning("Pedido #{PedidoId} pagado con advertencia: {Advertencia}", id, resultado.AdvertenciaRegistroFinanciero);
+
+				return Json(new { pedido = resultado.Pedido, advertencia = resultado.AdvertenciaRegistroFinanciero });
 			}
 			catch (Exception ex)
 			{

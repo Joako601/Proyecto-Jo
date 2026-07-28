@@ -23,9 +23,11 @@ namespace ProyectoJo.Application.UseCases
 
 		public List<OpinionDto> ObtenerTodas()
 		{
+			var productosPorId = _productoService.ObtenerTodos().ToDictionary(i => i.Id);
+
 			return _repository.ObtenerTodas()
 				.OrderByDescending(o => o.Fecha)
-				.Select(ArmarDto)
+				.Select(o => ArmarDto(o, productosPorId))
 				.ToList();
 		}
 
@@ -100,9 +102,9 @@ namespace ProyectoJo.Application.UseCases
 			return item?.Platillo ?? "Platillo eliminado";
 		}
 
-		private OpinionDto ArmarDto(OpinionCliente opinion)
+		private static OpinionDto ArmarDto(OpinionCliente opinion, IReadOnlyDictionary<int, Item> productosPorId)
 		{
-			var item = opinion.ItemId is not null ? _productoService.ObtenerPorId(opinion.ItemId.Value) : null;
+			var item = opinion.ItemId is not null ? productosPorId.GetValueOrDefault(opinion.ItemId.Value) : null;
 
 			return new OpinionDto
 			{

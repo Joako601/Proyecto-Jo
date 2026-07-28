@@ -61,19 +61,28 @@ namespace ProyectoJo.Application.UseCases
 			var mesPasado = hoy.AddMonths(-1);
 			var todos = _repository.ObtenerTodos();
 
-			decimal SumaIngresos(IEnumerable<Finanza> lista) =>
-				lista.Where(f => f.Tipo == TipoMovimiento.Ingreso).Sum(f => f.Monto);
+			var porMesTipo = todos
+				.GroupBy(f => (f.Fecha.Year, f.Fecha.Month, f.Tipo))
+				.ToDictionary(g => g.Key, g => (Total: g.Sum(f => f.Monto), Cantidad: g.Count()));
 
-			var ventasAnio = SumaIngresos(todos.Where(f => f.Fecha.Year == hoy.Year));
-			var ventasMes = SumaIngresos(todos.Where(f => f.Fecha.Year == hoy.Year && f.Fecha.Month == hoy.Month));
-			var ventasDia = SumaIngresos(todos.Where(f => f.Fecha.Date == hoy.Date));
+			decimal Monto(int anio, int mes, TipoMovimiento tipo) =>
+				porMesTipo.TryGetValue((anio, mes, tipo), out var v) ? v.Total : 0;
 
-			var movimientosMesPasado = todos
-				.Where(f => f.Fecha.Year == mesPasado.Year && f.Fecha.Month == mesPasado.Month && f.Tipo == TipoMovimiento.Ingreso)
-				.ToList();
-			var ventasMesPasado = movimientosMesPasado.Sum(f => f.Monto);
-			var ticketPromedioMesPasado = movimientosMesPasado.Count > 0
-				? ventasMesPasado / movimientosMesPasado.Count
+			int Cantidad(int anio, int mes, TipoMovimiento tipo) =>
+				porMesTipo.TryGetValue((anio, mes, tipo), out var v) ? v.Cantidad : 0;
+
+			var ventasAnio = porMesTipo
+				.Where(kv => kv.Key.Year == hoy.Year && kv.Key.Tipo == TipoMovimiento.Ingreso)
+				.Sum(kv => kv.Value.Total);
+			var ventasMes = Monto(hoy.Year, hoy.Month, TipoMovimiento.Ingreso);
+			var ventasDia = todos
+				.Where(f => f.Fecha.Date == hoy.Date && f.Tipo == TipoMovimiento.Ingreso)
+				.Sum(f => f.Monto);
+
+			var ventasMesPasado = Monto(mesPasado.Year, mesPasado.Month, TipoMovimiento.Ingreso);
+			var cantidadMesPasado = Cantidad(mesPasado.Year, mesPasado.Month, TipoMovimiento.Ingreso);
+			var ticketPromedioMesPasado = cantidadMesPasado > 0
+				? ventasMesPasado / cantidadMesPasado
 				: 0;
 
 			var tendenciaAnio = Enumerable.Range(1, 12)
@@ -83,8 +92,8 @@ namespace ProyectoJo.Application.UseCases
 					Mes = fecha.Month,
 					Anio = fecha.Year,
 					Etiqueta = fecha.ToString("MMM", cultura),
-					Ingresos = todos.Where(f => f.Fecha.Month == fecha.Month && f.Fecha.Year == fecha.Year && f.Tipo == TipoMovimiento.Ingreso).Sum(f => f.Monto),
-					Egresos = todos.Where(f => f.Fecha.Month == fecha.Month && f.Fecha.Year == fecha.Year && f.Tipo == TipoMovimiento.Egreso).Sum(f => f.Monto)
+					Ingresos = Monto(fecha.Year, fecha.Month, TipoMovimiento.Ingreso),
+					Egresos = Monto(fecha.Year, fecha.Month, TipoMovimiento.Egreso)
 				})
 				.ToList();
 
@@ -95,8 +104,8 @@ namespace ProyectoJo.Application.UseCases
 					Mes = fecha.Month,
 					Anio = fecha.Year,
 					Etiqueta = fecha.ToString("MMM yyyy", cultura),
-					Ingresos = todos.Where(f => f.Fecha.Month == fecha.Month && f.Fecha.Year == fecha.Year && f.Tipo == TipoMovimiento.Ingreso).Sum(f => f.Monto),
-					Egresos = todos.Where(f => f.Fecha.Month == fecha.Month && f.Fecha.Year == fecha.Year && f.Tipo == TipoMovimiento.Egreso).Sum(f => f.Monto)
+					Ingresos = Monto(fecha.Year, fecha.Month, TipoMovimiento.Ingreso),
+					Egresos = Monto(fecha.Year, fecha.Month, TipoMovimiento.Egreso)
 				})
 				.OrderBy(t => t.Anio).ThenBy(t => t.Mes)
 				.ToList();
@@ -116,8 +125,8 @@ namespace ProyectoJo.Application.UseCases
 
 			return new ResumenDashboard
 			{
-				TotalIngresosHistorico = SumaIngresos(todos),
-				TotalEgresosHistorico = todos.Where(f => f.Tipo == TipoMovimiento.Egreso).Sum(f => f.Monto),
+				TotalIngresosHistorico = porMesTipo.Where(kv => kv.Key.Tipo == TipoMovimiento.Ingreso).Sum(kv => kv.Value.Total),
+				TotalEgresosHistorico = porMesTipo.Where(kv => kv.Key.Tipo == TipoMovimiento.Egreso).Sum(kv => kv.Value.Total),
 				TotalMovimientos = todos.Count,
 				VentasAnio = ventasAnio,
 				VentasMes = ventasMes,

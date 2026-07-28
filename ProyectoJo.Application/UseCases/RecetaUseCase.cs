@@ -88,21 +88,25 @@ namespace ProyectoJo.Application.UseCases
 		{
 			var receta = _repository.ObtenerPorId(recetaId);
 			if (receta is null) return null;
-			return ArmarDto(receta);
+
+			var item = _productoService.ObtenerPorId(receta.ItemId);
+			return ArmarDto(receta, item);
 		}
 
 		public List<RendimientoRecetaDto> ObtenerRendimientoDeTodas()
 		{
-			return _repository.ObtenerTodas()
-				.Select(ArmarDto)
+			var recetas = _repository.ObtenerTodas();
+			var productosPorId = _productoService.ObtenerTodos().ToDictionary(i => i.Id);
+
+			return recetas
+				.Select(r => ArmarDto(r, productosPorId.GetValueOrDefault(r.ItemId)))
 				.Where(dto => dto is not null)
 				.Select(dto => dto!)
 				.ToList();
 		}
 
-		private RendimientoRecetaDto? ArmarDto(Receta receta)
+		private static RendimientoRecetaDto? ArmarDto(Receta receta, Item? item)
 		{
-			var item = _productoService.ObtenerPorId(receta.ItemId);
 			if (item is null) return null;
 
 			return new RendimientoRecetaDto

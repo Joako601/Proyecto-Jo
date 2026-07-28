@@ -20,5 +20,6 @@ namespace ProyectoJo.Application.Ports.In
 
 		bool EstaVigente(Promocion promocion);
 		decimal CalcularPrecioFinal(Item item);
+		decimal CalcularPrecioFinal(Item item, List<Promocion> promosVigentes);
 	}
 }

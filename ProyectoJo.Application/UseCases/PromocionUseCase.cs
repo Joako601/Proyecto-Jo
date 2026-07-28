@@ -41,8 +41,15 @@ namespace ProyectoJo.Application.UseCases
 
 		public decimal CalcularPrecioFinal(Item item)
 		{
-			var promo = ObtenerVigentesPorItem(item.Id)
-				.Where(p => p.TipoDescuento != TipoDescuento.Ninguno && p.ValorDescuento.HasValue)
+
+			return CalcularPrecioFinal(item, ObtenerVigentes().ToList());
+		}
+
+		public decimal CalcularPrecioFinal(Item item, List<Promocion> promosVigentes)
+		{
+			var promo = promosVigentes
+				.Where(p => p.ItemIds != null && p.ItemIds.Contains(item.Id)
+						 && p.TipoDescuento != TipoDescuento.Ninguno && p.ValorDescuento.HasValue)
 				.OrderByDescending(p => p.Id)
 				.FirstOrDefault();
 

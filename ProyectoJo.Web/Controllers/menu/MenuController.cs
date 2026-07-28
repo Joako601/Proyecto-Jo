@@ -37,15 +37,17 @@ namespace ProyectoJo.Web.Controllers
 				.Take(tamanoPagina)
 				.ToList();
 
+			var promosVigentes = _promocionService.ObtenerVigentes().ToList();
+
 			var viewModels = paginaActual.Select(i => new MenuItemViewModel
 			{
 				Platillo = i,
-				PrecioFinal = _promocionService.CalcularPrecioFinal(i)
+				PrecioFinal = _promocionService.CalcularPrecioFinal(i, promosVigentes)
 			}).ToList();
 
 			ViewBag.Categorias = menu.Select(i => i.Categoria).Distinct().ToList();
 			ViewBag.CategoriaActual = categoria;
-			ViewBag.PromocionesGenerales = _promocionService.ObtenerVigentesGenerales().ToList();
+			ViewBag.PromocionesGenerales = promosVigentes.Where(p => p.ItemIds == null || p.ItemIds.Count == 0).ToList();
 			ViewBag.PaginaActual = pagina;
 			ViewBag.TotalPaginas = totalPaginas;
 

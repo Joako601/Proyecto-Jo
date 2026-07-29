@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using ProyectoJo.Application.Ports.In;
 using ProyectoJo.Domain.Entities;
+using ProyectoJo.Web.Authorization;
 
 namespace ProyectoJo.Web.Areas.Admin.Controllers
 {
 	[Area("Admin")]
 	[Authorize(AuthenticationSchemes = "JoCookieAuth", Roles = "SuperAdmin,Administrador")]
+	[RequiereArea("Operadores")]
 	public class OperadoresController : Controller
 	{
 		private readonly IEmpleadoService _empleadoService;

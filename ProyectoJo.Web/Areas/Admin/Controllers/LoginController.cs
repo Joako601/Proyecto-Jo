@@ -42,6 +42,12 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 				new Claim(ClaimTypes.Role, resultado.Rol)
 			};
 
+			if (resultado.Rol == "Administrador")
+			{
+				var areas = resultado.Areas.Any() ? resultado.Areas : new List<string> { "General" };
+				claims.AddRange(areas.Select(a => new Claim("Area", a)));
+			}
+
 			var identity = new ClaimsIdentity(claims, "JoCookieAuth");
 			var principal = new ClaimsPrincipal(identity);
 

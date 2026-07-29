@@ -22,7 +22,7 @@ namespace ProyectoJo.Application.UseCases
 
 		public Task<Administrador?> ObtenerPorIdAsync(int id) => _repository.ObtenerPorIdAsync(id);
 
-		public async Task<(bool Exito, string? Error)> CrearAsync(string usuario, string contrasena)
+		public async Task<(bool Exito, string? Error)> CrearAsync(string usuario, string contrasena, List<string> areas)
 		{
 			if (string.IsNullOrWhiteSpace(usuario) || string.IsNullOrWhiteSpace(contrasena))
 				return (false, "Usuario y contraseña son obligatorios.");
@@ -38,14 +38,15 @@ namespace ProyectoJo.Application.UseCases
 			{
 				Usuario = usuario.Trim(),
 				ContrasenaHash = HashearContrasena(contrasena),
-				Activo = true
+				Activo = true,
+				Areas = NormalizarAreas(areas)
 			};
 
 			await _repository.AgregarAsync(administrador);
 			return (true, null);
 		}
 
-		public async Task<(bool Exito, string? Error)> EditarAsync(int id, string usuario, bool activo, string? nuevaContrasena)
+		public async Task<(bool Exito, string? Error)> EditarAsync(int id, string usuario, bool activo, string? nuevaContrasena, List<string> areas)
 		{
 			var administrador = await _repository.ObtenerPorIdAsync(id);
 			if (administrador is null)
@@ -60,6 +61,7 @@ namespace ProyectoJo.Application.UseCases
 
 			administrador.Usuario = usuario.Trim();
 			administrador.Activo = activo;
+			administrador.Areas = NormalizarAreas(areas);
 
 			if (!string.IsNullOrWhiteSpace(nuevaContrasena))
 			{
@@ -79,6 +81,12 @@ namespace ProyectoJo.Application.UseCases
 			var salt = RandomNumberGenerator.GetBytes(SaltSize);
 			var hash = Rfc2898DeriveBytes.Pbkdf2(contrasena, salt, Iteraciones, HashAlgorithmName.SHA256, HashSize);
 			return $"{Convert.ToBase64String(salt)}.{Convert.ToBase64String(hash)}";
+		}
+
+		private static List<string> NormalizarAreas(List<string>? areas)
+		{
+			if (areas is null || areas.Count == 0) return new List<string>();
+			return areas.Where(a => AreasAdmin.Todas.Contains(a)).Distinct().ToList();
 		}
 	}
 }

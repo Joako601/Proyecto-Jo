@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Administradores";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    var todasLasAreas = ProyectoJo.Domain.Entities.AreasAdmin.Todas;
 }
 
 <div class="admin-page">
@@ -27,8 +28,20 @@
         <form method="post" asp-area="Admin" asp-controller="Administradores" asp-action="Crear">
             <label>Usuario</label>
             <input type="text" name="usuario" required autocomplete="off" />
+
             <label>Contraseña</label>
             <input type="password" name="contrasena" required minlength="8" autocomplete="new-password" />
+
+            <label><input type="checkbox" name="general" value="true" /> Acceso general (todas las áreas)</label>
+
+            <fieldset>
+                <legend>O elegí áreas puntuales:</legend>
+                @foreach (var area in todasLasAreas)
+                {
+                    <label><input type="checkbox" name="areas" value="@area" /> @area</label>
+                }
+            </fieldset>
+
             <button type="submit" class="btn-primary">Crear</button>
         </form>
     </details>
@@ -39,6 +52,7 @@
                 <tr>
                     <th>Usuario</th>
                     <th>Activo</th>
+                    <th>Acceso</th>
                     <th></th>
                 </tr>
             </thead>
@@ -48,16 +62,37 @@
                     <tr>
                         <td data-label="Usuario">@a.Usuario</td>
                         <td data-label="Activo">@(a.Activo ? "Sí" : "No")</td>
+                        <td data-label="Acceso">@(a.Areas.Any() ? string.Join(", ", a.Areas) : "General")</td>
                         <td>
                             <details>
                                 <summary class="link-edit">Editar</summary>
                                 <form method="post" asp-area="Admin" asp-controller="Administradores" asp-action="Editar">
                                     <input type="hidden" name="id" value="@a.Id" />
+
                                     <label>Usuario</label>
                                     <input type="text" name="usuario" value="@a.Usuario" required />
+
                                     <label><input type="checkbox" name="activo" value="true" checked="@a.Activo" /> Activo</label>
+
                                     <label>Nueva contraseña (opcional)</label>
                                     <input type="password" name="nuevaContrasena" minlength="8" autocomplete="new-password" />
+
+                                    <label>
+                                        <input type="checkbox" name="general" value="true" checked="@(!a.Areas.Any())" />
+                                        Acceso general (todas las áreas)
+                                    </label>
+
+                                    <fieldset>
+                                        <legend>O áreas puntuales:</legend>
+                                        @foreach (var area in todasLasAreas)
+                                        {
+                                            <label>
+                                                <input type="checkbox" name="areas" value="@area" checked="@a.Areas.Contains(area)" />
+                                                @area
+                                            </label>
+                                        }
+                                    </fieldset>
+
                                     <button type="submit" class="btn-primary">Guardar</button>
                                 </form>
                             </details>

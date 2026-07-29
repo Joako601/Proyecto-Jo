@@ -30,14 +30,14 @@ namespace ProyectoJo.Infrastructure.Auth
 				usuario == _usuario &&
 				VerificarHash(contrasena, _contrasenaHash))
 			{
-				return new ResultadoAuth(usuario, RolSuperAdmin);
+				return new ResultadoAuth(usuario, RolSuperAdmin, new List<string>());
 			}
 
 			var administrador = await _administradorRepository.ObtenerPorUsuarioAsync(usuario);
 			if (administrador is not null && administrador.Activo &&
 				VerificarHash(contrasena, administrador.ContrasenaHash))
 			{
-				return new ResultadoAuth(administrador.Usuario, RolAdministrador);
+				return new ResultadoAuth(administrador.Usuario, RolAdministrador, administrador.Areas);
 			}
 
 			return null;

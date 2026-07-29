@@ -48,105 +48,135 @@
 
 <div class="tc-section-label">Módulos</div>
 <div class="row g-3">
-    <div class="col-6 col-lg-3">
-        <a asp-area="Admin" asp-controller="Finanzas" asp-action="Index" class="tc-modulo">
-            <div class="tc-modulo__top">
-                <div class="tc-modulo__title"><i class="bi bi-cash tc-icon--mustard"></i><span>Finanzas</span></div>
-                <span class="tc-modulo__arrow">→</span>
-            </div>
-            <div class="tc-modulo__body">Ingresos y egresos del día.</div>
-        </a>
-    </div>
-    <div class="col-6 col-lg-3">
-        <a asp-area="Admin" asp-controller="Finanzas" asp-action="Dashboard" class="tc-modulo">
-            <div class="tc-modulo__top">
-                <div class="tc-modulo__title"><i class="bi bi-bar-chart tc-icon--mustard"></i><span>Dashboard financiero</span></div>
-                <span class="tc-modulo__arrow">→</span>
-            </div>
-            <div class="tc-modulo__body">Tendencias del mes.</div>
-        </a>
-    </div>
-    <div class="col-6 col-lg-3">
-        <a asp-area="Admin" asp-controller="Menu" asp-action="Index" class="tc-modulo">
-            <div class="tc-modulo__top">
-                <div class="tc-modulo__title"><i class="bi bi-card-list tc-icon--teal"></i><span>Menú</span></div>
-                <span class="tc-modulo__arrow">→</span>
-            </div>
-            <div class="tc-modulo__body">Platillos y categorías.</div>
-        </a>
-    </div>
-    <div class="col-6 col-lg-3">
-        <a asp-area="Admin" asp-controller="Inventario" asp-action="Index" class="tc-modulo">
-            <div class="tc-modulo__top">
-                <div class="tc-modulo__title"><i class="bi bi-toggles tc-icon--teal"></i><span>Inventario</span></div>
-                <span class="tc-modulo__arrow">→</span>
-            </div>
-            <div class="tc-modulo__body">Pausar platillos agotados.</div>
-        </a>
-    </div>
-    <div class="col-6 col-lg-3">
-        <a asp-area="Admin" asp-controller="Promociones" asp-action="Index" class="tc-modulo">
-            <div class="tc-modulo__top">
-                <div class="tc-modulo__title"><i class="bi bi-megaphone tc-icon--mustard"></i><span>Promociones</span></div>
-                <span class="tc-modulo__arrow">→</span>
-            </div>
-            <div class="tc-modulo__body">Ofertas y descuentos activos.</div>
-        </a>
-    </div>
-    <div class="col-6 col-lg-3">
-        <a asp-area="Admin" asp-controller="MapaCalor" asp-action="Index" class="tc-modulo">
-            <div class="tc-modulo__top">
-                <div class="tc-modulo__title"><i class="bi bi-fire tc-icon--carbon"></i><span>Mapa de calor</span></div>
-                <span class="tc-modulo__arrow">→</span>
-            </div>
-            <div class="tc-modulo__body">Horas pico y productos más vendidos.</div>
-        </a>
-    </div>
-    <div class="col-6 col-lg-3">
-        <a asp-area="Admin" asp-controller="CierreCaja" asp-action="Index" class="tc-modulo">
-            <div class="tc-modulo__top">
-                <div class="tc-modulo__title"><i class="bi bi-safe tc-icon--brick"></i><span>Cierre de caja</span></div>
-                <span class="tc-modulo__arrow">→</span>
-            </div>
-            <div class="tc-modulo__body">Apertura, cierre y reporte de ventas del día.</div>
-        </a>
-    </div>
-    <div class="col-6 col-lg-3">
-        <a asp-area="Admin" asp-controller="HistorialAuditoria" asp-action="Index" class="tc-modulo">
-            <div class="tc-modulo__top">
-                <div class="tc-modulo__title"><i class="bi bi-clock-history tc-icon--carbon"></i><span>Auditoría</span></div>
-                <span class="tc-modulo__arrow">→</span>
-            </div>
-            <div class="tc-modulo__body">Registro de cambios realizados en el sistema.</div>
-        </a>
-    </div>
-    <div class="col-6 col-lg-3">
-        <a asp-area="Admin" asp-controller="Recetario" asp-action="Index" class="tc-modulo">
-            <div class="tc-modulo__top">
-                <div class="tc-modulo__title"><i class="bi bi-journal-text tc-icon--teal"></i><span>Recetario Digital</span></div>
-                <span class="tc-modulo__arrow">→</span>
-            </div>
-            <div class="tc-modulo__body">Cálculo de costos y rendimientos.</div>
-        </a>
-    </div>
-    <div class="col-6 col-lg-3">
-        <a asp-area="Admin" asp-controller="Opiniones" asp-action="Index" class="tc-modulo">
-            <div class="tc-modulo__top">
-                <div class="tc-modulo__title"><i class="bi bi-emoji-smile tc-icon--mustard"></i><span>Semáforo Feedback</span></div>
-                <span class="tc-modulo__arrow">→</span>
-            </div>
-            <div class="tc-modulo__body">Gestión de opiniones de clientes.</div>
-        </a>
-    </div>
-    <div class="col-6 col-lg-3">
-        <a asp-area="Admin" asp-controller="Insumos" asp-action="Index" class="tc-modulo">
-            <div class="tc-modulo__top">
-                <div class="tc-modulo__title"><i class="bi bi-exclamation-triangle tc-icon--brick"></i><span>Alerta de Stock</span></div>
-                <span class="tc-modulo__arrow">→</span>
-            </div>
-            <div class="tc-modulo__body">Insumos críticos y reposición.</div>
-        </a>
-    </div>
+    @if (User.TieneAccesoArea("Finanzas"))
+    {
+        <div class="col-6 col-lg-3">
+            <a asp-area="Admin" asp-controller="Finanzas" asp-action="Index" class="tc-modulo">
+                <div class="tc-modulo__top">
+                    <div class="tc-modulo__title"><i class="bi bi-cash tc-icon--mustard"></i><span>Finanzas</span></div>
+                    <span class="tc-modulo__arrow">→</span>
+                </div>
+                <div class="tc-modulo__body">Ingresos y egresos del día.</div>
+            </a>
+        </div>
+        <div class="col-6 col-lg-3">
+            <a asp-area="Admin" asp-controller="Finanzas" asp-action="Dashboard" class="tc-modulo">
+                <div class="tc-modulo__top">
+                    <div class="tc-modulo__title"><i class="bi bi-bar-chart tc-icon--mustard"></i><span>Dashboard financiero</span></div>
+                    <span class="tc-modulo__arrow">→</span>
+                </div>
+                <div class="tc-modulo__body">Tendencias del mes.</div>
+            </a>
+        </div>
+    }
+    @if (User.TieneAccesoArea("Menu"))
+    {
+        <div class="col-6 col-lg-3">
+            <a asp-area="Admin" asp-controller="Menu" asp-action="Index" class="tc-modulo">
+                <div class="tc-modulo__top">
+                    <div class="tc-modulo__title"><i class="bi bi-card-list tc-icon--teal"></i><span>Menú</span></div>
+                    <span class="tc-modulo__arrow">→</span>
+                </div>
+                <div class="tc-modulo__body">Platillos y categorías.</div>
+            </a>
+        </div>
+    }
+    @if (User.TieneAccesoArea("Inventario"))
+    {
+        <div class="col-6 col-lg-3">
+            <a asp-area="Admin" asp-controller="Inventario" asp-action="Index" class="tc-modulo">
+                <div class="tc-modulo__top">
+                    <div class="tc-modulo__title"><i class="bi bi-toggles tc-icon--teal"></i><span>Inventario</span></div>
+                    <span class="tc-modulo__arrow">→</span>
+                </div>
+                <div class="tc-modulo__body">Pausar platillos agotados.</div>
+            </a>
+        </div>
+    }
+    @if (User.TieneAccesoArea("Promociones"))
+    {
+        <div class="col-6 col-lg-3">
+            <a asp-area="Admin" asp-controller="Promociones" asp-action="Index" class="tc-modulo">
+                <div class="tc-modulo__top">
+                    <div class="tc-modulo__title"><i class="bi bi-megaphone tc-icon--mustard"></i><span>Promociones</span></div>
+                    <span class="tc-modulo__arrow">→</span>
+                </div>
+                <div class="tc-modulo__body">Ofertas y descuentos activos.</div>
+            </a>
+        </div>
+    }
+    @if (User.TieneAccesoArea("MapaCalor"))
+    {
+        <div class="col-6 col-lg-3">
+            <a asp-area="Admin" asp-controller="MapaCalor" asp-action="Index" class="tc-modulo">
+                <div class="tc-modulo__top">
+                    <div class="tc-modulo__title"><i class="bi bi-fire tc-icon--carbon"></i><span>Mapa de calor</span></div>
+                    <span class="tc-modulo__arrow">→</span>
+                </div>
+                <div class="tc-modulo__body">Horas pico y productos más vendidos.</div>
+            </a>
+        </div>
+    }
+    @if (User.TieneAccesoArea("CierreCaja"))
+    {
+        <div class="col-6 col-lg-3">
+            <a asp-area="Admin" asp-controller="CierreCaja" asp-action="Index" class="tc-modulo">
+                <div class="tc-modulo__top">
+                    <div class="tc-modulo__title"><i class="bi bi-safe tc-icon--brick"></i><span>Cierre de caja</span></div>
+                    <span class="tc-modulo__arrow">→</span>
+                </div>
+                <div class="tc-modulo__body">Apertura, cierre y reporte de ventas del día.</div>
+            </a>
+        </div>
+    }
+    @if (User.TieneAccesoArea("Auditoria"))
+    {
+        <div class="col-6 col-lg-3">
+            <a asp-area="Admin" asp-controller="HistorialAuditoria" asp-action="Index" class="tc-modulo">
+                <div class="tc-modulo__top">
+                    <div class="tc-modulo__title"><i class="bi bi-clock-history tc-icon--carbon"></i><span>Auditoría</span></div>
+                    <span class="tc-modulo__arrow">→</span>
+                </div>
+                <div class="tc-modulo__body">Registro de cambios realizados en el sistema.</div>
+            </a>
+        </div>
+    }
+    @if (User.TieneAccesoArea("Recetario"))
+    {
+        <div class="col-6 col-lg-3">
+            <a asp-area="Admin" asp-controller="Recetario" asp-action="Index" class="tc-modulo">
+                <div class="tc-modulo__top">
+                    <div class="tc-modulo__title"><i class="bi bi-journal-text tc-icon--teal"></i><span>Recetario Digital</span></div>
+                    <span class="tc-modulo__arrow">→</span>
+                </div>
+                <div class="tc-modulo__body">Cálculo de costos y rendimientos.</div>
+            </a>
+        </div>
+    }
+    @if (User.TieneAccesoArea("Opiniones"))
+    {
+        <div class="col-6 col-lg-3">
+            <a asp-area="Admin" asp-controller="Opiniones" asp-action="Index" class="tc-modulo">
+                <div class="tc-modulo__top">
+                    <div class="tc-modulo__title"><i class="bi bi-emoji-smile tc-icon--mustard"></i><span>Semáforo Feedback</span></div>
+                    <span class="tc-modulo__arrow">→</span>
+                </div>
+                <div class="tc-modulo__body">Gestión de opiniones de clientes.</div>
+            </a>
+        </div>
+    }
+    @if (User.TieneAccesoArea("Insumos"))
+    {
+        <div class="col-6 col-lg-3">
+            <a asp-area="Admin" asp-controller="Insumos" asp-action="Index" class="tc-modulo">
+                <div class="tc-modulo__top">
+                    <div class="tc-modulo__title"><i class="bi bi-exclamation-triangle tc-icon--brick"></i><span>Alerta de Stock</span></div>
+                    <span class="tc-modulo__arrow">→</span>
+                </div>
+                <div class="tc-modulo__body">Insumos críticos y reposición.</div>
+            </a>
+        </div>
+    }
     @{
         var esSuperAdmin = User.IsInRole("SuperAdmin");
         var accesoGeneral = User.HasClaim("Area", "General");

@@ -1068,5 +1068,15 @@
     "Entidad": "Finanza #51",
     "DetalleAntes": null,
     "DetalleDespues": "Ingreso - Ventas - $14850"
+  },
+  {
+    "Id": 108,
+    "FechaHora": "2026-07-28T20:18:46.2993174-06:00",
+    "Usuario": "Joaquin1",
+    "Modulo": "Promociones",
+    "Accion": 1,
+    "Entidad": "Promoci\u00F3n #3",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activa/Inactiva"
   }
 ]

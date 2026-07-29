@@ -88,7 +88,7 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 			if (!ModelState.IsValid) return BadRequest(ModelState);
 			try
 			{
-				var resultado = await _pedidoService.CrearAsync(pedido);
+				var resultado = await _pedidoService.CrearAsync(pedido, User.Identity?.Name ?? "Desconocido", "Recepcion");
 				return Json(resultado);
 			}
 			catch (InvalidOperationException ex)
@@ -108,7 +108,7 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 		{
 			try
 			{
-				var resultado = await _pedidoService.CambiarEstadoAsync(id, EstadoPedido.Pagado);
+				var resultado = await _pedidoService.CambiarEstadoAsync(id, EstadoPedido.Pagado, User.Identity?.Name ?? "Desconocido", "Recepcion");
 
 				if (resultado.NoEncontrado) return NotFound($"Pedido #{id} no encontrado.");
 				if (!resultado.Exitoso) return Conflict(new { error = resultado.MotivoRechazo });

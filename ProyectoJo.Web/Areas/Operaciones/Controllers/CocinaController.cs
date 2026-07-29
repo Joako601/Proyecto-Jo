@@ -22,7 +22,7 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 		public IActionResult Index() => View();
 
 		// GET /Operaciones/Cocina/ObtenerPedidos
-		
+
 		[HttpGet]
 		public async Task<IActionResult> ObtenerPedidos()
 		{
@@ -46,7 +46,7 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 				return BadRequest(new { error = $"Estado inválido: '{nuevoEstado}'" });
 			try
 			{
-				var resultado = await _pedidoService.CambiarEstadoAsync(id, estado);
+				var resultado = await _pedidoService.CambiarEstadoAsync(id, estado, User.Identity?.Name ?? "Desconocido", "Cocina");
 
 				if (resultado.NoEncontrado) return NotFound(new { error = $"Pedido #{id} no encontrado." });
 				if (!resultado.Exitoso) return Conflict(new { error = resultado.MotivoRechazo });

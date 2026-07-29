@@ -15,6 +15,7 @@ namespace ProyectoJo.Application.UseCases
 		private readonly IPromocionService _promocionService;
 		private readonly IInsumoService _insumoService;
 		private readonly IRecetaService _recetaService;
+		private readonly IAuditoriaService _auditoriaService;
 		private readonly ILogger<PedidoUseCase> _logger;
 
 		public PedidoUseCase(
@@ -25,6 +26,7 @@ namespace ProyectoJo.Application.UseCases
 			IPromocionService promocionService,
 			IInsumoService insumoService,
 			IRecetaService recetaService,
+			IAuditoriaService auditoriaService,
 			ILogger<PedidoUseCase> logger)
 		{
 			_repository = repository;
@@ -34,6 +36,7 @@ namespace ProyectoJo.Application.UseCases
 			_promocionService = promocionService;
 			_insumoService = insumoService;
 			_recetaService = recetaService;
+			_auditoriaService = auditoriaService;
 			_logger = logger;
 		}
 
@@ -48,7 +51,7 @@ namespace ProyectoJo.Application.UseCases
 			return await _repository.ObtenerPorIdAsync(id);
 		}
 
-		public async Task<ResultadoCrearPedido> CrearAsync(Pedido pedido)
+		public async Task<ResultadoCrearPedido> CrearAsync(Pedido pedido, string usuario, string estacion)
 		{
 			var lineasValidas = new List<ItemPedido>();
 			var lineasDescartadas = new List<LineaDescartada>();
@@ -116,6 +119,10 @@ namespace ProyectoJo.Application.UseCases
 			try { await _notificador.NotificarCreadoAsync(creado); }
 			catch (Exception ex) { _logger.LogError(ex, "Error notificando creación del Pedido #{PedidoId}", creado.Id); }
 
+			_auditoriaService.RegistrarAccion(
+				usuario, estacion, TipoAccionAuditoria.Creacion, $"Pedido #{creado.Id}",
+				detalleDespues: $"Mesa {creado.Mesa}, {creado.Items.Count} ítem(s), total {creado.Total:C}");
+
 			return new ResultadoCrearPedido { Pedido = creado, LineasDescartadas = lineasDescartadas, LineasAjustadas = lineasAjustadas };
 		}
 
@@ -139,7 +146,7 @@ namespace ProyectoJo.Application.UseCases
 			return precioFinal < 0 ? 0 : Math.Round(precioFinal, 2);
 		}
 
-		public async Task<ResultadoCambiarEstado> CambiarEstadoAsync(int id, EstadoPedido nuevoEstado)
+		public async Task<ResultadoCambiarEstado> CambiarEstadoAsync(int id, EstadoPedido nuevoEstado, string usuario, string estacion)
 		{
 			Func<Pedido, Task<string?>> validador = async pedido =>
 			{
@@ -194,6 +201,10 @@ namespace ProyectoJo.Application.UseCases
 			{
 				try { await _notificador.NotificarEstadoCambiadoAsync(actualizado); }
 				catch (Exception ex) { _logger.LogError(ex, "Error notificando cambio de estado del Pedido #{PedidoId}", id); }
+
+				_auditoriaService.RegistrarAccion(
+					usuario, estacion, TipoAccionAuditoria.Edicion, $"Pedido #{id}",
+					detalleAntes: pedidoAntes.Estado.ToString(), detalleDespues: actualizado.Estado.ToString());
 			}
 
 			return new ResultadoCambiarEstado

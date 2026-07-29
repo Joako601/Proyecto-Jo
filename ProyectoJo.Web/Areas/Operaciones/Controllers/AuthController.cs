@@ -123,9 +123,9 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 		// POST /Operaciones/Auth/Emparejar
 		[HttpPost]
 		[Authorize(AuthenticationSchemes = "SupervisorAuth")]
-		public async Task<IActionResult> Emparejar(RolEmpleado estacion, string nombre)
+		public async Task<IActionResult> Emparejar(RolEmpleado estacion, string? nombre = null)
 		{
-			var dispositivo = await _dispositivoService.EmparejarAsync(estacion, nombre);
+			var dispositivo = await _dispositivoService.EmparejarAsync(estacion, nombre ?? string.Empty);
 
 			Response.Cookies.Append("Jo.DispositivoToken", dispositivo.Token, new CookieOptions
 			{

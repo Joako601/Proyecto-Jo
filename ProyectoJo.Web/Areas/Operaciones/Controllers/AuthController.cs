@@ -90,25 +90,23 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 		}
 
 		// GET /Operaciones/Auth/LoginSupervisor
-		public IActionResult LoginSupervisor(bool bloqueado = false, string? returnUrl = null)
+		public IActionResult LoginSupervisor(bool bloqueado = false)
 		{
 			ViewBag.Bloqueado = bloqueado;
 			if (bloqueado)
 				ViewBag.Error = "Demasiados intentos. Espera un momento antes de volver a intentar.";
 
-			ViewBag.ReturnUrl = returnUrl;
 			return View();
 		}
 
 		// POST /Operaciones/Auth/LoginSupervisor
 		[HttpPost]
 		[EnableRateLimiting("login-supervisor")]
-		public async Task<IActionResult> LoginSupervisor(string clave, string? returnUrl = null)
+		public async Task<IActionResult> LoginSupervisor(string clave)
 		{
 			if (!await _supervisorAuthService.ValidarClaveAsync(clave))
 			{
 				ViewBag.Error = "Clave incorrecta";
-				ViewBag.ReturnUrl = returnUrl;
 				return View();
 			}
 
@@ -119,9 +117,6 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 
 			await HttpContext.SignInAsync("SupervisorAuth", principal,
 				new AuthenticationProperties { IsPersistent = false });
-
-			if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
-				return LocalRedirect(returnUrl);
 
 			return RedirectToAction("Emparejar");
 		}
@@ -135,15 +130,21 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 		[Authorize(AuthenticationSchemes = "SupervisorAuth")]
 		public async Task<IActionResult> Emparejar(RolEmpleado estacion, string? nombre = null)
 		{
-			var dispositivo = await _dispositivoService.EmparejarAsync(estacion, nombre ?? string.Empty);
+			var tokenActual = Request.Cookies["Jo.DispositivoToken"];
+			var dispositivo = tokenActual is null ? null : await _dispositivoService.ReasignarEstacionAsync(tokenActual, estacion);
 
-			Response.Cookies.Append("Jo.DispositivoToken", dispositivo.Token, new CookieOptions
+			if (dispositivo is null)
 			{
-				Expires = DateTimeOffset.UtcNow.AddYears(5),
-				HttpOnly = true,
-				IsEssential = true,
-				SameSite = SameSiteMode.Lax
-			});
+				dispositivo = await _dispositivoService.EmparejarAsync(estacion, nombre ?? string.Empty);
+
+				Response.Cookies.Append("Jo.DispositivoToken", dispositivo.Token, new CookieOptions
+				{
+					Expires = DateTimeOffset.UtcNow.AddYears(5),
+					HttpOnly = true,
+					IsEssential = true,
+					SameSite = SameSiteMode.Lax
+				});
+			}
 
 			return RedirectToAction("Login");
 		}

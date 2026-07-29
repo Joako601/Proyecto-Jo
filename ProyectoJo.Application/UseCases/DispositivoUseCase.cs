@@ -27,6 +27,12 @@ namespace ProyectoJo.Application.UseCases
 			return await _repository.RegistrarAsync(dispositivo);
 		}
 
+		public async Task<DispositivoOperaciones?> ReasignarEstacionAsync(string token, RolEmpleado estacion)
+		{
+			if (string.IsNullOrWhiteSpace(token)) return null;
+			return await _repository.ActualizarEstacionAsync(token, estacion);
+		}
+
 		public async Task<DispositivoOperaciones?> ReconocerAsync(string token)
 		{
 			if (string.IsNullOrWhiteSpace(token)) return null;

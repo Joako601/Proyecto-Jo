@@ -52,6 +52,25 @@ namespace ProyectoJo.Infrastructure.Persistence
 			}
 		}
 
+		public async Task<DispositivoOperaciones?> ActualizarEstacionAsync(string token, RolEmpleado estacion)
+		{
+			await _lock.WaitAsync();
+			try
+			{
+				var todos = await LeerAsync();
+				var dispositivo = todos.FirstOrDefault(d => d.Token == token);
+				if (dispositivo is null) return null;
+
+				dispositivo.Estacion = estacion;
+				await PersistirAsync(todos);
+				return dispositivo;
+			}
+			finally
+			{
+				_lock.Release();
+			}
+		}
+
 		public async Task<List<DispositivoOperaciones>> ObtenerTodosAsync()
 		{
 			await _lock.WaitAsync();

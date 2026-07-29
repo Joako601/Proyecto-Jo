@@ -7,15 +7,17 @@
 }
 
 <div class="d-flex justify-content-center align-items-center" style="min-height: 90vh;">
-    <div class="card shadow-sm" style="max-width: 380px; width: 100%;">
+    <div class="card shadow-sm emparejar-card">
         <div class="card-body p-4 text-center">
 
-            <span class="badge @(esCocina ? "bg-warning text-dark" : "bg-primary") mb-2 px-3 py-2">
+            <span class="badge @(esCocina ? "bg-warning" : "bg-primary") mb-2 px-3 py-2">
                 <i class="bi @(esCocina ? "bi-egg-fried" : "bi-receipt")"></i>
                 @estacion
             </span>
 
-            <h4 class="mb-1">Inicia sesión</h4>
+            <p class="emparejar-eyebrow mb-1">Ingresá tus datos para comenzar</p>
+            <h4 class="emparejar-titulo mb-3">Inicia sesión</h4>
+
             @if (ViewBag.NombreDispositivo is string nombreDispositivo && !string.IsNullOrWhiteSpace(nombreDispositivo))
             {
                 <p class="text-muted small mb-3">@nombreDispositivo</p>
@@ -29,20 +31,20 @@
             <form method="post" asp-area="Operaciones" asp-controller="Auth" asp-action="Login" class="text-start">
                 <div class="mb-3">
                     <label class="form-label">Nombre</label>
-                    <input type="text" name="nombre" class="form-control" required autocomplete="off"
+                    <input type="text" name="nombre" class="form-control form-control-lg" required autocomplete="off"
                            autofocus disabled="@bloqueado" />
                 </div>
-                <div class="mb-3">
+                <div class="mb-4">
                     <label class="form-label">Clave</label>
-                    <input type="password" name="clave" class="form-control" required autocomplete="off"
+                    <input type="password" name="clave" class="form-control form-control-lg" required autocomplete="off"
                            disabled="@bloqueado" />
                 </div>
-                <button type="submit" class="btn @(esCocina ? "btn-warning" : "btn-primary") w-100" disabled="@bloqueado">
+                <button type="submit" class="btn @(esCocina ? "btn-warning" : "btn-primary") btn-tactil w-100" disabled="@bloqueado">
                     Ingresar
                 </button>
             </form>
 
-            <a class="d-block mt-4 small text-muted" asp-area="Operaciones" asp-controller="Auth" asp-action="LoginSupervisor">
+            <a class="op-link-muted d-block mt-4 small" asp-area="Operaciones" asp-controller="Auth" asp-action="LoginSupervisor">
                 ¿Este dispositivo está mal configurado?
             </a>
         </div>

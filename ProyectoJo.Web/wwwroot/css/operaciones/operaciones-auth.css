@@ -122,6 +122,46 @@ body {
 	background-color: var(--tc-ink-muted) !important;
 }
 
+.btn-primary {
+	background-color: var(--tc-teal) !important;
+	border-color: var(--tc-teal) !important;
+	color: var(--tc-teal-ink) !important;
+}
+
+.btn-warning {
+	background-color: var(--tc-mustard) !important;
+	border-color: var(--tc-mustard) !important;
+	color: var(--tc-mustard-ink) !important;
+}
+
+.form-label {
+	font-size: 0.72rem;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--tc-ink-muted);
+	font-weight: 600;
+}
+
+.form-control {
+	border-color: var(--tc-border-soft);
+	border-radius: 10px;
+}
+
+	.form-control:focus {
+		border-color: var(--tc-mustard);
+		box-shadow: 0 0 0 0.2rem rgba(217, 164, 65, 0.25);
+	}
+
+.op-link-muted {
+	color: var(--tc-ink-muted);
+	text-decoration: none;
+}
+
+	.op-link-muted:hover {
+		color: var(--tc-brick);
+		text-decoration: underline;
+	}
+
 .alert-danger {
 	background-color: #fbe9e7 !important;
 	border-color: var(--tc-brick) !important;

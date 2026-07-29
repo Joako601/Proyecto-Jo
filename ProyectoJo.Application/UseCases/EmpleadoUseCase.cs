@@ -8,6 +8,8 @@ namespace ProyectoJo.Application.UseCases
 	{
 		private readonly IEmpleadoRepository _repository;
 
+		private const int ClaveMinima = 6;
+
 		public EmpleadoUseCase(IEmpleadoRepository repository)
 		{
 			_repository = repository;
@@ -17,18 +19,26 @@ namespace ProyectoJo.Application.UseCases
 
 		public Task<Empleado?> ObtenerPorIdAsync(int id) => _repository.ObtenerPorIdAsync(id);
 
-		public async Task<(bool Exito, string? Error)> CrearAsync(string nombre, string pin, RolEmpleado rol)
+		public async Task<(bool Exito, string? Error)> CrearAsync(string nombre, string clave, RolEmpleado rol)
 		{
 			if (string.IsNullOrWhiteSpace(nombre))
 				return (false, "El nombre es obligatorio.");
 
-			if (string.IsNullOrWhiteSpace(pin) || pin.Length < 4)
-				return (false, "El PIN debe tener al menos 4 dígitos.");
+			if (string.IsNullOrWhiteSpace(clave) || clave.Length < ClaveMinima)
+				return (false, $"La clave debe tener al menos {ClaveMinima} caracteres.");
+
+			var nombreNormalizado = nombre.Trim();
+			var existentes = await _repository.ObtenerTodosAsync();
+			var duplicado = existentes.Any(e =>
+				e.Rol == rol && string.Equals(e.Nombre, nombreNormalizado, StringComparison.OrdinalIgnoreCase));
+
+			if (duplicado)
+				return (false, "Ya existe un operador con ese nombre en esa estación.");
 
 			var empleado = new Empleado
 			{
-				Nombre = nombre.Trim(),
-				PinHash = EmpleadoAuthUseCase.HashearPin(pin),
+				Nombre = nombreNormalizado,
+				ClaveHash = EmpleadoAuthUseCase.HashearClave(clave),
 				Rol = rol,
 				Activo = true
 			};
@@ -37,7 +47,7 @@ namespace ProyectoJo.Application.UseCases
 			return (true, null);
 		}
 
-		public async Task<(bool Exito, string? Error)> EditarAsync(int id, string nombre, bool activo, RolEmpleado rol, string? nuevoPin)
+		public async Task<(bool Exito, string? Error)> EditarAsync(int id, string nombre, bool activo, RolEmpleado rol, string? nuevaClave)
 		{
 			var empleado = await _repository.ObtenerPorIdAsync(id);
 			if (empleado is null)
@@ -46,15 +56,23 @@ namespace ProyectoJo.Application.UseCases
 			if (string.IsNullOrWhiteSpace(nombre))
 				return (false, "El nombre es obligatorio.");
 
-			empleado.Nombre = nombre.Trim();
+			var nombreNormalizado = nombre.Trim();
+			var existentes = await _repository.ObtenerTodosAsync();
+			var duplicado = existentes.Any(e =>
+				e.Id != id && e.Rol == rol && string.Equals(e.Nombre, nombreNormalizado, StringComparison.OrdinalIgnoreCase));
+
+			if (duplicado)
+				return (false, "Ya existe un operador con ese nombre en esa estación.");
+
+			empleado.Nombre = nombreNormalizado;
 			empleado.Activo = activo;
 			empleado.Rol = rol;
 
-			if (!string.IsNullOrWhiteSpace(nuevoPin))
+			if (!string.IsNullOrWhiteSpace(nuevaClave))
 			{
-				if (nuevoPin.Length < 4)
-					return (false, "El nuevo PIN debe tener al menos 4 dígitos.");
-				empleado.PinHash = EmpleadoAuthUseCase.HashearPin(nuevoPin);
+				if (nuevaClave.Length < ClaveMinima)
+					return (false, $"La nueva clave debe tener al menos {ClaveMinima} caracteres.");
+				empleado.ClaveHash = EmpleadoAuthUseCase.HashearClave(nuevaClave);
 			}
 
 			var actualizado = await _repository.ActualizarAsync(empleado);

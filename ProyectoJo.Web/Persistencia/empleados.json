@@ -1,16 +1,9 @@
 [
   {
     "Id": 1,
-    "Nombre": "Empleado Recepci\u00F3n",
-    "PinHash": "jiGGIOqny9Pi6j8d6B/Gvg==.TjdspX\u002BUqIWTJ7trjwX7GjOWTMTUk3c95hYWiMuAcE0=",
+    "Nombre": "Joaquin",
+    "ClaveHash": "GhhVBZLNYtke2NRCIDumlg==.H5tspl71xQFoB4XG8/9GuzvOtEO\u002Bx7idHTV6jaBeRrs=",
     "Rol": "Recepcion",
-    "Activo": true
-  },
-  {
-    "Id": 2,
-    "Nombre": "Empleado Cocina",
-    "PinHash": "jiGGIOqny9Pi6j8d6B/Gvg==.TjdspX\u002BUqIWTJ7trjwX7GjOWTMTUk3c95hYWiMuAcE0=",
-    "Rol": "Cocina",
     "Activo": true
   }
 ]

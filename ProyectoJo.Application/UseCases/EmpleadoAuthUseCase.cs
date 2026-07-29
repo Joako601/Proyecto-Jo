@@ -18,37 +18,39 @@ namespace ProyectoJo.Application.UseCases
 			_repository = repository;
 		}
 
-		public async Task<Empleado?> ValidarPinAsync(string pin, RolEmpleado estacion)
+		public async Task<Empleado?> ValidarCredencialesAsync(string nombre, string clave, RolEmpleado estacion)
 		{
-			if (string.IsNullOrWhiteSpace(pin)) return null;
+			if (string.IsNullOrWhiteSpace(nombre) || string.IsNullOrWhiteSpace(clave))
+				return null;
 
 			var empleados = await _repository.ObtenerTodosAsync();
 
-			foreach (var empleado in empleados.Where(e => e.Activo && e.Rol == estacion))
-			{
-				if (VerificarPin(pin, empleado.PinHash))
-					return empleado;
-			}
+			var empleado = empleados.FirstOrDefault(e =>
+				e.Activo &&
+				e.Rol == estacion &&
+				string.Equals(e.Nombre, nombre.Trim(), StringComparison.OrdinalIgnoreCase));
 
-			return null;
+			if (empleado is null) return null;
+
+			return VerificarClave(clave, empleado.ClaveHash) ? empleado : null;
 		}
 
-		public static string HashearPin(string pin)
+		public static string HashearClave(string clave)
 		{
 			var salt = RandomNumberGenerator.GetBytes(SaltSize);
-			var hash = Rfc2898DeriveBytes.Pbkdf2(pin, salt, Iteraciones, HashAlgorithmName.SHA256, HashSize);
+			var hash = Rfc2898DeriveBytes.Pbkdf2(clave, salt, Iteraciones, HashAlgorithmName.SHA256, HashSize);
 			return $"{Convert.ToBase64String(salt)}.{Convert.ToBase64String(hash)}";
 		}
 
-		private static bool VerificarPin(string pinIngresado, string pinHashGuardado)
+		private static bool VerificarClave(string claveIngresada, string claveHashGuardada)
 		{
-			var partes = pinHashGuardado.Split('.');
+			var partes = claveHashGuardada.Split('.');
 			if (partes.Length != 2) return false;
 
 			var salt = Convert.FromBase64String(partes[0]);
 			var hashGuardado = Convert.FromBase64String(partes[1]);
 
-			var hashIngresado = Rfc2898DeriveBytes.Pbkdf2(pinIngresado, salt, Iteraciones, HashAlgorithmName.SHA256, HashSize);
+			var hashIngresado = Rfc2898DeriveBytes.Pbkdf2(claveIngresada, salt, Iteraciones, HashAlgorithmName.SHA256, HashSize);
 
 			return CryptographicOperations.FixedTimeEquals(hashIngresado, hashGuardado);
 		}

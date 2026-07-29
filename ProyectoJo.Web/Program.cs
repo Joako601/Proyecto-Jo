@@ -123,7 +123,7 @@ builder.Services.AddRateLimiter(options =>
 		return ValueTask.CompletedTask;
 	};
 
-	options.AddPolicy("login-pin", httpContext =>
+	options.AddPolicy("login-operador", httpContext =>
 		RateLimitPartition.GetFixedWindowLimiter(
 			partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "desconocido",
 			factory: _ => new FixedWindowRateLimiterOptions

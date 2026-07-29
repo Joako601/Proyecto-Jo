@@ -1,6 +1,6 @@
 ﻿@{
     Layout = "_Layout";
-    ViewData["Title"] = "Ingresar PIN";
+    ViewData["Title"] = "Ingresar";
     var estacion = ViewBag.Estacion?.ToString() ?? "";
     var esCocina = estacion == "Cocina";
     var bloqueado = ViewBag.Bloqueado is bool b && b;
@@ -15,10 +15,10 @@
                 @estacion
             </span>
 
-            <h4 class="mb-1">Ingresa tu PIN</h4>
-            @if (ViewBag.NombreDispositivo is string nombre && !string.IsNullOrWhiteSpace(nombre))
+            <h4 class="mb-1">Inicia sesión</h4>
+            @if (ViewBag.NombreDispositivo is string nombreDispositivo && !string.IsNullOrWhiteSpace(nombreDispositivo))
             {
-                <p class="text-muted small mb-3">@nombre</p>
+                <p class="text-muted small mb-3">@nombreDispositivo</p>
             }
 
             @if (ViewBag.Error is string error)
@@ -26,33 +26,20 @@
                 <div class="alert alert-danger py-2">@error</div>
             }
 
-            <form method="post" asp-area="Operaciones" asp-controller="Auth" asp-action="Login" id="formPin">
-                <input type="hidden" name="pin" id="pinValue" />
-
-                <div class="d-flex justify-content-center gap-2 mb-4" id="pinDots">
-                    <span class="pin-dot border rounded-circle" style="width:18px;height:18px;display:inline-block;"></span>
-                    <span class="pin-dot border rounded-circle" style="width:18px;height:18px;display:inline-block;"></span>
-                    <span class="pin-dot border rounded-circle" style="width:18px;height:18px;display:inline-block;"></span>
-                    <span class="pin-dot border rounded-circle" style="width:18px;height:18px;display:inline-block;"></span>
+            <form method="post" asp-area="Operaciones" asp-controller="Auth" asp-action="Login" class="text-start">
+                <div class="mb-3">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" name="nombre" class="form-control" required autocomplete="off"
+                           autofocus disabled="@bloqueado" />
                 </div>
-
-                <div class="row g-2 @(bloqueado ? "tecla-pin-bloqueada" : "")" id="teclaPinGrid">
-                    @for (int n = 1; n <= 9; n++)
-                    {
-                        <div class="col-4">
-                            <button type="button" class="btn btn-outline-secondary btn-tactil w-100 tecla-pin" data-num="@n">@n</button>
-                        </div>
-                    }
-                    <div class="col-4"></div>
-                    <div class="col-4">
-                        <button type="button" class="btn btn-outline-secondary btn-tactil w-100 tecla-pin" data-num="0">0</button>
-                    </div>
-                    <div class="col-4">
-                        <button type="button" class="btn btn-outline-danger btn-tactil w-100" id="btnBorrar">
-                            <i class="bi bi-backspace"></i>
-                        </button>
-                    </div>
+                <div class="mb-3">
+                    <label class="form-label">Clave</label>
+                    <input type="password" name="clave" class="form-control" required autocomplete="off"
+                           disabled="@bloqueado" />
                 </div>
+                <button type="submit" class="btn @(esCocina ? "btn-warning" : "btn-primary") w-100" disabled="@bloqueado">
+                    Ingresar
+                </button>
             </form>
 
             <a class="d-block mt-4 small text-muted" asp-area="Operaciones" asp-controller="Auth" asp-action="LoginSupervisor">
@@ -61,42 +48,3 @@
         </div>
     </div>
 </div>
-
-@section Scripts {
-    <style>
-        .tecla-pin-bloqueada {
-            opacity: 0.4;
-            pointer-events: none;
-        }
-    </style>
-    <script>
-        const MAX_PIN = 4;
-        const bloqueado = @Html.Raw(bloqueado ? "true" : "false");
-        let pin = "";
-
-        function actualizarPuntos() {
-            document.querySelectorAll(".pin-dot").forEach((dot, i) => {
-                dot.style.background = i < pin.length ? "#212529" : "transparent";
-            });
-        }
-
-        document.querySelectorAll(".tecla-pin").forEach(btn => {
-            btn.addEventListener("click", () => {
-                if (bloqueado) return;
-                if (pin.length >= MAX_PIN) return;
-                pin += btn.dataset.num;
-                actualizarPuntos();
-                if (pin.length === MAX_PIN) {
-                    document.getElementById("pinValue").value = pin;
-                    document.getElementById("formPin").submit();
-                }
-            });
-        });
-
-        document.getElementById("btnBorrar").addEventListener("click", () => {
-            if (bloqueado) return;
-            pin = pin.slice(0, -1);
-            actualizarPuntos();
-        });
-    </script>
-}

@@ -44,8 +44,8 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 
 		// POST /Operaciones/Auth/Login
 		[HttpPost]
-		[EnableRateLimiting("login-pin")]
-		public async Task<IActionResult> Login(string pin)
+		[EnableRateLimiting("login-operador")]
+		public async Task<IActionResult> Login(string nombre, string clave)
 		{
 			var token = Request.Cookies["Jo.DispositivoToken"];
 			var dispositivo = token is null ? null : await _dispositivoService.ReconocerAsync(token);
@@ -53,10 +53,10 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 			if (dispositivo is null)
 				return RedirectToAction("Emparejar");
 
-			var empleado = await _empleadoAuthService.ValidarPinAsync(pin, dispositivo.Estacion);
+			var empleado = await _empleadoAuthService.ValidarCredencialesAsync(nombre, clave, dispositivo.Estacion);
 			if (empleado is null)
 			{
-				ViewBag.Error = "PIN incorrecto";
+				ViewBag.Error = "Nombre o clave incorrectos";
 				ViewBag.Estacion = dispositivo.Estacion;
 				ViewBag.NombreDispositivo = dispositivo.Nombre;
 				return View();

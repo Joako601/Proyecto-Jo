@@ -77,9 +77,9 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 
 		[HttpPost]
 		[RequiereArea("Operadores")]
-		public async Task<IActionResult> CrearOperador(string nombre, string pin, RolEmpleado rol)
+		public async Task<IActionResult> CrearOperador(string nombre, string clave, RolEmpleado rol)
 		{
-			var (exito, error) = await _empleadoService.CrearAsync(nombre, pin, rol);
+			var (exito, error) = await _empleadoService.CrearAsync(nombre, clave, rol);
 			TempData["ErrorOperador"] = exito ? null : error;
 			TempData["ExitoOperador"] = exito ? "Operador creado correctamente." : null;
 			return RedirectToAction("Index");
@@ -87,9 +87,9 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 
 		[HttpPost]
 		[RequiereArea("Operadores")]
-		public async Task<IActionResult> EditarOperador(int id, string nombre, bool activo, RolEmpleado rol, string? nuevoPin)
+		public async Task<IActionResult> EditarOperador(int id, string nombre, bool activo, RolEmpleado rol, string? nuevaClave)
 		{
-			var (exito, error) = await _empleadoService.EditarAsync(id, nombre, activo, rol, nuevoPin);
+			var (exito, error) = await _empleadoService.EditarAsync(id, nombre, activo, rol, nuevaClave);
 			TempData["ErrorOperador"] = exito ? null : error;
 			TempData["ExitoOperador"] = exito ? "Operador actualizado correctamente." : null;
 			return RedirectToAction("Index");

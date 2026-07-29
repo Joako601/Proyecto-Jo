@@ -6,8 +6,8 @@ namespace ProyectoJo.Application.Ports.In
 	{
 		Task<List<Empleado>> ObtenerTodosAsync();
 		Task<Empleado?> ObtenerPorIdAsync(int id);
-		Task<(bool Exito, string? Error)> CrearAsync(string nombre, string pin, RolEmpleado rol);
-		Task<(bool Exito, string? Error)> EditarAsync(int id, string nombre, bool activo, RolEmpleado rol, string? nuevoPin);
+		Task<(bool Exito, string? Error)> CrearAsync(string nombre, string clave, RolEmpleado rol);
+		Task<(bool Exito, string? Error)> EditarAsync(int id, string nombre, bool activo, RolEmpleado rol, string? nuevaClave);
 		Task<bool> EliminarAsync(int id);
 	}
 }

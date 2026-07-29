@@ -27,8 +27,8 @@
         <form method="post" asp-area="Admin" asp-controller="Operadores" asp-action="Crear">
             <label>Nombre</label>
             <input type="text" name="nombre" required autocomplete="off" />
-            <label>PIN</label>
-            <input type="password" name="pin" required minlength="4" autocomplete="off" />
+            <label>Clave</label>
+            <input type="password" name="clave" required minlength="6" autocomplete="off" />
             <label>Rol</label>
             <select name="rol" required>
                 <option value="Cocina">Cocina</option>
@@ -68,8 +68,8 @@
                                         <option value="Recepcion" selected="@(e.Rol.ToString() == "Recepcion")">Recepción</option>
                                     </select>
                                     <label><input type="checkbox" name="activo" value="true" checked="@e.Activo" /> Activo</label>
-                                    <label>Nuevo PIN (opcional)</label>
-                                    <input type="password" name="nuevoPin" minlength="4" autocomplete="off" />
+                                    <label>Nueva clave (opcional)</label>
+                                    <input type="password" name="nuevaClave" minlength="6" autocomplete="off" />
                                     <button type="submit" class="btn-primary">Guardar</button>
                                 </form>
                             </details>

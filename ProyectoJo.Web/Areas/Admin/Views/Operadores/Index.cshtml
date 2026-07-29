@@ -1,0 +1,93 @@
+﻿@model List<ProyectoJo.Domain.Entities.Empleado>
+@{
+    ViewData["Title"] = "Operadores";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="admin-page">
+
+    <div class="page-header">
+        <div class="header-left">
+            <a asp-area="Admin" asp-controller="Gestion" asp-action="Index" class="back-link">← Dashboard</a>
+            <h1>Operadores (Cocina / Recepción)</h1>
+        </div>
+    </div>
+
+    @if (TempData["Error"] is string error)
+    {
+        <div class="clave-supervisor__mensaje clave-supervisor__mensaje--error">@error</div>
+    }
+    @if (TempData["Exito"] is string exito)
+    {
+        <div class="clave-supervisor__mensaje clave-supervisor__mensaje--exito">@exito</div>
+    }
+
+    <details class="filtro-bar filtro-bar--solo">
+        <summary class="btn-primary">+ Nuevo operador</summary>
+        <form method="post" asp-area="Admin" asp-controller="Operadores" asp-action="Crear">
+            <label>Nombre</label>
+            <input type="text" name="nombre" required autocomplete="off" />
+            <label>PIN</label>
+            <input type="password" name="pin" required minlength="4" autocomplete="off" />
+            <label>Rol</label>
+            <select name="rol" required>
+                <option value="Cocina">Cocina</option>
+                <option value="Recepcion">Recepción</option>
+            </select>
+            <button type="submit" class="btn-primary">Crear</button>
+        </form>
+    </details>
+
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Rol</th>
+                    <th>Activo</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var e in Model)
+                {
+                    <tr>
+                        <td data-label="Nombre">@e.Nombre</td>
+                        <td data-label="Rol"><span class="tag--@e.Rol.ToString().ToLower()">@e.Rol</span></td>
+                        <td data-label="Activo">@(e.Activo ? "Sí" : "No")</td>
+                        <td>
+                            <details>
+                                <summary class="link-edit">Editar</summary>
+                                <form method="post" asp-area="Admin" asp-controller="Operadores" asp-action="Editar">
+                                    <input type="hidden" name="id" value="@e.Id" />
+                                    <label>Nombre</label>
+                                    <input type="text" name="nombre" value="@e.Nombre" required />
+                                    <label>Rol</label>
+                                    <select name="rol" required>
+                                        <option value="Cocina" selected="@(e.Rol.ToString() == "Cocina")">Cocina</option>
+                                        <option value="Recepcion" selected="@(e.Rol.ToString() == "Recepcion")">Recepción</option>
+                                    </select>
+                                    <label><input type="checkbox" name="activo" value="true" checked="@e.Activo" /> Activo</label>
+                                    <label>Nuevo PIN (opcional)</label>
+                                    <input type="password" name="nuevoPin" minlength="4" autocomplete="off" />
+                                    <button type="submit" class="btn-primary">Guardar</button>
+                                </form>
+                            </details>
+                            <form method="post" asp-area="Admin" asp-controller="Operadores" asp-action="Eliminar"
+                                  onsubmit="return confirm('¿Eliminar a @e.Nombre?');" style="display:inline">
+                                <input type="hidden" name="id" value="@e.Id" />
+                                <button type="submit" class="link-delete">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <p class="empty-state">Todavía no hay operadores creados.</p>
+    }
+
+</div>

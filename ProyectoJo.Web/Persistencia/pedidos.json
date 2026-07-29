@@ -742,5 +742,84 @@
     "Estado": "Pendiente",
     "FechaCreacion": "2026-07-26T16:10:48.4856948Z",
     "Total": 25
+  },
+  {
+    "Id": 44,
+    "Mesa": "Para llevar",
+    "Items": [
+      {
+        "ItemId": 28,
+        "Nombre": "Cristal Negra",
+        "Cantidad": 106,
+        "PrecioUnitario": 30,
+        "Subtotal": 3180
+      },
+      {
+        "ItemId": 29,
+        "Nombre": "Mundet",
+        "Cantidad": 99,
+        "PrecioUnitario": 30,
+        "Subtotal": 2970
+      },
+      {
+        "ItemId": 30,
+        "Nombre": "Fanta",
+        "Cantidad": 53,
+        "PrecioUnitario": 30,
+        "Subtotal": 1590
+      },
+      {
+        "ItemId": 31,
+        "Nombre": "Del Valle Frut",
+        "Cantidad": 6,
+        "PrecioUnitario": 35,
+        "Subtotal": 210
+      },
+      {
+        "ItemId": 35,
+        "Nombre": "Te",
+        "Cantidad": 6,
+        "PrecioUnitario": 0,
+        "Subtotal": 0
+      },
+      {
+        "ItemId": 36,
+        "Nombre": "Horchata",
+        "Cantidad": 27,
+        "PrecioUnitario": 0,
+        "Subtotal": 0
+      },
+      {
+        "ItemId": 27,
+        "Nombre": "Coca-Cola sin Az\u00FAcar Retornable",
+        "Cantidad": 101,
+        "PrecioUnitario": 30,
+        "Subtotal": 3030
+      },
+      {
+        "ItemId": 26,
+        "Nombre": "Coca-Cola Retornable",
+        "Cantidad": 45,
+        "PrecioUnitario": 30,
+        "Subtotal": 1350
+      },
+      {
+        "ItemId": 33,
+        "Nombre": "Cebada",
+        "Cantidad": 1,
+        "PrecioUnitario": 0,
+        "Subtotal": 0
+      },
+      {
+        "ItemId": 32,
+        "Nombre": "Coca-Cola Desechable",
+        "Cantidad": 72,
+        "PrecioUnitario": 35,
+        "Subtotal": 2520
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-07-28T14:47:14.576585Z",
+    "Total": 14850
   }
 ]

@@ -6,5 +6,8 @@ namespace ProyectoJo.Application.Ports.Out
 	{
 		Task<List<Empleado>> ObtenerTodosAsync();
 		Task<Empleado?> ObtenerPorIdAsync(int id);
+		Task AgregarAsync(Empleado empleado);
+		Task<bool> ActualizarAsync(Empleado empleado);
+		Task<bool> EliminarAsync(int id);
 	}
 }

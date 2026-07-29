@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using ProyectoJo.Application.Ports.In;
@@ -30,19 +29,20 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		[EnableRateLimiting("login-admin")]
 		public async Task<IActionResult> Index(string usuario, string contrasena, string? returnUrl = null)
 		{
-			if (!_authService.ValidarCredenciales(usuario, contrasena))
+			var resultado = await _authService.ValidarCredencialesAsync(usuario, contrasena);
+			if (resultado is null)
 			{
 				ViewBag.Error = "Credenciales incorrectas";
 				return View();
 			}
 
 			var claims = new List<Claim>
-				{
-					new Claim(ClaimTypes.Name, usuario)
-				};
+			{
+				new Claim(ClaimTypes.Name, resultado.Usuario),
+				new Claim(ClaimTypes.Role, resultado.Rol)
+			};
 
 			var identity = new ClaimsIdentity(claims, "JoCookieAuth");
-
 			var principal = new ClaimsPrincipal(identity);
 
 			await HttpContext.SignInAsync("JoCookieAuth", principal);

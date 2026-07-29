@@ -398,5 +398,13 @@
     "Categoria": "venta",
     "Descripcion": "prueba",
     "Fecha": "2026-07-27T00:00:00"
+  },
+  {
+    "Id": 51,
+    "Monto": 14850,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #44 \u2014 Mesa Para llevar",
+    "Fecha": "2026-07-28T14:47:20.6695099Z"
   }
 ]

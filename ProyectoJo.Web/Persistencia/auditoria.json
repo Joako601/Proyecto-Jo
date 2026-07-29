@@ -1018,5 +1018,55 @@
     "Entidad": "Finanza #50",
     "DetalleAntes": null,
     "DetalleDespues": "Ingreso - venta - $1"
+  },
+  {
+    "Id": 103,
+    "FechaHora": "2026-07-28T08:44:00.8586639-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Productos",
+    "Accion": 1,
+    "Entidad": "Producto #1",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activo/Inactivo"
+  },
+  {
+    "Id": 104,
+    "FechaHora": "2026-07-28T08:44:02.8189645-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Productos",
+    "Accion": 1,
+    "Entidad": "Producto #1",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Activo/Inactivo"
+  },
+  {
+    "Id": 105,
+    "FechaHora": "2026-07-28T08:44:04.1487196-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Productos",
+    "Accion": 1,
+    "Entidad": "Producto #1",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Agotado/Disponible"
+  },
+  {
+    "Id": 106,
+    "FechaHora": "2026-07-28T08:44:05.142123-06:00",
+    "Usuario": "Joaquin",
+    "Modulo": "Productos",
+    "Accion": 1,
+    "Entidad": "Producto #1",
+    "DetalleAntes": null,
+    "DetalleDespues": "Se altern\u00F3 el estado Agotado/Disponible"
+  },
+  {
+    "Id": 107,
+    "FechaHora": "2026-07-28T08:47:20.6980499-06:00",
+    "Usuario": "Sistema (Pedido)",
+    "Modulo": "Finanzas",
+    "Accion": 0,
+    "Entidad": "Finanza #51",
+    "DetalleAntes": null,
+    "DetalleDespues": "Ingreso - Ventas - $14850"
   }
 ]

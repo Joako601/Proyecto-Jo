@@ -46,6 +46,7 @@ var rutaSupervisorClave = Path.Combine(rutaPersistencia, "supervisor-clave.json"
 var rutaRecetas = Path.Combine(rutaPersistencia, "recetas.json");
 var rutaOpiniones = Path.Combine(rutaPersistencia, "opiniones.json");
 var rutaInsumos = Path.Combine(rutaPersistencia, "insumos.json");
+var rutaAdministradores = Path.Combine(rutaPersistencia, "administradores.json");
 
 builder.Services.AddScoped<IProductoRepository>(_ => new JsonProductRepository(rutaMenu));
 builder.Services.AddScoped<IFinanzaRepository>(_ => new JsonFinanzaRepository(rutaFinanzas));
@@ -88,6 +89,11 @@ builder.Services.AddScoped<IInsumoService, InsumoUseCase>();
 builder.Services.AddScoped<IPedidoRepository>(_ => new JsonPedidoRepository(rutaPedidos));
 builder.Services.AddScoped<IPedidoService, PedidoUseCase>();
 builder.Services.AddScoped<IReporteService, ReporteUseCase>();
+
+builder.Services.AddScoped<IAdministradorRepository>(_ => new JsonAdministradorRepository(rutaAdministradores));
+builder.Services.AddScoped<IAdministradorService, AdministradorUseCase>();
+
+builder.Services.AddScoped<IEmpleadoService, EmpleadoUseCase>();
 
 
 builder.Services.AddSignalR();

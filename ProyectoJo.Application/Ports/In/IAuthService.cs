@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ProyectoJo.Application.Ports.In
+﻿namespace ProyectoJo.Application.Ports.In
 {
+	public record ResultadoAuth(string Usuario, string Rol);
+
 	public interface IAuthService
 	{
-		bool ValidarCredenciales(string usuario, string contrasena);
+		Task<ResultadoAuth?> ValidarCredencialesAsync(string usuario, string contrasena);
 	}
 }

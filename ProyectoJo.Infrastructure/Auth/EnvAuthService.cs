@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography;
 using Microsoft.Extensions.Configuration;
 using ProyectoJo.Application.Ports.In;
+using ProyectoJo.Application.Ports.Out;
 
 namespace ProyectoJo.Infrastructure.Auth
 {
@@ -8,22 +9,41 @@ namespace ProyectoJo.Infrastructure.Auth
 	{
 		private readonly string _usuario;
 		private readonly string _contrasenaHash;
+		private readonly IAdministradorRepository _administradorRepository;
 
-		public EnvAuthService(IConfiguration configuration)
+		public const string RolSuperAdmin = "SuperAdmin";
+		public const string RolAdministrador = "Administrador";
+
+		public EnvAuthService(IConfiguration configuration, IAdministradorRepository administradorRepository)
 		{
 			_usuario = configuration["Auth:AdminUser"] ?? "";
 			_contrasenaHash = configuration["Auth:AdminPasswordHash"] ?? "";
+			_administradorRepository = administradorRepository;
 		}
 
-		public bool ValidarCredenciales(string usuario, string contrasena)
+		public async Task<ResultadoAuth?> ValidarCredencialesAsync(string usuario, string contrasena)
 		{
-			if (string.IsNullOrWhiteSpace(_contrasenaHash)) return false;
-			if (usuario != _usuario) return false;
+			if (string.IsNullOrWhiteSpace(usuario) || string.IsNullOrWhiteSpace(contrasena))
+				return null;
 
-			return VerificarContrasena(contrasena, _contrasenaHash);
+			if (!string.IsNullOrWhiteSpace(_contrasenaHash) &&
+				usuario == _usuario &&
+				VerificarHash(contrasena, _contrasenaHash))
+			{
+				return new ResultadoAuth(usuario, RolSuperAdmin);
+			}
+
+			var administrador = await _administradorRepository.ObtenerPorUsuarioAsync(usuario);
+			if (administrador is not null && administrador.Activo &&
+				VerificarHash(contrasena, administrador.ContrasenaHash))
+			{
+				return new ResultadoAuth(administrador.Usuario, RolAdministrador);
+			}
+
+			return null;
 		}
 
-		private static bool VerificarContrasena(string contrasenaIngresada, string hashGuardado)
+		private static bool VerificarHash(string valorIngresado, string hashGuardado)
 		{
 			var partes = hashGuardado.Split('.');
 			if (partes.Length != 2) return false;
@@ -31,7 +51,7 @@ namespace ProyectoJo.Infrastructure.Auth
 			var salt = Convert.FromBase64String(partes[0]);
 			var hashEsperado = Convert.FromBase64String(partes[1]);
 
-			var hashIngresado = Rfc2898DeriveBytes.Pbkdf2(contrasenaIngresada, salt, 100_000, HashAlgorithmName.SHA256, 32);
+			var hashIngresado = Rfc2898DeriveBytes.Pbkdf2(valorIngresado, salt, 100_000, HashAlgorithmName.SHA256, 32);
 
 			return CryptographicOperations.FixedTimeEquals(hashIngresado, hashEsperado);
 		}

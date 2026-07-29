@@ -1,0 +1,230 @@
+﻿@model ProyectoJo.Web.Areas.Admin.Models.UsuariosIndexViewModel
+@{
+    ViewData["Title"] = "Usuarios y Accesos";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    var todasLasAreas = ProyectoJo.Domain.Entities.AreasAdmin.Todas;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-shared.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/menu/menu.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/usuarios/usuarios.css" asp-append-version="true" />
+}
+
+<div class="admin-page">
+
+    <div class="page-header">
+        <div class="header-left">
+            <a asp-area="Admin" asp-controller="Gestion" asp-action="Index" class="back-link">← Dashboard</a>
+            <h1>Usuarios y Accesos</h1>
+        </div>
+    </div>
+
+    @if (Model.PuedeGestionarAdministradores)
+    {
+        <div class="tc-section-label">Administradores</div>
+
+        @if (TempData["ErrorAdmin"] is string errorAdmin)
+        {
+            <div class="clave-supervisor__mensaje clave-supervisor__mensaje--error">@errorAdmin</div>
+        }
+        @if (TempData["ExitoAdmin"] is string exitoAdmin)
+        {
+            <div class="clave-supervisor__mensaje clave-supervisor__mensaje--exito">@exitoAdmin</div>
+        }
+
+        <details class="usuarios-panel">
+            <summary class="btn-primary">+ Nuevo administrador</summary>
+            <form method="post" asp-area="Admin" asp-controller="Usuarios" asp-action="CrearAdministrador" class="usuarios-form">
+                <div class="usuarios-form__campo">
+                    <label>Usuario</label>
+                    <input type="text" name="usuario" required autocomplete="off" />
+                </div>
+                <div class="usuarios-form__campo">
+                    <label>Contraseña</label>
+                    <input type="password" name="contrasena" required minlength="8" autocomplete="new-password" />
+                </div>
+
+                <label class="usuarios-form__check">
+                    <input type="checkbox" name="general" value="true" /> Acceso general (todas las áreas)
+                </label>
+
+                <fieldset class="usuarios-form__areas">
+                    <legend>O áreas puntuales</legend>
+                    @foreach (var area in todasLasAreas)
+                    {
+                        <label><input type="checkbox" name="areas" value="@area" /> @area</label>
+                    }
+                </fieldset>
+
+                <button type="submit" class="btn-primary">Crear administrador</button>
+            </form>
+        </details>
+
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Activo</th>
+                        <th>Acceso</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in Model.Administradores)
+                    {
+                        <tr>
+                            <td data-label="Usuario">@a.Usuario</td>
+                            <td data-label="Activo">
+                                <span class="tag--@(a.Activo ? "activo" : "inactivo")">@(a.Activo ? "Activo" : "Inactivo")</span>
+                            </td>
+                            <td data-label="Acceso">@(a.Areas.Any() ? string.Join(", ", a.Areas) : "General")</td>
+                            <td class="acciones">
+                                <details class="usuarios-editar">
+                                    <summary class="link-edit">Editar</summary>
+                                    <form method="post" asp-area="Admin" asp-controller="Usuarios" asp-action="EditarAdministrador" class="usuarios-form">
+                                        <input type="hidden" name="id" value="@a.Id" />
+                                        <div class="usuarios-form__campo">
+                                            <label>Usuario</label>
+                                            <input type="text" name="usuario" value="@a.Usuario" required />
+                                        </div>
+                                        <label class="usuarios-form__check">
+                                            <input type="checkbox" name="activo" value="true" checked="@a.Activo" /> Activo
+                                        </label>
+                                        <div class="usuarios-form__campo">
+                                            <label>Nueva contraseña (opcional)</label>
+                                            <input type="password" name="nuevaContrasena" minlength="8" autocomplete="new-password" />
+                                        </div>
+                                        <label class="usuarios-form__check">
+                                            <input type="checkbox" name="general" value="true" checked="@(!a.Areas.Any())" /> Acceso general
+                                        </label>
+                                        <fieldset class="usuarios-form__areas">
+                                            <legend>O áreas puntuales</legend>
+                                            @foreach (var area in todasLasAreas)
+                                            {
+                                                <label><input type="checkbox" name="areas" value="@area" checked="@a.Areas.Contains(area)" /> @area</label>
+                                            }
+                                        </fieldset>
+                                        <button type="submit" class="btn-primary">Guardar</button>
+                                    </form>
+                                </details>
+                                <form method="post" asp-area="Admin" asp-controller="Usuarios" asp-action="EliminarAdministrador"
+                                      onsubmit="return confirm('¿Eliminar a @a.Usuario?');">
+                                    <input type="hidden" name="id" value="@a.Id" />
+                                    <button type="submit" class="link-delete">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (!Model.Administradores.Any())
+        {
+            <p class="empty-state">Todavía no hay administradores creados.</p>
+        }
+
+        <hr class="tc-section-divider" />
+    }
+
+    @if (Model.PuedeGestionarOperadores)
+    {
+        <div class="tc-section-label">Operadores (Cocina / Recepción)</div>
+
+        @if (TempData["ErrorOperador"] is string errorOp)
+        {
+            <div class="clave-supervisor__mensaje clave-supervisor__mensaje--error">@errorOp</div>
+        }
+        @if (TempData["ExitoOperador"] is string exitoOp)
+        {
+            <div class="clave-supervisor__mensaje clave-supervisor__mensaje--exito">@exitoOp</div>
+        }
+
+        <details class="usuarios-panel">
+            <summary class="btn-primary">+ Nuevo operador</summary>
+            <form method="post" asp-area="Admin" asp-controller="Usuarios" asp-action="CrearOperador" class="usuarios-form">
+                <div class="usuarios-form__campo">
+                    <label>Nombre</label>
+                    <input type="text" name="nombre" required autocomplete="off" />
+                </div>
+                <div class="usuarios-form__campo">
+                    <label>PIN</label>
+                    <input type="password" name="pin" required minlength="4" autocomplete="off" />
+                </div>
+                <div class="usuarios-form__campo">
+                    <label>Rol</label>
+                    <select name="rol" class="form-control-sm" required>
+                        <option value="Cocina">Cocina</option>
+                        <option value="Recepcion">Recepción</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">Crear operador</button>
+            </form>
+        </details>
+
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Rol</th>
+                        <th>Activo</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var e in Model.Operadores)
+                    {
+                        <tr>
+                            <td data-label="Nombre">@e.Nombre</td>
+                            <td data-label="Rol"><span class="tag--@e.Rol.ToString().ToLower()">@e.Rol</span></td>
+                            <td data-label="Activo">
+                                <span class="tag--@(e.Activo ? "activo" : "inactivo")">@(e.Activo ? "Activo" : "Inactivo")</span>
+                            </td>
+                            <td class="acciones">
+                                <details class="usuarios-editar">
+                                    <summary class="link-edit">Editar</summary>
+                                    <form method="post" asp-area="Admin" asp-controller="Usuarios" asp-action="EditarOperador" class="usuarios-form">
+                                        <input type="hidden" name="id" value="@e.Id" />
+                                        <div class="usuarios-form__campo">
+                                            <label>Nombre</label>
+                                            <input type="text" name="nombre" value="@e.Nombre" required />
+                                        </div>
+                                        <div class="usuarios-form__campo">
+                                            <label>Rol</label>
+                                            <select name="rol" class="form-control-sm" required>
+                                                <option value="Cocina" selected="@(e.Rol == ProyectoJo.Domain.Entities.RolEmpleado.Cocina)">Cocina</option>
+                                                <option value="Recepcion" selected="@(e.Rol == ProyectoJo.Domain.Entities.RolEmpleado.Recepcion)">Recepción</option>
+                                            </select>
+                                        </div>
+                                        <label class="usuarios-form__check">
+                                            <input type="checkbox" name="activo" value="true" checked="@e.Activo" /> Activo
+                                        </label>
+                                        <div class="usuarios-form__campo">
+                                            <label>Nuevo PIN (opcional)</label>
+                                            <input type="password" name="nuevoPin" minlength="4" autocomplete="off" />
+                                        </div>
+                                        <button type="submit" class="btn-primary">Guardar</button>
+                                    </form>
+                                </details>
+                                <form method="post" asp-area="Admin" asp-controller="Usuarios" asp-action="EliminarOperador"
+                                      onsubmit="return confirm('¿Eliminar a @e.Nombre?');">
+                                    <input type="hidden" name="id" value="@e.Id" />
+                                    <button type="submit" class="link-delete">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (!Model.Operadores.Any())
+        {
+            <p class="empty-state">Todavía no hay operadores creados.</p>
+        }
+    }
+
+</div>

@@ -147,4 +147,23 @@
             <div class="tc-modulo__body">Insumos críticos y reposición.</div>
         </a>
     </div>
+    @{
+        var esSuperAdmin = User.IsInRole("SuperAdmin");
+        var accesoGeneral = User.HasClaim("Area", "General");
+        var accesoOperadores = User.HasClaim("Area", "Operadores");
+    }
+    @if (esSuperAdmin || accesoGeneral || accesoOperadores)
+    {
+        <div class="col-6 col-lg-3">
+            <a asp-area="Admin" asp-controller="Usuarios" asp-action="Index" class="tc-modulo">
+                <div class="tc-modulo__top">
+                    <div class="tc-modulo__title"><i class="bi bi-people tc-icon--carbon"></i><span>Usuarios y Accesos</span></div>
+                    <span class="tc-modulo__arrow">→</span>
+                </div>
+                <div class="tc-modulo__body">
+                    @(esSuperAdmin ? "Administradores y operadores." : "Gestión de operadores.")
+                </div>
+            </a>
+        </div>
+    }
 </div>

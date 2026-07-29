@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProyectoJo.Application.Ports.In;
+using ProyectoJo.Web.Authorization;
 
 namespace ProyectoJo.Web.Areas.Admin.Controllers
 {
 	[Area("Admin")]
 	[Authorize(AuthenticationSchemes = "JoCookieAuth")]
+	[RequiereArea("CierreCaja")]
 	public class CierreCajaController : Controller
 	{
 		private readonly ICierreCajaService _cierreCajaService;

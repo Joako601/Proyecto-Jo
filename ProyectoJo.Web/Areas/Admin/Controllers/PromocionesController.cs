@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using ProyectoJo.Application.Ports.In;
 using ProyectoJo.Domain.Entities;
+using ProyectoJo.Web.Authorization;
 
 namespace ProyectoJo.Web.Areas.Admin.Controllers
 {
 	[Area("Admin")]
 	[Authorize(AuthenticationSchemes = "JoCookieAuth")]
+	[RequiereArea("Promociones")]
 	public class PromocionesController : Controller
 	{
 		private readonly IPromocionService _promocionService;

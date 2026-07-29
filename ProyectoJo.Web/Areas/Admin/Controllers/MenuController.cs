@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using ProyectoJo.Application.Ports.In;
 using ProyectoJo.Domain.Entities;
+using ProyectoJo.Web.Authorization;
 
 namespace ProyectoJo.Web.Areas.Admin.Controllers
 {
 	[Area("Admin")]
 	[Authorize(AuthenticationSchemes = "JoCookieAuth")]
+	[RequiereArea("Menu")]
 	public class MenuController : Controller
 	{
 		private readonly IProductoService _productoService;

@@ -60,62 +60,91 @@
 
         <div class="sidebar__section-label">Operación</div>
         <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link @(EsActivo("Menu") ? "active" : "")" asp-area="Admin" asp-controller="Menu" asp-action="Index">
-                    <i class="bi bi-card-list"></i> Menú
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link @(EsActivo("Inventario") ? "active" : "")" asp-area="Admin" asp-controller="Inventario" asp-action="Index">
-                    <i class="bi bi-toggles"></i> Inventario
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link @(EsActivo("Promociones") ? "active" : "")" asp-area="Admin" asp-controller="Promociones" asp-action="Index">
-                    <i class="bi bi-megaphone"></i> Promociones
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link @(EsActivo("Insumos") ? "active" : "")" asp-area="Admin" asp-controller="Insumos" asp-action="Index">
-                    <i class="bi bi-exclamation-triangle"></i> Alerta de Stock
-                </a>
-            </li>
+            @if (User.TieneAccesoArea("Menu"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @(EsActivo("Menu") ? "active" : "")" asp-area="Admin" asp-controller="Menu" asp-action="Index">
+                        <i class="bi bi-card-list"></i> Menú
+                    </a>
+                </li>
+            }
+            @if (User.TieneAccesoArea("Inventario"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @(EsActivo("Inventario") ? "active" : "")" asp-area="Admin" asp-controller="Inventario" asp-action="Index">
+                        <i class="bi bi-toggles"></i> Inventario
+                    </a>
+                </li>
+            }
+            @if (User.TieneAccesoArea("Promociones"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @(EsActivo("Promociones") ? "active" : "")" asp-area="Admin" asp-controller="Promociones" asp-action="Index">
+                        <i class="bi bi-megaphone"></i> Promociones
+                    </a>
+                </li>
+            }
+            @if (User.TieneAccesoArea("Insumos"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @(EsActivo("Insumos") ? "active" : "")" asp-area="Admin" asp-controller="Insumos" asp-action="Index">
+                        <i class="bi bi-exclamation-triangle"></i> Alerta de Stock
+                    </a>
+                </li>
+            }
         </ul>
 
         <div class="sidebar__section-label">Finanzas</div>
         <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link nav-link--sub @(EsActivoAccion("Finanzas", "Index") ? "active" : "")" asp-area="Admin" asp-controller="Finanzas" asp-action="Index">
-                    <i class="bi bi-receipt"></i> Movimientos
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link nav-link--sub @(EsActivoAccion("Finanzas", "Dashboard") ? "active" : "")" asp-area="Admin" asp-controller="Finanzas" asp-action="Dashboard">
-                    <i class="bi bi-bar-chart"></i> Dashboard
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link @(EsActivo("CierreCaja") ? "active" : "")" asp-area="Admin" asp-controller="CierreCaja" asp-action="Index">
-                    <i class="bi bi-safe"></i> Cierre de Caja
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link @(EsActivo("MapaCalor") ? "active" : "")" asp-area="Admin" asp-controller="MapaCalor" asp-action="Index">
-                    <i class="bi bi-fire"></i> Mapa de Calor
-                </a>
-            </li>
+            @if (User.TieneAccesoArea("Finanzas"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link nav-link--sub @(EsActivoAccion("Finanzas", "Index") ? "active" : "")" asp-area="Admin" asp-controller="Finanzas" asp-action="Index">
+                        <i class="bi bi-receipt"></i> Movimientos
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link--sub @(EsActivoAccion("Finanzas", "Dashboard") ? "active" : "")" asp-area="Admin" asp-controller="Finanzas" asp-action="Dashboard">
+                        <i class="bi bi-bar-chart"></i> Dashboard
+                    </a>
+                </li>
+            }
+            @if (User.TieneAccesoArea("CierreCaja"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @(EsActivo("CierreCaja") ? "active" : "")" asp-area="Admin" asp-controller="CierreCaja" asp-action="Index">
+                        <i class="bi bi-safe"></i> Cierre de Caja
+                    </a>
+                </li>
+            }
+            @if (User.TieneAccesoArea("MapaCalor"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @(EsActivo("MapaCalor") ? "active" : "")" asp-area="Admin" asp-controller="MapaCalor" asp-action="Index">
+                        <i class="bi bi-fire"></i> Mapa de Calor
+                    </a>
+                </li>
+            }
         </ul>
 
         <div class="sidebar__section-label">Sistema</div>
         <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link @(EsActivo("HistorialAuditoria") ? "active" : "")" asp-area="Admin" asp-controller="HistorialAuditoria" asp-action="Index">
-                    <i class="bi bi-clock-history"></i> Auditoría
-                </a>
-                <a class="nav-link @(EsActivo("Dispositivos") ? "active" : "")" asp-area="Admin" asp-controller="Dispositivos" asp-action="Index">
-                    <i class="bi bi-tablet"></i> Dispositivos
-                </a>
-            </li>
+            @if (User.TieneAccesoArea("Auditoria"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @(EsActivo("HistorialAuditoria") ? "active" : "")" asp-area="Admin" asp-controller="HistorialAuditoria" asp-action="Index">
+                        <i class="bi bi-clock-history"></i> Auditoría
+                    </a>
+                </li>
+            }
+            @if (User.TieneAccesoArea("Dispositivos"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @(EsActivo("Dispositivos") ? "active" : "")" asp-area="Admin" asp-controller="Dispositivos" asp-action="Index">
+                        <i class="bi bi-tablet"></i> Dispositivos
+                    </a>
+                </li>
+            }
         </ul>
 
         <div class="sidebar__footer">
@@ -135,7 +164,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-            (function () {
+            (function() {
                 var sidebar = document.getElementById('adminSidebar');
                 var toggle = document.querySelector('.admin-sidebar-toggle');
                 var backdrop = document.querySelector('.sidebar-backdrop');
@@ -155,14 +184,14 @@
                 }
 
                 if (toggle && sidebar && backdrop) {
-                    toggle.addEventListener('click', function () {
+                    toggle.addEventListener('click', function() {
                         sidebar.classList.contains('sidebar--open') ? cerrar() : abrir();
                     });
                     backdrop.addEventListener('click', cerrar);
-                    sidebar.querySelectorAll('.nav-link').forEach(function (link) {
+                    sidebar.querySelectorAll('.nav-link').forEach(function(link) {
                         link.addEventListener('click', cerrar);
                     });
-                    window.addEventListener('resize', function () {
+                    window.addEventListener('resize', function() {
                         if (window.innerWidth >= 992) cerrar();
                     });
                 }

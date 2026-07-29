@@ -821,5 +821,21 @@
     "Estado": "Pagado",
     "FechaCreacion": "2026-07-28T14:47:14.576585Z",
     "Total": 14850
+  },
+  {
+    "Id": 45,
+    "Mesa": "Para llevar",
+    "Items": [
+      {
+        "ItemId": 26,
+        "Nombre": "Coca-Cola Retornable",
+        "Cantidad": 1,
+        "PrecioUnitario": 30,
+        "Subtotal": 30
+      }
+    ],
+    "Estado": "Pagado",
+    "FechaCreacion": "2026-07-29T02:52:32.3974546Z",
+    "Total": 30
   }
 ]

@@ -406,5 +406,13 @@
     "Categoria": "Ventas",
     "Descripcion": "Pedido #44 \u2014 Mesa Para llevar",
     "Fecha": "2026-07-28T14:47:20.6695099Z"
+  },
+  {
+    "Id": 52,
+    "Monto": 30,
+    "Tipo": 0,
+    "Categoria": "Ventas",
+    "Descripcion": "Pedido #45 \u2014 Mesa Para llevar",
+    "Fecha": "2026-07-29T02:52:33.4184615Z"
   }
 ]

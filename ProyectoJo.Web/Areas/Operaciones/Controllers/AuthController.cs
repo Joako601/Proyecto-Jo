@@ -25,6 +25,8 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 			_supervisorAuthService = supervisorAuthService;
 		}
 
+		// GET /Operaciones/Auth/Login
+		[Authorize(AuthenticationSchemes = "SupervisorAuth")]
 		public async Task<IActionResult> Login(bool bloqueado = false)
 		{
 			var token = Request.Cookies["Jo.DispositivoToken"];
@@ -45,6 +47,7 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 		// POST /Operaciones/Auth/Login
 		[HttpPost]
 		[EnableRateLimiting("login-operador")]
+		[Authorize(AuthenticationSchemes = "SupervisorAuth")]
 		public async Task<IActionResult> Login(string nombre, string clave)
 		{
 			var token = Request.Cookies["Jo.DispositivoToken"];
@@ -79,29 +82,33 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 					ExpiresUtc = DateTimeOffset.UtcNow.AddHours(12)
 				});
 
+			await HttpContext.SignOutAsync("SupervisorAuth");
+
 			return dispositivo.Estacion == RolEmpleado.Cocina
 				? RedirectToAction("Index", "Cocina")
 				: RedirectToAction("Index", "Recepcion");
 		}
 
 		// GET /Operaciones/Auth/LoginSupervisor
-		public IActionResult LoginSupervisor(bool bloqueado = false)
+		public IActionResult LoginSupervisor(bool bloqueado = false, string? returnUrl = null)
 		{
 			ViewBag.Bloqueado = bloqueado;
 			if (bloqueado)
 				ViewBag.Error = "Demasiados intentos. Espera un momento antes de volver a intentar.";
 
+			ViewBag.ReturnUrl = returnUrl;
 			return View();
 		}
 
 		// POST /Operaciones/Auth/LoginSupervisor
 		[HttpPost]
 		[EnableRateLimiting("login-supervisor")]
-		public async Task<IActionResult> LoginSupervisor(string clave)
+		public async Task<IActionResult> LoginSupervisor(string clave, string? returnUrl = null)
 		{
 			if (!await _supervisorAuthService.ValidarClaveAsync(clave))
 			{
 				ViewBag.Error = "Clave incorrecta";
+				ViewBag.ReturnUrl = returnUrl;
 				return View();
 			}
 
@@ -112,6 +119,9 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 
 			await HttpContext.SignInAsync("SupervisorAuth", principal,
 				new AuthenticationProperties { IsPersistent = false });
+
+			if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+				return LocalRedirect(returnUrl);
 
 			return RedirectToAction("Emparejar");
 		}
@@ -134,8 +144,6 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 				IsEssential = true,
 				SameSite = SameSiteMode.Lax
 			});
-
-			await HttpContext.SignOutAsync("SupervisorAuth");
 
 			return RedirectToAction("Login");
 		}

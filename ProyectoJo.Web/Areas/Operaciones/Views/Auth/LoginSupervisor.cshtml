@@ -19,10 +19,12 @@
             }
 
             <form method="post" asp-area="Operaciones" asp-controller="Auth" asp-action="LoginSupervisor">
+                <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
                 <div class="mb-3">
                     <input type="password"
                            name="clave"
                            class="form-control form-control-lg text-center @(bloqueado ? "disabled" : "")"
+                           placeholder="Clave de supervisor o administrador"
                            autocomplete="off"
                            autofocus
                     @(bloqueado ? "disabled" : "") />

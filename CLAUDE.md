@@ -17,6 +17,10 @@ Do not run `git commit` "on the user's behalf" even if asked to prepare everythi
 
 Do not add comments to code in this repository (C#, Razor, JS, CSS, etc.), including XML doc comments — whether writing new code or editing existing files. Write self-explanatory code (clear names, small methods) instead of explaining it with comments. Don't remove pre-existing comments in code you aren't otherwise touching.
 
+## Summaries: only report what was actually applied
+
+When explaining a set of changes (end-of-task summary, commit message, etc.), describe only the real, applied changes to classes/files in that commit. Do not add ADRs, do not describe changes that weren't actually implemented, and do not present hypothetical/future/"could also do X" work as if it were part of what happened. Suggestions for follow-up work belong in a separate, clearly-labeled "next steps" note — never blended into the list of what changed.
+
 ## Project overview
 
 Proyecto Jo' is a financial/administrative management system for small businesses, built with **ASP.NET Core (.NET 10)** using **Hexagonal Architecture (Ports & Adapters)**. Domain logic is isolated from frameworks and infrastructure across five independent projects with a single dependency direction: adapters depend on the domain, the domain never depends on adapters. Full history of architectural decisions lives in `/ADRs`; a C4-model overview (context/containers/components) is in `docs/Arquitectura-C4.md`.
@@ -31,7 +35,7 @@ dotnet restore
 dotnet run --project ProyectoJo.Web
 # → https://localhost:7287 / http://localhost:5207
 
-# Run the REST API (Swagger-documented, currently not consumed by anything — see Known technical debt)
+# Run the REST API (Swagger-documented; currently not wired to any persistence — see Known technical debt)
 dotnet run --project ProyectoJo.Api
 # → https://localhost:63639 / http://localhost:63640 (Swagger UI at the API root)
 
@@ -41,9 +45,15 @@ dotnet test ProyectoJo.Application.Tests
 # Run a single test class or method
 dotnet test ProyectoJo.Application.Tests --filter "FullyQualifiedName~PedidoUseCaseTests"
 dotnet test ProyectoJo.Application.Tests --filter "FullyQualifiedName~PedidoUseCaseTests.MethodName"
+
+# Apply pending EF Core migrations to the configured PostgreSQL database
+dotnet ef database update --project ProyectoJo.Infrastructure --startup-project ProyectoJo.Web
+
+# Wipe all app tables (TRUNCATE ... RESTART IDENTITY CASCADE)
+dotnet run --project ProyectoJo.Web -- --reset
 ```
 
-The admin panel requires the `Auth__AdminUser` and `Auth__AdminPasswordHash` environment variables (or .NET User Secrets) — see `ProyectoJo.Infrastructure/Auth/EnvAuthService`. Never hardcode these or commit real values in `launchSettings.json`.
+The admin panel requires the `Auth__AdminUser` and `Auth__AdminPasswordHash` environment variables (or .NET User Secrets) — see `ProyectoJo.Infrastructure/Auth/EnvAuthService`. `ProyectoJo.Web` also requires `ConnectionStrings:Default` (a PostgreSQL connection string), set via User Secrets in development. Never hardcode either in `launchSettings.json` or `appsettings.json`.
 
 CI (`.github/workflows/ci.yml`) runs `dotnet restore/build/test` on every push to any branch and on PRs targeting the `deuda-tecnica` branch (not `main`).
 
@@ -53,10 +63,10 @@ Five projects, dependency direction flows inward toward the domain:
 
 - **`ProyectoJo.Domain`** — core entities (`Item`, `Finanza`, `Pedido`, `ItemPedido`, `Promocion`, ...), zero external dependencies.
 - **`ProyectoJo.Application`** — use cases and ports. `Ports/In` defines service interfaces (`IProductoService`, `IFinanzaService`, `IPedidoService`, `IPromocionService`, etc.) that adapters call into; `Ports/Out` defines repository/notifier interfaces (`IProductoRepository`, `IPedidoNotificador`, etc.) that infrastructure implements; `UseCases/` holds the actual business logic; `DTOs/` holds cross-boundary data shapes.
-- **`ProyectoJo.Infrastructure`** — output adapters. `Persistence/` has one `Json*Repository` per entity, all writing atomically (write to `.tmp`, then move) and using a static `SemaphoreSlim` per repository type for concurrency safety. `Auth/` has `EnvAuthService` (env-var-based credential check).
-- **`ProyectoJo.Web`** — primary input adapter (ASP.NET Core MVC). Composes the whole dependency graph itself in `Program.cs` (see below). Contains three cookie-auth schemes, SignalR for real-time order flow, rate limiting on login endpoints, and its own JSON persistence files.
-- **`ProyectoJo.Api`** — secondary input adapter (ASP.NET Core Web API + Swagger), documented but **not actively used** by the running system; reserved for future external clients (mobile apps, WhatsApp, Postman). It composes its own (incomplete) dependency graph independently of `Web` — see Known technical debt.
-- **`ProyectoJo.Application.Tests`** — xUnit + Moq. `UseCases/` has unit tests mocking the ports; `Infrastructure/` has integration tests instantiating real `Json*Repository` implementations against temp files to exercise atomic-write/concurrency behavior.
+- **`ProyectoJo.Infrastructure`** — output adapters. `Persistence/EfCore/` has the PostgreSQL adapter: `ProyectoJoDbContext`, one `IEntityTypeConfiguration<T>` per entity under `Configurations/`, one `Ef*Repository` per `Ports/Out` interface under `Repositories/`, and the EF Core `Migrations/`. `Auth/` has `EnvAuthService` (env-var-based credential check).
+- **`ProyectoJo.Web`** — primary input adapter (ASP.NET Core MVC). Composes the whole dependency graph itself in `Program.cs` (see below), backed entirely by PostgreSQL via `AddDbContext<ProyectoJoDbContext>` + the `Ef*Repository` classes. Contains three cookie-auth schemes, SignalR for real-time order flow, and rate limiting on login endpoints.
+- **`ProyectoJo.Api`** — secondary input adapter (ASP.NET Core Web API + Swagger), documented but **not actively used** by the running system; reserved for future external clients (mobile apps, WhatsApp, Postman). Currently out of scope: its `Program.cs` registers the use cases but no repositories at all, so any endpoint that touches persistence fails at runtime resolving its dependencies — see Known technical debt.
+- **`ProyectoJo.Application.Tests`** — xUnit + Moq, unit tests mocking the `Ports/Out` interfaces. No integration tests against a real database currently exist.
 
 ### `ProyectoJo.Web` structure
 
@@ -65,7 +75,6 @@ Five projects, dependency direction flows inward toward the domain:
 - `Areas/Operaciones/` — Cocina (kitchen) and Recepción (front desk) operational flow, gated by supervisor PIN before every employee login (`Auth/`).
 - `Hubs/PedidosHub` + `Realtime/SignalRPedidoNotificador` — real-time order status push implementing `IPedidoNotificador`, consumed by Cocina/Recepción views instead of polling.
 - `Middleware/JsonExceptionMiddleware` — converts unhandled exceptions to JSON responses.
-- `Persistencia/` — the actual JSON data files (`menu.json`, `finanzas.json`, `promociones.json`, `pedidos.json`, `empleados.json`, `dispositivos.json`, `cierres-caja.json`, `auditoria.json`, `supervisor-clave.json`, `recetas.json`, `opiniones.json`, `insumos.json`, `administradores.json`).
 
 ### Authentication schemes (all cookie-based, defined in `ProyectoJo.Web/Program.cs`)
 
@@ -81,18 +90,18 @@ Login endpoints for all three are rate-limited (5–8 requests/min per IP via `A
 
 ### Dependency composition is manual and duplicated per entry point
 
-`ProyectoJo.Web/Program.cs` and `ProyectoJo.Api/Program.cs` each wire up their own DI graph independently — there is no shared composition root. When adding a new use case/repository pair, register it in **both** `Program.cs` files if it needs to be reachable from both adapters (currently the API only wires up `Pedido`, `Producto`, and `Finanza`). See "Known technical debt" below before assuming the API's graph is complete.
+`ProyectoJo.Web/Program.cs` and `ProyectoJo.Api/Program.cs` each wire up their own DI graph independently — there is no shared composition root. `Web` registers `AddDbContext<ProyectoJoDbContext>` plus every `Ef*Repository`; `Api` currently registers none. When adding a new use case/repository pair, register it in `Web`'s `Program.cs` — `Api` is out of scope for now (see Known technical debt).
 
 ## Known technical debt
 
-Documented explicitly in [ADR-08](./ADRs/ADR-08-Joaquin-Uriona.md) rather than left implicit in code:
-
-- `ProyectoJo.Api/Program.cs` builds persistence paths by hand (relative `Path.Combine` into `../ProyectoJo.Web/Persistencia/...`) instead of configuration.
-- `JsonPedidoRepository` uses a static per-process `SemaphoreSlim`, not shared between `Web` and `Api` processes — concurrent writes from both are not mutually safe.
-- `ProyectoJo.Api/Program.cs` never registers `IPedidoNotificador` or `IPromocionService`, so `PedidosController` fails at runtime resolving `PedidoUseCase`.
-
-Root cause for all three: `Web` and `Api` compose their dependency graphs separately. The proposed fix (per ADR-08) is a shared extension method (`AddProyectoJoServices`) both entry points call into.
+- **`ProyectoJo.Api` has no persistence wired up at all.** Its `Program.cs` registers `IPedidoService`/`IProductoService`/`IFinanzaService` but no repositories, so any endpoint that touches the database throws a DI resolution error at runtime. This is a deliberate, temporary state — `Api` is being ignored while `Web`'s PostgreSQL migration is the priority. [ADR-08](./ADRs/ADR-08-Joaquin-Uriona.md) describes an older, now-superseded version of the `Api`/`Web` split (from when both read the same JSON files); a new ADR covering the current state is expected later.
 
 ## Persistence
 
-Everything currently persists to JSON files with atomic writes (temp file + move), one repository class per entity in `ProyectoJo.Infrastructure/Persistence`. A move to SQL + Entity Framework is planned but not yet started — don't assume a database exists.
+PostgreSQL via EF Core (`Npgsql.EntityFrameworkCore.PostgreSQL` + `EFCore.NamingConventions` for snake_case table/column names). `ProyectoJoDbContext` (in `ProyectoJo.Infrastructure/Persistence/EfCore/`) maps every `Ports/Out` interface to an `Ef*Repository`. `Pedido.Items` and `Receta.Ingredientes` are owned collections in their own tables (`pedido_items`, `receta_ingredientes`) with `ON DELETE CASCADE`. All `DateTime`/`DateTime?` properties are normalized to UTC on write via a global `ValueConverter` in `OnModelCreating` — Postgres `timestamp with time zone` columns reject any other `Kind`, and use cases mix `DateTime.Now`/`DateTime.UtcNow`, so this conversion is load-bearing, not cosmetic.
+
+Operations that need atomicity across a read-validate-write sequence (`Pedido.CambiarEstadoAtomicoAsync`, `Insumo` stock descontar/reponer) use a DB transaction with `SELECT ... FOR UPDATE` instead of the in-process locking the old JSON repositories used.
+
+Migrations live in `ProyectoJo.Infrastructure/Persistence/EfCore/Migrations/`. Apply them with `dotnet ef database update --project ProyectoJo.Infrastructure --startup-project ProyectoJo.Web`.
+
+`JsonToPostgresSeeder` (`ProyectoJo.Infrastructure/Persistence/EfCore/JsonToPostgresSeeder.cs`), invoked via `dotnet run --project ProyectoJo.Web -- --seed`, was a one-time tool to import the old JSON files into Postgres. The source JSON files it reads no longer exist in the repo, so `--seed` is currently a no-op (it logs "no existe, se omite" per file and exits). `--reset` (`TRUNCATE ... RESTART IDENTITY CASCADE` across all app tables) still works and is useful to wipe the database clean, e.g. before rehearsing a demo.

@@ -1,7 +1,5 @@
 ﻿using ProyectoJo.Application.Ports.In;
 using ProyectoJo.Application.UseCases;
-using ProyectoJo.Application.Ports.Out;
-using ProyectoJo.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,24 +19,6 @@ builder.Services.AddSwaggerGen(c =>
 		Description = "REST API for order management between front desk and kitchen."
 	});
 });
-
-var pedidosPath = Path.Combine(
-	builder.Environment.ContentRootPath, "..", "ProyectoJo.Web", "Persistencia", "pedidos.json");
-
-var menuPath = Path.Combine(
-	builder.Environment.ContentRootPath, "..", "ProyectoJo.Web", "Persistencia", "menu.json");
-
-var finanzasPath = Path.Combine(
-	builder.Environment.ContentRootPath, "..", "ProyectoJo.Web", "Persistencia", "finanzas.json");
-
-builder.Services.AddSingleton<IPedidoRepository>(
-	new JsonPedidoRepository(Path.GetFullPath(pedidosPath)));
-
-builder.Services.AddSingleton<IProductoRepository>(
-	new JsonProductRepository(Path.GetFullPath(menuPath)));
-
-builder.Services.AddSingleton<IFinanzaRepository>(
-	new JsonFinanzaRepository(Path.GetFullPath(finanzasPath)));
 
 builder.Services.AddScoped<IPedidoService, PedidoUseCase>();
 builder.Services.AddScoped<IProductoService, ProductoUseCase>();

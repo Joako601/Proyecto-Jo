@@ -44,6 +44,14 @@
     <link rel="stylesheet" href="~/css/admin/mapacalor/mapacalor.css" asp-append-version="true" />
 }
 
+@* Datos para Chart.js *@
+<script type="application/json" id="mc-data-horas-labels">@Html.Raw(etiquetasHoras)</script>
+<script type="application/json" id="mc-data-horas-data">@Html.Raw(dataPedidosPorHora)</script>
+<script type="application/json" id="mc-data-dias-labels">@Html.Raw(etiquetasDiasSemana)</script>
+<script type="application/json" id="mc-data-dias-data">@Html.Raw(dataPedidosPorDiaSemana)</script>
+<script type="application/json" id="mc-data-meses-labels">@Html.Raw(etiquetasMeses)</script>
+<script type="application/json" id="mc-data-meses-data">@Html.Raw(dataPedidosPorMes)</script>
+
 <div class="admin-page">
 
     <div class="page-header">
@@ -364,63 +372,5 @@
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script>
-        (function() {
-            'use strict';
-
-            var tcTeal = 'rgba(47, 110, 98, 0.85)';
-            var tcMustard = 'rgba(217, 164, 65, 0.85)';
-            var tcBrick = 'rgba(178, 58, 46, 0.85)';
-
-            // Scroll suave a la sección indicada en ?scroll=
-            var params = new URLSearchParams(window.location.search);
-            var scrollTarget = params.get('scroll');
-            if (scrollTarget) {
-                var el = document.getElementById(scrollTarget);
-                if (el) {
-                    requestAnimationFrame(function() {
-                        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    });
-                }
-            }
-
-            // Formularios con data-scroll-target inyectan ?scroll= al hacer submit
-            document.querySelectorAll('form[data-scroll-target]').forEach(function(form) {
-                form.addEventListener('submit', function() {
-                    var hidden = document.createElement('input');
-                    hidden.type = 'hidden';
-                    hidden.name = 'scroll';
-                    hidden.value = form.dataset.scrollTarget;
-                    form.appendChild(hidden);
-                });
-            });
-
-            new Chart(document.getElementById('graficaHoraspico'), {
-                type: 'bar',
-                data: {
-                    labels: @Html.Raw(etiquetasHoras),
-                    datasets: [{ label: 'Pedidos pagados', data: @Html.Raw(dataPedidosPorHora), backgroundColor: tcTeal, borderRadius: 4 }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
-            });
-
-            new Chart(document.getElementById('graficaDiasSemana'), {
-                type: 'bar',
-                data: {
-                    labels: @Html.Raw(etiquetasDiasSemana),
-                    datasets: [{ label: 'Pedidos pagados', data: @Html.Raw(dataPedidosPorDiaSemana), backgroundColor: tcMustard, borderRadius: 4 }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
-            });
-
-            new Chart(document.getElementById('graficaMeses'), {
-                type: 'bar',
-                data: {
-                    labels: @Html.Raw(etiquetasMeses),
-                    datasets: [{ label: 'Pedidos pagados', data: @Html.Raw(dataPedidosPorMes), backgroundColor: tcBrick, borderRadius: 4 }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
-            });
-        }());
-    </script>
+    <script src="~/js/mapa-calor.js" asp-append-version="true"></script>
 }

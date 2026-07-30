@@ -76,6 +76,8 @@ Five projects, dependency direction flows inward toward the domain:
 - `Hubs/PedidosHub` + `Realtime/SignalRPedidoNotificador` — real-time order status push implementing `IPedidoNotificador`, consumed by Cocina/Recepción views instead of polling.
 - `Middleware/JsonExceptionMiddleware` — converts unhandled exceptions to JSON responses.
 
+**Controller/View folder casing must match exactly (PascalCase).** ASP.NET Core's default view lookup is `/Views/{ControllerName}/{ActionName}.cshtml`, resolved against the literal controller/action name. This only "works" on Windows because NTFS is case-insensitive; the deployment target ([per README](./README.md)) is Linux, where the filesystem is case-sensitive. A folder or file with the wrong case compiles and runs fine locally but throws "the view was not found" only in production. When adding a new controller or view, name the folder/file after the controller/action exactly as written in C# (e.g. `MenuController` → `Controllers/Menu/`, action `Detalle()` → `Views/Menu/Detalle.cshtml`).
+
 ### Authentication schemes (all cookie-based, defined in `ProyectoJo.Web/Program.cs`)
 
 Three independent, non-overlapping cookie schemes — compromising one grants no access to the others:

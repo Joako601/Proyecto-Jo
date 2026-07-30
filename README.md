@@ -6,7 +6,7 @@
 ![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)
 ![Arquitectura](https://img.shields.io/badge/Arquitectura-Hexagonal-blue)
 ![API](https://img.shields.io/badge/API-REST%20%2B%20Swagger-85EA2D)
-![Tests](https://img.shields.io/badge/Tests-26%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/Tests-73%20passing-brightgreen)
 
 ---
 
@@ -87,13 +87,12 @@ flowchart TD
     end
 
     subgraph INFRA ["ProyectoJo.Infrastructure"]
-        PERS["Persistence — JSON (escritura atómica)"]
+        PERS["Persistence/EfCore — PostgreSQL (EF Core)"]
         AUTH["Auth — IAuthService"]
     end
 
     subgraph TESTS ["ProyectoJo.Application.Tests"]
         UT["UseCases/ — Tests unitarios (Moq)"]
-        IT["Infrastructure/ — Tests de integración (archivo temporal)"]
     end
 
     WC -->|invoca| PIN
@@ -104,7 +103,6 @@ flowchart TD
     POUT -->|implementado por| NOTIF
     NOTIF -->|push| HUB
     UT -->|mock de| POUT
-    IT -->|instancia real de| PERS
 ```
 
 Más detalle en las vistas arquitectónicas de cada ADR.
@@ -139,7 +137,8 @@ ProyectoJo/
 │   └── DTOs/                     # ResumenFinanciero, ResumenDashboard, ResultadoCrearPedido
 │
 ├── ProyectoJo.Infrastructure/    # Adaptadores de salida
-│   ├── Persistence/              # Repositorios JSON con escritura atómica (.tmp + Move)
+│   ├── Persistence/EfCore/       # PostgreSQL vía EF Core: DbContext, Configurations/,
+│   │                             # Repositories/ (Ef*Repository) y Migrations/
 │   └── Auth/                     # EnvAuthService
 │
 ├── ProyectoJo.Web/               # Adaptador de entrada — ASP.NET Core MVC
@@ -150,20 +149,15 @@ ProyectoJo/
 │   ├── Realtime/                 # SignalRPedidoNotificador
 │   ├── Middleware/               # JsonExceptionMiddleware
 │   ├── Views/
-│   ├── Persistencia/             # menu.json, finanzas.json, promociones.json,
-│   │                             # pedidos.json, cierres-caja.json, auditoria.json
 │   └── ADRs/                     # Historial de decisiones arquitectónicas
 │
 ├── ProyectoJo.Api/               # Adaptador de entrada — ASP.NET Core Web API
 │   ├── Controllers/              # PedidosController
-│   └── Program.cs                # Composición de dependencias + Swagger
+│   └── Program.cs                # Composición de dependencias + Swagger (sin persistencia
+│                                  # registrada por ahora — ver Deuda técnica conocida)
 │
 ├── ProyectoJo.Application.Tests/ # Proyecto de tests — xUnit + Moq
-│   ├── UseCases/                 # Tests unitarios con mocks (ProductoUseCase,
-│   │                             # FinanzaUseCase, PromocionUseCase,
-│   │                             # CierreCajaUseCase, PedidoUseCase)
-│   └── Infrastructure/           # Tests de integración con repos reales contra
-│                                 # archivos temporales (concurrencia y escritura atómica)
+│   └── UseCases/                 # Tests unitarios con mocks, uno por caso de uso
 │
 └── .github/workflows/            # Pipeline de Integración Continua
     └── ci.yml                    # Build + test automático en cada push / PR
@@ -198,10 +192,10 @@ La arquitectura del sistema está documentada en tres niveles de detalle bajo el
 | API (adaptador de entrada) | ASP.NET Core Web API |
 | Tiempo real | SignalR |
 | Documentación de API | Swagger / OpenAPI (Swashbuckle.AspNetCore) |
-| Persistencia actual | Archivos JSON con escritura atómica (planeado: SQL + Entity Framework) |
+| Persistencia actual | PostgreSQL vía Entity Framework Core (Npgsql), solo en `ProyectoJo.Web` — ver Deuda técnica conocida |
 | Autenticación | Cookie auth  |
 | Logging | Serilog (consola + archivo rotativo diario) |
-| Tests | xUnit 2.9.2 + Moq 4.20.72 — 26 tests (unitarios + integración con concurrencia real) |
+| Tests | xUnit 2.9.2 + Moq 4.20.72 — 73 tests unitarios |
 | Integración Continua | GitHub Actions — build + test automático en cada push y Pull Request |
 | Despliegue objetivo | AWS EC2 |
 
@@ -223,18 +217,37 @@ y la API (`ProyectoJo.Api`). Cada uno se ejecuta por separado.
 # Restaurar dependencias de toda la solución
 dotnet restore
 
+# Aplicar las migraciones de EF Core contra tu PostgreSQL (ver sección siguiente)
+dotnet ef database update --project ProyectoJo.Infrastructure --startup-project ProyectoJo.Web
+
 # Levantar el sitio web (panel admin + vitrina pública + Cocina/Recepción)
 dotnet run --project ProyectoJo.Web
 # → https://localhost:7287  /  http://localhost:5207
 
-# Levantar la API REST (actualmente sin uso activo en el sistema)
+# Levantar la API REST (actualmente sin persistencia registrada — ver Deuda técnica conocida)
 dotnet run --project ProyectoJo.Api
 # → https://localhost:63639  /  http://localhost:63640
 
 # Correr los tests
 dotnet test ProyectoJo.Application.Tests
-# → 26 tests, 0 errores
+# → 73 tests, 0 errores
 ```
+
+### Base de datos (PostgreSQL)
+
+`ProyectoJo.Web` requiere una instancia de PostgreSQL alcanzable y una cadena de
+conexión configurada en `ConnectionStrings:Default`. En desarrollo, configúrala vía
+*User Secrets* (nunca en `appsettings.json` ni en el repositorio):
+
+```bash
+dotnet user-secrets set "ConnectionStrings:Default" \
+  "Host=localhost;Port=5432;Database=proyectojo;Username=postgres;Password=<tu-clave>" \
+  --project ProyectoJo.Web
+```
+
+Con la base creada y la cadena de conexión configurada, aplicá las migraciones con el
+comando `dotnet ef database update` de arriba. Las migraciones viven en
+`ProyectoJo.Infrastructure/Persistence/EfCore/Migrations/`.
 
 ### Credenciales del panel administrativo
 
@@ -341,15 +354,14 @@ con evidencia del check en verde en su Pull Request correspondiente.
 
 ## Deuda técnica conocida
 
-El sistema documenta su deuda técnica de forma explícita en vez de dejarla implícita en el código. El detalle completo — causa, costo de no pagarla y propuesta de solución — está en [ADR-08](./ADRs/ADR-08-Joaquin-Uriona.md).
+El sistema documenta su deuda técnica de forma explícita en vez de dejarla implícita en el código. [ADR-08](./ADRs/ADR-08-Joaquin-Uriona.md) describe una versión anterior de esta deuda (de cuando `Web` y `Api` todavía leían los mismos archivos JSON); desde la migración de `Web` a PostgreSQL, el problema cambió de forma y está resumido acá hasta que se documente en un ADR nuevo.
 
 | Deuda | Tipo | Estado |
 |---|---|---|
-| `ProyectoJo.Api/Program.cs` arma las rutas de persistencia a mano (`Path.Combine` relativo, no configuración) | Infraestructura | Documentada — pendiente |
-| `JsonPedidoRepository` usa un `SemaphoreSlim` estático por proceso, no compartido entre `Web` y `Api` | Infraestructura | Documentada — pendiente |
-| `ProyectoJo.Api/Program.cs` no registra `IPedidoNotificador` ni `IPromocionService`, por lo que `PedidosController` falla en runtime al resolver `PedidoUseCase` | Accidental | Documentada — pendiente |
+| `ProyectoJo.Api/Program.cs` no registra ningún repositorio (`IPedidoRepository`, `IProductoRepository`, `IFinanzaRepository`, etc.) — cualquier endpoint que use persistencia falla en runtime al resolver sus dependencias | Accidental | Documentada — pendiente, `Api` fuera de alcance por ahora |
+| `Web` y `Api` no comparten datos: `Web` persiste en PostgreSQL, `Api` no tiene ninguna fuente de datos propia | Infraestructura | Documentada — pendiente |
 
-> Ambas deudas comparten causa raíz: `Web` y `Api` componen su grafo de dependencias por separado. La solución propuesta es centralizar el registro en un método de extensión compartido (`AddProyectoJoServices`), detallado en el ADR-08.
+> Causa raíz: `Web` y `Api` componen su grafo de dependencias por separado y no hay una raíz de composición compartida. La prioridad actual es la migración de `Web`; retomar `Api` (ya sea dándole su propio acceso a PostgreSQL o centralizando el registro en un método compartido) queda pendiente.
 ---
 
 ## Uso de IA

@@ -65,11 +65,12 @@ namespace ProyectoJo.Application.Tests.Infrastructure
 		public async Task CambiarEstadoAtomicoAsync_CuandoElPedidoNoExiste_DevuelveTuplaNula()
 		{
 			// Act
-			var (anterior, actualizado) = await _repository.CambiarEstadoAtomicoAsync(999, EstadoPedido.Pagado);
+			var (anterior, actualizado, motivoRechazo) = await _repository.CambiarEstadoAtomicoAsync(999, EstadoPedido.Pagado);
 
 			// Assert
 			Assert.Null(anterior);
 			Assert.Null(actualizado);
+			Assert.Null(motivoRechazo);
 		}
 	}
 }

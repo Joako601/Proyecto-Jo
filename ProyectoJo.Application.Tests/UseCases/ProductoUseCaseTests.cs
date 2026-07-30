@@ -22,12 +22,8 @@ namespace ProyectoJo.Application.Tests.UseCases
 		[Fact]
 		public void EditarItem_CuandoElItemNoExiste_DevuelveFalseYNoRegistraAuditoria()
 		{
-			// Arrange: el menú existente no contiene el Id que se intenta editar
-			var menuExistente = new List<Item>
-			{
-				new() { Id = 1, Platillo = "Tacos", Categoria = "Comida", Precio = 50 }
-			};
-			_repository.Setup(r => r.ObtenerMenu()).Returns(menuExistente);
+			// Arrange: no hay ningún item con ese Id en el repositorio
+			_repository.Setup(r => r.ObtenerPorId(999)).Returns((Item?)null);
 
 			var itemInexistente = new Item { Id = 999, Platillo = "Fantasma", Categoria = "Comida", Precio = 10 };
 
@@ -36,7 +32,7 @@ namespace ProyectoJo.Application.Tests.UseCases
 
 			// Assert
 			Assert.False(resultado);
-			_repository.Verify(r => r.GuardarMenu(It.IsAny<List<Item>>()), Times.Never);
+			_repository.Verify(r => r.ActualizarItem(It.IsAny<Item>()), Times.Never);
 			_auditoriaService.Verify(a => a.RegistrarAccion(
 				It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TipoAccionAuditoria>(), It.IsAny<string>(),
 				It.IsAny<string?>(), It.IsAny<string?>()), Times.Never);
@@ -46,11 +42,8 @@ namespace ProyectoJo.Application.Tests.UseCases
 		public void EditarItem_CuandoElItemExiste_DevuelveTrueYRegistraAuditoria()
 		{
 			// Arrange
-			var menuExistente = new List<Item>
-			{
-				new() { Id = 1, Platillo = "Tacos", Categoria = "Comida", Precio = 50 }
-			};
-			_repository.Setup(r => r.ObtenerMenu()).Returns(menuExistente);
+			var anterior = new Item { Id = 1, Platillo = "Tacos", Categoria = "Comida", Precio = 50 };
+			_repository.Setup(r => r.ObtenerPorId(1)).Returns(anterior);
 
 			var itemEditado = new Item { Id = 1, Platillo = "Tacos al Pastor", Categoria = "Comida", Precio = 60 };
 
@@ -59,8 +52,8 @@ namespace ProyectoJo.Application.Tests.UseCases
 
 			// Assert
 			Assert.True(resultado);
-			_repository.Verify(r => r.GuardarMenu(It.Is<List<Item>>(
-				lista => lista.Count == 1 && lista[0].Platillo == "Tacos al Pastor")), Times.Once);
+			_repository.Verify(r => r.ActualizarItem(It.Is<Item>(
+				i => i.Id == 1 && i.Platillo == "Tacos al Pastor")), Times.Once);
 			_auditoriaService.Verify(a => a.RegistrarAccion(
 				"admin", "Productos", TipoAccionAuditoria.Edicion, It.IsAny<string>(),
 				It.IsAny<string?>(), It.IsAny<string?>()), Times.Once);
@@ -89,6 +82,7 @@ namespace ProyectoJo.Application.Tests.UseCases
 			// Arrange
 			var item = new Item { Id = 1, Platillo = "Tacos", Categoria = "Comida", Precio = 50 };
 			_repository.Setup(r => r.ObtenerPorId(1)).Returns(item);
+			_repository.Setup(r => r.Eliminar(1)).Returns(true);
 
 			// Act
 			var resultado = _useCase.Eliminar(1, "admin");

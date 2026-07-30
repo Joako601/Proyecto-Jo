@@ -44,6 +44,7 @@ namespace ProyectoJo.Application.Tests.UseCases
 			var anterior = new Promocion { Id = 1, Titulo = "2x1 Tacos" };
 			_repository.Setup(r => r.ObtenerPorId(1)).Returns(anterior);
 			var promoEditada = new Promocion { Id = 1, Titulo = "2x1 Tacos Finde" };
+			_repository.Setup(r => r.Editar(promoEditada)).Returns(true);
 
 			// Act
 			var resultado = _useCase.Editar(promoEditada, "admin");
@@ -79,6 +80,7 @@ namespace ProyectoJo.Application.Tests.UseCases
 			// Arrange
 			var promocion = new Promocion { Id = 1, Titulo = "2x1 Tacos" };
 			_repository.Setup(r => r.ObtenerPorId(1)).Returns(promocion);
+			_repository.Setup(r => r.Eliminar(1)).Returns(true);
 
 			// Act
 			var resultado = _useCase.Eliminar(1, "admin");

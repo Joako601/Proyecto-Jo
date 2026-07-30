@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
 using ProyectoJo.Application.Ports.In;
 using ProyectoJo.Application.UseCases;
 using ProyectoJo.Application.Ports.Out;
-using ProyectoJo.Infrastructure.Persistence;
+using ProyectoJo.Infrastructure.Persistence.EfCore;
+using ProyectoJo.Infrastructure.Persistence.EfCore.Repositories;
 using ProyectoJo.Infrastructure.Auth;
 using Microsoft.Extensions.FileProviders;
 using Serilog;
@@ -33,64 +35,51 @@ builder.Environment.WebRootFileProvider = new CompositeFileProvider(
 	new PhysicalFileProvider(adminWebRoot)
 );
 
-var rutaPersistencia = Path.Combine(builder.Environment.ContentRootPath, "Persistencia");
-var rutaMenu = Path.Combine(rutaPersistencia, "menu.json");
-var rutaFinanzas = Path.Combine(rutaPersistencia, "finanzas.json");
-var rutaPromociones = Path.Combine(rutaPersistencia, "promociones.json");
-var rutaEmpleados = Path.Combine(rutaPersistencia, "empleados.json");
-var rutaDispositivos = Path.Combine(rutaPersistencia, "dispositivos.json");
-var rutaPedidos = Path.Combine(rutaPersistencia, "pedidos.json");
-var rutaCierresCaja = Path.Combine(rutaPersistencia, "cierres-caja.json");
-var rutaAuditoria = Path.Combine(rutaPersistencia, "auditoria.json");
-var rutaSupervisorClave = Path.Combine(rutaPersistencia, "supervisor-clave.json");
-var rutaRecetas = Path.Combine(rutaPersistencia, "recetas.json");
-var rutaOpiniones = Path.Combine(rutaPersistencia, "opiniones.json");
-var rutaInsumos = Path.Combine(rutaPersistencia, "insumos.json");
-var rutaAdministradores = Path.Combine(rutaPersistencia, "administradores.json");
+builder.Services.AddDbContext<ProyectoJoDbContext>(options => options
+	.UseNpgsql(builder.Configuration.GetConnectionString("Default"))
+	.UseSnakeCaseNamingConvention());
 
-builder.Services.AddScoped<IProductoRepository>(_ => new JsonProductRepository(rutaMenu));
-builder.Services.AddScoped<IFinanzaRepository>(_ => new JsonFinanzaRepository(rutaFinanzas));
+builder.Services.AddScoped<IProductoRepository, EfProductoRepository>();
+builder.Services.AddScoped<IFinanzaRepository, EfFinanzaRepository>();
 builder.Services.AddScoped<IProductoService, ProductoUseCase>();
 builder.Services.AddScoped<IFinanzaService, FinanzaUseCase>();
 builder.Services.AddScoped<IAuthService, EnvAuthService>();
 
-builder.Services.AddScoped<IPromocionRepository>(_ => new JsonPromocionRepository(rutaPromociones));
+builder.Services.AddScoped<IPromocionRepository, EfPromocionRepository>();
 builder.Services.AddScoped<IPromocionService, PromocionUseCase>();
 
-builder.Services.AddScoped<IEmpleadoRepository>(_ => new JsonEmpleadoRepository(rutaEmpleados));
+builder.Services.AddScoped<IEmpleadoRepository, EfEmpleadoRepository>();
 builder.Services.AddScoped<IEmpleadoAuthService, EmpleadoAuthUseCase>();
 
-builder.Services.AddScoped<IDispositivoRepository>(_ => new JsonDispositivoRepository(rutaDispositivos));
+builder.Services.AddScoped<IDispositivoRepository, EfDispositivoRepository>();
 builder.Services.AddScoped<IDispositivoService, DispositivoUseCase>();
 
-builder.Services.AddScoped<ISupervisorClaveRepository>(_ => new JsonSupervisorClaveRepository(rutaSupervisorClave));
+builder.Services.AddScoped<ISupervisorClaveRepository, EfSupervisorClaveRepository>();
 builder.Services.AddScoped<ISupervisorAuthService, SupervisorAuthUseCase>();
 
-builder.Services.AddScoped<IPedidoRepository>(_ => new JsonPedidoRepository(rutaPedidos));
+builder.Services.AddScoped<IPedidoRepository, EfPedidoRepository>();
 builder.Services.AddScoped<IPedidoService, PedidoUseCase>();
 
-builder.Services.AddScoped<ICierreCajaRepository>(_ => new JsonCierreCajaRepository(rutaCierresCaja));
+builder.Services.AddScoped<ICierreCajaRepository, EfCierreCajaRepository>();
 builder.Services.AddScoped<ICierreCajaService, CierreCajaUseCase>();
 
-builder.Services.AddScoped<IAuditoriaRepository>(_ => new JsonAuditoriaRepository(rutaAuditoria));
+builder.Services.AddScoped<IAuditoriaRepository, EfAuditoriaRepository>();
 builder.Services.AddScoped<IAuditoriaService, AuditoriaUseCase>();
 
 builder.Services.AddScoped<IPedidoNotificador, SignalRPedidoNotificador>();
 
-builder.Services.AddScoped<IRecetaRepository>(_ => new JsonRecetaRepository(rutaRecetas));
+builder.Services.AddScoped<IRecetaRepository, EfRecetaRepository>();
 builder.Services.AddScoped<IRecetaService, RecetaUseCase>();
 
-builder.Services.AddScoped<IOpinionRepository>(_ => new JsonOpinionRepository(rutaOpiniones));
+builder.Services.AddScoped<IOpinionRepository, EfOpinionRepository>();
 builder.Services.AddScoped<IOpinionService, OpinionUseCase>();
 
-builder.Services.AddScoped<IInsumoRepository>(_ => new JsonInsumoRepository(rutaInsumos));
+builder.Services.AddScoped<IInsumoRepository, EfInsumoRepository>();
 builder.Services.AddScoped<IInsumoService, InsumoUseCase>();
 
-builder.Services.AddScoped<IPedidoRepository>(_ => new JsonPedidoRepository(rutaPedidos));
-builder.Services.AddScoped<IPedidoService, PedidoUseCase>();
 builder.Services.AddScoped<IReporteService, ReporteUseCase>();
 
-builder.Services.AddScoped<IAdministradorRepository>(_ => new JsonAdministradorRepository(rutaAdministradores));
+builder.Services.AddScoped<IAdministradorRepository, EfAdministradorRepository>();
 builder.Services.AddScoped<IAdministradorService, AdministradorUseCase>();
 
 builder.Services.AddScoped<IEmpleadoService, EmpleadoUseCase>();

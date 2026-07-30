@@ -3,6 +3,42 @@
 	background-color: var(--yerba-cream);
 }
 
+.historia-section .divider-gold {
+	width: 50px;
+	height: 2px;
+	background-color: var(--yerba-gold);
+	margin: 0 0 20px 0;
+}
+
+.img-historia-wrapper--secundaria {
+	width: 90%;
+	margin-left: auto;
+}
+
+.img-historia-wrapper.proximamente-placeholder {
+	min-height: 320px;
+	background-color: #faf9f6;
+	border: 1px dashed var(--yerba-gold-light);
+}
+
+.proximamente-icono {
+	font-size: 2.5rem;
+	color: var(--yerba-gold-light);
+}
+
+.proximamente-titulo {
+	letter-spacing: 3px;
+	color: var(--yerba-gold-light);
+	font-weight: bold;
+	font-size: 0.85rem;
+}
+
+.proximamente-subtitulo {
+	letter-spacing: 2px;
+	color: #999;
+	font-size: 0.7rem;
+}
+
 .historia-title {
 	font-family: 'Playfair Display', serif !important;
 	font-size: 3.5rem;

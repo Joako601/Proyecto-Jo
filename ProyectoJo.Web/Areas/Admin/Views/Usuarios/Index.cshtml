@@ -110,7 +110,7 @@
                                     </form>
                                 </details>
                                 <form method="post" asp-area="Admin" asp-controller="Usuarios" asp-action="EliminarAdministrador"
-                                      onsubmit="return confirm('¿Eliminar a @a.Usuario?');">
+                                      data-confirm-delete="¿Eliminar a @a.Usuario?">
                                     <input type="hidden" name="id" value="@a.Id" />
                                     <button type="submit" class="link-delete">Eliminar</button>
                                 </form>
@@ -210,7 +210,7 @@
                                     </form>
                                 </details>
                                 <form method="post" asp-area="Admin" asp-controller="Usuarios" asp-action="EliminarOperador"
-                                      onsubmit="return confirm('¿Eliminar a @e.Nombre?');">
+                                      data-confirm-delete="¿Eliminar a @e.Nombre?">
                                     <input type="hidden" name="id" value="@e.Id" />
                                     <button type="submit" class="link-delete">Eliminar</button>
                                 </form>

@@ -110,7 +110,7 @@
                                        asp-route-id="@r.RecetaId" class="link-edit">Editar</a>
                                     <form asp-area="Admin" asp-controller="Recetario" asp-action="Eliminar"
                                           asp-route-id="@r.RecetaId" method="post"
-                                          onsubmit="return confirm('¿Eliminar la receta de @r.Platillo?')">
+                                          data-confirm-delete="¿Eliminar la receta de @r.Platillo?">
                                         <button type="submit" class="link-delete">Eliminar</button>
                                     </form>
                                 </div>

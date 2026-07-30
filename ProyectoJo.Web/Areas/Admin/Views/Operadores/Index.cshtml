@@ -74,7 +74,7 @@
                                 </form>
                             </details>
                             <form method="post" asp-area="Admin" asp-controller="Operadores" asp-action="Eliminar"
-                                  onsubmit="return confirm('¿Eliminar a @e.Nombre?');" style="display:inline">
+                                  data-confirm-delete="¿Eliminar a @e.Nombre?" style="display:inline">
                                 <input type="hidden" name="id" value="@e.Id" />
                                 <button type="submit" class="link-delete">Eliminar</button>
                             </form>

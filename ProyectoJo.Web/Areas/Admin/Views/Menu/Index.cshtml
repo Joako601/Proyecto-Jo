@@ -46,7 +46,7 @@
         <form method="get" class="filtro-form">
             <input type="text" name="busqueda" value="@busqueda"
                    class="form-control-sm" placeholder="Buscar por nombre..." style="min-width:220px" />
-            <select name="categoria" class="form-control-sm" onchange="this.form.submit()">
+            <select name="categoria" class="form-control-sm" data-autosubmit>
                 <option value="">Todas las categorías</option>
                 @foreach (var cat in categorias)
                 {
@@ -123,7 +123,7 @@
                                        asp-route-id="@item.Id" class="link-edit">Editar</a>
                                     <form asp-area="Admin" asp-controller="Menu" asp-action="Eliminar"
                                           asp-route-id="@item.Id" method="post"
-                                          onsubmit="return confirm('¿Eliminar @item.Platillo?')">
+                                          data-confirm-delete="¿Eliminar @item.Platillo?">
                                         <button type="submit" class="link-delete">Eliminar</button>
                                     </form>
                                 </div>

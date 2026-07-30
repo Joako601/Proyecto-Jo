@@ -75,7 +75,7 @@
                asp-route-id="@promo.Id" class="link-edit">Editar</a>
             <form asp-area="Admin" asp-controller="Promociones" asp-action="Eliminar"
                   asp-route-id="@promo.Id" method="post"
-                  onsubmit="return confirm('¿Eliminar @promo.Titulo?')">
+                  data-confirm-delete="¿Eliminar @promo.Titulo?">
                 <button type="submit" class="link-delete">Eliminar</button>
             </form>
         </div>

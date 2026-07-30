@@ -81,7 +81,7 @@
                                     <i class="bi bi-pencil"></i>
                                 </a>
                                 <form asp-area="Admin" asp-controller="Insumos" asp-action="Eliminar" asp-route-id="@insumo.Id" method="post" class="d-inline"
-                                      onsubmit="return confirm('¿Eliminar este insumo?');">
+                                      data-confirm-delete="¿Eliminar este insumo?">
                                     <button type="submit" class="btn-secondary" title="Eliminar"><i class="bi bi-trash"></i></button>
                                 </form>
                             </td>

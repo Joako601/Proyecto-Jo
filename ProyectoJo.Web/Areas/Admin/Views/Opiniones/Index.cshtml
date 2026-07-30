@@ -69,7 +69,7 @@
         <form method="get" class="filtro-form">
             <input type="text" name="busqueda" value="@busqueda"
                    class="form-control-sm" placeholder="Buscar por platillo, cliente o comentario..." style="min-width:240px" />
-            <select name="estado" class="form-control-sm" onchange="this.form.submit()">
+            <select name="estado" class="form-control-sm" data-autosubmit>
                 <option value="">Todos los estados</option>
                 <option value="Verde" selected="@(estadoFiltro == "Verde")">Verde</option>
                 <option value="Amarillo" selected="@(estadoFiltro == "Amarillo")">Amarillo</option>
@@ -161,7 +161,7 @@
                                        asp-route-id="@o.Id" class="link-edit">Editar</a>
                                     <form asp-area="Admin" asp-controller="Opiniones" asp-action="Eliminar"
                                           asp-route-id="@o.Id" method="post"
-                                          onsubmit="return confirm('¿Eliminar esta opinión?')">
+                                          data-confirm-delete="¿Eliminar esta opinión?">
                                         <button type="submit" class="link-delete">Eliminar</button>
                                     </form>
                                 </div>

@@ -1,10 +1,17 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProyectoJo.Domain.Entities;
 
 namespace ProyectoJo.Infrastructure.Persistence.EfCore
 {
 	public class ProyectoJoDbContext : DbContext
 	{
+		private static readonly ValueConverter<DateTime, DateTime> UtcDateTimeConverter =
+			new(v => EnsureUtc(v), v => v);
+
+		private static readonly ValueConverter<DateTime?, DateTime?> UtcNullableDateTimeConverter =
+			new(v => v.HasValue ? EnsureUtc(v.Value) : v, v => v);
+
 		public ProyectoJoDbContext(DbContextOptions<ProyectoJoDbContext> options) : base(options)
 		{
 		}
@@ -26,6 +33,24 @@ namespace ProyectoJo.Infrastructure.Persistence.EfCore
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			modelBuilder.ApplyConfigurationsFromAssembly(typeof(ProyectoJoDbContext).Assembly);
+
+			foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+			{
+				foreach (var property in entityType.GetProperties())
+				{
+					if (property.ClrType == typeof(DateTime))
+						property.SetValueConverter(UtcDateTimeConverter);
+					else if (property.ClrType == typeof(DateTime?))
+						property.SetValueConverter(UtcNullableDateTimeConverter);
+				}
+			}
 		}
+
+		private static DateTime EnsureUtc(DateTime value) => value.Kind switch
+		{
+			DateTimeKind.Utc => value,
+			DateTimeKind.Local => value.ToUniversalTime(),
+			_ => DateTime.SpecifyKind(value, DateTimeKind.Utc)
+		};
 	}
 }

@@ -12,7 +12,7 @@ namespace ProyectoJo.Infrastructure.Persistence.EfCore.Configurations
 			builder.HasKey(d => d.Id);
 			builder.Property(d => d.Token).IsRequired().HasMaxLength(100);
 			builder.HasIndex(d => d.Token).IsUnique();
-			builder.Property(d => d.Nombre).IsRequired().HasMaxLength(200);
+			builder.Property(d => d.Nombre).IsRequired(false).HasMaxLength(200);
 			builder.Property(d => d.Estacion).HasConversion<string>().HasMaxLength(20);
 		}
 	}

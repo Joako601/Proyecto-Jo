@@ -13,6 +13,7 @@ namespace ProyectoJo.Infrastructure.Persistence.EfCore.Configurations
 			builder.Property(i => i.Platillo).IsRequired().HasMaxLength(200);
 			builder.Property(i => i.Categoria).IsRequired().HasMaxLength(100);
 			builder.Property(i => i.Precio).HasPrecision(18, 2);
+			builder.Property(i => i.Ingredientes).IsRequired(false);
 		}
 	}
 }

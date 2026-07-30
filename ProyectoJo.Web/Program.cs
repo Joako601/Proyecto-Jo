@@ -200,6 +200,23 @@ builder.Services.AddAuthentication("JoCookieAuth")
 
 var app = builder.Build();
 
+if (args.Contains("--reset"))
+{
+	using var scope = app.Services.CreateScope();
+	var dbContext = scope.ServiceProvider.GetRequiredService<ProyectoJoDbContext>();
+	await ProyectoJo.Infrastructure.Persistence.EfCore.JsonToPostgresSeeder.ResetAsync(dbContext);
+	return;
+}
+
+if (args.Contains("--seed"))
+{
+	using var scope = app.Services.CreateScope();
+	var dbContext = scope.ServiceProvider.GetRequiredService<ProyectoJoDbContext>();
+	var rutaPersistencia = Path.Combine(builder.Environment.ContentRootPath, "Persistencia");
+	await ProyectoJo.Infrastructure.Persistence.EfCore.JsonToPostgresSeeder.SeedAsync(dbContext, rutaPersistencia);
+	return;
+}
+
 app.UseSerilogRequestLogging();
 
 app.UseMiddleware<ProyectoJo.Web.Middleware.JsonExceptionMiddleware>();

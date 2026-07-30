@@ -38,6 +38,24 @@
 	left: 0;
 }
 
+.platillo-visual .platillo-visual-icono {
+	font-size: 2.8rem;
+	color: white;
+}
+
+.platillo-visual-titulo {
+	letter-spacing: 3px;
+	color: white;
+	font-weight: bold;
+	font-size: 0.85rem;
+}
+
+.platillo-visual-subtitulo {
+	letter-spacing: 2px;
+	color: rgba(255,255,255,0.7);
+	font-size: 0.7rem;
+}
+
 .platillo-wrapper:hover .platillo-visual span {
 	transform: scale(1.1) rotate(5deg);
 }
@@ -82,6 +100,10 @@
 	color: var(--yerba-gold-light);
 	margin-top: 1rem;
 	display: block;
+}
+
+.precio-premium.precio-premium-anterior {
+	font-size: 0.9em;
 }
 
 .descripcion-premium {

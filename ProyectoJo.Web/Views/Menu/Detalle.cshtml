@@ -15,9 +15,9 @@
             {
                 <!-- TODO: reemplazar con foto propia del negocio (sprint de fotografía) -->
                 <div class="d-flex flex-column align-items-center justify-content-center text-center">
-                    <span style="font-size: 2.8rem; color: white;">&#10047;</span>
-                    <p class="text-uppercase mt-3 mb-0" style="letter-spacing: 3px; color: white; font-weight: bold; font-size: 0.85rem;">Próximamente</p>
-                    <p class="text-uppercase mt-1" style="letter-spacing: 2px; color: rgba(255,255,255,0.7); font-size: 0.7rem;">Foto en camino</p>
+                    <span class="platillo-visual-icono">&#10047;</span>
+                    <p class="text-uppercase mt-3 mb-0 platillo-visual-titulo">Próximamente</p>
+                    <p class="text-uppercase mt-1 platillo-visual-subtitulo">Foto en camino</p>
                 </div>
             }
             else
@@ -32,7 +32,7 @@
                 <h1 class="titulo-premium">@item.Platillo</h1>
                 @if (Model.TienePromocion)
                 {
-                    <span class="precio-premium text-decoration-line-through text-muted" style="font-size: 0.9em;">$@item.Precio</span>
+                    <span class="precio-premium precio-premium-anterior text-decoration-line-through text-muted">$@item.Precio</span>
                     <span class="precio-premium">$@Model.PrecioFinal</span>
                 }
                 else

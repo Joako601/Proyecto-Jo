@@ -1,0 +1,24 @@
+.ubicacion-eyebrow {
+	letter-spacing: 5px;
+	color: #b5a478;
+	font-size: 0.9rem;
+}
+
+.ubicacion-fuente-premium {
+	font-family: 'Playfair Display', serif;
+}
+
+.ubicacion-hero .divider-gold {
+	width: 40px;
+	height: 1px;
+	background: #b5a478;
+	margin: 20px auto;
+}
+
+.ubicacion-mapa-iframe {
+	border: 0;
+}
+
+.ubicacion-horario-domingo {
+	color: #b5a478;
+}

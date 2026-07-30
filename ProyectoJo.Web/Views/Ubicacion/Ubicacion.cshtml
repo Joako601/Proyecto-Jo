@@ -2,11 +2,15 @@
     ViewData["Title"] = "Ubicación - Tía Caro";
 }
 
+@section Styles {
+    <link rel="stylesheet" href="~/css/ubicacion/ubicacion.css" asp-append-version="true" />
+}
+
 <div class="container py-5">
-    <div class="text-center mb-5 fade-in-up">
-        <p class="text-uppercase mb-2" style="letter-spacing: 5px; color: #b5a478; font-size: 0.9rem;">Visítanos</p>
-        <h1 class="display-4 welcome-title" style="font-family: 'Playfair Display', serif;">Antojitos de la Tía Caro</h1>
-        <div class="divider-gold" style="width: 40px; height: 1px; background: #b5a478; margin: 20px auto;"></div>
+    <div class="text-center mb-5 fade-in-up ubicacion-hero">
+        <p class="text-uppercase mb-2 ubicacion-eyebrow">Visítanos</p>
+        <h1 class="display-4 welcome-title ubicacion-fuente-premium">Antojitos de la Tía Caro</h1>
+        <div class="divider-gold"></div>
     </div>
 
     <div class="row g-4 fade-in-up" style="animation-delay: 0.15s;">
@@ -15,7 +19,7 @@
 
             <div class="ratio ratio-16x9 shadow-sm border p-1 bg-white">
                 <iframe src="https://www.google.com/maps?q=Antojitos+de+la+Tia+Caro+San+Pedro+Uxmal+Merida&output=embed"
-                        style="border:0;"
+                        class="ubicacion-mapa-iframe"
                         allowfullscreen=""
                         loading="lazy">
                 </iframe>
@@ -32,13 +36,13 @@
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body p-4">
-                    <h3 class="h5 mb-4" style="font-family: 'Playfair Display', serif;">Horarios de Servicio</h3>
+                    <h3 class="h5 mb-4 ubicacion-fuente-premium">Horarios de Servicio</h3>
                     <ul class="list-unstyled small">
                         <li class="d-flex justify-content-between mb-3 border-bottom pb-2">
                             <span>Lun - Sáb</span>
                             <strong>18:30 - 23:30</strong>
                         </li>
-                        <li class="d-flex justify-content-between mb-3 border-bottom pb-2" style="color: #b5a478;">
+                        <li class="d-flex justify-content-between mb-3 border-bottom pb-2 ubicacion-horario-domingo">
                             <span>Domingos</span>
                             <strong>07:00 - 13:00</strong>
                         </li>

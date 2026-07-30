@@ -45,7 +45,7 @@ namespace ProyectoJo.Api.Controllers
 		public async Task<IActionResult> Create([FromBody] Pedido pedido)
 		{
 			if (!ModelState.IsValid) return BadRequest(ModelState);
-			var resultado = await _pedidoService.CrearAsync(pedido);
+			var resultado = await _pedidoService.CrearAsync(pedido, "API", "Recepcion");
 			return CreatedAtAction(nameof(GetById), new { id = resultado.Pedido.Id }, resultado.Pedido);
 		}
 
@@ -54,11 +54,13 @@ namespace ProyectoJo.Api.Controllers
 		[Tags("Recepción")]
 		[ProducesResponseType(typeof(Pedido), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status409Conflict)]
 		public async Task<IActionResult> Pagar(int id)
 		{
-			var actualizado = await _pedidoService.CambiarEstadoAsync(id, EstadoPedido.Pagado);
-			if (actualizado is null) return NotFound();
-			return Ok(actualizado);
+			var resultado = await _pedidoService.CambiarEstadoAsync(id, EstadoPedido.Pagado, "API", "Recepcion");
+			if (resultado.NoEncontrado) return NotFound();
+			if (!resultado.Exitoso) return Conflict(resultado.MotivoRechazo);
+			return Ok(resultado.Pedido);
 		}
 
 		
@@ -78,11 +80,13 @@ namespace ProyectoJo.Api.Controllers
 		[Tags("Cocina")]
 		[ProducesResponseType(typeof(Pedido), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status409Conflict)]
 		public async Task<IActionResult> CambiarEstado(int id, [FromBody] EstadoPedido nuevoEstado)
 		{
-			var actualizado = await _pedidoService.CambiarEstadoAsync(id, nuevoEstado);
-			if (actualizado is null) return NotFound();
-			return Ok(actualizado);
+			var resultado = await _pedidoService.CambiarEstadoAsync(id, nuevoEstado, "API", "Cocina");
+			if (resultado.NoEncontrado) return NotFound();
+			if (!resultado.Exitoso) return Conflict(resultado.MotivoRechazo);
+			return Ok(resultado.Pedido);
 		}
 	}
 }

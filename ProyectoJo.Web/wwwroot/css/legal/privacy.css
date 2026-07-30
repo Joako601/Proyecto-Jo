@@ -60,7 +60,7 @@
 
 .privacy-content .privacy-disclaimer {
 	background-color: #faf9f6;
-	border-left: 3px solid #b5a478;
+	border-left: 2px solid #b5a478;
 	padding: 1rem 1.25rem;
 	font-size: 0.85rem;
 	color: #777;
@@ -91,4 +91,10 @@
 .privacy-contact-list i {
 	margin-right: 8px;
 	color: #b5a478;
+}
+
+.privacy-contact-note {
+	font-size: 0.8rem;
+	color: #999;
+	margin-top: 0.5rem;
 }

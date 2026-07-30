@@ -13,6 +13,10 @@ At the end of a set of changes, Claude must:
 
 Do not run `git commit` "on the user's behalf" even if asked to prepare everything — staging/committing/pushing is the one step that always stays manual here.
 
+## No code comments
+
+Do not add comments to code in this repository (C#, Razor, JS, CSS, etc.), including XML doc comments — whether writing new code or editing existing files. Write self-explanatory code (clear names, small methods) instead of explaining it with comments. Don't remove pre-existing comments in code you aren't otherwise touching.
+
 ## Project overview
 
 Proyecto Jo' is a financial/administrative management system for small businesses, built with **ASP.NET Core (.NET 10)** using **Hexagonal Architecture (Ports & Adapters)**. Domain logic is isolated from frameworks and infrastructure across five independent projects with a single dependency direction: adapters depend on the domain, the domain never depends on adapters. Full history of architectural decisions lives in `/ADRs`; a C4-model overview (context/containers/components) is in `docs/Arquitectura-C4.md`.

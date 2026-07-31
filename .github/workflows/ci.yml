@@ -5,10 +5,12 @@ on:
     branches: [ "**" ]
   pull_request:
     branches: [ "deuda-tecnica" ]
+  workflow_dispatch:
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Checkout repository
@@ -18,9 +20,28 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
+          cache: true
+          cache-dependency-path: '**/*.csproj'
 
       - name: Restore dependencies
         run: dotnet restore
+
+      - name: Check for pending EF Core migrations
+        env:
+          ConnectionStrings__Default: "Host=localhost;Database=ci;Username=ci;Password=ci"
+        run: |
+          dotnet tool install --global dotnet-ef --version 10.0.0
+          dotnet ef migrations has-pending-model-changes --project ProyectoJo.Infrastructure --startup-project ProyectoJo.Web
+
+      - name: Check for vulnerable NuGet packages
+        run: |
+          dotnet list package --vulnerable --include-transitive --format json > vulnerable-packages.json
+          if grep -q '"topLevelPackages"\|"transitivePackages"' vulnerable-packages.json; then
+            echo "::error::Vulnerable NuGet packages detected"
+            cat vulnerable-packages.json
+            exit 1
+          fi
+          echo "No vulnerable packages found."
 
       - name: Build
         run: dotnet build --no-restore --configuration Release

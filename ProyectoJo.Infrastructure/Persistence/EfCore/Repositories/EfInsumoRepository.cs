@@ -13,7 +13,7 @@ namespace ProyectoJo.Infrastructure.Persistence.EfCore.Repositories
 			_context = context;
 		}
 
-		public List<Insumo> ObtenerTodos() => _context.Insumos.AsNoTracking().ToList();
+		public List<Insumo> ObtenerTodos() => _context.Insumos.AsNoTracking().OrderBy(i => i.Id).ToList();
 
 		public Insumo? ObtenerPorId(int id) => _context.Insumos.AsNoTracking().FirstOrDefault(i => i.Id == id);
 

@@ -9,6 +9,7 @@ namespace ProyectoJo.Web.Middleware
 			"font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; " +
 			"img-src 'self' data:; " +
 			"connect-src 'self'; " +
+			"frame-src https://www.google.com; " +
 			"object-src 'none'; " +
 			"base-uri 'self'; " +
 			"frame-ancestors 'none'";

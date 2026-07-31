@@ -2,11 +2,26 @@
 @{
     ViewData["Title"] = "Alerta de Stock";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+
+    const int PorPagina = 12;
+    var totalPaginas = (int)Math.Ceiling(Model.Count / (double)PorPagina);
+    var paginaActual = int.TryParse(Context.Request.Query["pagina"], out var p) ? p : 1;
+    if (paginaActual < 1) paginaActual = 1;
+    if (totalPaginas > 0 && paginaActual > totalPaginas) paginaActual = totalPaginas;
+
+    var paginado = Model
+        .Skip((paginaActual - 1) * PorPagina)
+        .Take(PorPagina)
+        .ToList();
+
+    var desdeItem = Model.Any() ? ((paginaActual - 1) * PorPagina) + 1 : 0;
+    var hastaItem = ((paginaActual - 1) * PorPagina) + paginado.Count;
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-shared.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin/inventario/inventario.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/paginador/paginador.css" asp-append-version="true" />
 }
 
 <div class="admin-page">
@@ -61,7 +76,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var insumo in Model)
+                    @foreach (var insumo in paginado)
                     {
                         var estadoClase = insumo.Agotado ? "tc-value--brick" : insumo.StockBajo ? "tc-value--mustard" : "tc-value--teal";
                         var estadoTexto = insumo.Agotado ? "Agotado" : insumo.StockBajo ? "Stock bajo" : "OK";
@@ -95,5 +110,9 @@
                 </tbody>
             </table>
         </div>
+        <p class="paginador-resumen">
+            Mostrando @desdeItem–@hastaItem de @Model.Count insumos
+        </p>
+        @await Html.PartialAsync("_Paginador", (paginaActual, totalPaginas))
     }
 </div>

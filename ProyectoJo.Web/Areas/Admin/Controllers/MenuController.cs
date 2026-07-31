@@ -49,6 +49,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 				ViewBag.Categorias = ObtenerCategorias();
 				return View(item);
 			}
+			item.Id = 0;
 			_productoService.AgregarItem(item, User.Identity?.Name ?? "Desconocido");
 			return RedirectToAction("Index");
 		}

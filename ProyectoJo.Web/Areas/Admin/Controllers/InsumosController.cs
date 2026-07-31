@@ -37,6 +37,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		public IActionResult Crear(Insumo insumo)
 		{
 			if (!ModelState.IsValid) return View(insumo);
+			insumo.Id = 0;
 			_insumoService.Agregar(insumo, User.Identity?.Name ?? "Desconocido");
 			return RedirectToAction(nameof(Index));
 		}

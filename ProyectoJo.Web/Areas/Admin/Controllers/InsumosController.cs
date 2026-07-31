@@ -37,7 +37,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		public IActionResult Crear(Insumo insumo)
 		{
 			if (!ModelState.IsValid) return View(insumo);
-			insumo.Id = 0;
+			insumo.DescartarId();
 			_insumoService.Agregar(insumo, User.Identity?.Name ?? "Desconocido");
 			return RedirectToAction(nameof(Index));
 		}
@@ -62,14 +62,18 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 
 		// POST: /Admin/Insumos/Reponer
 		[HttpPost]
-		public IActionResult Reponer(int id, decimal cantidad)
+		public async Task<IActionResult> Reponer(int id, decimal cantidad)
 		{
-			var reabastecido = _insumoService.Reponer(id, cantidad, User.Identity?.Name ?? "Desconocido");
-			if (!reabastecido)
+			var resultado = await _insumoService.ReponerAsync(id, cantidad, User.Identity?.Name ?? "Desconocido");
+			if (resultado != ResultadoReponerInsumo.Exitoso)
 			{
-				TempData["Error"] = cantidad <= 0
-					? "La cantidad a reponer debe ser mayor a 0."
-					: "No se pudo reponer el stock del insumo indicado.";
+				TempData["Error"] = resultado switch
+				{
+					ResultadoReponerInsumo.CantidadInvalida => "La cantidad a reponer debe ser mayor a 0.",
+					ResultadoReponerInsumo.InsumoNoEncontrado => "El insumo indicado no existe.",
+					ResultadoReponerInsumo.ConflictoDeConcurrencia => "El insumo fue modificado por otro proceso. Intentalo de nuevo.",
+					_ => "No se pudo reponer el stock del insumo indicado."
+				};
 			}
 			return RedirectToAction(nameof(Index));
 		}

@@ -87,7 +87,7 @@ flowchart TD
     end
  
     HUB["PedidosHub : Hub"]
-    MW["JsonExceptionMiddleware\n(envuelve todas las peticiones)"]
+    MW["JsonExceptionMiddleware, SecurityHeadersMiddleware\n(envuelven todas las peticiones)"]
  
     subgraph PIN ["Application/Ports/In"]
         I_AUTH["IAuthService"]

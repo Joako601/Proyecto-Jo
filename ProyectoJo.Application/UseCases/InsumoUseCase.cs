@@ -70,15 +70,15 @@ namespace ProyectoJo.Application.UseCases
 			return true;
 		}
 
-		public bool Reponer(int id, decimal cantidad, string usuario)
+		public async Task<ResultadoReponerInsumo> ReponerAsync(int id, decimal cantidad, string usuario)
 		{
-			if (cantidad <= 0) return false;
+			if (cantidad <= 0) return ResultadoReponerInsumo.CantidadInvalida;
 
 			var anterior = _repository.ObtenerPorId(id);
-			if (anterior is null) return false;
+			if (anterior is null) return ResultadoReponerInsumo.InsumoNoEncontrado;
 
-			var actualizado = _repository.ReponerAtomicoAsync(id, cantidad).GetAwaiter().GetResult();
-			if (actualizado is null) return false;
+			var actualizado = await _repository.ReponerAtomicoAsync(id, cantidad);
+			if (actualizado is null) return ResultadoReponerInsumo.ConflictoDeConcurrencia;
 
 			_auditoriaService.RegistrarAccion(
 				usuario: usuario,
@@ -89,7 +89,7 @@ namespace ProyectoJo.Application.UseCases
 				detalleDespues: $"Stock: {actualizado.StockActual} {actualizado.Unidad} (+{cantidad})"
 			);
 
-			return true;
+			return ResultadoReponerInsumo.Exitoso;
 		}
 
 		public async Task<string?> VerificarYDescontarAsync(List<ItemPedido> items, Func<int, Receta?> obtenerRecetaPorItemId)

@@ -2,7 +2,7 @@
 
 namespace ProyectoJo.Domain.Entities
 {
-	public class Promocion : IValidatableObject
+	public class Promocion : IValidatableObject, IEntidadConId
 	{
 		public int Id { get; set; }
 		public string Titulo { get; set; } = string.Empty;

@@ -2,7 +2,7 @@
 
 namespace ProyectoJo.Domain.Entities
 {
-	public class Item
+	public class Item : IEntidadConId
 	{
 		public int Id { get; set; }
 

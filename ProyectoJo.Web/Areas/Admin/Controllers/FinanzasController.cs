@@ -62,7 +62,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 				ViewBag.Categorias = ObtenerCategorias();
 				return View(finanza);
 			}
-			finanza.Id = 0;
+			finanza.DescartarId();
 			_finanzaService.RegistrarMovimiento(finanza, User.Identity?.Name ?? "Desconocido");
 			return RedirectToAction("Index");
 		}

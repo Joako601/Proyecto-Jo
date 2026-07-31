@@ -2,7 +2,7 @@
 
 namespace ProyectoJo.Domain.Entities
 {
-	public class Receta
+	public class Receta : IEntidadConId
 	{
 		public int Id { get; set; }
 		public int ItemId { get; set; }

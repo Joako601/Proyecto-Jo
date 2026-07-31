@@ -2,7 +2,7 @@
 
 namespace ProyectoJo.Domain.Entities
 {
-	public class Finanza
+	public class Finanza : IEntidadConId
 	{
 		public int Id { get; set; }
 

@@ -9,7 +9,7 @@ namespace ProyectoJo.Application.Ports.In
 		void Agregar(Insumo insumo, string usuario);
 		bool Editar(Insumo insumo, string usuario);
 		bool Eliminar(int id, string usuario);
-		bool Reponer(int id, decimal cantidad, string usuario);
+		Task<ResultadoReponerInsumo> ReponerAsync(int id, decimal cantidad, string usuario);
 
 		Task<string?> VerificarYDescontarAsync(List<ItemPedido> items, Func<int, Receta?> obtenerRecetaPorItemId);
 
@@ -19,5 +19,13 @@ namespace ProyectoJo.Application.Ports.In
 		int? ObtenerMaximoDisponible(Item item, IReadOnlyDictionary<string, Insumo> insumosPorNombre);
 
 		Dictionary<string, Insumo> ObtenerIndicePorNombre();
+	}
+
+	public enum ResultadoReponerInsumo
+	{
+		Exitoso,
+		CantidadInvalida,
+		InsumoNoEncontrado,
+		ConflictoDeConcurrencia
 	}
 }

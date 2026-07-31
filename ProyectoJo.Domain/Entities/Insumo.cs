@@ -2,7 +2,7 @@
 
 namespace ProyectoJo.Domain.Entities
 {
-	public class Insumo
+	public class Insumo : IEntidadConId
 	{
 		public int Id { get; set; }
 		public string Nombre { get; set; } = string.Empty;

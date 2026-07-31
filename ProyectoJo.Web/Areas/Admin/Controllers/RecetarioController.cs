@@ -68,7 +68,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 				return View(receta);
 			}
 
-			receta.Id = 0;
+			receta.DescartarId();
 			_recetaService.Agregar(receta, User.Identity?.Name ?? "Desconocido");
 			return RedirectToAction("Index");
 		}

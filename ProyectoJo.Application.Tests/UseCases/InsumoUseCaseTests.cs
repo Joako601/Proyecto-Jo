@@ -64,25 +64,51 @@ namespace ProyectoJo.Application.Tests.UseCases
 		}
 
 		[Fact]
-		public void Reponer_ConCantidadNoPositiva_DevuelveFalseSinConsultarElRepositorio()
+		public async Task ReponerAsync_ConCantidadNoPositiva_DevuelveCantidadInvalidaSinConsultarElRepositorio()
 		{
-			var resultado = _useCase.Reponer(1, 0, "admin");
+			var resultado = await _useCase.ReponerAsync(1, 0, "admin");
 
-			Assert.False(resultado);
+			Assert.Equal(ResultadoReponerInsumo.CantidadInvalida, resultado);
 			_repository.Verify(r => r.ObtenerPorId(It.IsAny<int>()), Times.Never);
 		}
 
 		[Fact]
-		public void Reponer_ConDatosValidos_ActualizaStockYRegistraAuditoria()
+		public async Task ReponerAsync_CuandoElInsumoNoExiste_DevuelveInsumoNoEncontradoSinLlamarAlRepositorioAtomico()
+		{
+			_repository.Setup(r => r.ObtenerPorId(999)).Returns((Insumo?)null);
+
+			var resultado = await _useCase.ReponerAsync(999, 10, "admin");
+
+			Assert.Equal(ResultadoReponerInsumo.InsumoNoEncontrado, resultado);
+			_repository.Verify(r => r.ReponerAtomicoAsync(It.IsAny<int>(), It.IsAny<decimal>()), Times.Never);
+		}
+
+		[Fact]
+		public async Task ReponerAsync_CuandoSePierdeLaCarreraAtomica_DevuelveConflictoDeConcurrencia()
+		{
+			var anterior = new Insumo { Id = 1, Nombre = "Harina", StockActual = 5, Unidad = UnidadIngrediente.Kilogramo };
+			_repository.Setup(r => r.ObtenerPorId(1)).Returns(anterior);
+			_repository.Setup(r => r.ReponerAtomicoAsync(1, 10)).ReturnsAsync((Insumo?)null);
+
+			var resultado = await _useCase.ReponerAsync(1, 10, "admin");
+
+			Assert.Equal(ResultadoReponerInsumo.ConflictoDeConcurrencia, resultado);
+			_auditoriaService.Verify(a => a.RegistrarAccion(
+				It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TipoAccionAuditoria>(), It.IsAny<string>(),
+				It.IsAny<string?>(), It.IsAny<string?>()), Times.Never);
+		}
+
+		[Fact]
+		public async Task ReponerAsync_ConDatosValidos_ActualizaStockYRegistraAuditoria()
 		{
 			var anterior = new Insumo { Id = 1, Nombre = "Harina", StockActual = 5, Unidad = UnidadIngrediente.Kilogramo };
 			var actualizado = new Insumo { Id = 1, Nombre = "Harina", StockActual = 15, Unidad = UnidadIngrediente.Kilogramo };
 			_repository.Setup(r => r.ObtenerPorId(1)).Returns(anterior);
 			_repository.Setup(r => r.ReponerAtomicoAsync(1, 10)).ReturnsAsync(actualizado);
 
-			var resultado = _useCase.Reponer(1, 10, "admin");
+			var resultado = await _useCase.ReponerAsync(1, 10, "admin");
 
-			Assert.True(resultado);
+			Assert.Equal(ResultadoReponerInsumo.Exitoso, resultado);
 			_auditoriaService.Verify(a => a.RegistrarAccion(
 				"admin", "Insumos", TipoAccionAuditoria.Edicion, It.IsAny<string>(),
 				It.IsAny<string?>(), It.IsAny<string?>()), Times.Once);

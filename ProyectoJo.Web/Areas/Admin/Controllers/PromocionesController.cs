@@ -55,7 +55,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 				return View(promocion);
 			}
 
-			promocion.Id = 0;
+			promocion.DescartarId();
 			_promocionService.Agregar(promocion, User.Identity?.Name ?? "Desconocido");
 			return RedirectToAction("Index");
 		}

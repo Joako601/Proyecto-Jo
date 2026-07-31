@@ -166,7 +166,15 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		{
 			var encabezado = new byte[12];
 			await using var stream = archivo.OpenReadStream();
-			var leidos = await stream.ReadAsync(encabezado.AsMemory(0, encabezado.Length));
+
+			var leidos = 0;
+			while (leidos < encabezado.Length)
+			{
+				var bloque = await stream.ReadAsync(encabezado.AsMemory(leidos, encabezado.Length - leidos));
+				if (bloque == 0) break;
+				leidos += bloque;
+			}
+
 			if (leidos < 4) return false;
 
 			if (encabezado[0] == 0xFF && encabezado[1] == 0xD8 && encabezado[2] == 0xFF)

@@ -108,6 +108,22 @@ Migrations live in `ProyectoJo.Infrastructure/Persistence/EfCore/Migrations/`. A
 
 `JsonToPostgresSeeder` (`ProyectoJo.Infrastructure/Persistence/EfCore/JsonToPostgresSeeder.cs`), invoked via `dotnet run --project ProyectoJo.Web -- --seed`, was a one-time tool to import the old JSON files into Postgres. The source JSON files it reads no longer exist in the repo, so `--seed` is currently a no-op (it logs "no existe, se omite" per file and exits). `--reset` (`TRUNCATE ... RESTART IDENTITY CASCADE` across all app tables) still works and is useful to wipe the database clean, e.g. before rehearsing a demo.
 
+## Input validation (Domain entities)
+
+Domain entities carry `System.ComponentModel.DataAnnotations` attributes for business-rule numeric/string validation (`[Range]`, `[Required]`, `[StringLength]`), enforced through the `ModelState.IsValid` check every Admin/Operaciones controller already runs before calling a use case — no separate Create/Edit DTOs, no changes to `Ports/In` signatures. Cross-field rules a single attribute can't express (e.g. `Promocion`'s discount value depending on its discount type, or its `FechaInicio`/`FechaFin` ordering) are implemented via `IValidatableObject.Validate` on the entity instead. When an action bypasses full-entity model binding (e.g. `PromocionesController.ActualizarFecha`, which takes loose `DateTime?` parameters instead of a bound `Promocion`), the equivalent check is duplicated in the use case itself, throwing `InvalidOperationException` — same pattern `CierreCajaUseCase` already used — and the controller surfaces it via `TempData["Error"]`.
+
+Entities with attributes so far: `Item` (`Precio > 0`, `Platillo`/`Categoria` required), `Finanza` (`Monto > 0`), `Insumo` (`StockActual`/`StockMinimo >= 0`), `IngredienteReceta` (`Cantidad > 0`, `CostoUnitario >= 0`), `Receta` (`Rendimiento >= 1`), `Promocion` (discount value/type consistency + date ordering), `Pedido` (`Mesa` required, max 50 chars).
+
+No automated test coverage exists yet for these validations — `ProyectoJo.Application.Tests` predates them and doesn't exercise `ModelState`/`DataAnnotations` at all.
+
+## Security hardening
+
+- All three auth cookies (`Jo.Admin`, `Jo.Supervisor`, `Jo.Operaciones`) plus the device-pairing cookie (`Jo.DispositivoToken`) are `HttpOnly` + `Secure` + `SameSite=Strict`.
+- `ProyectoJo.Web/Middleware/SecurityHeadersMiddleware.cs` (registered early in `Program.cs`, before `UseStaticFiles`) sets `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, and a `Content-Security-Policy` on every response, including static files. **Adding a new external script/style/font CDN, or any inline `<script>` block, requires updating the CSP allowlist in that file.** It currently only allows `cdn.jsdelivr.net` (Bootstrap/Chart.js) and `fonts.googleapis.com`/`fonts.gstatic.com` (fonts), with no `'unsafe-inline'` for scripts — there are no inline `<script>` tags or `onclick`/`onsubmit`/`onchange` attributes anywhere in the project; keep it that way or the CSP will need loosening.
+- `PromocionesController.SubirImagen` validates the real file signature (magic bytes) of JPEG/PNG/GIF/WEBP, not just the extension, before saving to `wwwroot/uploads/promociones/`.
+- The five entity-creation actions that bind the full Domain entity straight from the POST body (`MenuController.Agregar`, `FinanzasController.Registrar`, `InsumosController.Crear`, `PromocionesController.Agregar`, `RecetarioController.Agregar`) reset `.Id = 0` before calling the use case, discarding any client-supplied primary key.
+- Verified clean as of the last security audit: CSRF (global `AutoValidateAntiforgeryTokenAttribute` + header-based token for `[FromBody]` endpoints), SQL injection (raw SQL is either parameterized `FromSqlInterpolated` or hardcoded table names with zero user input), XSS (`Html.Raw` usages only wrap `System.Text.Json`-serialized data islands), password hashing (PBKDF2 + `CryptographicOperations.FixedTimeEquals`), authorization (`RequiereAreaAttribute` consistent across all Admin controllers; the SignalR hub requires auth and validates group/role match).
+
 ## Front-end inline-style/script cleanup (in progress)
 
 Ongoing effort to pull `style=""` inline CSS and inline JS event handlers (`onclick`/`onsubmit`/`onchange`) out of `.cshtml` views into page-scoped CSS files and small delegated-event JS files, one page at a time, each verified by running `ProyectoJo.Web` locally and checking in-browser before moving to the next.

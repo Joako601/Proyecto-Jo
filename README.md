@@ -6,7 +6,7 @@
 ![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)
 ![Arquitectura](https://img.shields.io/badge/Arquitectura-Hexagonal-blue)
 ![API](https://img.shields.io/badge/API-REST%20%2B%20Swagger-85EA2D)
-[![CI](https://github.com/Joako601/Protecto3/actions/workflows/ci.yml/badge.svg?branch=pipeline-ci)](https://github.com/Joako601/Protecto3/actions/workflows/ci.yml)
+[![CI](https://github.com/Joako601/Proyecto-Jo/actions/workflows/ci.yml/badge.svg?branch=pipeline-ci)](https://github.com/Joako601/Proyecto-Jo/actions/workflows/ci.yml)
 
 > El badge de CI refleja el estado de `pipeline-ci`, la rama de desarrollo activo; `main` va por detrás y se actualiza al mergear.
 
@@ -342,7 +342,7 @@ flowchart LR
 La decisión original de usar GitHub Actions — alternativas consideradas y
 consecuencias — está documentada en [ADR-09](./ADRs/ADR-09-Joaquin-Uriona.md).
 El workflow evolucionó desde entonces con las verificaciones adicionales
-descritas arriba; el trabajo vive en la rama [`pipeline-ci`](https://github.com/Joako601/Protecto3/tree/pipeline-ci).
+descritas arriba; el trabajo vive en la rama [`pipeline-ci`](https://github.com/Joako601/Proyecto-Jo/tree/pipeline-ci).
 
 ---
 

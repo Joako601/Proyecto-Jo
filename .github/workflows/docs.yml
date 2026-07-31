@@ -25,6 +25,7 @@ jobs:
         with:
           args: >-
             --no-progress --verbose
+            --user-agent 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
             --exclude 'localhost'
             --exclude '127\.0\.0\.1'
             --exclude 'linkedin\.com'

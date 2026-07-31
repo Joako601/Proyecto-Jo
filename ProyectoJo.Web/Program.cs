@@ -161,14 +161,19 @@ builder.Services.AddAntiforgery(options =>
 	options.HeaderName = "RequestVerificationToken";
 });
 
+static void EndurecerCookie(CookieBuilder cookie)
+{
+	cookie.HttpOnly = true;
+	cookie.SecurePolicy = CookieSecurePolicy.Always;
+	cookie.SameSite = SameSiteMode.Strict;
+}
+
 builder.Services.AddAuthentication("JoCookieAuth")
 	.AddCookie("JoCookieAuth", options => {
 		options.LoginPath = "/Admin/Login";
 		options.AccessDeniedPath = "/Admin/AccesoDenegado";
 		options.Cookie.Name = "Jo.Admin";
-		options.Cookie.HttpOnly = true;
-		options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-		options.Cookie.SameSite = SameSiteMode.Strict;
+		EndurecerCookie(options.Cookie);
 		options.ExpireTimeSpan = TimeSpan.FromMinutes(45);
 		options.SlidingExpiration = true;
 	})
@@ -178,9 +183,7 @@ builder.Services.AddAuthentication("JoCookieAuth")
 		options.LoginPath = "/Operaciones/Auth/LoginSupervisor";
 		options.AccessDeniedPath = "/Operaciones/Auth/LoginSupervisor";
 		options.Cookie.Name = "Jo.Supervisor";
-		options.Cookie.HttpOnly = true;
-		options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-		options.Cookie.SameSite = SameSiteMode.Strict;
+		EndurecerCookie(options.Cookie);
 		options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
 		options.SlidingExpiration = false;
 	})
@@ -188,9 +191,7 @@ builder.Services.AddAuthentication("JoCookieAuth")
 		options.LoginPath = "/Operaciones/Auth/Login";
 		options.AccessDeniedPath = "/Operaciones/Auth/Login";
 		options.Cookie.Name = "Jo.Operaciones";
-		options.Cookie.HttpOnly = true;
-		options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-		options.Cookie.SameSite = SameSiteMode.Strict;
+		EndurecerCookie(options.Cookie);
 		options.ExpireTimeSpan = TimeSpan.FromHours(12);
 		options.SlidingExpiration = true;
 		options.Events.OnRedirectToLogin = context =>

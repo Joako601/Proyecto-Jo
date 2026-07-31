@@ -22,13 +22,9 @@ namespace ProyectoJo.Web.Middleware
 
 		public Task InvokeAsync(HttpContext context)
 		{
-			context.Response.OnStarting(() =>
-			{
-				context.Response.Headers["X-Content-Type-Options"] = "nosniff";
-				context.Response.Headers["X-Frame-Options"] = "DENY";
-				context.Response.Headers["Content-Security-Policy"] = Csp;
-				return Task.CompletedTask;
-			});
+			context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+			context.Response.Headers["X-Frame-Options"] = "DENY";
+			context.Response.Headers["Content-Security-Policy"] = Csp;
 
 			return _next(context);
 		}

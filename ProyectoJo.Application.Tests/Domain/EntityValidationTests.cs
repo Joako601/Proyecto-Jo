@@ -4,6 +4,16 @@ using Xunit;
 
 namespace ProyectoJo.Application.Tests.Domain
 {
+	internal static class ValidacionHelper
+	{
+		public static List<ValidationResult> Validar<T>(T entidad) where T : notnull
+		{
+			var resultados = new List<ValidationResult>();
+			Validator.TryValidateObject(entidad, new ValidationContext(entidad), resultados, validateAllProperties: true);
+			return resultados;
+		}
+	}
+
 	public class ItemValidationTests
 	{
 		private static Item ItemValido() => new()
@@ -16,17 +26,10 @@ namespace ProyectoJo.Application.Tests.Domain
 			Base = ""
 		};
 
-		private static List<ValidationResult> Validar(Item item)
-		{
-			var resultados = new List<ValidationResult>();
-			Validator.TryValidateObject(item, new ValidationContext(item), resultados, validateAllProperties: true);
-			return resultados;
-		}
-
 		[Fact]
 		public void Item_ConDatosValidos_NoTieneErrores()
 		{
-			var resultados = Validar(ItemValido());
+			var resultados = ValidacionHelper.Validar(ItemValido());
 
 			Assert.Empty(resultados);
 		}
@@ -37,7 +40,7 @@ namespace ProyectoJo.Application.Tests.Domain
 			var item = ItemValido();
 			item.Precio = 0m;
 
-			var resultados = Validar(item);
+			var resultados = ValidacionHelper.Validar(item);
 
 			Assert.Contains(resultados, r => r.MemberNames.Contains(nameof(Item.Precio)));
 		}
@@ -48,7 +51,7 @@ namespace ProyectoJo.Application.Tests.Domain
 			var item = ItemValido();
 			item.Precio = -10m;
 
-			var resultados = Validar(item);
+			var resultados = ValidacionHelper.Validar(item);
 
 			Assert.Contains(resultados, r => r.MemberNames.Contains(nameof(Item.Precio)));
 		}
@@ -59,7 +62,7 @@ namespace ProyectoJo.Application.Tests.Domain
 			var item = ItemValido();
 			item.Platillo = "";
 
-			var resultados = Validar(item);
+			var resultados = ValidacionHelper.Validar(item);
 
 			Assert.Contains(resultados, r => r.MemberNames.Contains(nameof(Item.Platillo)));
 		}
@@ -70,7 +73,7 @@ namespace ProyectoJo.Application.Tests.Domain
 			var item = ItemValido();
 			item.Categoria = "";
 
-			var resultados = Validar(item);
+			var resultados = ValidacionHelper.Validar(item);
 
 			Assert.Contains(resultados, r => r.MemberNames.Contains(nameof(Item.Categoria)));
 		}
@@ -86,17 +89,10 @@ namespace ProyectoJo.Application.Tests.Domain
 			Descripcion = ""
 		};
 
-		private static List<ValidationResult> Validar(Finanza finanza)
-		{
-			var resultados = new List<ValidationResult>();
-			Validator.TryValidateObject(finanza, new ValidationContext(finanza), resultados, validateAllProperties: true);
-			return resultados;
-		}
-
 		[Fact]
 		public void Finanza_ConMontoValido_NoTieneErrores()
 		{
-			var resultados = Validar(FinanzaValida());
+			var resultados = ValidacionHelper.Validar(FinanzaValida());
 
 			Assert.Empty(resultados);
 		}
@@ -107,7 +103,7 @@ namespace ProyectoJo.Application.Tests.Domain
 			var finanza = FinanzaValida();
 			finanza.Monto = 0m;
 
-			var resultados = Validar(finanza);
+			var resultados = ValidacionHelper.Validar(finanza);
 
 			Assert.Contains(resultados, r => r.MemberNames.Contains(nameof(Finanza.Monto)));
 		}
@@ -118,7 +114,7 @@ namespace ProyectoJo.Application.Tests.Domain
 			var finanza = FinanzaValida();
 			finanza.Monto = -100m;
 
-			var resultados = Validar(finanza);
+			var resultados = ValidacionHelper.Validar(finanza);
 
 			Assert.Contains(resultados, r => r.MemberNames.Contains(nameof(Finanza.Monto)));
 		}
@@ -134,17 +130,10 @@ namespace ProyectoJo.Application.Tests.Domain
 			StockMinimo = 2m
 		};
 
-		private static List<ValidationResult> Validar(Insumo insumo)
-		{
-			var resultados = new List<ValidationResult>();
-			Validator.TryValidateObject(insumo, new ValidationContext(insumo), resultados, validateAllProperties: true);
-			return resultados;
-		}
-
 		[Fact]
 		public void Insumo_ConStockValido_NoTieneErrores()
 		{
-			var resultados = Validar(InsumoValido());
+			var resultados = ValidacionHelper.Validar(InsumoValido());
 
 			Assert.Empty(resultados);
 		}
@@ -155,7 +144,7 @@ namespace ProyectoJo.Application.Tests.Domain
 			var insumo = InsumoValido();
 			insumo.StockActual = 0m;
 
-			var resultados = Validar(insumo);
+			var resultados = ValidacionHelper.Validar(insumo);
 
 			Assert.Empty(resultados);
 		}
@@ -166,7 +155,7 @@ namespace ProyectoJo.Application.Tests.Domain
 			var insumo = InsumoValido();
 			insumo.StockActual = -1m;
 
-			var resultados = Validar(insumo);
+			var resultados = ValidacionHelper.Validar(insumo);
 
 			Assert.Contains(resultados, r => r.MemberNames.Contains(nameof(Insumo.StockActual)));
 		}
@@ -177,7 +166,7 @@ namespace ProyectoJo.Application.Tests.Domain
 			var insumo = InsumoValido();
 			insumo.StockMinimo = -1m;
 
-			var resultados = Validar(insumo);
+			var resultados = ValidacionHelper.Validar(insumo);
 
 			Assert.Contains(resultados, r => r.MemberNames.Contains(nameof(Insumo.StockMinimo)));
 		}
@@ -194,17 +183,10 @@ namespace ProyectoJo.Application.Tests.Domain
 			CostoUnitario = 20m
 		};
 
-		private static List<ValidationResult> Validar(IngredienteReceta ingrediente)
-		{
-			var resultados = new List<ValidationResult>();
-			Validator.TryValidateObject(ingrediente, new ValidationContext(ingrediente), resultados, validateAllProperties: true);
-			return resultados;
-		}
-
 		[Fact]
 		public void Ingrediente_ConDatosValidos_NoTieneErrores()
 		{
-			var resultados = Validar(IngredienteValido());
+			var resultados = ValidacionHelper.Validar(IngredienteValido());
 
 			Assert.Empty(resultados);
 		}
@@ -215,7 +197,7 @@ namespace ProyectoJo.Application.Tests.Domain
 			var ingrediente = IngredienteValido();
 			ingrediente.Cantidad = 0m;
 
-			var resultados = Validar(ingrediente);
+			var resultados = ValidacionHelper.Validar(ingrediente);
 
 			Assert.Contains(resultados, r => r.MemberNames.Contains(nameof(IngredienteReceta.Cantidad)));
 		}
@@ -226,7 +208,7 @@ namespace ProyectoJo.Application.Tests.Domain
 			var ingrediente = IngredienteValido();
 			ingrediente.Cantidad = -2m;
 
-			var resultados = Validar(ingrediente);
+			var resultados = ValidacionHelper.Validar(ingrediente);
 
 			Assert.Contains(resultados, r => r.MemberNames.Contains(nameof(IngredienteReceta.Cantidad)));
 		}
@@ -237,7 +219,7 @@ namespace ProyectoJo.Application.Tests.Domain
 			var ingrediente = IngredienteValido();
 			ingrediente.CostoUnitario = -5m;
 
-			var resultados = Validar(ingrediente);
+			var resultados = ValidacionHelper.Validar(ingrediente);
 
 			Assert.Contains(resultados, r => r.MemberNames.Contains(nameof(IngredienteReceta.CostoUnitario)));
 		}
@@ -248,7 +230,7 @@ namespace ProyectoJo.Application.Tests.Domain
 			var ingrediente = IngredienteValido();
 			ingrediente.CostoUnitario = 0m;
 
-			var resultados = Validar(ingrediente);
+			var resultados = ValidacionHelper.Validar(ingrediente);
 
 			Assert.Empty(resultados);
 		}
@@ -263,17 +245,10 @@ namespace ProyectoJo.Application.Tests.Domain
 			Rendimiento = 4
 		};
 
-		private static List<ValidationResult> Validar(Receta receta)
-		{
-			var resultados = new List<ValidationResult>();
-			Validator.TryValidateObject(receta, new ValidationContext(receta), resultados, validateAllProperties: true);
-			return resultados;
-		}
-
 		[Fact]
 		public void Receta_ConRendimientoValido_NoTieneErrores()
 		{
-			var resultados = Validar(RecetaValida());
+			var resultados = ValidacionHelper.Validar(RecetaValida());
 
 			Assert.Empty(resultados);
 		}
@@ -284,7 +259,7 @@ namespace ProyectoJo.Application.Tests.Domain
 			var receta = RecetaValida();
 			receta.Rendimiento = 0;
 
-			var resultados = Validar(receta);
+			var resultados = ValidacionHelper.Validar(receta);
 
 			Assert.Contains(resultados, r => r.MemberNames.Contains(nameof(Receta.Rendimiento)));
 		}
@@ -295,7 +270,7 @@ namespace ProyectoJo.Application.Tests.Domain
 			var receta = RecetaValida();
 			receta.Rendimiento = -1;
 
-			var resultados = Validar(receta);
+			var resultados = ValidacionHelper.Validar(receta);
 
 			Assert.Contains(resultados, r => r.MemberNames.Contains(nameof(Receta.Rendimiento)));
 		}
@@ -308,17 +283,10 @@ namespace ProyectoJo.Application.Tests.Domain
 			Mesa = "Mesa 5"
 		};
 
-		private static List<ValidationResult> Validar(Pedido pedido)
-		{
-			var resultados = new List<ValidationResult>();
-			Validator.TryValidateObject(pedido, new ValidationContext(pedido), resultados, validateAllProperties: true);
-			return resultados;
-		}
-
 		[Fact]
 		public void Pedido_ConMesaValida_NoTieneErrores()
 		{
-			var resultados = Validar(PedidoValido());
+			var resultados = ValidacionHelper.Validar(PedidoValido());
 
 			Assert.Empty(resultados);
 		}
@@ -329,7 +297,7 @@ namespace ProyectoJo.Application.Tests.Domain
 			var pedido = PedidoValido();
 			pedido.Mesa = "";
 
-			var resultados = Validar(pedido);
+			var resultados = ValidacionHelper.Validar(pedido);
 
 			Assert.Contains(resultados, r => r.MemberNames.Contains(nameof(Pedido.Mesa)));
 		}
@@ -340,7 +308,7 @@ namespace ProyectoJo.Application.Tests.Domain
 			var pedido = PedidoValido();
 			pedido.Mesa = new string('A', 51);
 
-			var resultados = Validar(pedido);
+			var resultados = ValidacionHelper.Validar(pedido);
 
 			Assert.Contains(resultados, r => r.MemberNames.Contains(nameof(Pedido.Mesa)));
 		}
@@ -351,7 +319,7 @@ namespace ProyectoJo.Application.Tests.Domain
 			var pedido = PedidoValido();
 			pedido.Mesa = new string('A', 50);
 
-			var resultados = Validar(pedido);
+			var resultados = ValidacionHelper.Validar(pedido);
 
 			Assert.Empty(resultados);
 		}
@@ -365,17 +333,10 @@ namespace ProyectoJo.Application.Tests.Domain
 			TipoDescuento = TipoDescuento.Ninguno
 		};
 
-		private static List<ValidationResult> Validar(Promocion promocion)
-		{
-			var resultados = new List<ValidationResult>();
-			Validator.TryValidateObject(promocion, new ValidationContext(promocion), resultados, validateAllProperties: true);
-			return resultados;
-		}
-
 		[Fact]
 		public void Promocion_SinDescuento_NoTieneErrores()
 		{
-			var resultados = Validar(PromocionValida());
+			var resultados = ValidacionHelper.Validar(PromocionValida());
 
 			Assert.Empty(resultados);
 		}
@@ -387,7 +348,7 @@ namespace ProyectoJo.Application.Tests.Domain
 			promocion.TipoDescuento = TipoDescuento.Porcentaje;
 			promocion.ValorDescuento = null;
 
-			var resultados = Validar(promocion);
+			var resultados = ValidacionHelper.Validar(promocion);
 
 			Assert.Contains(resultados, r => r.MemberNames.Contains(nameof(Promocion.ValorDescuento)));
 		}
@@ -399,7 +360,7 @@ namespace ProyectoJo.Application.Tests.Domain
 			promocion.TipoDescuento = TipoDescuento.MontoFijo;
 			promocion.ValorDescuento = 0m;
 
-			var resultados = Validar(promocion);
+			var resultados = ValidacionHelper.Validar(promocion);
 
 			Assert.Contains(resultados, r => r.MemberNames.Contains(nameof(Promocion.ValorDescuento)));
 		}
@@ -411,7 +372,7 @@ namespace ProyectoJo.Application.Tests.Domain
 			promocion.TipoDescuento = TipoDescuento.Porcentaje;
 			promocion.ValorDescuento = 150m;
 
-			var resultados = Validar(promocion);
+			var resultados = ValidacionHelper.Validar(promocion);
 
 			Assert.Contains(resultados, r => r.MemberNames.Contains(nameof(Promocion.ValorDescuento)));
 		}
@@ -423,7 +384,7 @@ namespace ProyectoJo.Application.Tests.Domain
 			promocion.TipoDescuento = TipoDescuento.Porcentaje;
 			promocion.ValorDescuento = 20m;
 
-			var resultados = Validar(promocion);
+			var resultados = ValidacionHelper.Validar(promocion);
 
 			Assert.Empty(resultados);
 		}
@@ -435,7 +396,7 @@ namespace ProyectoJo.Application.Tests.Domain
 			promocion.TipoDescuento = TipoDescuento.MontoFijo;
 			promocion.ValorDescuento = 50m;
 
-			var resultados = Validar(promocion);
+			var resultados = ValidacionHelper.Validar(promocion);
 
 			Assert.Empty(resultados);
 		}
@@ -447,7 +408,7 @@ namespace ProyectoJo.Application.Tests.Domain
 			promocion.FechaInicio = new DateTime(2026, 8, 10);
 			promocion.FechaFin = new DateTime(2026, 8, 1);
 
-			var resultados = Validar(promocion);
+			var resultados = ValidacionHelper.Validar(promocion);
 
 			Assert.Contains(resultados, r => r.MemberNames.Contains(nameof(Promocion.FechaFin)));
 		}
@@ -459,7 +420,7 @@ namespace ProyectoJo.Application.Tests.Domain
 			promocion.FechaInicio = new DateTime(2026, 8, 1);
 			promocion.FechaFin = new DateTime(2026, 8, 10);
 
-			var resultados = Validar(promocion);
+			var resultados = ValidacionHelper.Validar(promocion);
 
 			Assert.Empty(resultados);
 		}

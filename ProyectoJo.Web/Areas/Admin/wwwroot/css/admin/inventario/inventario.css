@@ -1,14 +1,4 @@
-﻿.alert-error {
-    background: #fdecea;
-    color: #c0392b;
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-    padding: 10px 14px;
-    margin-bottom: 16px;
-    font-size: 13px;
-}
-
-/* ============================================
+﻿/* ============================================
    Inventario — Tabla
    ============================================ */
 .inv-table {

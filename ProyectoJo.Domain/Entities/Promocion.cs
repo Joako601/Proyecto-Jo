@@ -35,12 +35,15 @@ namespace ProyectoJo.Domain.Entities
 				}
 			}
 
-			if (FechaInicio.HasValue && FechaFin.HasValue && FechaInicio.Value.Date > FechaFin.Value.Date)
+			if (!RangoDeFechasEsValido(FechaInicio, FechaFin))
 			{
 				yield return new ValidationResult(
 					"La fecha de inicio no puede ser posterior a la fecha de fin.",
 					new[] { nameof(FechaFin) });
 			}
 		}
+
+		public static bool RangoDeFechasEsValido(DateTime? fechaInicio, DateTime? fechaFin) =>
+			!fechaInicio.HasValue || !fechaFin.HasValue || fechaInicio.Value.Date <= fechaFin.Value.Date;
 	}
 }

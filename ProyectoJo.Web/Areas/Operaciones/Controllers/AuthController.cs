@@ -142,7 +142,8 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 					Expires = DateTimeOffset.UtcNow.AddYears(5),
 					HttpOnly = true,
 					IsEssential = true,
-					SameSite = SameSiteMode.Lax
+					Secure = true,
+					SameSite = SameSiteMode.Strict
 				});
 			}
 

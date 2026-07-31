@@ -143,6 +143,9 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 			if (archivo.Length > TamanoMaximoBytes)
 				return BadRequest(new { error = "La imagen no puede superar los 5 MB." });
 
+			if (!await EsImagenValidaAsync(archivo))
+				return BadRequest(new { error = "El archivo no es una imagen válida." });
+
 			var carpeta = Path.Combine(_entorno.WebRootPath, "uploads", "promociones");
 			Directory.CreateDirectory(carpeta);
 
@@ -156,6 +159,30 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 
 			var urlRelativa = $"/uploads/promociones/{nombreArchivo}";
 			return Json(new { url = urlRelativa });
+		}
+
+		private static async Task<bool> EsImagenValidaAsync(IFormFile archivo)
+		{
+			var encabezado = new byte[12];
+			await using var stream = archivo.OpenReadStream();
+			var leidos = await stream.ReadAsync(encabezado.AsMemory(0, encabezado.Length));
+			if (leidos < 4) return false;
+
+			if (encabezado[0] == 0xFF && encabezado[1] == 0xD8 && encabezado[2] == 0xFF)
+				return true; // JPEG
+
+			if (encabezado[0] == 0x89 && encabezado[1] == 0x50 && encabezado[2] == 0x4E && encabezado[3] == 0x47)
+				return true; // PNG
+
+			if (encabezado[0] == 0x47 && encabezado[1] == 0x49 && encabezado[2] == 0x46 && encabezado[3] == 0x38)
+				return true; // GIF
+
+			if (leidos == 12 &&
+				encabezado[0] == 0x52 && encabezado[1] == 0x49 && encabezado[2] == 0x46 && encabezado[3] == 0x46 &&
+				encabezado[8] == 0x57 && encabezado[9] == 0x45 && encabezado[10] == 0x42 && encabezado[11] == 0x50)
+				return true; // WEBP
+
+			return false;
 		}
 	}
 }

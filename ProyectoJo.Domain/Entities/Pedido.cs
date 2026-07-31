@@ -1,8 +1,13 @@
-﻿namespace ProyectoJo.Domain.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ProyectoJo.Domain.Entities
 {
 	public class Pedido
 	{
 		public int Id { get; set; }
+
+		[Required(ErrorMessage = "La mesa es obligatoria.")]
+		[StringLength(50, ErrorMessage = "La mesa no puede superar los 50 caracteres.")]
 		public string Mesa { get; set; } = string.Empty;
 		public List<ItemPedido> Items { get; set; } = new();
 		public EstadoPedido Estado { get; set; } = EstadoPedido.Pendiente;

@@ -7,12 +7,20 @@ namespace ProyectoJo.Application.UseCases
 	public class PromocionUseCase : IPromocionService
 	{
 		private readonly IPromocionRepository _repository;
+		private readonly IProductoRepository _productoRepository;
 		private readonly IAuditoriaService _auditoriaService;
 
-		public PromocionUseCase(IPromocionRepository repository, IAuditoriaService auditoriaService)
+		public PromocionUseCase(IPromocionRepository repository, IProductoRepository productoRepository, IAuditoriaService auditoriaService)
 		{
 			_repository = repository;
+			_productoRepository = productoRepository;
 			_auditoriaService = auditoriaService;
+		}
+
+		private void FiltrarItemIdsInexistentes(Promocion promocion)
+		{
+			var idsExistentes = _productoRepository.ObtenerTodos().Select(i => i.Id).ToHashSet();
+			promocion.ItemIds = promocion.ItemIds.Where(idsExistentes.Contains).ToList();
 		}
 
 		public IEnumerable<Promocion> ObtenerTodas() => _repository.ObtenerTodas();
@@ -67,6 +75,7 @@ namespace ProyectoJo.Application.UseCases
 
 		public void Agregar(Promocion promocion, string usuario)
 		{
+			FiltrarItemIdsInexistentes(promocion);
 			_repository.Agregar(promocion);
 
 			_auditoriaService.RegistrarAccion(
@@ -83,6 +92,7 @@ namespace ProyectoJo.Application.UseCases
 			var anterior = _repository.ObtenerPorId(promocion.Id);
 			if (anterior is null) return false;
 
+			FiltrarItemIdsInexistentes(promocion);
 			var actualizado = _repository.Editar(promocion);
 			if (!actualizado) return false;
 

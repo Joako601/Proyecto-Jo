@@ -1,10 +1,14 @@
-﻿namespace ProyectoJo.Domain.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ProyectoJo.Domain.Entities
 {
 	public class Receta
 	{
 		public int Id { get; set; }
 		public int ItemId { get; set; }
 		public string NombreReceta { get; set; } = string.Empty;
+
+		[Range(1, int.MaxValue, ErrorMessage = "El rendimiento debe ser de al menos 1 porción.")]
 		public int Rendimiento { get; set; } = 1;
 
 		public string UnidadRendimiento { get; set; } = "porciones";

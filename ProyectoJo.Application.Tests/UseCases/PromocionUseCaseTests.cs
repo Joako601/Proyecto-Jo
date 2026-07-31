@@ -11,12 +11,14 @@ namespace ProyectoJo.Application.Tests.UseCases
 	public class PromocionUseCaseTests
 	{
 		private readonly Mock<IPromocionRepository> _repository = new();
+		private readonly Mock<IProductoRepository> _productoRepository = new();
 		private readonly Mock<IAuditoriaService> _auditoriaService = new();
 		private readonly PromocionUseCase _useCase;
 
 		public PromocionUseCaseTests()
 		{
-			_useCase = new PromocionUseCase(_repository.Object, _auditoriaService.Object);
+			_productoRepository.Setup(r => r.ObtenerTodos()).Returns(new List<Item>());
+			_useCase = new PromocionUseCase(_repository.Object, _productoRepository.Object, _auditoriaService.Object);
 		}
 
 		[Fact]

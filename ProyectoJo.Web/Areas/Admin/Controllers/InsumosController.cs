@@ -63,7 +63,13 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		[HttpPost]
 		public IActionResult Reponer(int id, decimal cantidad)
 		{
-			_insumoService.Reponer(id, cantidad, User.Identity?.Name ?? "Desconocido");
+			var reabastecido = _insumoService.Reponer(id, cantidad, User.Identity?.Name ?? "Desconocido");
+			if (!reabastecido)
+			{
+				TempData["Error"] = cantidad <= 0
+					? "La cantidad a reponer debe ser mayor a 0."
+					: "No se pudo reponer el stock del insumo indicado.";
+			}
 			return RedirectToAction(nameof(Index));
 		}
 

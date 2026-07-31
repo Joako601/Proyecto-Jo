@@ -29,6 +29,11 @@
         </a>
     </div>
 
+    @if (TempData["Error"] is string error)
+    {
+        <div class="alert-error">@error</div>
+    }
+
     @if (TempData["MensajeSincronizacion"] != null)
     {
         <div class="alert-error" style="background:var(--tc-teal-100,#e6f4f1); border-color:var(--tc-teal,#2f6f62); color:var(--tc-teal-900,#1c443b);">

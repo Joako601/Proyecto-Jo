@@ -107,3 +107,23 @@ Operations that need atomicity across a read-validate-write sequence (`Pedido.Ca
 Migrations live in `ProyectoJo.Infrastructure/Persistence/EfCore/Migrations/`. Apply them with `dotnet ef database update --project ProyectoJo.Infrastructure --startup-project ProyectoJo.Web`.
 
 `JsonToPostgresSeeder` (`ProyectoJo.Infrastructure/Persistence/EfCore/JsonToPostgresSeeder.cs`), invoked via `dotnet run --project ProyectoJo.Web -- --seed`, was a one-time tool to import the old JSON files into Postgres. The source JSON files it reads no longer exist in the repo, so `--seed` is currently a no-op (it logs "no existe, se omite" per file and exits). `--reset` (`TRUNCATE ... RESTART IDENTITY CASCADE` across all app tables) still works and is useful to wipe the database clean, e.g. before rehearsing a demo.
+
+## Front-end inline-style/script cleanup (in progress)
+
+Ongoing effort to pull `style=""` inline CSS and inline JS event handlers (`onclick`/`onsubmit`/`onchange`) out of `.cshtml` views into page-scoped CSS files and small delegated-event JS files, one page at a time, each verified by running `ProyectoJo.Web` locally and checking in-browser before moving to the next.
+
+**Conventions established so far:**
+- Each public view gets its own CSS file under `wwwroot/css/<page>/`, matching the existing per-page convention. If a view has none yet (e.g. `Ubicacion.cshtml` had none), create one and load it via `@section Styles`.
+- `animation-delay` inline styles on `.fade-in-up` / `.card-animate` elements are left inline on purpose — there's an explicit comment in `wwwroot/css/layout/layout.css` documenting this as intentional.
+- Genuinely dynamic per-row inline styles (`style="width:@porcentaje%"` progress bars, `animation-delay: @((delay % 4) * 0.08)s`) are left alone — they can't be static CSS classes.
+- Admin `onsubmit="return confirm(...)"` / `onchange="this.form.submit()"` were replaced with `data-confirm-delete` / `data-autosubmit` attributes, handled by `wwwroot/js/admin-confirm-delete.js` / `admin-autosubmit.js`, both wired once in `Areas/Admin/Views/Shared/_Layout.cshtml`.
+- Inline `<script>` blocks in `MapaCalor/Index.cshtml` and the Admin `_Layout.cshtml` were extracted to `wwwroot/js/mapa-calor.js` and `admin-layout.js`; server data is passed to JS via `<script type="application/json">` "data islands" (same pattern `Finanzas/Dashboard.cshtml` already used), not interpolated directly into the script.
+- Some `divider-gold` / `proximamente-placeholder` usages relied entirely on inline styles because the shared class had no matching CSS actually loaded on that page (e.g. `Historia.cshtml`, `Ubicacion.cshtml`) — check this before assuming the shared class alone is enough.
+
+**Done:** `Historia.cshtml`, `Home/Privacy.cshtml`, `Menu/Detalle.cshtml`, `Ubicacion/Ubicacion.cshtml`, `Nosotros/Index.cshtml`, `Menu/Index.cshtml` (this last one also had its "Ver Experiencia" hover-underline effect removed entirely after extensive rendering inconsistencies that couldn't be pinned down — it's now static text with a color-only hover, no underline).
+
+**Remaining public pages:** `Home/Index.cshtml` (18 inline styles), `Views/Shared/_Layout.cshtml` (3).
+
+**Remaining Admin/Operaciones views (lower priority, not started):** `Insumos/Index`, `Insumos/Editar`, `Menu/Index` (Admin), `Menu/Editar`, `Menu/Agregar`, `Recetario/Index`, `Promociones/Editar`, `Promociones/Agregar`, `Promociones/_TablaPromociones`, `Promociones/_FilaPromocion`, `Opiniones/Index`, `Operadores/Index`, `CierreCaja/Cerrar`, `Finanzas/Registrar`, `Operaciones/Auth/Login`, `Operaciones/Auth/LoginSupervisor`, `Operaciones/Auth/Emparejar`, `Operaciones/Recepcion/Index`.
+
+**Also noted, not fixed (out of scope):** `Menu/Index.cshtml`'s `menu.css` has several classes (`.item-module`, `.item-title`, `.menu-title`, `.btn-add-platillo`, `.btn-ver-experiencia`, etc.) that don't match any markup in the current view — looks like dead CSS from an older layout version.

@@ -12,11 +12,11 @@
 
 <div class="container py-5 mt-3">
     <div class="text-center mb-5 fade-in-up">
-        <h1 style="font-family: 'Playfair Display', serif; color: #222; font-weight: 700; font-size: 4.5rem; margin-bottom: 0.1rem;">
+        <h1 class="menu-titulo-principal">
             Antojitos Tía Caro
         </h1>
 
-        <div class="mx-auto my-4" style="width: 80px; height: 3px; background-color: #b5a478;"></div>
+        <div class="mx-auto my-4 menu-divider"></div>
     </div>
 
     @if (promosGenerales != null && promosGenerales.Any())
@@ -58,7 +58,7 @@
 
     <div class="row justify-content-center mb-5 fade-in-up" style="animation-delay: 0.2s;">
         <div class="col-md-9">
-            <p class="text-center text-uppercase mb-2" style="font-family: 'Inter', sans-serif; font-size: 0.7rem; letter-spacing: 2px; color: #888; font-weight: 600;">
+            <p class="text-center text-uppercase mb-2 menu-categorias-label">
                 Categorías
             </p>
             <div class="menu-filters-wrapper">
@@ -90,28 +90,27 @@
                      data-category="@item.Categoria.ToLower()"
                      style="animation-delay: @((delay % 4) * 0.08)s; @(item.Agotado ? "opacity: 0.5;" : "")">
 
-                    <div class="card border-0 p-5 item-card"
-                         style="background-color: #ffffff; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border-radius: 2px;">
+                    <div class="card border-0 p-5 item-card">
                         <div class="d-flex flex-column flex-md-row justify-content-between">
 
                             <div>
                                 <div class="d-flex align-items-center gap-3 mb-1">
-                                    <h2 style="font-family: 'Playfair Display', serif; color: #222; font-weight: 700; font-size: 2.2rem; margin-bottom: 0;">
+                                    <h2 class="item-card-titulo">
                                         @item.Platillo
                                     </h2>
                                     @if (item.Agotado)
                                     {
-                                        <span class="badge bg-secondary" style="font-size: 0.65rem; letter-spacing: 1px;">AGOTADO</span>
+                                        <span class="badge bg-secondary badge-agotado">AGOTADO</span>
                                     }
                                     @if (vm.TienePromocion)
                                     {
-                                        <span class="badge" style="background-color: #b5a478; font-size: 0.65rem; letter-spacing: 1px;">PROMOCIÓN</span>
+                                        <span class="badge badge-promocion">PROMOCIÓN</span>
                                     }
                                 </div>
-                                <p class="text-muted mb-5" style="font-family: 'Inter', sans-serif; font-size: 0.95rem;">
+                                <p class="text-muted mb-5 item-card-descripcion">
                                     @item.Descripcion
                                 </p>
-                                <span class="text-uppercase" style="color: #b5a478; font-size: 0.7rem; letter-spacing: 2px; font-weight: 600;">
+                                <span class="text-uppercase item-card-base">
                                     Base: @item.Base — @item.Categoria
                                 </span>
                             </div>
@@ -119,14 +118,14 @@
                             <div class="text-md-end d-flex flex-column justify-content-between align-items-md-end mt-4 mt-md-0">
                                 @if (vm.TienePromocion)
                                 {
-                                    <span class="text-muted text-decoration-line-through" style="font-size: 0.95rem;">$@item.Precio</span>
-                                    <h3 style="color: #b5a478; font-weight: 600; font-size: 1.4rem;">
+                                    <span class="text-muted text-decoration-line-through item-card-precio-anterior">$@item.Precio</span>
+                                    <h3 class="item-card-precio item-card-precio--promo">
                                         $@vm.PrecioFinal
                                     </h3>
                                 }
                                 else
                                 {
-                                    <h3 style="color: #b5a478; font-weight: 400; font-size: 1.4rem;">
+                                    <h3 class="item-card-precio">
                                         $@item.Precio
                                     </h3>
                                 }
@@ -139,7 +138,7 @@
                                 }
                                 else
                                 {
-                                    <span class="text-muted text-uppercase" style="font-size: 0.8rem; letter-spacing: 1px;">
+                                    <span class="text-muted text-uppercase item-card-no-disponible">
                                         No disponible
                                     </span>
                                 }

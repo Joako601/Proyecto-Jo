@@ -135,6 +135,9 @@ namespace ProyectoJo.Application.UseCases
 
 		public bool ActualizarFecha(int id, DateTime? fechaInicio, DateTime? fechaFin, string usuario)
 		{
+			if (fechaInicio.HasValue && fechaFin.HasValue && fechaInicio.Value.Date > fechaFin.Value.Date)
+				throw new InvalidOperationException("La fecha de inicio no puede ser posterior a la fecha de fin.");
+
 			var promocion = _repository.ObtenerPorId(id);
 			if (promocion is null) return false;
 

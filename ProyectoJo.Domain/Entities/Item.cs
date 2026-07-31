@@ -5,7 +5,11 @@ namespace ProyectoJo.Domain.Entities
 	public class Item
 	{
 		public int Id { get; set; }
+
+		[Required(ErrorMessage = "El nombre del platillo es obligatorio.")]
 		public string Platillo { get; set; }
+
+		[Required(ErrorMessage = "La categoría es obligatoria.")]
 		public string Categoria { get; set; }
 
 		[Range(0.01, double.MaxValue, ErrorMessage = "El precio debe ser mayor a 0.")]

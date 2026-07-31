@@ -19,21 +19,27 @@ namespace ProyectoJo.Domain.Entities
 
 		public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
 		{
-			if (TipoDescuento == TipoDescuento.Ninguno) yield break;
-
-			if (ValorDescuento is null || ValorDescuento <= 0)
+			if (TipoDescuento != TipoDescuento.Ninguno)
 			{
-				yield return new ValidationResult(
-					"El valor del descuento debe ser mayor a 0.",
-					new[] { nameof(ValorDescuento) });
-				yield break;
+				if (ValorDescuento is null || ValorDescuento <= 0)
+				{
+					yield return new ValidationResult(
+						"El valor del descuento debe ser mayor a 0.",
+						new[] { nameof(ValorDescuento) });
+				}
+				else if (TipoDescuento == TipoDescuento.Porcentaje && ValorDescuento > 100)
+				{
+					yield return new ValidationResult(
+						"El descuento porcentual no puede superar el 100%.",
+						new[] { nameof(ValorDescuento) });
+				}
 			}
 
-			if (TipoDescuento == TipoDescuento.Porcentaje && ValorDescuento > 100)
+			if (FechaInicio.HasValue && FechaFin.HasValue && FechaInicio.Value.Date > FechaFin.Value.Date)
 			{
 				yield return new ValidationResult(
-					"El descuento porcentual no puede superar el 100%.",
-					new[] { nameof(ValorDescuento) });
+					"La fecha de inicio no puede ser posterior a la fecha de fin.",
+					new[] { nameof(FechaFin) });
 			}
 		}
 	}

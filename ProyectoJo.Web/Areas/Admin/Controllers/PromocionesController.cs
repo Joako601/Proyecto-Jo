@@ -107,9 +107,17 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		[HttpPost]
 		public IActionResult ActualizarFecha(int id, DateTime? fechaInicio, DateTime? fechaFin)
 		{
-			var actualizado = _promocionService.ActualizarFecha(id, fechaInicio, fechaFin, User.Identity?.Name ?? "Desconocido");
-			if (!actualizado) return NotFound();
-			return RedirectToAction("Index");
+			try
+			{
+				var actualizado = _promocionService.ActualizarFecha(id, fechaInicio, fechaFin, User.Identity?.Name ?? "Desconocido");
+				if (!actualizado) return NotFound();
+				return RedirectToAction("Index");
+			}
+			catch (InvalidOperationException ex)
+			{
+				TempData["Error"] = ex.Message;
+				return RedirectToAction("Index");
+			}
 		}
 
 		// POST: /Admin/Promociones/HacerPermanente/5

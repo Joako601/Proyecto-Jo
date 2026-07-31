@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProyectoJo.Application.Ports.In;
 using ProyectoJo.Web.Authorization;
@@ -30,8 +31,12 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 
 		// POST: /Admin/CierreCaja/Abrir
 		[HttpPost]
-		public IActionResult Abrir(decimal fondoInicial, string? notas)
+		public IActionResult Abrir(
+			[Range(0, double.MaxValue, ErrorMessage = "El fondo inicial no puede ser negativo.")] decimal fondoInicial,
+			string? notas)
 		{
+			if (!ModelState.IsValid) return View();
+
 			try
 			{
 				_cierreCajaService.AbrirCaja(fondoInicial, notas, User.Identity?.Name ?? "Desconocido");

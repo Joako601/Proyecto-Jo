@@ -342,7 +342,7 @@ flowchart LR
 La decisión original de usar GitHub Actions — alternativas consideradas y
 consecuencias — está documentada en [ADR-09](./ADRs/ADR-09-Joaquin-Uriona.md).
 El workflow evolucionó desde entonces con las verificaciones adicionales
-descritas arriba; el trabajo vive en la rama [`pipeline-ci`](../../tree/pipeline-ci).
+descritas arriba; el trabajo vive en la rama [`pipeline-ci`](https://github.com/Joako601/Protecto3/tree/pipeline-ci).
 
 ---
 

@@ -28,7 +28,6 @@ namespace ProyectoJo.Infrastructure.Persistence.EfCore
 		public DbSet<Receta> Recetas => Set<Receta>();
 		public DbSet<OpinionCliente> Opiniones => Set<OpinionCliente>();
 		public DbSet<Administrador> Administradores => Set<Administrador>();
-		public DbSet<SupervisorClave> SupervisorClave => Set<SupervisorClave>();
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{

@@ -2,6 +2,23 @@
     margin-bottom: 20px;
 }
 
+.usuarios-mensaje {
+    font-size: 12px;
+    border-radius: 4px;
+    padding: 8px 10px;
+    margin-bottom: 16px;
+}
+
+.usuarios-mensaje--error {
+    color: var(--tc-brick-link);
+    background: rgba(178, 58, 46, 0.1);
+}
+
+.usuarios-mensaje--exito {
+    color: var(--tc-teal);
+    background: var(--tc-teal-ink);
+}
+
     .usuarios-panel > summary {
         list-style: none;
         cursor: pointer;

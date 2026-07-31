@@ -5,6 +5,10 @@
     var todasLasAreas = ProyectoJo.Domain.Entities.AreasAdmin.Todas;
 }
 
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin/usuarios/usuarios.css" asp-append-version="true" />
+}
+
 <div class="admin-page">
 
     <div class="page-header">
@@ -16,11 +20,11 @@
 
     @if (TempData["Error"] is string error)
     {
-        <div class="clave-supervisor__mensaje clave-supervisor__mensaje--error">@error</div>
+        <div class="usuarios-mensaje usuarios-mensaje--error">@error</div>
     }
     @if (TempData["Exito"] is string exito)
     {
-        <div class="clave-supervisor__mensaje clave-supervisor__mensaje--exito">@exito</div>
+        <div class="usuarios-mensaje usuarios-mensaje--exito">@exito</div>
     }
 
     <details class="filtro-bar filtro-bar--solo">
@@ -31,6 +35,9 @@
 
             <label>Contraseña</label>
             <input type="password" name="contrasena" required minlength="8" autocomplete="new-password" />
+
+            <label>Clave de supervisor (PIN para operadores)</label>
+            <input type="password" name="claveSupervisor" required minlength="6" autocomplete="new-password" />
 
             <label><input type="checkbox" name="general" value="true" /> Acceso general (todas las áreas)</label>
 
@@ -76,6 +83,9 @@
 
                                     <label>Nueva contraseña (opcional)</label>
                                     <input type="password" name="nuevaContrasena" minlength="8" autocomplete="new-password" />
+
+                                    <label>Nueva clave de supervisor (opcional)</label>
+                                    <input type="password" name="nuevaClaveSupervisor" minlength="6" autocomplete="new-password" />
 
                                     <label>
                                         <input type="checkbox" name="general" value="true" checked="@(!a.Areas.Any())" />

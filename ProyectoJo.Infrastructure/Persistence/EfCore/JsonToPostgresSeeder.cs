@@ -11,7 +11,7 @@ namespace ProyectoJo.Infrastructure.Persistence.EfCore
 		{
 			"items", "finanzas", "promociones", "empleados", "dispositivos_operaciones",
 			"cierres_caja", "auditoria", "insumos", "recetas", "opiniones",
-			"administradores", "pedidos", "supervisor_clave"
+			"administradores", "pedidos"
 		};
 
 		private static readonly JsonSerializerOptions Plano = new();
@@ -41,7 +41,6 @@ namespace ProyectoJo.Infrastructure.Persistence.EfCore
 			await ImportarAsync(context, context.Opiniones, rutaPersistencia, "opiniones.json", Plano);
 			await ImportarAsync(context, context.Administradores, rutaPersistencia, "administradores.json", Plano);
 			await ImportarAsync(context, context.Pedidos, rutaPersistencia, "pedidos.json", ConEnumsComoTexto);
-			await ImportarSupervisorClaveAsync(context, rutaPersistencia);
 
 			await ReiniciarSecuenciasAsync(context);
 
@@ -61,8 +60,7 @@ namespace ProyectoJo.Infrastructure.Persistence.EfCore
 			await context.Recetas.AnyAsync() ||
 			await context.Opiniones.AnyAsync() ||
 			await context.Administradores.AnyAsync() ||
-			await context.Pedidos.AnyAsync() ||
-			await context.SupervisorClave.AnyAsync();
+			await context.Pedidos.AnyAsync();
 
 		private static async Task ImportarAsync<T>(
 			ProyectoJoDbContext context,
@@ -105,34 +103,6 @@ namespace ProyectoJo.Infrastructure.Persistence.EfCore
 			Console.WriteLine($"{nombreArchivo}: {registros.Count} registro(s) importado(s).");
 		}
 
-		private static async Task ImportarSupervisorClaveAsync(ProyectoJoDbContext context, string rutaPersistencia)
-		{
-			var rutaArchivo = Path.Combine(rutaPersistencia, "supervisor-clave.json");
-			if (!File.Exists(rutaArchivo))
-			{
-				Console.WriteLine("supervisor-clave.json: no existe, se omite.");
-				return;
-			}
-
-			var json = await File.ReadAllTextAsync(rutaArchivo);
-			if (string.IsNullOrWhiteSpace(json))
-			{
-				Console.WriteLine("supervisor-clave.json: vacío, se omite.");
-				return;
-			}
-
-			var dto = JsonSerializer.Deserialize<SupervisorClaveDto>(json, Plano);
-			if (string.IsNullOrWhiteSpace(dto?.ClaveHash))
-			{
-				Console.WriteLine("supervisor-clave.json: sin hash, se omite.");
-				return;
-			}
-
-			context.SupervisorClave.Add(new SupervisorClave { Id = 1, ClaveHash = dto.ClaveHash });
-			await context.SaveChangesAsync();
-			Console.WriteLine("supervisor-clave.json: clave importada.");
-		}
-
 		private static async Task ReiniciarSecuenciasAsync(ProyectoJoDbContext context)
 		{
 			foreach (var tabla in Tablas)
@@ -151,11 +121,6 @@ namespace ProyectoJo.Infrastructure.Persistence.EfCore
 				$"TRUNCATE TABLE {string.Join(", ", Tablas)} RESTART IDENTITY CASCADE;");
 #pragma warning restore EF1002
 			Console.WriteLine("Todas las tablas quedaron vacías.");
-		}
-
-		private class SupervisorClaveDto
-		{
-			public string ClaveHash { get; set; } = string.Empty;
 		}
 	}
 }

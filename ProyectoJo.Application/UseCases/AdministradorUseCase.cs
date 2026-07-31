@@ -22,13 +22,16 @@ namespace ProyectoJo.Application.UseCases
 
 		public Task<Administrador?> ObtenerPorIdAsync(int id) => _repository.ObtenerPorIdAsync(id);
 
-		public async Task<(bool Exito, string? Error)> CrearAsync(string usuario, string contrasena, List<string> areas)
+		public async Task<(bool Exito, string? Error)> CrearAsync(string usuario, string contrasena, List<string> areas, string? claveSupervisor)
 		{
-			if (string.IsNullOrWhiteSpace(usuario) || string.IsNullOrWhiteSpace(contrasena))
-				return (false, "Usuario y contraseña son obligatorios.");
+			if (string.IsNullOrWhiteSpace(usuario) || string.IsNullOrWhiteSpace(contrasena) || string.IsNullOrWhiteSpace(claveSupervisor))
+				return (false, "Usuario, contraseña y clave de supervisor son obligatorios.");
 
 			if (contrasena.Length < 8)
 				return (false, "La contraseña debe tener al menos 8 caracteres.");
+
+			if (claveSupervisor.Length < 6)
+				return (false, "La clave de supervisor debe tener al menos 6 caracteres.");
 
 			var existente = await _repository.ObtenerPorUsuarioAsync(usuario.Trim());
 			if (existente is not null)
@@ -38,6 +41,7 @@ namespace ProyectoJo.Application.UseCases
 			{
 				Usuario = usuario.Trim(),
 				ContrasenaHash = HashearContrasena(contrasena),
+				ClaveSupervisorHash = HashearContrasena(claveSupervisor),
 				Activo = true,
 				Areas = NormalizarAreas(areas)
 			};
@@ -46,7 +50,7 @@ namespace ProyectoJo.Application.UseCases
 			return (true, null);
 		}
 
-		public async Task<(bool Exito, string? Error)> EditarAsync(int id, string usuario, bool activo, string? nuevaContrasena, List<string> areas)
+		public async Task<(bool Exito, string? Error)> EditarAsync(int id, string usuario, bool activo, string? nuevaContrasena, List<string> areas, string? nuevaClaveSupervisor = null)
 		{
 			var administrador = await _repository.ObtenerPorIdAsync(id);
 			if (administrador is null)
@@ -68,6 +72,13 @@ namespace ProyectoJo.Application.UseCases
 				if (nuevaContrasena.Length < 8)
 					return (false, "La nueva contraseña debe tener al menos 8 caracteres.");
 				administrador.ContrasenaHash = HashearContrasena(nuevaContrasena);
+			}
+
+			if (!string.IsNullOrWhiteSpace(nuevaClaveSupervisor))
+			{
+				if (nuevaClaveSupervisor.Length < 6)
+					return (false, "La nueva clave de supervisor debe tener al menos 6 caracteres.");
+				administrador.ClaveSupervisorHash = HashearContrasena(nuevaClaveSupervisor);
 			}
 
 			var actualizado = await _repository.ActualizarAsync(administrador);

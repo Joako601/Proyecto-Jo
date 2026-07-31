@@ -45,10 +45,10 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 
 		[HttpPost]
 		[Authorize(Roles = "SuperAdmin")]
-		public async Task<IActionResult> CrearAdministrador(string usuario, string contrasena, bool general, List<string>? areas)
+		public async Task<IActionResult> CrearAdministrador(string usuario, string contrasena, string? claveSupervisor, bool general, List<string>? areas)
 		{
 			var areasFinal = general ? new List<string>() : (areas ?? new List<string>());
-			var (exito, error) = await _administradorService.CrearAsync(usuario, contrasena, areasFinal);
+			var (exito, error) = await _administradorService.CrearAsync(usuario, contrasena, areasFinal, claveSupervisor);
 			TempData["ErrorAdmin"] = exito ? null : error;
 			TempData["ExitoAdmin"] = exito ? "Administrador creado correctamente." : null;
 			return RedirectToAction("Index");
@@ -56,10 +56,10 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 
 		[HttpPost]
 		[Authorize(Roles = "SuperAdmin")]
-		public async Task<IActionResult> EditarAdministrador(int id, string usuario, bool activo, string? nuevaContrasena, bool general, List<string>? areas)
+		public async Task<IActionResult> EditarAdministrador(int id, string usuario, bool activo, string? nuevaContrasena, string? nuevaClaveSupervisor, bool general, List<string>? areas)
 		{
 			var areasFinal = general ? new List<string>() : (areas ?? new List<string>());
-			var (exito, error) = await _administradorService.EditarAsync(id, usuario, activo, nuevaContrasena, areasFinal);
+			var (exito, error) = await _administradorService.EditarAsync(id, usuario, activo, nuevaContrasena, areasFinal, nuevaClaveSupervisor);
 			TempData["ErrorAdmin"] = exito ? null : error;
 			TempData["ExitoAdmin"] = exito ? "Administrador actualizado correctamente." : null;
 			return RedirectToAction("Index");

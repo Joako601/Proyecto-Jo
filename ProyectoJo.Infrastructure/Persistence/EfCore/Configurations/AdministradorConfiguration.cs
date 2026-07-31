@@ -13,6 +13,7 @@ namespace ProyectoJo.Infrastructure.Persistence.EfCore.Configurations
 			builder.Property(a => a.Usuario).IsRequired().HasMaxLength(100);
 			builder.HasIndex(a => a.Usuario).IsUnique();
 			builder.Property(a => a.ContrasenaHash).IsRequired().HasMaxLength(200);
+			builder.Property(a => a.ClaveSupervisorHash).HasMaxLength(200);
 		}
 	}
 }

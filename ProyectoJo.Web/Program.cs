@@ -54,7 +54,6 @@ builder.Services.AddScoped<IEmpleadoAuthService, EmpleadoAuthUseCase>();
 builder.Services.AddScoped<IDispositivoRepository, EfDispositivoRepository>();
 builder.Services.AddScoped<IDispositivoService, DispositivoUseCase>();
 
-builder.Services.AddScoped<ISupervisorClaveRepository, EfSupervisorClaveRepository>();
 builder.Services.AddScoped<ISupervisorAuthService, SupervisorAuthUseCase>();
 
 builder.Services.AddScoped<IPedidoRepository, EfPedidoRepository>();

@@ -44,6 +44,10 @@
                     <label>Contraseña</label>
                     <input type="password" name="contrasena" required minlength="8" autocomplete="new-password" />
                 </div>
+                <div class="usuarios-form__campo">
+                    <label>Clave de supervisor (PIN para operadores)</label>
+                    <input type="password" name="claveSupervisor" required minlength="6" autocomplete="new-password" />
+                </div>
 
                 <label class="usuarios-form__check">
                     <input type="checkbox" name="general" value="true" /> Acceso general (todas las áreas)
@@ -95,6 +99,10 @@
                                         <div class="usuarios-form__campo">
                                             <label>Nueva contraseña (opcional)</label>
                                             <input type="password" name="nuevaContrasena" minlength="8" autocomplete="new-password" />
+                                        </div>
+                                        <div class="usuarios-form__campo">
+                                            <label>Nueva clave de supervisor (opcional)</label>
+                                            <input type="password" name="nuevaClaveSupervisor" minlength="6" autocomplete="new-password" />
                                         </div>
                                         <label class="usuarios-form__check">
                                             <input type="checkbox" name="general" value="true" checked="@(!a.Areas.Any())" /> Acceso general

@@ -1,13 +1,14 @@
 using Moq;
 using ProyectoJo.Application.Ports.Out;
 using ProyectoJo.Application.UseCases;
+using ProyectoJo.Domain.Entities;
 using Xunit;
 
 namespace ProyectoJo.Application.Tests.UseCases
 {
 	public class SupervisorAuthUseCaseTests
 	{
-		private readonly Mock<ISupervisorClaveRepository> _repository = new();
+		private readonly Mock<IAdministradorRepository> _repository = new();
 		private readonly SupervisorAuthUseCase _useCase;
 
 		public SupervisorAuthUseCaseTests()
@@ -21,13 +22,16 @@ namespace ProyectoJo.Application.Tests.UseCases
 			var resultado = await _useCase.ValidarClaveAsync("");
 
 			Assert.False(resultado);
-			_repository.Verify(r => r.ObtenerHashAsync(), Times.Never);
+			_repository.Verify(r => r.ObtenerTodosAsync(), Times.Never);
 		}
 
 		[Fact]
-		public async Task ValidarClaveAsync_SinClaveConfigurada_DevuelveFalse()
+		public async Task ValidarClaveAsync_SinNingunAdministradorConClaveConfigurada_DevuelveFalse()
 		{
-			_repository.Setup(r => r.ObtenerHashAsync()).ReturnsAsync((string?)null);
+			_repository.Setup(r => r.ObtenerTodosAsync()).ReturnsAsync(new List<Administrador>
+			{
+				new() { Id = 1, Usuario = "admin", Activo = true, ClaveSupervisorHash = null }
+			});
 
 			var resultado = await _useCase.ValidarClaveAsync("cualquierClave");
 
@@ -35,68 +39,45 @@ namespace ProyectoJo.Application.Tests.UseCases
 		}
 
 		[Fact]
-		public async Task TieneClaveConfiguradaAsync_DevuelveTrueSoloSiHayHashGuardado()
+		public async Task ValidarClaveAsync_ConClaveCorrectaDeUnAdministradorActivo_DevuelveTrue()
 		{
-			_repository.Setup(r => r.ObtenerHashAsync()).ReturnsAsync((string?)null);
-			Assert.False(await _useCase.TieneClaveConfiguradaAsync());
+			var hash = AdministradorUseCase.HashearContrasena("clave123");
+			_repository.Setup(r => r.ObtenerTodosAsync()).ReturnsAsync(new List<Administrador>
+			{
+				new() { Id = 1, Usuario = "admin1", Activo = true, ClaveSupervisorHash = hash }
+			});
 
-			_repository.Setup(r => r.ObtenerHashAsync()).ReturnsAsync("hash-existente");
-			Assert.True(await _useCase.TieneClaveConfiguradaAsync());
-		}
-
-		[Fact]
-		public async Task CambiarClaveAsync_ConNuevaClaveCorta_DevuelveFalseSinGuardar()
-		{
-			var resultado = await _useCase.CambiarClaveAsync(null, "123");
-
-			Assert.False(resultado);
-			_repository.Verify(r => r.GuardarHashAsync(It.IsAny<string>()), Times.Never);
-		}
-
-		[Fact]
-		public async Task CambiarClaveAsync_SinClaveConfigurada_PermiteEstablecerlaSinClaveActual()
-		{
-			_repository.Setup(r => r.ObtenerHashAsync()).ReturnsAsync((string?)null);
-
-			var resultado = await _useCase.CambiarClaveAsync(null, "claveNueva123");
+			var resultado = await _useCase.ValidarClaveAsync("clave123");
 
 			Assert.True(resultado);
-			_repository.Verify(r => r.GuardarHashAsync(It.Is<string>(h => h.Contains('.'))), Times.Once);
 		}
 
 		[Fact]
-		public async Task CambiarClaveAsync_ConClaveActualIncorrecta_DevuelveFalseSinGuardar()
+		public async Task ValidarClaveAsync_ConClaveDeUnAdministradorInactivo_DevuelveFalse()
 		{
-			_repository.Setup(r => r.ObtenerHashAsync()).ReturnsAsync("saltInvalido.hashInvalido");
+			var hash = AdministradorUseCase.HashearContrasena("clave123");
+			_repository.Setup(r => r.ObtenerTodosAsync()).ReturnsAsync(new List<Administrador>
+			{
+				new() { Id = 1, Usuario = "admin1", Activo = false, ClaveSupervisorHash = hash }
+			});
 
-			var resultado = await _useCase.CambiarClaveAsync("claveIncorrecta", "claveNueva123");
+			var resultado = await _useCase.ValidarClaveAsync("clave123");
 
 			Assert.False(resultado);
-			_repository.Verify(r => r.GuardarHashAsync(It.IsAny<string>()), Times.Never);
 		}
 
 		[Fact]
-		public async Task CambiarClaveAsync_ConClaveActualCorrecta_ActualizaElHash()
+		public async Task ValidarClaveAsync_ConClaveIncorrecta_DevuelveFalse()
 		{
-			string? hashGuardado = null;
-			_repository.Setup(r => r.GuardarHashAsync(It.IsAny<string>()))
-				.Callback<string>(h => hashGuardado = h)
-				.Returns(Task.CompletedTask);
-			_repository.Setup(r => r.ObtenerHashAsync()).ReturnsAsync(() => hashGuardado);
+			var hash = AdministradorUseCase.HashearContrasena("claveCorrecta");
+			_repository.Setup(r => r.ObtenerTodosAsync()).ReturnsAsync(new List<Administrador>
+			{
+				new() { Id = 1, Usuario = "admin1", Activo = true, ClaveSupervisorHash = hash }
+			});
 
-			// Primero se establece la clave inicial (todavía no hay ninguna configurada)
-			await _useCase.CambiarClaveAsync(null, "claveInicial1");
+			var resultado = await _useCase.ValidarClaveAsync("claveIncorrecta");
 
-			// Luego se cambia usando la clave actual correcta
-			var resultado = await _useCase.CambiarClaveAsync("claveInicial1", "claveNueva123");
-
-			Assert.True(resultado);
-
-			var validaConLaAnterior = await _useCase.ValidarClaveAsync("claveInicial1");
-			Assert.False(validaConLaAnterior);
-
-			var validaConLaNueva = await _useCase.ValidarClaveAsync("claveNueva123");
-			Assert.True(validaConLaNueva);
+			Assert.False(resultado);
 		}
 	}
 }

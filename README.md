@@ -6,7 +6,9 @@
 ![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)
 ![Arquitectura](https://img.shields.io/badge/Arquitectura-Hexagonal-blue)
 ![API](https://img.shields.io/badge/API-REST%20%2B%20Swagger-85EA2D)
-![Tests](https://img.shields.io/badge/Tests-73%20passing-brightgreen)
+[![CI](https://github.com/Joako601/Protecto3/actions/workflows/ci.yml/badge.svg?branch=pipeline-ci)](https://github.com/Joako601/Protecto3/actions/workflows/ci.yml)
+
+> El badge de CI refleja el estado de `pipeline-ci`, la rama de desarrollo activo; `main` va por detrás y se actualiza al mergear.
 
 ---
 
@@ -79,7 +81,7 @@ flowchart TD
         WC["Controllers MVC (Razor Views)"]
         HUB["PedidosHub (SignalR)"]
         NOTIF["SignalRPedidoNotificador"]
-        MW["JsonExceptionMiddleware"]
+        MW["JsonExceptionMiddleware, SecurityHeadersMiddleware"]
     end
 
     subgraph API ["ProyectoJo.Api"]
@@ -147,9 +149,8 @@ ProyectoJo/
 │   ├── Areas/Operaciones/        # Cocina, Recepción, Auth por PIN
 │   ├── Hubs/                     # PedidosHub — canal SignalR en tiempo real
 │   ├── Realtime/                 # SignalRPedidoNotificador
-│   ├── Middleware/               # JsonExceptionMiddleware
-│   ├── Views/
-│   └── ADRs/                     # Historial de decisiones arquitectónicas
+│   ├── Middleware/               # JsonExceptionMiddleware, SecurityHeadersMiddleware
+│   └── Views/
 │
 ├── ProyectoJo.Api/               # Adaptador de entrada — ASP.NET Core Web API
 │   ├── Controllers/              # PedidosController
@@ -157,10 +158,14 @@ ProyectoJo/
 │                                  # registrada por ahora — ver Deuda técnica conocida)
 │
 ├── ProyectoJo.Application.Tests/ # Proyecto de tests — xUnit + Moq
+│   ├── Domain/                   # Tests de validaciones (DataAnnotations) por entidad
 │   └── UseCases/                 # Tests unitarios con mocks, uno por caso de uso
 │
-└── .github/workflows/            # Pipeline de Integración Continua
-    └── ci.yml                    # Build + test automático en cada push / PR
+├── ADRs/                         # Historial de decisiones arquitectónicas
+│
+└── .github/workflows/            # Integración Continua y validación de documentación
+    ├── ci.yml                    # Restore, chequeo de migraciones, auditoría de vulnerabilidades, build y test
+    └── docs.yml                  # Falla si hay links rotos en los archivos Markdown del repo
 ```
 ---
 
@@ -195,8 +200,8 @@ La arquitectura del sistema está documentada en tres niveles de detalle bajo el
 | Persistencia actual | PostgreSQL vía Entity Framework Core (Npgsql), solo en `ProyectoJo.Web` — ver Deuda técnica conocida |
 | Autenticación | Cookie auth  |
 | Logging | Serilog (consola + archivo rotativo diario) |
-| Tests | xUnit 2.9.2 + Moq 4.20.72 — 73 tests unitarios |
-| Integración Continua | GitHub Actions — build + test automático en cada push y Pull Request |
+| Tests | xUnit 2.9.2 + Moq 4.20.72 |
+| Integración Continua | GitHub Actions — build, test, chequeo de migraciones EF Core pendientes y auditoría de vulnerabilidades NuGet en cada push y Pull Request; verificación de links rotos en la documentación |
 | Despliegue objetivo | AWS EC2 |
 
 ---
@@ -230,7 +235,6 @@ dotnet run --project ProyectoJo.Api
 
 # Correr los tests
 dotnet test ProyectoJo.Application.Tests
-# → 73 tests, 0 errores
 ```
 
 ### Base de datos (PostgreSQL)
@@ -306,10 +310,16 @@ respectivos controladores en `ProyectoJo.Api`.
 ## Integración Continua (CI/CD)
 
 Cada `push` a cualquier rama y cada Pull Request contra `deuda-tecnica` dispara
-un workflow de **GitHub Actions** (`.github/workflows/ci.yml`) que compila la
-solución y corre toda la suite de `ProyectoJo.Application.Tests`. Si un solo
-test falla, el check del Pull Request queda en rojo y bloquea el merge hasta
-corregirlo.
+el workflow de **GitHub Actions** `ci.yml`: restaura dependencias, verifica que
+no haya migraciones de EF Core pendientes contra el modelo de dominio, audita
+las dependencias NuGet en busca de vulnerabilidades conocidas, compila en modo
+Release y corre toda la suite de `ProyectoJo.Application.Tests`. Si cualquier
+paso falla, el check del Pull Request queda en rojo y bloquea el merge hasta
+corregirlo. También puede dispararse manualmente desde la pestaña *Actions*.
+
+Un segundo workflow, `docs.yml`, corre sobre los archivos Markdown del
+repositorio (README, ADRs, `docs/`) y falla si detecta un link roto, interno
+o externo.
 
 ```mermaid
 flowchart LR
@@ -319,20 +329,20 @@ flowchart LR
 
     subgraph GH ["GitHub Actions — ci.yml"]
         direction LR
-        S1["checkout"] --> S2["setup .NET 10"] --> S3["dotnet restore"] --> S4["dotnet build"] --> S5["dotnet test"]
+        S1["checkout"] --> S2["setup .NET 10 + cache NuGet"] --> S3["dotnet restore"] --> S4["chequeo de migraciones EF Core"] --> S5["auditoría de vulnerabilidades NuGet"] --> S6["dotnet build"] --> S7["dotnet test"]
     end
 
     BRANCH --> GH
     PR --> GH
 
-    S5 -->|"exit 0"| GREEN["✅ Check verde"]
-    S5 -->|"exit != 0"| RED["❌ Check rojo"]
+    S7 -->|"exit 0"| GREEN["✅ Check verde"]
+    S7 -->|"exit != 0"| RED["❌ Check rojo"]
 ```
 
-La decisión completa — por qué GitHub Actions, alternativas consideradas y
+La decisión original de usar GitHub Actions — alternativas consideradas y
 consecuencias — está documentada en [ADR-09](./ADRs/ADR-09-Joaquin-Uriona.md).
-El trabajo de configuración vive en la rama [`pipeline-ci`](../../tree/pipeline-ci),
-con evidencia del check en verde en su Pull Request correspondiente.
+El workflow evolucionó desde entonces con las verificaciones adicionales
+descritas arriba; el trabajo vive en la rama [`pipeline-ci`](../../tree/pipeline-ci).
 
 ---
 
@@ -372,7 +382,7 @@ Se utilizó IA para:
 - Generar la sintaxis Mermaid de los diagramas de arquitectura y del pipeline de CI/CD
 - Generar la estructura y el código de los tests unitarios y de integración a partir del código existente en
   `ProyectoJo.Application` y `ProyectoJo.Infrastructure`
-- Generar la estructura inicial del workflow de GitHub Actions (`ci.yml`)
+- Generar la estructura inicial de los workflows de GitHub Actions (`ci.yml`, `docs.yml`)
 
 No se utilizó para tomar decisiones arquitectónicas ni para diseñar la solución.
 

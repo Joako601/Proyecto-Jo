@@ -94,5 +94,83 @@ namespace ProyectoJo.Application.Tests.UseCases
 				"admin", "Promociones", TipoAccionAuditoria.Eliminacion, It.IsAny<string>(),
 				It.IsAny<string?>(), It.IsAny<string?>()), Times.Once);
 		}
+
+		[Fact]
+		public void Agregar_ConItemIdsInexistentes_LosDescartaAntesDeGuardar()
+		{
+			// Arrange
+			_productoRepository.Setup(r => r.ObtenerTodos()).Returns(new List<Item> { new() { Id = 1 }, new() { Id = 2 } });
+			var promocion = new Promocion { Titulo = "2x1 Tacos", ItemIds = new List<int> { 1, 2, 999 } };
+
+			// Act
+			_useCase.Agregar(promocion, "admin");
+
+			// Assert
+			_repository.Verify(r => r.Agregar(It.Is<Promocion>(p => p.ItemIds.SequenceEqual(new[] { 1, 2 }))), Times.Once);
+		}
+
+		[Fact]
+		public void Editar_ConItemIdsInexistentes_LosDescartaAntesDeGuardar()
+		{
+			// Arrange
+			var anterior = new Promocion { Id = 1, Titulo = "2x1 Tacos" };
+			_repository.Setup(r => r.ObtenerPorId(1)).Returns(anterior);
+			_repository.Setup(r => r.Editar(It.IsAny<Promocion>())).Returns(true);
+			_productoRepository.Setup(r => r.ObtenerTodos()).Returns(new List<Item> { new() { Id = 5 } });
+			var promocionEditada = new Promocion { Id = 1, Titulo = "2x1 Tacos", ItemIds = new List<int> { 5, 6 } };
+
+			// Act
+			_useCase.Editar(promocionEditada, "admin");
+
+			// Assert
+			_repository.Verify(r => r.Editar(It.Is<Promocion>(p => p.ItemIds.SequenceEqual(new[] { 5 }))), Times.Once);
+		}
+
+		[Fact]
+		public void ActualizarFecha_ConFechaInicioPosteriorAFechaFin_LanzaExcepcionSinConsultarElRepositorio()
+		{
+			// Arrange
+			var fechaInicio = new DateTime(2026, 8, 10);
+			var fechaFin = new DateTime(2026, 8, 1);
+
+			// Act & Assert
+			Assert.Throws<InvalidOperationException>(() => _useCase.ActualizarFecha(1, fechaInicio, fechaFin, "admin"));
+			_repository.Verify(r => r.ObtenerPorId(It.IsAny<int>()), Times.Never);
+		}
+
+		[Fact]
+		public void ActualizarFecha_ConRangoValido_ActualizaYRegistraAuditoria()
+		{
+			// Arrange
+			var promocion = new Promocion { Id = 1, Titulo = "2x1 Tacos" };
+			_repository.Setup(r => r.ObtenerPorId(1)).Returns(promocion);
+			_repository.Setup(r => r.Editar(promocion)).Returns(true);
+			var fechaInicio = new DateTime(2026, 8, 1);
+			var fechaFin = new DateTime(2026, 8, 10);
+
+			// Act
+			var resultado = _useCase.ActualizarFecha(1, fechaInicio, fechaFin, "admin");
+
+			// Assert
+			Assert.True(resultado);
+			Assert.Equal(fechaInicio, promocion.FechaInicio);
+			Assert.Equal(fechaFin, promocion.FechaFin);
+			_auditoriaService.Verify(a => a.RegistrarAccion(
+				"admin", "Promociones", TipoAccionAuditoria.Edicion, It.IsAny<string>(),
+				It.IsAny<string?>(), It.IsAny<string?>()), Times.Once);
+		}
+
+		[Fact]
+		public void ActualizarFecha_CuandoLaPromocionNoExiste_DevuelveFalse()
+		{
+			// Arrange
+			_repository.Setup(r => r.ObtenerPorId(999)).Returns((Promocion?)null);
+
+			// Act
+			var resultado = _useCase.ActualizarFecha(999, null, null, "admin");
+
+			// Assert
+			Assert.False(resultado);
+		}
 	}
 }

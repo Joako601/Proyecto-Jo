@@ -106,8 +106,18 @@ Target is a single EC2 (Ubuntu) instance behind nginx (TLS termination + reverse
 2. `docs/AWS-2-Usuarios.md` — IAM: root MFA, admin group/user, optional read-only user, the (permissionless) EC2 role.
 3. `docs/AWS-3-Servicios.md` — security groups, RDS, EC2, Elastic IP, and how to tear everything down after a demo to stop billing.
 4. `docs/Despliegue-AWS.md` — installing the runtime/nginx/certbot on the server, GitHub Secrets, running the pipeline, rollback.
+5. `docs/Despliegue-Resumen-Operativo.md` — operational cheat sheet for the already-provisioned environment: where credentials live, how to redeploy, how to check logs, and every real issue hit during the first end-to-end deploy (see below).
 
 `ProyectoJo.Web/Program.cs` runs `UseForwardedHeaders` (X-Forwarded-For/X-Forwarded-Proto) as the first middleware — required for the rate limiter's per-IP partitioning and any `Request.IsHttps` check to work correctly behind the nginx reverse proxy. `.gitignore` has an "AWS / infraestructura" section (`*.pem`, `*.ppk`, `.aws/`, `*.env` with a `*.env.example` exception, `deploy/*.env`, Terraform state) so credentials/keys generated while following the docs above can't be committed by accident.
+
+**`workflow_dispatch` only triggers from the default branch.** GitHub only lists/allows manually dispatching a workflow whose file exists on `main` (or whatever the repo's default branch is) — a workflow that only exists on a feature branch never appears in the Actions UI, even if you try to target that branch in the run dialog. `deploy.yml` must be merged to `main` before it's runnable at all.
+
+**Real issues hit during the first live deploy, now fixed, worth knowing if re-provisioning from scratch:**
+- `efbundle` (the EF Core migrations bundle) can't construct `ProyectoJoDbContext` through the app's own service provider when it's registered via `AddDbContextPool` (a documented EF Core tooling limitation, not specific to this app) — it falls back to booting the full `Program.cs` host, which fails outside a real ASP.NET Core runtime. Fixed with an explicit `ProyectoJo.Infrastructure/Persistence/EfCore/ProyectoJoDbContextFactory.cs` (`IDesignTimeDbContextFactory<ProyectoJoDbContext>`), reading the connection string from `ConnectionStrings__Default`. `AddDbContextPool` in `Program.cs` is unchanged — only design-time tooling needed the extra factory.
+- RDS PostgreSQL rejects unencrypted connections by default — the connection string needs `SSL Mode=Require;Trust Server Certificate=true` appended, in both `RDS_CONNECTION_STRING` (GitHub secret) and `ConnectionStrings__Default` (server-side `.env`).
+- `deploy/proyectojo-web.service` uses `Type=simple`, not `Type=notify` — ASP.NET Core doesn't implement the `sd_notify` readiness protocol, so `Type=notify` made systemd wait 90s for a signal that never arrives and kill an otherwise-healthy process.
+- `ProyectoJo.Web.csproj` has a `<Content Include="Areas\Admin\wwwroot\**" CopyToPublishDirectory="PreserveNewest" .../>` item. `Areas/Admin/wwwroot/` (all Admin-panel CSS/JS) is merged into `WebRootFileProvider` at runtime via a `CompositeFileProvider` in `Program.cs`, but `dotnet publish` never copies that folder on its own — without the explicit `Content` item, production both crashed on startup (`PhysicalFileProvider` throwing on the missing directory) and, if it hadn't, would have served the Admin panel with no styling at all.
+- Data Protection keys are ephemeral (`Program.cs` has no persisted key ring configured) — every process restart invalidates all antiforgery tokens and auth cookies. A form loaded before a restart/redeploy gets a 400 on submit; the fix is just reloading the page, not a bug to chase.
 
 ## Known technical debt
 

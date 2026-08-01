@@ -202,7 +202,7 @@ La arquitectura del sistema está documentada en tres niveles de detalle bajo el
 | Logging | Serilog (consola + archivo rotativo diario) |
 | Tests | xUnit 2.9.2 + Moq 4.20.72 |
 | Integración Continua | GitHub Actions — build, test, chequeo de migraciones EF Core pendientes y auditoría de vulnerabilidades NuGet en cada push y Pull Request; verificación de links rotos en la documentación |
-| Despliegue objetivo | AWS EC2 + RDS — ver [Despliegue en AWS](docs/Despliegue-AWS.md) |
+| Despliegue objetivo | AWS EC2 + RDS — ver [AWS-1-Cuenta.md](docs/AWS-1-Cuenta.md) (serie de 4 documentos) |
 
 ---
 

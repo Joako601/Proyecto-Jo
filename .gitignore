@@ -23,6 +23,31 @@ ProjectoJo.slnLaunch.user
 # Archivos de configuración de ambiente de desarrollo
 **/appsettings.Development.json
 
+# ============================================================
+# AWS / infraestructura — nunca deben llegar al repo
+# ============================================================
+
+# Claves privadas SSH/RDP descargadas de EC2 (par de claves .pem/.ppk)
+*.pem
+*.ppk
+
+# Credenciales/config local de la AWS CLI si se llegan a generar acá
+.aws/
+aws-exports.js
+
+# Variables de entorno reales de un ambiente (el server usa
+# /etc/proyectojo/proyectojo.env, fuera del repo — ver docs/Despliegue-AWS.md).
+# Esto es por si alguna vez se arma una copia local de prueba.
+*.env
+!*.env.example
+deploy/*.env
+
+# Estado de Terraform/CloudFormation, por si se suma IaC más adelante
+*.tfstate
+*.tfstate.*
+.terraform/
+*.tfvars
+
 
 # ============================================================
 # .NET / VISUAL STUDIO

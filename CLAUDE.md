@@ -98,6 +98,17 @@ Login endpoints for all three are rate-limited (5–8 requests/min per IP via `A
 
 `ProyectoJo.Web/Program.cs` and `ProyectoJo.Api/Program.cs` each wire up their own DI graph independently — there is no shared composition root. `Web` registers `AddDbContext<ProyectoJoDbContext>` plus every `Ef*Repository`; `Api` currently registers none. When adding a new use case/repository pair, register it in `Web`'s `Program.cs` — `Api` is out of scope for now (see Known technical debt).
 
+## Deployment
+
+Target is a single EC2 (Ubuntu) instance behind nginx (TLS termination + reverse proxy to Kestrel on loopback) with RDS PostgreSQL, deployed via a manual-only (`workflow_dispatch`) GitHub Actions pipeline (`.github/workflows/deploy.yml`): publish → EF Core migrations bundle → SCP to `/opt/proyectojo/releases/<run_id>` → apply migrations → flip the `/opt/proyectojo/current` symlink → restart the `proyectojo-web` systemd service (`deploy/proyectojo-web.service`, `deploy/nginx-proyectojo.conf`). Full setup is documented as a 4-part beginner-level series, meant to be followed in order since later steps assume earlier ones exist (IAM users before any resource is provisioned, resources before the software inside them):
+
+1. `docs/AWS-1-Cuenta.md` — creating and activating the AWS account.
+2. `docs/AWS-2-Usuarios.md` — IAM: root MFA, admin group/user, optional read-only user, the (permissionless) EC2 role.
+3. `docs/AWS-3-Servicios.md` — security groups, RDS, EC2, Elastic IP, and how to tear everything down after a demo to stop billing.
+4. `docs/Despliegue-AWS.md` — installing the runtime/nginx/certbot on the server, GitHub Secrets, running the pipeline, rollback.
+
+`ProyectoJo.Web/Program.cs` runs `UseForwardedHeaders` (X-Forwarded-For/X-Forwarded-Proto) as the first middleware — required for the rate limiter's per-IP partitioning and any `Request.IsHttps` check to work correctly behind the nginx reverse proxy. `.gitignore` has an "AWS / infraestructura" section (`*.pem`, `*.ppk`, `.aws/`, `*.env` with a `*.env.example` exception, `deploy/*.env`, Terraform state) so credentials/keys generated while following the docs above can't be committed by accident.
+
 ## Known technical debt
 
 - **`ProyectoJo.Api` has no persistence wired up at all.** Its `Program.cs` registers `IPedidoService`/`IProductoService`/`IFinanzaService` but no repositories, so any endpoint that touches the database throws a DI resolution error at runtime. This is a deliberate, temporary state — `Api` is being ignored while `Web`'s PostgreSQL migration is the priority. [ADR-08](./ADRs/ADR-08-Joaquin-Uriona.md) describes an older, now-superseded version of the `Api`/`Web` split (from when both read the same JSON files); a new ADR covering the current state is expected later.

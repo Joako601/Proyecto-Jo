@@ -3,11 +3,11 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Tía Caro</title>
+    <title>@ViewData["Title"] - Proyecto Jo</title>
 
-    <link rel="icon" type="image/png" sizes="32x32" href="~/img/favicon-32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="~/img/favicon-16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="~/img/favicon-180.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="~/img/favicon-32.png" asp-append-version="true">
+    <link rel="icon" type="image/png" sizes="16x16" href="~/img/favicon-16.png" asp-append-version="true">
+    <link rel="apple-touch-icon" sizes="180x180" href="~/img/favicon-180.png" asp-append-version="true">
 
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Montserrat:wght@300;400;600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
@@ -26,13 +26,8 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom py-3">
             <div class="container-fluid px-3 px-lg-5">
 
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
-                    <picture>
-                        <source srcset="@Url.Content("~/img/logo-nav-1x.webp") 1x, @Url.Content("~/img/logo-nav-2x.webp") 2x" type="image/webp">
-                        <img src="@Url.Content("~/img/logo-nav-1x.png")"
-                             srcset="@Url.Content("~/img/logo-nav-2x.png") 2x"
-                             alt="Tía Caro Logo" style="height: 45px; width: auto;">
-                    </picture>
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index" style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.5rem;">
+                    Proyecto Jo
                 </a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarPrincipal"
@@ -60,11 +55,11 @@
         <div class="container">
             <div class="row gy-4">
                 <div class="col-lg-4 col-md-6">
-                    <h5 class="footer-title">TÍA CARO</h5>
-                    <p class="footer-text">Tradición yucateca en San Pedro Uxmal, Mérida.</p>
+                    <h5 class="footer-title">PROYECTO JO</h5>
+                    <p class="footer-text">Sistema de gestión administrativa y financiera.</p>
                     <p class="footer-text mb-0">
                         <i class="bi bi-geo-alt-fill footer-icon"></i>
-                        Calle 36 x 5 y 7, San Pedro Uxmal
+                        Mérida, Yucatán, México
                     </p>
                 </div>
 
@@ -101,13 +96,13 @@
                     <p class="footer-text">Síguenos para ver lo nuevo de la cocina.</p>
                     <div class="footer-socials">
 
-                        <a href="https://www.instagram.com/antojitos_la_tia_caro" target="_blank" rel="noopener noreferrer">
+                        <a href="#" rel="noopener noreferrer">
                             <i class="bi bi-instagram"></i>
                         </a>
-                        <a href="https://www.tiktok.com/@@antojitos_latiacaro" target="_blank" rel="noopener noreferrer">
+                        <a href="#" rel="noopener noreferrer">
                             <i class="bi bi-tiktok"></i>
                         </a>
-                        <a href="https://www.facebook.com/people/Antojitos-LA-T%C3%ADA-CARO/100057718524240/" target="_blank" rel="noopener noreferrer">
+                        <a href="#" rel="noopener noreferrer">
                             <i class="bi bi-facebook"></i>
                         </a>
                     </div>
@@ -117,7 +112,7 @@
             <hr class="footer-divider" />
 
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
-                <p class="footer-copy mb-0">&copy; @DateTime.Now.Year Tía Caro. Todos los derechos reservados.</p>
+                <p class="footer-copy mb-0">&copy; @DateTime.Now.Year Proyecto Jo. Todos los derechos reservados.</p>
                 <div class="d-flex align-items-center gap-3">
                     <a asp-controller="Home" asp-action="Privacy" class="footer-copy-link">Aviso de Privacidad</a>
                     <p class="footer-copy mb-0">Hecho con <i class="bi bi-heart-fill" style="color:#b5a478;"></i> en Mérida, Yucatán.</p>

@@ -1,0 +1,84 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+          cache: true
+          cache-dependency-path: '**/*.csproj'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Publish ProyectoJo.Web
+        run: dotnet publish ProyectoJo.Web -c Release -o ./publish --no-self-contained
+
+      - name: Build EF Core migrations bundle
+        run: |
+          dotnet tool install --global dotnet-ef --version 10.0.0
+          dotnet ef migrations bundle \
+            --project ProyectoJo.Infrastructure \
+            --startup-project ProyectoJo.Web \
+            --self-contained -r linux-x64 \
+            -o ./publish/efbundle
+
+      - name: Package release
+        run: tar -czf release.tar.gz -C publish .
+
+      - name: Upload release to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: ${{ secrets.EC2_SSH_PORT || 22 }}
+          source: "release.tar.gz"
+          target: "/tmp"
+
+      - name: Apply migrations and switch release
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          RELEASE_ID: ${{ github.run_id }}
+          RDS_CONNECTION_STRING: ${{ secrets.RDS_CONNECTION_STRING }}
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: ${{ secrets.EC2_SSH_PORT || 22 }}
+          envs: RELEASE_ID,RDS_CONNECTION_STRING
+          script: |
+            set -euo pipefail
+
+            RELEASE_DIR="/opt/proyectojo/releases/${RELEASE_ID}"
+            sudo mkdir -p "$RELEASE_DIR"
+            sudo tar -xzf /tmp/release.tar.gz -C "$RELEASE_DIR"
+            sudo chmod +x "$RELEASE_DIR/efbundle"
+            rm -f /tmp/release.tar.gz
+
+            # Apply pending migrations against RDS before this release goes live.
+            "$RELEASE_DIR/efbundle" --connection "$RDS_CONNECTION_STRING"
+
+            # Atomically point "current" at the new release and restart the service.
+            sudo ln -sfn "$RELEASE_DIR" /opt/proyectojo/current
+            sudo systemctl restart proyectojo-web
+            sudo systemctl --no-pager --full status proyectojo-web
+
+            # Keep only the last 5 releases on disk.
+            cd /opt/proyectojo/releases
+            ls -1dt */ 2>/dev/null | tail -n +6 | xargs -r sudo rm -rf

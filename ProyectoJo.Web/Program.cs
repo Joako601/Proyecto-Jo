@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using ProyectoJo.Application.Ports.In;
@@ -231,6 +232,11 @@ if (args.Contains("--seed"))
 	await ProyectoJo.Infrastructure.Persistence.EfCore.JsonToPostgresSeeder.SeedAsync(dbContext, rutaPersistencia);
 	return;
 }
+
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+	ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 
 app.UseSerilogRequestLogging();
 

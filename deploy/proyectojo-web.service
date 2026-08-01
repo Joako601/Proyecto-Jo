@@ -1,0 +1,21 @@
+[Unit]
+Description=Proyecto Jo' - Web (ASP.NET Core)
+After=network.target
+
+[Service]
+Type=notify
+WorkingDirectory=/opt/proyectojo/current
+ExecStart=/usr/bin/dotnet /opt/proyectojo/current/ProyectoJo.Web.dll
+Restart=on-failure
+RestartSec=5
+KillSignal=SIGINT
+SyslogIdentifier=proyectojo-web
+User=proyectojo
+Group=proyectojo
+EnvironmentFile=/etc/proyectojo/proyectojo.env
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=ASPNETCORE_URLS=http://localhost:5000
+Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+
+[Install]
+WantedBy=multi-user.target

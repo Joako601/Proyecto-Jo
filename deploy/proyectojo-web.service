@@ -3,7 +3,7 @@ Description=Proyecto Jo' - Web (ASP.NET Core)
 After=network.target
 
 [Service]
-Type=notify
+Type=simple
 WorkingDirectory=/opt/proyectojo/current
 ExecStart=/usr/bin/dotnet /opt/proyectojo/current/ProyectoJo.Web.dll
 Restart=on-failure

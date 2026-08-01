@@ -16,6 +16,22 @@ namespace ProyectoJo.Infrastructure.Persistence.EfCore.Repositories
 		public async Task<List<Pedido>> ObtenerTodosAsync() =>
 			await _context.Pedidos.Include(p => p.Items).AsNoTracking().ToListAsync();
 
+		public async Task<List<Pedido>> ObtenerActivosAsync() =>
+			await _context.Pedidos
+				.Include(p => p.Items)
+				.AsNoTracking()
+				.Where(p => p.Estado == EstadoPedido.Pendiente || p.Estado == EstadoPedido.Preparado)
+				.OrderBy(p => p.FechaCreacion)
+				.ToListAsync();
+
+		public async Task<List<Pedido>> ObtenerDelDiaAsync(DateTime desde) =>
+			await _context.Pedidos
+				.Include(p => p.Items)
+				.AsNoTracking()
+				.Where(p => p.Estado != EstadoPedido.Cancelado && p.FechaCreacion >= desde)
+				.OrderByDescending(p => p.FechaCreacion)
+				.ToListAsync();
+
 		public async Task<Pedido?> ObtenerPorIdAsync(int id) =>
 			await _context.Pedidos.Include(p => p.Items).AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
 

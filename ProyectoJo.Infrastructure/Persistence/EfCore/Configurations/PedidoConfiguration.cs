@@ -13,6 +13,7 @@ namespace ProyectoJo.Infrastructure.Persistence.EfCore.Configurations
 			builder.Property(p => p.Mesa).IsRequired().HasMaxLength(50);
 			builder.Property(p => p.Estado).HasConversion<string>().HasMaxLength(20);
 			builder.Ignore(p => p.Total);
+			builder.HasIndex(p => new { p.Estado, p.FechaCreacion });
 
 			builder.OwnsMany(p => p.Items, items =>
 			{

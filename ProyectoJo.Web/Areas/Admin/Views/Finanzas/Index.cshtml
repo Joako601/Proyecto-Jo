@@ -8,20 +8,13 @@
     int anio = ViewBag.Anio;
     var meses = System.Globalization.CultureInfo.GetCultureInfo("es-MX").DateTimeFormat.MonthNames;
 
-    var resultado = Model.ToList();
+    var paginado = Model.ToList();
+    int paginaActual = ViewBag.PaginaActual;
+    int totalPaginas = ViewBag.TotalPaginas;
+    int totalMovimientos = ViewBag.TotalMovimientos;
 
     const int PorPagina = 12;
-    var totalPaginas = (int)Math.Ceiling(resultado.Count / (double)PorPagina);
-    var paginaActual = int.TryParse(Context.Request.Query["pagina"], out var p) ? p : 1;
-    if (paginaActual < 1) paginaActual = 1;
-    if (totalPaginas > 0 && paginaActual > totalPaginas) paginaActual = totalPaginas;
-
-    var paginado = resultado
-        .Skip((paginaActual - 1) * PorPagina)
-        .Take(PorPagina)
-        .ToList();
-
-    var desdeItem = resultado.Any() ? ((paginaActual - 1) * PorPagina) + 1 : 0;
+    var desdeItem = totalMovimientos > 0 ? ((paginaActual - 1) * PorPagina) + 1 : 0;
     var hastaItem = ((paginaActual - 1) * PorPagina) + paginado.Count;
 }
 
@@ -61,7 +54,7 @@
             <button type="submit" class="btn-secondary">Filtrar</button>
         </form>
         <a asp-action="Registrar" class="btn-primary">
-            <i class="bi bi-plus-lg"></i>&nbsp; Registrar movimiento
+            Registrar movimiento
         </a>
     </div>
 
@@ -84,7 +77,7 @@
         </div>
     }
 
-    @if (!resultado.Any())
+    @if (totalMovimientos == 0)
     {
         <p class="empty-state">No hay movimientos registrados en @meses[mes - 1] @anio.</p>
     }
@@ -125,7 +118,7 @@
             </table>
         </div>
         <p class="paginador-resumen">
-            Mostrando @desdeItem–@hastaItem de @resultado.Count movimientos
+            Mostrando @desdeItem–@hastaItem de @totalMovimientos movimientos
         </p>
         @await Html.PartialAsync("_Paginador", (paginaActual, totalPaginas))
     }

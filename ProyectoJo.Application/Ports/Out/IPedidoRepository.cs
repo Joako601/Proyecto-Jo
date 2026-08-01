@@ -3,6 +3,8 @@
 public interface IPedidoRepository
 {
 	Task<List<Pedido>> ObtenerTodosAsync();
+	Task<List<Pedido>> ObtenerActivosAsync();
+	Task<List<Pedido>> ObtenerDelDiaAsync(DateTime desde);
 	Task<Pedido?> ObtenerPorIdAsync(int id);
 	Task<Pedido> GuardarAsync(Pedido pedido);
 	Task<Pedido?> ActualizarAsync(Pedido pedido);

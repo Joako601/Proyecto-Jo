@@ -14,6 +14,7 @@ namespace ProyectoJo.Infrastructure.Persistence.EfCore.Configurations
 			builder.Property(r => r.Modulo).IsRequired().HasMaxLength(100);
 			builder.Property(r => r.Accion).HasConversion<string>().HasMaxLength(20);
 			builder.Property(r => r.Entidad).IsRequired().HasMaxLength(300);
+			builder.HasIndex(r => r.FechaHora);
 		}
 	}
 }

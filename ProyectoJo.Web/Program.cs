@@ -35,9 +35,14 @@ builder.Environment.WebRootFileProvider = new CompositeFileProvider(
 	new PhysicalFileProvider(adminWebRoot)
 );
 
-builder.Services.AddDbContext<ProyectoJoDbContext>(options => options
+builder.Services.AddDbContextPool<ProyectoJoDbContext>(options => options
 	.UseNpgsql(builder.Configuration.GetConnectionString("Default"))
 	.UseSnakeCaseNamingConvention());
+
+builder.Services.AddResponseCompression(options =>
+{
+	options.EnableForHttps = true;
+});
 
 builder.Services.AddScoped<IProductoRepository, EfProductoRepository>();
 builder.Services.AddScoped<IFinanzaRepository, EfFinanzaRepository>();
@@ -229,6 +234,8 @@ if (args.Contains("--seed"))
 
 app.UseSerilogRequestLogging();
 
+app.UseResponseCompression();
+
 app.UseMiddleware<ProyectoJo.Web.Middleware.SecurityHeadersMiddleware>();
 app.UseMiddleware<ProyectoJo.Web.Middleware.JsonExceptionMiddleware>();
 
@@ -243,7 +250,13 @@ else
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+	OnPrepareResponse = ctx =>
+	{
+		ctx.Context.Response.Headers.CacheControl = "public,max-age=604800";
+	}
+});
 app.UseRouting();
 
 app.UseRateLimiter();

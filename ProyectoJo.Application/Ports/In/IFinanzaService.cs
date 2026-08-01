@@ -9,6 +9,7 @@ namespace ProyectoJo.Application.Ports.In
 		List<Finanza> ObtenerTodos();
 		List<Finanza> ObtenerPorFecha(DateTime desde, DateTime hasta);
 		List<Finanza> ObtenerPorCategoria(string categoria);
+		(List<Finanza> Items, int Total) ObtenerPaginado(int mes, int anio, int pagina, int porPagina);
 		ResumenFinanciero ObtenerResumenDelDia(DateTime fecha);
 		ResumenFinanciero ObtenerResumenPorPeriodo(DateTime desde, DateTime hasta);
 		ResumenDashboard ObtenerDashboard();

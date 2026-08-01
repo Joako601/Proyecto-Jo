@@ -8,5 +8,8 @@ namespace ProyectoJo.Application.Ports.In
 			string? detalleAntes = null, string? detalleDespues = null);
 
 		List<RegistroAuditoria> ObtenerHistorial(string? modulo = null, DateTime? desde = null, DateTime? hasta = null);
+
+		(List<RegistroAuditoria> Items, int Total) ObtenerHistorialPaginado(
+			string? modulo, DateTime? desde, DateTime? hasta, int pagina, int porPagina);
 	}
 }

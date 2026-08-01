@@ -40,12 +40,6 @@ namespace ProyectoJo.Application.UseCases
 			_logger = logger;
 		}
 
-		public async Task<List<Pedido>> ObtenerPendientesAsync()
-		{
-			var todos = await _repository.ObtenerTodosAsync();
-			return todos.Where(p => p.Estado == EstadoPedido.Pendiente).ToList();
-		}
-
 		public async Task<Pedido?> ObtenerPorIdAsync(int id)
 		{
 			return await _repository.ObtenerPorIdAsync(id);
@@ -215,22 +209,10 @@ namespace ProyectoJo.Application.UseCases
 			};
 		}
 
-		public async Task<List<Pedido>> ObtenerParaCocinaAsync()
-		{
-			var todos = await _repository.ObtenerTodosAsync();
-			return todos
-				.Where(p => p.Estado == EstadoPedido.Pendiente || p.Estado == EstadoPedido.Preparado)
-				.OrderBy(p => p.FechaCreacion)
-				.ToList();
-		}
+		public async Task<List<Pedido>> ObtenerParaCocinaAsync() =>
+			await _repository.ObtenerActivosAsync();
 
-		public async Task<List<Pedido>> ObtenerParaRecepcionAsync()
-		{
-			var todos = await _repository.ObtenerTodosAsync();
-			return todos
-				.Where(p => p.Estado != EstadoPedido.Cancelado)
-				.OrderByDescending(p => p.FechaCreacion)
-				.ToList();
-		}
+		public async Task<List<Pedido>> ObtenerParaRecepcionAsync() =>
+			await _repository.ObtenerDelDiaAsync(DateTime.UtcNow.Date);
 	}
 }

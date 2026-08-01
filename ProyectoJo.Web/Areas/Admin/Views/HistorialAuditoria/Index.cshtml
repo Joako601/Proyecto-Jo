@@ -3,20 +3,13 @@
     ViewData["Title"] = "Historial de Auditoría";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 
-    var historial = Model.ToList();
+    var paginado = Model.ToList();
+    int paginaActual = ViewBag.PaginaActual;
+    int totalPaginas = ViewBag.TotalPaginas;
+    int totalRegistros = ViewBag.TotalRegistros;
 
     const int PorPagina = 15;
-    var totalPaginas = (int)Math.Ceiling(historial.Count / (double)PorPagina);
-    var paginaActual = int.TryParse(Context.Request.Query["pagina"], out var p) ? p : 1;
-    if (paginaActual < 1) paginaActual = 1;
-    if (totalPaginas > 0 && paginaActual > totalPaginas) paginaActual = totalPaginas;
-
-    var paginado = historial
-        .Skip((paginaActual - 1) * PorPagina)
-        .Take(PorPagina)
-        .ToList();
-
-    var desdeItem = historial.Any() ? ((paginaActual - 1) * PorPagina) + 1 : 0;
+    var desdeItem = totalRegistros > 0 ? ((paginaActual - 1) * PorPagina) + 1 : 0;
     var hastaItem = ((paginaActual - 1) * PorPagina) + paginado.Count;
 }
 
@@ -100,14 +93,14 @@
         </table>
     </div>
 
-    @if (!historial.Any())
+    @if (totalRegistros == 0)
     {
         <p class="empty-state">No hay registros de auditoría todavía.</p>
     }
     else
     {
         <p class="paginador-resumen">
-            Mostrando @desdeItem–@hastaItem de @historial.Count registros
+            Mostrando @desdeItem–@hastaItem de @totalRegistros registros
         </p>
         @await Html.PartialAsync("_Paginador", (paginaActual, totalPaginas))
     }

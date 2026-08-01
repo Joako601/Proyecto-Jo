@@ -33,9 +33,10 @@ namespace ProyectoJo.Application.UseCases
 		public List<Finanza> ObtenerTodos() => _repository.ObtenerTodos();
 
 		public List<Finanza> ObtenerPorFecha(DateTime desde, DateTime hasta) =>
-			_repository.ObtenerTodos()
-				.Where(f => f.Fecha.Date >= desde.Date && f.Fecha.Date <= hasta.Date)
-				.ToList();
+			_repository.ObtenerPorFecha(desde, hasta);
+
+		public (List<Finanza> Items, int Total) ObtenerPaginado(int mes, int anio, int pagina, int porPagina) =>
+			_repository.ObtenerPaginado(mes, anio, pagina, porPagina);
 
 		public List<Finanza> ObtenerPorCategoria(string categoria) =>
 			_repository.ObtenerTodos()

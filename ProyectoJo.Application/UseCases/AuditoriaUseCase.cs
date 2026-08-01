@@ -45,5 +45,9 @@ namespace ProyectoJo.Application.UseCases
 
 			return registros.OrderByDescending(r => r.FechaHora).ToList();
 		}
+
+		public (List<RegistroAuditoria> Items, int Total) ObtenerHistorialPaginado(
+			string? modulo, DateTime? desde, DateTime? hasta, int pagina, int porPagina) =>
+			_auditoriaRepository.ObtenerPaginado(modulo, desde, hasta, pagina, porPagina);
 	}
 }

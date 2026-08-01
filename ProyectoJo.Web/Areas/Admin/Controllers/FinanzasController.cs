@@ -27,21 +27,24 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 				.ToList();
 
 		// GET: /Admin/Finanzas
-		public IActionResult Index(int? mes, int? anio)
+		public IActionResult Index(int? mes, int? anio, int pagina = 1)
 		{
 			var hoy = DateTime.Today;
 			var mesActual = mes ?? hoy.Month;
 			var anioActual = anio ?? hoy.Year;
+			const int porPagina = 12;
 
-			var movimientos = _finanzaService.ObtenerTodos()
-				.Where(f => f.Fecha.Month == mesActual && f.Fecha.Year == anioActual)
-				.OrderByDescending(f => f.Fecha)
-				.ToList();
+			if (pagina < 1) pagina = 1;
+
+			var (movimientos, total) = _finanzaService.ObtenerPaginado(mesActual, anioActual, pagina, porPagina);
 
 			var resumen = _finanzaService.ObtenerResumenDelDia(hoy);
 			ViewBag.Resumen = resumen;
 			ViewBag.Mes = mesActual;
 			ViewBag.Anio = anioActual;
+			ViewBag.PaginaActual = pagina;
+			ViewBag.TotalPaginas = (int)Math.Ceiling(total / (double)porPagina);
+			ViewBag.TotalMovimientos = total;
 
 			return View(movimientos);
 		}

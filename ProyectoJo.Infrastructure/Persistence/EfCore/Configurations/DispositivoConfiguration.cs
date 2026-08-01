@@ -14,6 +14,8 @@ namespace ProyectoJo.Infrastructure.Persistence.EfCore.Configurations
 			builder.HasIndex(d => d.Token).IsUnique();
 			builder.Property(d => d.Nombre).IsRequired(false).HasMaxLength(200);
 			builder.Property(d => d.Estacion).HasConversion<string>().HasMaxLength(20);
+			builder.Property(d => d.Bloqueado).HasDefaultValue(false);
+			builder.Property(d => d.Activo).HasDefaultValue(true);
 		}
 	}
 }

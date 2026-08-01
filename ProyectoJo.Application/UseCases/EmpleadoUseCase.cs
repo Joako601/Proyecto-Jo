@@ -53,8 +53,11 @@ namespace ProyectoJo.Application.UseCases
 			if (empleado is null)
 				return (false, "El operador no existe.");
 
-			if (string.IsNullOrWhiteSpace(nombre))
-				return (false, "El nombre es obligatorio.");
+			if (string.IsNullOrWhiteSpace(nombre) || string.IsNullOrWhiteSpace(nuevaClave))
+				return (false, "El nombre y la clave son obligatorios.");
+
+			if (nuevaClave.Length < ClaveMinima)
+				return (false, $"La nueva clave debe tener al menos {ClaveMinima} caracteres.");
 
 			var nombreNormalizado = nombre.Trim();
 			var existentes = await _repository.ObtenerTodosAsync();
@@ -67,13 +70,7 @@ namespace ProyectoJo.Application.UseCases
 			empleado.Nombre = nombreNormalizado;
 			empleado.Activo = activo;
 			empleado.Rol = rol;
-
-			if (!string.IsNullOrWhiteSpace(nuevaClave))
-			{
-				if (nuevaClave.Length < ClaveMinima)
-					return (false, $"La nueva clave debe tener al menos {ClaveMinima} caracteres.");
-				empleado.ClaveHash = EmpleadoAuthUseCase.HashearClave(nuevaClave);
-			}
+			empleado.ClaveHash = EmpleadoAuthUseCase.HashearClave(nuevaClave);
 
 			var actualizado = await _repository.ActualizarAsync(empleado);
 			return actualizado ? (true, null) : (false, "No se pudo actualizar el operador.");

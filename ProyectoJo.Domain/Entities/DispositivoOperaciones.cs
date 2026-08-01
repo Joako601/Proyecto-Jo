@@ -7,5 +7,7 @@
 		public RolEmpleado Estacion { get; set; }
 		public string Nombre { get; set; } = string.Empty;
 		public DateTime FechaRegistro { get; set; } = DateTime.UtcNow;
+		public bool Bloqueado { get; set; }
+		public bool Activo { get; set; } = true;
 	}
 }

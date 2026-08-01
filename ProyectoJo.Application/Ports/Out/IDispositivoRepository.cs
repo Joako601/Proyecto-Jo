@@ -6,7 +6,9 @@ namespace ProyectoJo.Application.Ports.Out
 	{
 		Task<DispositivoOperaciones?> ObtenerPorTokenAsync(string token);
 		Task<DispositivoOperaciones> RegistrarAsync(DispositivoOperaciones dispositivo);
-		Task<DispositivoOperaciones?> ActualizarEstacionAsync(string token, RolEmpleado estacion);
+		Task<DispositivoOperaciones?> ActualizarEstacionAsync(string token, RolEmpleado estacion, string? nombre);
 		Task<List<DispositivoOperaciones>> ObtenerTodosAsync();
+		Task<DispositivoOperaciones?> ToggleBloqueadoAsync(int id);
+		Task<DispositivoOperaciones?> ToggleActivoAsync(int id);
 	}
 }

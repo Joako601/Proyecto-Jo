@@ -24,7 +24,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		[HttpPost]
 		public async Task<IActionResult> Crear(string usuario, string contrasena, bool general, List<string>? areas, string? claveSupervisor)
 		{
-			var areasFinal = general ? new List<string>() : (areas ?? new List<string>());
+			var areasFinal = general ? new List<string> { "General" } : (areas ?? new List<string>());
 			var (exito, error) = await _administradorService.CrearAsync(usuario, contrasena, areasFinal, claveSupervisor);
 			TempData["Error"] = exito ? null : error;
 			TempData["Exito"] = exito ? "Administrador creado correctamente." : null;
@@ -34,7 +34,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		[HttpPost]
 		public async Task<IActionResult> Editar(int id, string usuario, bool activo, string? nuevaContrasena, bool general, List<string>? areas, string? nuevaClaveSupervisor)
 		{
-			var areasFinal = general ? new List<string>() : (areas ?? new List<string>());
+			var areasFinal = general ? new List<string> { "General" } : (areas ?? new List<string>());
 			var (exito, error) = await _administradorService.EditarAsync(id, usuario, activo, nuevaContrasena, areasFinal, nuevaClaveSupervisor);
 			TempData["Error"] = exito ? null : error;
 			TempData["Exito"] = exito ? "Administrador actualizado correctamente." : null;

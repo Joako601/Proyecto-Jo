@@ -1,0 +1,60 @@
+.estado-dispositivo {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.estado-dispositivo-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.estado-dispositivo--conectado {
+    color: var(--tc-teal);
+}
+
+    .estado-dispositivo--conectado .estado-dispositivo-dot {
+        background: var(--tc-teal);
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.03);
+    }
+
+.estado-dispositivo--desconectado {
+    color: var(--tc-ink-muted);
+}
+
+    .estado-dispositivo--desconectado .estado-dispositivo-dot {
+        background: var(--tc-ink-muted);
+    }
+
+.estado-dispositivo--bloqueado {
+    color: var(--tc-brick-link);
+}
+
+    .estado-dispositivo--bloqueado .estado-dispositivo-dot {
+        background: var(--tc-brick-link);
+    }
+
+.estado-dispositivo--quitado {
+    color: var(--tc-ink-muted);
+    font-style: italic;
+}
+
+    .estado-dispositivo--quitado .estado-dispositivo-dot {
+        background: var(--tc-ink-muted);
+        opacity: 0.5;
+    }
+
+.filtro-estado-btns {
+    display: flex;
+    gap: 8px;
+}
+
+.filtro-estado-btns .btn-secondary.active {
+    background: var(--tc-carbon);
+    color: var(--tc-stone);
+    border-color: var(--tc-carbon);
+}

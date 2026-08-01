@@ -50,14 +50,20 @@ namespace ProyectoJo.Application.UseCases
 			return (true, null);
 		}
 
-		public async Task<(bool Exito, string? Error)> EditarAsync(int id, string usuario, bool activo, string? nuevaContrasena, List<string> areas, string? nuevaClaveSupervisor = null)
+		public async Task<(bool Exito, string? Error)> EditarAsync(int id, string usuario, bool activo, string? nuevaContrasena, List<string> areas, string? nuevaClaveSupervisor)
 		{
 			var administrador = await _repository.ObtenerPorIdAsync(id);
 			if (administrador is null)
 				return (false, "El administrador no existe.");
 
-			if (string.IsNullOrWhiteSpace(usuario))
-				return (false, "El usuario es obligatorio.");
+			if (string.IsNullOrWhiteSpace(usuario) || string.IsNullOrWhiteSpace(nuevaContrasena) || string.IsNullOrWhiteSpace(nuevaClaveSupervisor))
+				return (false, "Usuario, contraseña y clave de supervisor son obligatorios.");
+
+			if (nuevaContrasena.Length < 8)
+				return (false, "La nueva contraseña debe tener al menos 8 caracteres.");
+
+			if (nuevaClaveSupervisor.Length < 6)
+				return (false, "La nueva clave de supervisor debe tener al menos 6 caracteres.");
 
 			var duplicado = await _repository.ObtenerPorUsuarioAsync(usuario.Trim());
 			if (duplicado is not null && duplicado.Id != id)
@@ -66,20 +72,8 @@ namespace ProyectoJo.Application.UseCases
 			administrador.Usuario = usuario.Trim();
 			administrador.Activo = activo;
 			administrador.Areas = NormalizarAreas(areas);
-
-			if (!string.IsNullOrWhiteSpace(nuevaContrasena))
-			{
-				if (nuevaContrasena.Length < 8)
-					return (false, "La nueva contraseña debe tener al menos 8 caracteres.");
-				administrador.ContrasenaHash = HashearContrasena(nuevaContrasena);
-			}
-
-			if (!string.IsNullOrWhiteSpace(nuevaClaveSupervisor))
-			{
-				if (nuevaClaveSupervisor.Length < 6)
-					return (false, "La nueva clave de supervisor debe tener al menos 6 caracteres.");
-				administrador.ClaveSupervisorHash = HashearContrasena(nuevaClaveSupervisor);
-			}
+			administrador.ContrasenaHash = HashearContrasena(nuevaContrasena);
+			administrador.ClaveSupervisorHash = HashearContrasena(nuevaClaveSupervisor);
 
 			var actualizado = await _repository.ActualizarAsync(administrador);
 			return actualizado ? (true, null) : (false, "No se pudo actualizar el administrador.");
@@ -97,6 +91,7 @@ namespace ProyectoJo.Application.UseCases
 		private static List<string> NormalizarAreas(List<string>? areas)
 		{
 			if (areas is null || areas.Count == 0) return new List<string>();
+			if (areas.Contains("General")) return new List<string> { "General" };
 			return areas.Where(a => AreasAdmin.Todas.Contains(a)).Distinct().ToList();
 		}
 	}

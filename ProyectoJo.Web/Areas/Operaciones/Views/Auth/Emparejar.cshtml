@@ -3,6 +3,8 @@
     ViewData["Title"] = "Configurar dispositivo";
     ViewData["VolverTexto"] = "Volver";
     ViewData["VolverUrl"] = Url.Action("SalirSupervisor", "Auth", new { area = "Operaciones" });
+
+    var estacionActual = ViewBag.EstacionActual?.ToString();
 }
 
 <div class="d-flex justify-content-center align-items-center" style="min-height: 90vh;">
@@ -14,13 +16,13 @@
             <form method="post" asp-area="Operaciones" asp-controller="Auth" asp-action="Emparejar">
                 <div class="mb-3">
                     <div class="estacion-grid">
-                        <input type="radio" class="btn-check" name="estacion" id="rolRecepcion" value="Recepcion" autocomplete="off" checked>
+                        <input type="radio" class="btn-check" name="estacion" id="rolRecepcion" value="Recepcion" autocomplete="off" checked="@(estacionActual != "Cocina")">
                         <label class="estacion-tile" for="rolRecepcion">
                             <span class="estacion-tile__icono"><i class="bi bi-receipt"></i></span>
                             <span class="estacion-tile__nombre">Recepción</span>
                         </label>
 
-                        <input type="radio" class="btn-check" name="estacion" id="rolCocina" value="Cocina" autocomplete="off">
+                        <input type="radio" class="btn-check" name="estacion" id="rolCocina" value="Cocina" autocomplete="off" checked="@(estacionActual == "Cocina")">
                         <label class="estacion-tile" for="rolCocina">
                             <span class="estacion-tile__icono"><i class="bi bi-egg-fried"></i></span>
                             <span class="estacion-tile__nombre">Cocina</span>

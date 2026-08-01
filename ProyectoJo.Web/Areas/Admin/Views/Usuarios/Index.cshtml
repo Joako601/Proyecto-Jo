@@ -11,6 +11,10 @@
     <link rel="stylesheet" href="~/css/admin/usuarios/usuarios.css" asp-append-version="true" />
 }
 
+@section Scripts {
+    <script src="~/js/usuarios-form.js" asp-append-version="true"></script>
+}
+
 <div class="admin-page">
 
     <div class="page-header">
@@ -34,7 +38,7 @@
         }
 
         <details class="usuarios-panel">
-            <summary class="btn-primary">+ Nuevo administrador</summary>
+            <summary class="btn-primary">Nuevo administrador</summary>
             <form method="post" asp-area="Admin" asp-controller="Usuarios" asp-action="CrearAdministrador" class="usuarios-form">
                 <div class="usuarios-form__campo">
                     <label>Usuario</label>
@@ -83,40 +87,9 @@
                             <td data-label="Activo">
                                 <span class="tag--@(a.Activo ? "activo" : "inactivo")">@(a.Activo ? "Activo" : "Inactivo")</span>
                             </td>
-                            <td data-label="Acceso">@(a.Areas.Any() ? string.Join(", ", a.Areas) : "General")</td>
+                            <td data-label="Acceso">@(a.Areas.Contains("General") ? "General" : (a.Areas.Any() ? string.Join(", ", a.Areas) : "N/A"))</td>
                             <td class="acciones">
-                                <details class="usuarios-editar">
-                                    <summary class="link-edit">Editar</summary>
-                                    <form method="post" asp-area="Admin" asp-controller="Usuarios" asp-action="EditarAdministrador" class="usuarios-form">
-                                        <input type="hidden" name="id" value="@a.Id" />
-                                        <div class="usuarios-form__campo">
-                                            <label>Usuario</label>
-                                            <input type="text" name="usuario" value="@a.Usuario" required />
-                                        </div>
-                                        <label class="usuarios-form__check">
-                                            <input type="checkbox" name="activo" value="true" checked="@a.Activo" /> Activo
-                                        </label>
-                                        <div class="usuarios-form__campo">
-                                            <label>Nueva contraseña (opcional)</label>
-                                            <input type="password" name="nuevaContrasena" minlength="8" autocomplete="new-password" />
-                                        </div>
-                                        <div class="usuarios-form__campo">
-                                            <label>Nueva clave de supervisor (opcional)</label>
-                                            <input type="password" name="nuevaClaveSupervisor" minlength="6" autocomplete="new-password" />
-                                        </div>
-                                        <label class="usuarios-form__check">
-                                            <input type="checkbox" name="general" value="true" checked="@(!a.Areas.Any())" /> Acceso general
-                                        </label>
-                                        <fieldset class="usuarios-form__areas">
-                                            <legend>O áreas puntuales</legend>
-                                            @foreach (var area in todasLasAreas)
-                                            {
-                                                <label><input type="checkbox" name="areas" value="@area" checked="@a.Areas.Contains(area)" /> @area</label>
-                                            }
-                                        </fieldset>
-                                        <button type="submit" class="btn-primary">Guardar</button>
-                                    </form>
-                                </details>
+                                <button type="button" class="link-edit" data-bs-toggle="modal" data-bs-target="#editarAdmin-@a.Id">Editar</button>
                                 <form method="post" asp-area="Admin" asp-controller="Usuarios" asp-action="EliminarAdministrador"
                                       data-confirm-delete="¿Eliminar a @a.Usuario?">
                                     <input type="hidden" name="id" value="@a.Id" />
@@ -132,6 +105,56 @@
         @if (!Model.Administradores.Any())
         {
             <p class="empty-state">Todavía no hay administradores creados.</p>
+        }
+
+        @foreach (var a in Model.Administradores)
+        {
+            <div class="modal fade usuarios-modal" id="editarAdmin-@a.Id" tabindex="-1" aria-labelledby="editarAdmin-@(a.Id)-label" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <form method="post" asp-area="Admin" asp-controller="Usuarios" asp-action="EditarAdministrador" class="usuarios-form usuarios-form--modal">
+                            <input type="hidden" name="id" value="@a.Id" />
+                            <div class="modal-header">
+                                <h2 class="usuarios-modal__title" id="editarAdmin-@(a.Id)-label">Editar administrador</h2>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="usuarios-form__grid">
+                                    <div class="usuarios-form__campo">
+                                        <label>Usuario</label>
+                                        <input type="text" name="usuario" value="@a.Usuario" required />
+                                    </div>
+                                    <div class="usuarios-form__campo">
+                                        <label>Nueva contraseña</label>
+                                        <input type="password" name="nuevaContrasena" required minlength="8" autocomplete="new-password" />
+                                    </div>
+                                    <div class="usuarios-form__campo">
+                                        <label>Nueva clave de supervisor</label>
+                                        <input type="password" name="nuevaClaveSupervisor" required minlength="6" autocomplete="new-password" />
+                                    </div>
+                                </div>
+                                <label class="usuarios-form__check">
+                                    <input type="checkbox" name="activo" value="true" checked="@a.Activo" /> Activo
+                                </label>
+                                <label class="usuarios-form__check">
+                                    <input type="checkbox" name="general" value="true" checked="@a.Areas.Contains("General")" /> Acceso general
+                                </label>
+                                <fieldset class="usuarios-form__areas">
+                                    <legend>O áreas puntuales</legend>
+                                    @foreach (var area in todasLasAreas)
+                                    {
+                                        <label><input type="checkbox" name="areas" value="@area" checked="@a.Areas.Contains(area)" /> @area</label>
+                                    }
+                                </fieldset>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn-primary">Guardar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         }
 
         <hr class="tc-section-divider" />
@@ -151,7 +174,7 @@
         }
 
         <details class="usuarios-panel">
-            <summary class="btn-primary">+ Nuevo operador</summary>
+            <summary class="btn-primary">Nuevo operador</summary>
             <form method="post" asp-area="Admin" asp-controller="Usuarios" asp-action="CrearOperador" class="usuarios-form">
                 <div class="usuarios-form__campo">
                     <label>Nombre</label>
@@ -192,31 +215,7 @@
                                 <span class="tag--@(e.Activo ? "activo" : "inactivo")">@(e.Activo ? "Activo" : "Inactivo")</span>
                             </td>
                             <td class="acciones">
-                                <details class="usuarios-editar">
-                                    <summary class="link-edit">Editar</summary>
-                                    <form method="post" asp-area="Admin" asp-controller="Usuarios" asp-action="EditarOperador" class="usuarios-form">
-                                        <input type="hidden" name="id" value="@e.Id" />
-                                        <div class="usuarios-form__campo">
-                                            <label>Nombre</label>
-                                            <input type="text" name="nombre" value="@e.Nombre" required />
-                                        </div>
-                                        <div class="usuarios-form__campo">
-                                            <label>Rol</label>
-                                            <select name="rol" class="form-control-sm" required>
-                                                <option value="Cocina" selected="@(e.Rol == ProyectoJo.Domain.Entities.RolEmpleado.Cocina)">Cocina</option>
-                                                <option value="Recepcion" selected="@(e.Rol == ProyectoJo.Domain.Entities.RolEmpleado.Recepcion)">Recepción</option>
-                                            </select>
-                                        </div>
-                                        <label class="usuarios-form__check">
-                                            <input type="checkbox" name="activo" value="true" checked="@e.Activo" /> Activo
-                                        </label>
-                                        <div class="usuarios-form__campo">
-                                            <label>Nueva clave (opcional)</label>
-                                            <input type="password" name="nuevaClave" minlength="6" autocomplete="off" />
-                                        </div>
-                                        <button type="submit" class="btn-primary">Guardar</button>
-                                    </form>
-                                </details>
+                                <button type="button" class="link-edit" data-bs-toggle="modal" data-bs-target="#editarOperador-@e.Id">Editar</button>
                                 <form method="post" asp-area="Admin" asp-controller="Usuarios" asp-action="EliminarOperador"
                                       data-confirm-delete="¿Eliminar a @e.Nombre?">
                                     <input type="hidden" name="id" value="@e.Id" />
@@ -232,6 +231,49 @@
         @if (!Model.Operadores.Any())
         {
             <p class="empty-state">Todavía no hay operadores creados.</p>
+        }
+
+        @foreach (var e in Model.Operadores)
+        {
+            <div class="modal fade usuarios-modal" id="editarOperador-@e.Id" tabindex="-1" aria-labelledby="editarOperador-@(e.Id)-label" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <form method="post" asp-area="Admin" asp-controller="Usuarios" asp-action="EditarOperador" class="usuarios-form usuarios-form--modal">
+                            <input type="hidden" name="id" value="@e.Id" />
+                            <div class="modal-header">
+                                <h2 class="usuarios-modal__title" id="editarOperador-@(e.Id)-label">Editar operador</h2>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="usuarios-form__grid">
+                                    <div class="usuarios-form__campo">
+                                        <label>Nombre</label>
+                                        <input type="text" name="nombre" value="@e.Nombre" required />
+                                    </div>
+                                    <div class="usuarios-form__campo">
+                                        <label>Rol</label>
+                                        <select name="rol" class="form-control-sm" required>
+                                            <option value="Cocina" selected="@(e.Rol == ProyectoJo.Domain.Entities.RolEmpleado.Cocina)">Cocina</option>
+                                            <option value="Recepcion" selected="@(e.Rol == ProyectoJo.Domain.Entities.RolEmpleado.Recepcion)">Recepción</option>
+                                        </select>
+                                    </div>
+                                    <div class="usuarios-form__campo">
+                                        <label>Nueva clave</label>
+                                        <input type="password" name="nuevaClave" required minlength="6" autocomplete="off" />
+                                    </div>
+                                </div>
+                                <label class="usuarios-form__check">
+                                    <input type="checkbox" name="activo" value="true" checked="@e.Activo" /> Activo
+                                </label>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn-primary">Guardar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         }
     }
 

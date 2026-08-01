@@ -1,11 +1,34 @@
-﻿@model List<ProyectoJo.Domain.Entities.DispositivoOperaciones>
+@model List<ProyectoJo.Web.Areas.Admin.Models.DispositivoListItem>
 @{
     ViewData["Title"] = "Dispositivos";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+
+    var filtroEstado = Context.Request.Query["estado"].ToString();
+
+    var filtrado = Model
+        .Where(item => filtroEstado != "conectado" || item.Conectado)
+        .Where(item => filtroEstado != "desconectado" || !item.Conectado)
+        .ToList();
+
+    const int PorPagina = 12;
+    var totalPaginas = (int)Math.Ceiling(filtrado.Count / (double)PorPagina);
+    var paginaActual = int.TryParse(Context.Request.Query["pagina"], out var p) ? p : 1;
+    if (paginaActual < 1) paginaActual = 1;
+    if (totalPaginas > 0 && paginaActual > totalPaginas) paginaActual = totalPaginas;
+
+    var paginado = filtrado
+        .Skip((paginaActual - 1) * PorPagina)
+        .Take(PorPagina)
+        .ToList();
+
+    var desdeItem = filtrado.Any() ? ((paginaActual - 1) * PorPagina) + 1 : 0;
+    var hastaItem = ((paginaActual - 1) * PorPagina) + paginado.Count;
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/admin/finanzas/finanzas-shared.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/dispositivos/dispositivos.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/paginador/paginador.css" asp-append-version="true" />
 }
 
 <div class="admin-page">
@@ -18,40 +41,108 @@
     </div>
 
     <div class="filtro-bar filtro-bar--solo">
-        <a class="btn-primary" asp-area="Operaciones" asp-controller="Auth" asp-action="Emparejar" target="_blank">
-            + Emparejar nuevo
-        </a>
+        <div class="filtro-estado-btns">
+            <a class="btn-secondary @(filtroEstado == "conectado" ? "active" : "")"
+               asp-area="Admin" asp-controller="Dispositivos" asp-action="Index"
+               asp-route-estado="@(filtroEstado == "conectado" ? null : "conectado")">
+                Conectados
+            </a>
+            <a class="btn-secondary @(filtroEstado == "desconectado" ? "active" : "")"
+               asp-area="Admin" asp-controller="Dispositivos" asp-action="Index"
+               asp-route-estado="@(filtroEstado == "desconectado" ? null : "desconectado")">
+                Desconectados
+            </a>
+        </div>
     </div>
 
-    <div class="table-responsive">
-        <table class="admin-table">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Estación</th>
-                    <th>Registrado el</th>
-                    <th>Token</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var d in Model)
-                {
-                    <tr>
-                        <td data-label="Nombre">@(string.IsNullOrWhiteSpace(d.Nombre) ? "(sin nombre)" : d.Nombre)</td>
-                        <td data-label="Estación">
-                            <span class="tag--@d.Estacion.ToString().ToLower()">@d.Estacion</span>
-                        </td>
-                        <td data-label="Registrado el">@d.FechaRegistro.ToString("dd/MM/yyyy HH:mm")</td>
-                        <td data-label="Token">••••@(d.Token.Length >= 6 ? d.Token[^6..] : d.Token)</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-
-    @if (!Model.Any())
+    @if (!filtrado.Any())
     {
-        <p class="empty-state">Todavía no se emparejó ningún dispositivo.</p>
+        <p class="empty-state">
+            @(Model.Any() ? "Ningún dispositivo coincide con ese filtro." : "Todavía no se emparejó ningún dispositivo.")
+        </p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Estación</th>
+                        <th>Estado</th>
+                        <th>Registrado el</th>
+                        <th>Token</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in paginado)
+                    {
+                        var d = item.Dispositivo;
+                        var nombreMostrado = string.IsNullOrWhiteSpace(d.Nombre) ? "(sin nombre)" : d.Nombre;
+                        var mensajeBloqueo = d.Bloqueado
+                            ? $"¿Desbloquear \"{nombreMostrado}\"?"
+                            : $"¿Bloquear \"{nombreMostrado}\"? Si tiene una sesión activa, se cerrará al instante.";
+                        var mensajeQuitar = d.Activo
+                            ? $"¿Quitar \"{nombreMostrado}\" del sistema? Si tiene una sesión activa, se cerrará al instante."
+                            : $"¿Reactivar \"{nombreMostrado}\"?";
+
+                        <tr>
+                            <td data-label="Nombre">@nombreMostrado</td>
+                            <td data-label="Estación">
+                                <span class="tag--@d.Estacion.ToString().ToLower()">@d.Estacion</span>
+                            </td>
+                            <td data-label="Estado">
+                                @if (!d.Activo)
+                                {
+                                    <span class="estado-dispositivo estado-dispositivo--quitado">
+                                        <span class="estado-dispositivo-dot"></span> Quitado
+                                    </span>
+                                }
+                                else if (d.Bloqueado)
+                                {
+                                    <span class="estado-dispositivo estado-dispositivo--bloqueado">
+                                        <span class="estado-dispositivo-dot"></span> Bloqueado
+                                    </span>
+                                }
+                                else if (item.Conectado)
+                                {
+                                    <span class="estado-dispositivo estado-dispositivo--conectado">
+                                        <span class="estado-dispositivo-dot"></span> En línea
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="estado-dispositivo estado-dispositivo--desconectado">
+                                        <span class="estado-dispositivo-dot"></span> Desconectado
+                                    </span>
+                                }
+                            </td>
+                            <td data-label="Registrado el">@d.FechaRegistro.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td data-label="Token">••••@(d.Token.Length >= 6 ? d.Token[^6..] : d.Token)</td>
+                            <td data-label="Acciones">
+                                <div class="acciones">
+                                    <form asp-area="Admin" asp-controller="Dispositivos" asp-action="ToggleBloqueado"
+                                          asp-route-id="@d.Id" method="post" class="d-inline"
+                                          data-confirm-delete="@mensajeBloqueo">
+                                        <button type="submit" class="link-edit">@(d.Bloqueado ? "Desbloquear" : "Bloquear")</button>
+                                    </form>
+                                    <form asp-area="Admin" asp-controller="Dispositivos" asp-action="ToggleActivo"
+                                          asp-route-id="@d.Id" method="post" class="d-inline"
+                                          data-confirm-delete="@mensajeQuitar">
+                                        <button type="submit" class="link-delete">@(d.Activo ? "Quitar" : "Reactivar")</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <p class="paginador-resumen">
+            Mostrando @desdeItem–@hastaItem de @filtrado.Count dispositivos
+        </p>
+        @await Html.PartialAsync("_Paginador", (paginaActual, totalPaginas))
     }
 
 </div>

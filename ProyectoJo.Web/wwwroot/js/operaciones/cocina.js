@@ -126,6 +126,10 @@
         cargarPedidos();
     });
 
+    connection.on('Desconectar', function () {
+        window.location.href = '/Operaciones/Auth/Salir';
+    });
+
     connection.onreconnecting(function () {
         setEstadoConexion('reconectando');
     });

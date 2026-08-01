@@ -35,6 +35,12 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 			if (dispositivo is null)
 				return RedirectToAction("Emparejar");
 
+			if (dispositivo.Bloqueado || !dispositivo.Activo)
+			{
+				ViewBag.DispositivoInhabilitado = true;
+				return View();
+			}
+
 			ViewBag.Bloqueado = bloqueado;
 			if (bloqueado)
 				ViewBag.Error = "Demasiados intentos. Espera un momento antes de volver a intentar.";
@@ -56,6 +62,12 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 			if (dispositivo is null)
 				return RedirectToAction("Emparejar");
 
+			if (dispositivo.Bloqueado || !dispositivo.Activo)
+			{
+				ViewBag.DispositivoInhabilitado = true;
+				return View();
+			}
+
 			var empleado = await _empleadoAuthService.ValidarCredencialesAsync(nombre, clave, dispositivo.Estacion);
 			if (empleado is null)
 			{
@@ -65,11 +77,14 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 				return View();
 			}
 
+			dispositivo = await _dispositivoService.ReasignarEstacionAsync(dispositivo.Token, dispositivo.Estacion, empleado.Nombre) ?? dispositivo;
+
 			var claims = new List<Claim>
 			{
 				new Claim(ClaimTypes.Name, empleado.Nombre),
 				new Claim(ClaimTypes.Role, empleado.Rol.ToString()),
-				new Claim("Dispositivo", dispositivo.Nombre ?? string.Empty)
+				new Claim("Dispositivo", dispositivo.Nombre ?? string.Empty),
+				new Claim("DispositivoToken", dispositivo.Token)
 			};
 
 			var identity = new ClaimsIdentity(claims, "OperacionesCookieAuth");
@@ -123,19 +138,26 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 
 		// GET /Operaciones/Auth/Emparejar
 		[Authorize(AuthenticationSchemes = "SupervisorAuth")]
-		public IActionResult Emparejar() => View();
+		public async Task<IActionResult> Emparejar()
+		{
+			var tokenActual = Request.Cookies["Jo.DispositivoToken"];
+			var dispositivoActual = tokenActual is null ? null : await _dispositivoService.ReconocerAsync(tokenActual);
+
+			ViewBag.EstacionActual = dispositivoActual?.Estacion;
+			return View();
+		}
 
 		// POST /Operaciones/Auth/Emparejar
 		[HttpPost]
 		[Authorize(AuthenticationSchemes = "SupervisorAuth")]
-		public async Task<IActionResult> Emparejar(RolEmpleado estacion, string? nombre = null)
+		public async Task<IActionResult> Emparejar(RolEmpleado estacion)
 		{
 			var tokenActual = Request.Cookies["Jo.DispositivoToken"];
-			var dispositivo = tokenActual is null ? null : await _dispositivoService.ReasignarEstacionAsync(tokenActual, estacion);
+			var dispositivo = tokenActual is null ? null : await _dispositivoService.ReasignarEstacionAsync(tokenActual, estacion, null);
 
 			if (dispositivo is null)
 			{
-				dispositivo = await _dispositivoService.EmparejarAsync(estacion, nombre ?? string.Empty);
+				dispositivo = await _dispositivoService.EmparejarAsync(estacion, string.Empty);
 
 				Response.Cookies.Append("Jo.DispositivoToken", dispositivo.Token, new CookieOptions
 				{

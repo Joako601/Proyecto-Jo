@@ -23,17 +23,40 @@ namespace ProyectoJo.Infrastructure.Persistence.EfCore.Repositories
 			return dispositivo;
 		}
 
-		public async Task<DispositivoOperaciones?> ActualizarEstacionAsync(string token, RolEmpleado estacion)
+		public async Task<DispositivoOperaciones?> ActualizarEstacionAsync(string token, RolEmpleado estacion, string? nombre)
 		{
 			var dispositivo = await _context.Dispositivos.FirstOrDefaultAsync(d => d.Token == token);
 			if (dispositivo is null) return null;
 
 			dispositivo.Estacion = estacion;
+			if (!string.IsNullOrWhiteSpace(nombre))
+				dispositivo.Nombre = nombre;
+
 			await _context.SaveChangesAsync();
 			return dispositivo;
 		}
 
 		public async Task<List<DispositivoOperaciones>> ObtenerTodosAsync() =>
 			await _context.Dispositivos.AsNoTracking().ToListAsync();
+
+		public async Task<DispositivoOperaciones?> ToggleBloqueadoAsync(int id)
+		{
+			var dispositivo = await _context.Dispositivos.FirstOrDefaultAsync(d => d.Id == id);
+			if (dispositivo is null) return null;
+
+			dispositivo.Bloqueado = !dispositivo.Bloqueado;
+			await _context.SaveChangesAsync();
+			return dispositivo;
+		}
+
+		public async Task<DispositivoOperaciones?> ToggleActivoAsync(int id)
+		{
+			var dispositivo = await _context.Dispositivos.FirstOrDefaultAsync(d => d.Id == id);
+			if (dispositivo is null) return null;
+
+			dispositivo.Activo = !dispositivo.Activo;
+			await _context.SaveChangesAsync();
+			return dispositivo;
+		}
 	}
 }

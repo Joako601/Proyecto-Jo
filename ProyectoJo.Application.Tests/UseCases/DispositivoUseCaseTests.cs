@@ -37,19 +37,41 @@ namespace ProyectoJo.Application.Tests.UseCases
 		[Fact]
 		public async Task ReasignarEstacionAsync_ConTokenVacio_DevuelveNullSinConsultarRepositorio()
 		{
-			var resultado = await _useCase.ReasignarEstacionAsync("", RolEmpleado.Recepcion);
+			var resultado = await _useCase.ReasignarEstacionAsync("", RolEmpleado.Recepcion, null);
 
 			Assert.Null(resultado);
-			_repository.Verify(r => r.ActualizarEstacionAsync(It.IsAny<string>(), It.IsAny<RolEmpleado>()), Times.Never);
+			_repository.Verify(r => r.ActualizarEstacionAsync(It.IsAny<string>(), It.IsAny<RolEmpleado>(), It.IsAny<string?>()), Times.Never);
 		}
 
 		[Fact]
 		public async Task ReasignarEstacionAsync_ConTokenValido_DelegaAlRepositorio()
 		{
 			var dispositivo = new DispositivoOperaciones { Id = 1, Token = "abc", Estacion = RolEmpleado.Recepcion };
-			_repository.Setup(r => r.ActualizarEstacionAsync("abc", RolEmpleado.Recepcion)).ReturnsAsync(dispositivo);
+			_repository.Setup(r => r.ActualizarEstacionAsync("abc", RolEmpleado.Recepcion, "Caja 1")).ReturnsAsync(dispositivo);
 
-			var resultado = await _useCase.ReasignarEstacionAsync("abc", RolEmpleado.Recepcion);
+			var resultado = await _useCase.ReasignarEstacionAsync("abc", RolEmpleado.Recepcion, "Caja 1");
+
+			Assert.Same(dispositivo, resultado);
+		}
+
+		[Fact]
+		public async Task ToggleBloqueadoAsync_DelegaAlRepositorio()
+		{
+			var dispositivo = new DispositivoOperaciones { Id = 1, Token = "abc", Bloqueado = true };
+			_repository.Setup(r => r.ToggleBloqueadoAsync(1)).ReturnsAsync(dispositivo);
+
+			var resultado = await _useCase.ToggleBloqueadoAsync(1);
+
+			Assert.Same(dispositivo, resultado);
+		}
+
+		[Fact]
+		public async Task ToggleActivoAsync_DelegaAlRepositorio()
+		{
+			var dispositivo = new DispositivoOperaciones { Id = 1, Token = "abc", Activo = false };
+			_repository.Setup(r => r.ToggleActivoAsync(1)).ReturnsAsync(dispositivo);
+
+			var resultado = await _useCase.ToggleActivoAsync(1);
 
 			Assert.Same(dispositivo, resultado);
 		}

@@ -84,5 +84,18 @@ namespace ProyectoJo.Application.Tests.UseCases
 			Assert.Contains("al menos", error);
 			_repository.Verify(r => r.ActualizarAsync(It.IsAny<Empleado>()), Times.Never);
 		}
+
+		[Fact]
+		public async Task EditarAsync_SinNuevaClave_DevuelveErrorSinActualizar()
+		{
+			var empleado = new Empleado { Id = 1, Nombre = "Juan", Rol = RolEmpleado.Cocina };
+			_repository.Setup(r => r.ObtenerPorIdAsync(1)).ReturnsAsync(empleado);
+
+			var (exito, error) = await _useCase.EditarAsync(1, "Juan", true, RolEmpleado.Cocina, null);
+
+			Assert.False(exito);
+			Assert.Equal("El nombre y la clave son obligatorios.", error);
+			_repository.Verify(r => r.ActualizarAsync(It.IsAny<Empleado>()), Times.Never);
+		}
 	}
 }

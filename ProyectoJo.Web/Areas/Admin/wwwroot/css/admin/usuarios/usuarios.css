@@ -23,6 +23,7 @@
         list-style: none;
         cursor: pointer;
         width: fit-content;
+        margin-left: 0;
     }
 
         .usuarios-panel > summary::-webkit-details-marker {
@@ -83,9 +84,9 @@
 }
 
 .usuarios-form__areas {
-    border: 0.5px solid var(--tc-border-soft);
-    border-radius: 4px;
-    padding: 12px 14px;
+    border: 0;
+    margin: 0;
+    padding: 0;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
@@ -93,7 +94,7 @@
 
     .usuarios-form__areas legend {
         margin-bottom: 8px;
-        padding: 0 4px;
+        padding: 0;
     }
 
     .usuarios-form__areas label {
@@ -106,22 +107,73 @@
         color: var(--tc-ink);
     }
 
-.usuarios-editar {
-    display: inline-block;
+.usuarios-form__areas--disabled {
+    opacity: 0.45;
+}
+
+    .usuarios-form__areas--disabled label {
+        cursor: not-allowed;
+    }
+
+.admin-table .link-edit {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: var(--tc-font-body);
     margin-right: 12px;
 }
 
-    .usuarios-editar > summary {
-        list-style: none;
-        cursor: pointer;
-    }
+.usuarios-form__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+}
 
-        .usuarios-editar > summary::-webkit-details-marker {
-            display: none;
-        }
+.usuarios-modal .modal-content {
+    border: none;
+    border-radius: 8px;
+}
+
+.usuarios-modal .modal-header {
+    border-bottom: 0.5px solid var(--tc-border-soft);
+    padding: 18px 22px;
+}
+
+.usuarios-modal .modal-body {
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.usuarios-modal .modal-footer {
+    border-top: 0.5px solid var(--tc-border-soft);
+    padding: 16px 22px;
+}
+
+.usuarios-modal__title {
+    font-family: var(--tc-font-display);
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--tc-ink);
+    margin: 0;
+}
+
+.usuarios-form--modal {
+    background: none;
+    border: none;
+    padding: 0;
+    max-width: none;
+    gap: 0;
+}
 
 @media (max-width: 767.98px) {
     .usuarios-form__areas {
+        grid-template-columns: 1fr;
+    }
+
+    .usuarios-form__grid {
         grid-template-columns: 1fr;
     }
 }

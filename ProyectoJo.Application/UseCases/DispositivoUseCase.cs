@@ -27,10 +27,10 @@ namespace ProyectoJo.Application.UseCases
 			return await _repository.RegistrarAsync(dispositivo);
 		}
 
-		public async Task<DispositivoOperaciones?> ReasignarEstacionAsync(string token, RolEmpleado estacion)
+		public async Task<DispositivoOperaciones?> ReasignarEstacionAsync(string token, RolEmpleado estacion, string? nombre)
 		{
 			if (string.IsNullOrWhiteSpace(token)) return null;
-			return await _repository.ActualizarEstacionAsync(token, estacion);
+			return await _repository.ActualizarEstacionAsync(token, estacion, nombre);
 		}
 
 		public async Task<DispositivoOperaciones?> ReconocerAsync(string token)
@@ -42,6 +42,16 @@ namespace ProyectoJo.Application.UseCases
 		public async Task<List<DispositivoOperaciones>> ObtenerTodosAsync()
 		{
 			return await _repository.ObtenerTodosAsync();
+		}
+
+		public async Task<DispositivoOperaciones?> ToggleBloqueadoAsync(int id)
+		{
+			return await _repository.ToggleBloqueadoAsync(id);
+		}
+
+		public async Task<DispositivoOperaciones?> ToggleActivoAsync(int id)
+		{
+			return await _repository.ToggleActivoAsync(id);
 		}
 
 		private static string GenerarToken()

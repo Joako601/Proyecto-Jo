@@ -85,6 +85,7 @@ builder.Services.AddScoped<IEmpleadoService, EmpleadoUseCase>();
 
 
 builder.Services.AddSignalR();
+builder.Services.AddSingleton<DispositivoPresenceTracker>();
 
 
 builder.Services.AddRateLimiter(options =>

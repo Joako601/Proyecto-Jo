@@ -44,8 +44,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 
 			if (resultado.Rol == "Administrador")
 			{
-				var areas = resultado.Areas.Any() ? resultado.Areas : new List<string> { "General" };
-				claims.AddRange(areas.Select(a => new Claim("Area", a)));
+				claims.AddRange(resultado.Areas.Select(a => new Claim("Area", a)));
 			}
 
 			var identity = new ClaimsIdentity(claims, "JoCookieAuth");

@@ -28,7 +28,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 			{
 				TotalPlatillos = _productoService.ObtenerMenu().Count,
 				VentasHoy = resumenHoy.TotalIngresos,
-				PendientesHoy = 0,
+				BalanceHoy = resumenHoy.SaldoNeto,
 				TotalOpiniones = _opinionService.ContarTotal()
 			};
 

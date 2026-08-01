@@ -248,7 +248,7 @@ body {
         padding: 5px;
     }
 
-    .tc-user-chip__name {
+    .tc-user-chip__info {
         display: none;
     }
 }
@@ -455,10 +455,22 @@ body {
     justify-content: center;
 }
 
+.tc-user-chip__info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+}
+
 .tc-user-chip__name {
     font-size: 13px;
     font-weight: 600;
     color: var(--tc-ink);
+}
+
+.tc-user-chip__rol {
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--tc-ink-muted);
 }
 
 /* ============================================
@@ -489,6 +501,10 @@ body {
 
     .tc-ticket .tc-value--mustard {
         color: var(--tc-mustard);
+    }
+
+    .tc-ticket .tc-value--brick {
+        color: var(--tc-brick);
     }
 
 /* ============================================

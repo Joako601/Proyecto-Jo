@@ -9,10 +9,17 @@
         <h2>Panel administrativo</h2>
         <span class="tc-date">@DateTime.Today.ToString("dd/MM/yyyy")</span>
     </div>
+    @{
+        var nombreUsuario = User.Identity?.Name ?? "Admin";
+        var rolUsuario = User.IsInRole("SuperAdmin") ? "Super Administrador" : "Administrador";
+    }
     <div class="tc-topbar__right">
         <div class="tc-user-chip">
-            <div class="tc-user-chip__avatar">J</div>
-            <span class="tc-user-chip__name">Joaquín</span>
+            <div class="tc-user-chip__avatar">@nombreUsuario.Substring(0, 1).ToUpper()</div>
+            <div class="tc-user-chip__info">
+                <span class="tc-user-chip__name">@nombreUsuario</span>
+                <span class="tc-user-chip__rol">@rolUsuario</span>
+            </div>
         </div>
     </div>
 </div>
@@ -32,8 +39,8 @@
     </div>
     <div class="col-6 col-lg-3">
         <div class="tc-ticket">
-            <div class="tc-label">Pendientes</div>
-            <div class="tc-value tc-value--mustard">@Model.PendientesHoy</div>
+            <div class="tc-label">Balance del día</div>
+            <div class="tc-value @(Model.BalanceHoy < 0 ? "tc-value--brick" : "tc-value--teal")">$@Model.BalanceHoy.ToString("N0")</div>
         </div>
     </div>
     <div class="col-6 col-lg-3">

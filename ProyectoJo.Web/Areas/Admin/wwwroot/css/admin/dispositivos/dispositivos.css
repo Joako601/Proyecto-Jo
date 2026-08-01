@@ -58,3 +58,49 @@
     color: var(--tc-stone);
     border-color: var(--tc-carbon);
 }
+
+.acciones {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.btn-dispositivo-accion {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 4px;
+    border: 0.5px solid transparent;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: var(--tc-font-body);
+    line-height: 1.4;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: filter 0.15s ease;
+}
+
+    .btn-dispositivo-accion:hover {
+        filter: brightness(0.96);
+    }
+
+.btn-dispositivo-accion--bloquear {
+    background: #FAEEDA;
+    border-color: #FAC775;
+    color: var(--tc-mustard-ink);
+}
+
+.btn-dispositivo-accion--desbloquear,
+.btn-dispositivo-accion--reactivar {
+    background: var(--tc-teal-ink);
+    border-color: #9FE1CB;
+    color: var(--tc-teal);
+}
+
+.btn-dispositivo-accion--quitar {
+    background: rgba(178, 58, 46, 0.1);
+    border-color: rgba(178, 58, 46, 0.3);
+    color: var(--tc-brick-link);
+}

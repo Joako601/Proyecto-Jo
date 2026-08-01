@@ -125,12 +125,16 @@
                                     <form asp-area="Admin" asp-controller="Dispositivos" asp-action="ToggleBloqueado"
                                           asp-route-id="@d.Id" method="post" class="d-inline"
                                           data-confirm-delete="@mensajeBloqueo">
-                                        <button type="submit" class="link-edit">@(d.Bloqueado ? "Desbloquear" : "Bloquear")</button>
+                                        <button type="submit" class="btn-dispositivo-accion @(d.Bloqueado ? "btn-dispositivo-accion--desbloquear" : "btn-dispositivo-accion--bloquear")">
+                                            @(d.Bloqueado ? "Desbloquear" : "Bloquear")
+                                        </button>
                                     </form>
                                     <form asp-area="Admin" asp-controller="Dispositivos" asp-action="ToggleActivo"
                                           asp-route-id="@d.Id" method="post" class="d-inline"
                                           data-confirm-delete="@mensajeQuitar">
-                                        <button type="submit" class="link-delete">@(d.Activo ? "Quitar" : "Reactivar")</button>
+                                        <button type="submit" class="btn-dispositivo-accion @(d.Activo ? "btn-dispositivo-accion--quitar" : "btn-dispositivo-accion--reactivar")">
+                                            @(d.Activo ? "Quitar" : "Reactivar")
+                                        </button>
                                     </form>
                                 </div>
                             </td>

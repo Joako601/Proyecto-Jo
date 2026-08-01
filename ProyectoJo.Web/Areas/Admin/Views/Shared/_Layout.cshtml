@@ -92,6 +92,14 @@
                     </a>
                 </li>
             }
+            @if (User.TieneAccesoArea("Recetario"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @(EsActivo("Recetario") ? "active" : "")" asp-area="Admin" asp-controller="Recetario" asp-action="Index">
+                        <i class="bi bi-journal-text"></i> Recetario Digital
+                    </a>
+                </li>
+            }
         </ul>
 
         <div class="sidebar__section-label">Finanzas</div>
@@ -129,6 +137,14 @@
 
         <div class="sidebar__section-label">Sistema</div>
         <ul class="nav flex-column">
+            @if (User.TieneAccesoArea("Opiniones"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @(EsActivo("Opiniones") ? "active" : "")" asp-area="Admin" asp-controller="Opiniones" asp-action="Index">
+                        <i class="bi bi-emoji-smile"></i> Semáforo Feedback
+                    </a>
+                </li>
+            }
             @if (User.TieneAccesoArea("Auditoria"))
             {
                 <li class="nav-item">
@@ -142,6 +158,19 @@
                 <li class="nav-item">
                     <a class="nav-link @(EsActivo("Dispositivos") ? "active" : "")" asp-area="Admin" asp-controller="Dispositivos" asp-action="Index">
                         <i class="bi bi-tablet"></i> Dispositivos
+                    </a>
+                </li>
+            }
+            @{
+                var esSuperAdminSidebar = User.IsInRole("SuperAdmin");
+                var accesoGeneralSidebar = User.HasClaim("Area", "General");
+                var accesoOperadoresSidebar = User.HasClaim("Area", "Operadores");
+            }
+            @if (esSuperAdminSidebar || accesoGeneralSidebar || accesoOperadoresSidebar)
+            {
+                <li class="nav-item">
+                    <a class="nav-link @(EsActivo("Usuarios") ? "active" : "")" asp-area="Admin" asp-controller="Usuarios" asp-action="Index">
+                        <i class="bi bi-people"></i> Usuarios y Accesos
                     </a>
                 </li>
             }

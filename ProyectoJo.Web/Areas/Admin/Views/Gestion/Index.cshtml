@@ -177,6 +177,18 @@
             </a>
         </div>
     }
+    @if (User.TieneAccesoArea("Dispositivos"))
+    {
+        <div class="col-6 col-lg-3">
+            <a asp-area="Admin" asp-controller="Dispositivos" asp-action="Index" class="tc-modulo">
+                <div class="tc-modulo__top">
+                    <div class="tc-modulo__title"><i class="bi bi-tablet tc-icon--carbon"></i><span>Dispositivos</span></div>
+                    <span class="tc-modulo__arrow">→</span>
+                </div>
+                <div class="tc-modulo__body">Emparejamiento, conexión y bloqueo.</div>
+            </a>
+        </div>
+    }
     @{
         var esSuperAdmin = User.IsInRole("SuperAdmin");
         var accesoGeneral = User.HasClaim("Area", "General");

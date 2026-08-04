@@ -12,12 +12,14 @@
     <meta name="request-verification-token" content="@tokenSet.RequestToken">
     <link rel="manifest" href="~/manifest.json">
     <title>Cocina — Proyecto Jo'</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/operaciones/cocina.css" asp-append-version="true">
 </head>
 <body>
     <div class="top-bar">
         <div class="top-bar__brand">
-            <span class="top-bar__icon">🍳</span>
             <h1 class="top-bar__title">Cocina</h1>
             @if (User.FindFirst("Dispositivo")?.Value is string nombreDisp && !string.IsNullOrWhiteSpace(nombreDisp))
             {

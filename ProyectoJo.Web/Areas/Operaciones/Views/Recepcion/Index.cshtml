@@ -20,7 +20,6 @@
 <body>
     <div class="top-bar">
         <div class="top-bar__brand">
-            <span class="top-bar__icon">🧾</span>
             <h1 class="top-bar__title">Recepción</h1>
             @if (User.FindFirst("Dispositivo")?.Value is string nombreDisp && !string.IsNullOrWhiteSpace(nombreDisp))
             {
@@ -34,13 +33,12 @@
     </div>
 
     <div id="vista-switch" class="vista-switch">
-        <button class="vista-switch__btn vista-switch__btn--activo" data-vista="pedir">🛒 Pedir</button>
-        <button class="vista-switch__btn" data-vista="pedidos">📋 Pedidos</button>
+        <button class="vista-switch__btn vista-switch__btn--activo" data-vista="pedir">Pedir</button>
+        <button class="vista-switch__btn" data-vista="pedidos">Pedidos</button>
     </div>
 
     <div class="toolbar">
         <div class="buscador-box">
-            <span class="buscador-box__icono">🔍</span>
             <input id="buscador" class="buscador" placeholder="Buscar platillo..." autocomplete="off">
         </div>
     </div>

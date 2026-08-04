@@ -97,18 +97,9 @@ body {
     max-width: 420px;
 }
 
-.buscador-box__icono {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 0.85rem;
-    opacity: 0.6;
-}
-
 .buscador {
     width: 100%;
-    padding: 10px 12px 10px 34px;
+    padding: 10px 12px;
     border: 1px solid var(--tc-border-soft);
     border-radius: 8px;
     font-size: 0.9rem;
@@ -797,14 +788,10 @@ body {
     }
 
     .chip--c1 { border-color: var(--tc-mustard); }
-    .chip--c2 { border-color: var(--tc-teal); }
-    .chip--c3 { border-color: var(--tc-brick); }
-    .chip--c4 { border-color: var(--tc-carbon); }
+    .chip--c2 { border-color: var(--tc-carbon); }
 
     .chip--c1.chip--activo { background: var(--tc-mustard); border-color: var(--tc-mustard); color: var(--tc-mustard-ink); }
-    .chip--c2.chip--activo { background: var(--tc-teal); border-color: var(--tc-teal); color: var(--tc-teal-ink); }
-    .chip--c3.chip--activo { background: var(--tc-brick); border-color: var(--tc-brick); color: #fff; }
-    .chip--c4.chip--activo { background: var(--tc-carbon); border-color: var(--tc-carbon); color: var(--tc-stone); }
+    .chip--c2.chip--activo { background: var(--tc-carbon); border-color: var(--tc-carbon); color: var(--tc-stone); }
 
     .btn-volver-categorias {
         align-items: center;

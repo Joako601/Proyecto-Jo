@@ -70,8 +70,8 @@
         if (!el) return;
         var textos = {
             conectado: '',
-            reconectando: '🔄 Reconectando…',
-            desconectado: '⚠ Sin conexión — usa el botón de refresco'
+            reconectando: 'Reconectando…',
+            desconectado: 'Sin conexión — usa el botón de refresco'
         };
         el.textContent = textos[estado] || '';
     }
@@ -117,7 +117,7 @@
             .filter(function (v, i, a) { return a.indexOf(v) === i; });
     }
 
-    var CHIP_COLORES = ['chip--c1', 'chip--c2', 'chip--c3', 'chip--c4'];
+    var CHIP_COLORES = ['chip--c1', 'chip--c2'];
 
     function renderChips() {
         var cont = document.getElementById('chips-categoria');
@@ -378,7 +378,7 @@
 
         if (itemsProblema.length > 0) {
             bloques.push(
-                '<span style="color:var(--tc-brick);font-weight:600;">❌ No disponibles (no se envían):</span><br>' +
+                '<span style="color:var(--tc-brick);font-weight:600;">No disponibles (no se envían):</span><br>' +
                 itemsProblema.map(function (p) {
                     return '&nbsp;&nbsp;• <b>' + p.nombre + '</b>: ' + p.motivo;
                 }).join('<br>')
@@ -387,7 +387,7 @@
 
         if (itemsAjustados.length > 0) {
             bloques.push(
-                '<span style="color:var(--tc-mustard);font-weight:600;">⚠️ Cantidad ajustada por stock:</span><br>' +
+                '<span style="color:var(--tc-mustard);font-weight:600;">Cantidad ajustada por stock:</span><br>' +
                 itemsAjustados.map(function (p) {
                     return '&nbsp;&nbsp;• <b>' + p.nombre + '</b>: pediste ' + p.cantidadSolicitada +
                         ', solo se puede preparar <b>' + p.cantidadFinal + '</b>';
@@ -396,7 +396,7 @@
         }
 
         bloques.push(
-            '<span style="color:var(--tc-teal);font-weight:600;">✅ Se envían a cocina:</span><br>' +
+            '<span style="color:var(--tc-teal);font-weight:600;">Se envían a cocina:</span><br>' +
             itemsDisponibles.map(function (p) {
                 return '&nbsp;&nbsp;• <b>' + p.nombre + '</b> ×' + p.cantidad;
             }).join('<br>')
@@ -475,7 +475,7 @@
         var activos = ultimosPedidos.filter(function (p) { return p.estado !== 'Pagado'; }).length;
         var btnPedidos = document.querySelector('.vista-switch__btn[data-vista="pedidos"]');
         if (btnPedidos) {
-            btnPedidos.textContent = '📋 Pedidos' + (activos > 0 ? ' (' + activos + ')' : '');
+            btnPedidos.textContent = 'Pedidos' + (activos > 0 ? ' (' + activos + ')' : '');
         }
 
         var filtrados = tabActiva === 'activos'

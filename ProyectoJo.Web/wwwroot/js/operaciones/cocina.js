@@ -39,8 +39,8 @@
         if (!el) return;
         var textos = {
             conectado: '',
-            reconectando: '🔄 Reconectando…',
-            desconectado: '⚠ Sin conexión — usa el botón de refresco'
+            reconectando: 'Reconectando…',
+            desconectado: 'Sin conexión — usa el botón de refresco'
         };
         el.textContent = textos[estado] || '';
     }
@@ -56,7 +56,7 @@
         var preparados = pedidos.filter(function (p) { return p.estado === 'Preparado'; });
 
         if (pendientes.length === 0) {
-            colPendiente.innerHTML = '<p class="mensaje-vacio">Sin pedidos pendientes 🎉</p>';
+            colPendiente.innerHTML = '<p class="mensaje-vacio">Sin pedidos pendientes</p>';
         } else {
             pendientes.forEach(function (p) { colPendiente.appendChild(crearTarjeta(p)); });
         }

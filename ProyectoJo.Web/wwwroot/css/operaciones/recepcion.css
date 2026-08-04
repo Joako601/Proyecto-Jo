@@ -422,6 +422,15 @@ body {
     display: none;
 }
 
+/* ── Switcher Pedir/Pedidos + paso categorías (ocultos en desktop) ── */
+.vista-switch {
+    display: none;
+}
+
+.btn-volver-categorias {
+    display: none;
+}
+
 /* ── Tabs ── */
 .tabs {
     display: flex;
@@ -730,6 +739,137 @@ body {
         font-size: 0.85rem;
         cursor: pointer;
         white-space: nowrap;
+    }
+
+    /* ── Switcher Pedir/Pedidos ── */
+    .vista-switch {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+
+    .vista-switch__btn {
+        flex: 1;
+        padding: 13px;
+        border: 1px solid var(--tc-border-soft);
+        border-radius: 10px;
+        background: var(--tc-card);
+        color: var(--tc-ink-muted);
+        font-weight: 700;
+        font-size: 0.92rem;
+        cursor: pointer;
+        transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+
+    .vista-switch__btn--activo {
+        background: var(--tc-carbon);
+        border-color: var(--tc-carbon);
+        color: var(--tc-stone);
+    }
+
+    body.vista-pedidos .toolbar,
+    body.vista-pedidos .chips,
+    body.vista-pedidos .layout {
+        display: none;
+    }
+
+    body:not(.vista-pedidos) #seccion-pedidos {
+        display: none;
+    }
+
+    /* ── Paso 1: categorías grandes, estilo kiosco ── */
+    .chips {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        overflow-x: visible;
+        padding: 0 0 16px;
+    }
+
+    .chip {
+        padding: 24px 12px;
+        border: 2px solid var(--tc-border-soft);
+        border-radius: 14px;
+        font-size: 1.02rem;
+        font-weight: 700;
+        text-align: center;
+        white-space: normal;
+    }
+
+    .chip--c1 { border-color: var(--tc-mustard); }
+    .chip--c2 { border-color: var(--tc-teal); }
+    .chip--c3 { border-color: var(--tc-brick); }
+    .chip--c4 { border-color: var(--tc-carbon); }
+
+    .chip--c1.chip--activo { background: var(--tc-mustard); border-color: var(--tc-mustard); color: var(--tc-mustard-ink); }
+    .chip--c2.chip--activo { background: var(--tc-teal); border-color: var(--tc-teal); color: var(--tc-teal-ink); }
+    .chip--c3.chip--activo { background: var(--tc-brick); border-color: var(--tc-brick); color: #fff; }
+    .chip--c4.chip--activo { background: var(--tc-carbon); border-color: var(--tc-carbon); color: var(--tc-stone); }
+
+    .btn-volver-categorias {
+        align-items: center;
+        gap: 6px;
+        background: none;
+        border: none;
+        color: var(--tc-mustard-link);
+        font-weight: 700;
+        font-size: 0.98rem;
+        padding: 0 0 14px;
+        cursor: pointer;
+    }
+
+    body:not(.paso-menu) #menu-grid {
+        display: none;
+    }
+
+    body.paso-menu .chips {
+        display: none;
+    }
+
+    body.paso-menu .btn-volver-categorias {
+        display: flex;
+    }
+
+    /* ── Paso 2: tarjetas de producto grandes ── */
+    .menu-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .menu-card {
+        min-height: 120px;
+        padding: 16px;
+        border-radius: 14px;
+    }
+
+    .menu-card__nombre {
+        font-size: 1.02rem;
+    }
+
+    .menu-card__precio,
+    .menu-card__agotado-label {
+        font-size: 0.95rem;
+    }
+
+    /* ── Objetivos táctiles más grandes ── */
+    .crear-btn {
+        padding: 16px;
+        font-size: 1.05rem;
+        border-radius: 10px;
+    }
+
+    .tabs__btn {
+        padding: 14px;
+        font-size: 0.98rem;
+    }
+
+    .pedido-card {
+        padding: 18px;
+    }
+
+    .pagar-btn {
+        padding: 13px;
+        font-size: 0.95rem;
     }
 }
 

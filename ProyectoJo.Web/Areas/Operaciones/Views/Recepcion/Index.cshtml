@@ -33,6 +33,11 @@
         </a>
     </div>
 
+    <div id="vista-switch" class="vista-switch">
+        <button class="vista-switch__btn vista-switch__btn--activo" data-vista="pedir">🛒 Pedir</button>
+        <button class="vista-switch__btn" data-vista="pedidos">📋 Pedidos</button>
+    </div>
+
     <div class="toolbar">
         <div class="buscador-box">
             <span class="buscador-box__icono">🔍</span>
@@ -44,6 +49,7 @@
 
     <div class="layout">
         <section class="col-menu">
+            <button id="btn-volver-categorias" class="btn-volver-categorias">← Categorías</button>
             <div id="menu-grid" class="menu-grid">
                 <p class="mensaje-vacio">Cargando menú...</p>
             </div>
@@ -87,14 +93,16 @@
         <button id="btn-ver-pedido" class="barra-mobile__btn">Ver pedido</button>
     </div>
 
-    <div class="tabs">
-        <button id="tab-activos" class="tabs__btn tabs__btn--activo" data-tab="activos">Pedidos activos</button>
-        <button id="tab-pagados" class="tabs__btn" data-tab="pagados">Pagados</button>
-    </div>
+    <section id="seccion-pedidos">
+        <div class="tabs">
+            <button id="tab-activos" class="tabs__btn tabs__btn--activo" data-tab="activos">Pedidos activos</button>
+            <button id="tab-pagados" class="tabs__btn" data-tab="pagados">Pagados</button>
+        </div>
 
-    <div id="pedidos-grid" class="pedidos-grid">
-        <p class="mensaje-vacio">Cargando pedidos...</p>
-    </div>
+        <div id="pedidos-grid" class="pedidos-grid">
+            <p class="mensaje-vacio">Cargando pedidos...</p>
+        </div>
+    </section>
 
     <div id="modal-confirmacion" class="modal" style="display:none;">
         <div id="modal-overlay" class="modal__overlay"></div>

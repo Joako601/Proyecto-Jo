@@ -13,6 +13,48 @@
     var ultimosPedidos = [];
     var categoriaActiva = 'Todos';
     var textoBusqueda = '';
+    var pasoPedir = 'categorias';
+    var vistaPrincipal = 'pedir';
+
+    function actualizarClasesVista() {
+        document.body.classList.toggle('paso-menu', pasoPedir === 'menu');
+        document.body.classList.toggle('vista-pedidos', vistaPrincipal === 'pedidos');
+    }
+
+    function irAPasoMenu(categoria) {
+        if (categoria) categoriaActiva = categoria;
+        pasoPedir = 'menu';
+        actualizarClasesVista();
+        renderChips();
+        renderMenu();
+    }
+
+    function irAPasoCategorias() {
+        pasoPedir = 'categorias';
+        actualizarClasesVista();
+        renderChips();
+    }
+
+    function actualizarSwitchBotones() {
+        var btnPedir = document.querySelector('.vista-switch__btn[data-vista="pedir"]');
+        var btnPedidos = document.querySelector('.vista-switch__btn[data-vista="pedidos"]');
+        if (btnPedir) btnPedir.classList.toggle('vista-switch__btn--activo', vistaPrincipal === 'pedir');
+        if (btnPedidos) btnPedidos.classList.toggle('vista-switch__btn--activo', vistaPrincipal === 'pedidos');
+    }
+
+    function irAVistaPedir() {
+        vistaPrincipal = 'pedir';
+        actualizarClasesVista();
+        actualizarSwitchBotones();
+    }
+
+    function irAVistaPedidos() {
+        vistaPrincipal = 'pedidos';
+        cerrarCarrito();
+        actualizarClasesVista();
+        actualizarSwitchBotones();
+        cargarPedidos();
+    }
 
     function ir(url) {
         window.location.href = url;
@@ -28,8 +70,8 @@
         if (!el) return;
         var textos = {
             conectado: '',
-            reconectando: '🔄 Reconectando…',
-            desconectado: '⚠ Sin conexión — usa el botón de refresco'
+            reconectando: 'Reconectando…',
+            desconectado: 'Sin conexión — usa el botón de refresco'
         };
         el.textContent = textos[estado] || '';
     }
@@ -75,14 +117,17 @@
             .filter(function (v, i, a) { return a.indexOf(v) === i; });
     }
 
+    var CHIP_COLORES = ['chip--c1', 'chip--c2'];
+
     function renderChips() {
         var cont = document.getElementById('chips-categoria');
         var categorias = ['Todos'].concat(categoriasDisponibles());
 
         if (categorias.indexOf(categoriaActiva) === -1) categoriaActiva = 'Todos';
 
-        cont.innerHTML = categorias.map(function (cat) {
-            return '<button class="chip' + (cat === categoriaActiva ? ' chip--activo' : '') +
+        cont.innerHTML = categorias.map(function (cat, i) {
+            var claseColor = cat === 'Todos' ? '' : ' ' + CHIP_COLORES[(i - 1) % CHIP_COLORES.length];
+            return '<button class="chip' + claseColor + (cat === categoriaActiva ? ' chip--activo' : '') +
                 '" data-categoria="' + cat.replace(/"/g, '&quot;') + '">' + cat + '</button>';
         }).join('');
     }
@@ -333,7 +378,7 @@
 
         if (itemsProblema.length > 0) {
             bloques.push(
-                '<span style="color:var(--tc-brick);font-weight:600;">❌ No disponibles (no se envían):</span><br>' +
+                '<span style="color:var(--tc-brick);font-weight:600;">No disponibles (no se envían):</span><br>' +
                 itemsProblema.map(function (p) {
                     return '&nbsp;&nbsp;• <b>' + p.nombre + '</b>: ' + p.motivo;
                 }).join('<br>')
@@ -342,7 +387,7 @@
 
         if (itemsAjustados.length > 0) {
             bloques.push(
-                '<span style="color:var(--tc-mustard);font-weight:600;">⚠️ Cantidad ajustada por stock:</span><br>' +
+                '<span style="color:var(--tc-mustard);font-weight:600;">Cantidad ajustada por stock:</span><br>' +
                 itemsAjustados.map(function (p) {
                     return '&nbsp;&nbsp;• <b>' + p.nombre + '</b>: pediste ' + p.cantidadSolicitada +
                         ', solo se puede preparar <b>' + p.cantidadFinal + '</b>';
@@ -351,7 +396,7 @@
         }
 
         bloques.push(
-            '<span style="color:var(--tc-teal);font-weight:600;">✅ Se envían a cocina:</span><br>' +
+            '<span style="color:var(--tc-teal);font-weight:600;">Se envían a cocina:</span><br>' +
             itemsDisponibles.map(function (p) {
                 return '&nbsp;&nbsp;• <b>' + p.nombre + '</b> ×' + p.cantidad;
             }).join('<br>')
@@ -426,6 +471,12 @@
 
     function renderPedidos() {
         var cont = document.getElementById('pedidos-grid');
+
+        var activos = ultimosPedidos.filter(function (p) { return p.estado !== 'Pagado'; }).length;
+        var btnPedidos = document.querySelector('.vista-switch__btn[data-vista="pedidos"]');
+        if (btnPedidos) {
+            btnPedidos.textContent = 'Pedidos' + (activos > 0 ? ' (' + activos + ')' : '');
+        }
 
         var filtrados = tabActiva === 'activos'
             ? ultimosPedidos.filter(function (p) { return p.estado !== 'Pagado'; })
@@ -535,9 +586,16 @@
             return;
         }
         if (t.matches('.chip') && t.dataset.categoria) {
-            categoriaActiva = t.dataset.categoria;
-            renderChips();
-            renderMenu();
+            irAPasoMenu(t.dataset.categoria);
+            return;
+        }
+        if (t.matches('#btn-volver-categorias')) {
+            irAPasoCategorias();
+            return;
+        }
+        if (t.matches('.vista-switch__btn') && t.dataset.vista) {
+            if (t.dataset.vista === 'pedidos') irAVistaPedidos();
+            else irAVistaPedir();
             return;
         }
         if (t.matches('[data-accion="restar"]')) {
@@ -596,12 +654,17 @@
     document.addEventListener('input', function (e) {
         if (e.target.matches('#buscador')) {
             textoBusqueda = e.target.value.trim();
+            if (textoBusqueda && pasoPedir === 'categorias') {
+                irAPasoMenu();
+                return;
+            }
             renderMenu();
         }
     });
 
     setTipoEntrega('mesa');
     cambiarTab('activos');
+    actualizarClasesVista();
     cargarMenu();
     cargarPedidos();
     iniciarSignalR();

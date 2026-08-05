@@ -8,29 +8,13 @@
     margin-bottom: 24px;
 }
 
-.resumen-semaforo-card {
-    border-left: 3px solid var(--tc-border-soft);
-}
-
-.resumen-semaforo-card--verde {
-    border-left-color: #2FAE79;
-}
-
     .resumen-semaforo-card--verde .dash-valor {
         color: #0F6E56;
     }
 
-.resumen-semaforo-card--amarillo {
-    border-left-color: #E0A83B;
-}
-
     .resumen-semaforo-card--amarillo .dash-valor {
         color: var(--tc-mustard-ink);
     }
-
-.resumen-semaforo-card--rojo {
-    border-left-color: #C24444;
-}
 
     .resumen-semaforo-card--rojo .dash-valor {
         color: #A32D2D;

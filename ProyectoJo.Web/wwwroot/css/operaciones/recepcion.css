@@ -460,15 +460,6 @@ body {
     border-radius: 10px;
     padding: 14px;
     flex: 1 1 260px;
-    border-left: 4px solid var(--tc-mustard);
-}
-
-.pedido-card--Preparado {
-    border-left-color: var(--tc-teal);
-}
-
-.pedido-card--Pagado {
-    border-left-color: #3b7a3b;
 }
 
 .pedido-card__header {

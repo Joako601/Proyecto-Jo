@@ -50,7 +50,6 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 			var areasFinal = general ? new List<string> { "General" } : (areas ?? new List<string>());
 			var (exito, error) = await _administradorService.CrearAsync(usuario, contrasena, areasFinal, claveSupervisor);
 			TempData["ErrorAdmin"] = exito ? null : error;
-			TempData["ExitoAdmin"] = exito ? "Administrador creado correctamente." : null;
 			return RedirectToAction("Index");
 		}
 
@@ -80,7 +79,6 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		{
 			var (exito, error) = await _empleadoService.CrearAsync(nombre, clave, rol);
 			TempData["ErrorOperador"] = exito ? null : error;
-			TempData["ExitoOperador"] = exito ? "Operador creado correctamente." : null;
 			return RedirectToAction("Index");
 		}
 

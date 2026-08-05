@@ -32,10 +32,6 @@
         {
             <div class="clave-supervisor__mensaje clave-supervisor__mensaje--error">@errorAdmin</div>
         }
-        @if (TempData["ExitoAdmin"] is string exitoAdmin)
-        {
-            <div class="clave-supervisor__mensaje clave-supervisor__mensaje--exito">@exitoAdmin</div>
-        }
 
         <details class="usuarios-panel">
             <summary class="btn-primary">Nuevo administrador</summary>
@@ -167,10 +163,6 @@
         @if (TempData["ErrorOperador"] is string errorOp)
         {
             <div class="clave-supervisor__mensaje clave-supervisor__mensaje--error">@errorOp</div>
-        }
-        @if (TempData["ExitoOperador"] is string exitoOp)
-        {
-            <div class="clave-supervisor__mensaje clave-supervisor__mensaje--exito">@exitoOp</div>
         }
 
         <details class="usuarios-panel">

@@ -11,12 +11,39 @@
         return d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
     }
 
+    function parseModificadores(nombre) {
+        var m = /^(.*?)\s*\(sin (.+)\)$/.exec(nombre);
+        if (!m) return { base: nombre, mods: null };
+        return { base: m[1], mods: 'Sin ' + m[2] };
+    }
+
+    function calcularUrgencia(fechaIso) {
+        var minutos = (Date.now() - new Date(fechaIso).getTime()) / 60000;
+        if (minutos >= 20) return 'urgente';
+        if (minutos >= 10) return 'aviso';
+        return null;
+    }
+
+    function ordenarPorFecha(lista) {
+        return lista.slice().sort(function (a, b) {
+            return new Date(a.fechaCreacion) - new Date(b.fechaCreacion);
+        });
+    }
+
     function crearTarjeta(pedido) {
         var div = document.createElement('div');
-        div.className = 'pedido' + (pedido.estado === 'Preparado' ? ' pedido--preparado' : '');
+        var urgencia = pedido.estado === 'Pendiente' ? calcularUrgencia(pedido.fechaCreacion) : null;
+        div.className = 'pedido'
+            + (pedido.estado === 'Preparado' ? ' pedido--preparado' : '')
+            + (urgencia ? ' pedido--' + urgencia : '');
+        div.dataset.fecha = pedido.fechaCreacion;
 
         var itemsHtml = pedido.items
-            .map(function (i) { return '<li>' + i.cantidad + 'x ' + i.nombre + '</li>'; })
+            .map(function (i) {
+                var partes = parseModificadores(i.nombre);
+                var modHtml = partes.mods ? '<span class="pedido__mod">' + partes.mods + '</span>' : '';
+                return '<li>' + i.cantidad + 'x ' + partes.base + modHtml + '</li>';
+            })
             .join('');
 
         var accionHtml = pedido.estado === 'Pendiente'
@@ -32,6 +59,22 @@
             accionHtml;
 
         return div;
+    }
+
+    function actualizarUrgenciaEnPantalla() {
+        var tarjetas = document.querySelectorAll('#col-pendiente .pedido');
+        tarjetas.forEach(function (t) {
+            var fecha = t.dataset.fecha;
+            if (!fecha) return;
+            var urgencia = calcularUrgencia(fecha);
+            t.classList.remove('pedido--aviso', 'pedido--urgente');
+            if (urgencia) t.classList.add('pedido--' + urgencia);
+        });
+    }
+
+    function actualizarContador(id, n) {
+        var el = document.getElementById(id);
+        if (el) el.textContent = n > 0 ? '(' + n + ')' : '';
     }
 
     function setEstadoConexion(estado) {
@@ -52,8 +95,11 @@
         colPendiente.innerHTML = '';
         colPreparado.innerHTML = '';
 
-        var pendientes = pedidos.filter(function (p) { return p.estado === 'Pendiente'; });
-        var preparados = pedidos.filter(function (p) { return p.estado === 'Preparado'; });
+        var pendientes = ordenarPorFecha(pedidos.filter(function (p) { return p.estado === 'Pendiente'; }));
+        var preparados = ordenarPorFecha(pedidos.filter(function (p) { return p.estado === 'Preparado'; }));
+
+        actualizarContador('contador-pendiente', pendientes.length);
+        actualizarContador('contador-preparado', preparados.length);
 
         if (pendientes.length === 0) {
             colPendiente.innerHTML = '<p class="mensaje-vacio">Sin pedidos pendientes</p>';
@@ -167,5 +213,6 @@
 
     cargarPedidos();
     iniciarSignalR();
+    setInterval(actualizarUrgenciaEnPantalla, 30000);
 
 })();

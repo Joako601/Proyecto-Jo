@@ -18,6 +18,8 @@
     --tc-brick-link: #993C1D;
     --tc-border-dash: #443c33;
     --tc-border-soft: #d8d1c2;
+    --tc-urgencia-bg-aviso: #FBEFD9;
+    --tc-urgencia-bg-urgente: #F7DEDA;
     --tc-font-display: 'Fraunces', serif;
     --tc-font-body: 'Public Sans', sans-serif;
     --tc-font-mono: 'IBM Plex Mono', monospace;
@@ -98,14 +100,22 @@ body {
 }
 
 .columna__titulo {
-    font-size: 0.8rem;
+    font-size: 1rem;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--tc-ink-muted);
-    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--tc-carbon);
+    font-weight: 700;
     margin: 0 0 12px 0;
     padding-bottom: 10px;
     border-bottom: 2px solid var(--tc-border-soft);
+}
+
+.columna__contador {
+    font-size: 0.85rem;
+    letter-spacing: normal;
+    text-transform: none;
+    font-weight: 600;
+    color: var(--tc-ink-muted);
 }
 
 .columna__contenido {
@@ -114,17 +124,41 @@ body {
     gap: 12px;
 }
 
+.columna__contenido--acotada {
+    max-height: min(640px, 70vh);
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
 /* ── Tarjeta de pedido ── */
 .pedido {
     background: var(--tc-card);
     border-radius: 12px;
     padding: 16px;
-    border-left: 5px solid var(--tc-mustard);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    transition: background 0.2s;
 }
 
-.pedido--preparado {
-    border-left-color: var(--tc-teal);
+.pedido--aviso {
+    background: var(--tc-urgencia-bg-aviso);
+}
+
+.pedido--urgente {
+    background: var(--tc-urgencia-bg-urgente);
+    animation: pulso-urgente 2s ease-in-out infinite;
+}
+
+    .pedido--urgente .pedido__mesa {
+        color: var(--tc-brick);
+    }
+
+@keyframes pulso-urgente {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(178, 58, 46, 0);
+    }
+
+    50% {
+        box-shadow: 0 0 0 3px rgba(178, 58, 46, 0.22);
+    }
 }
 
 .pedido__header {
@@ -137,33 +171,46 @@ body {
 .pedido__mesa {
     font-family: var(--tc-font-display);
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 1.25rem;
     color: var(--tc-carbon);
 }
 
 .pedido__hora {
     font-family: var(--tc-font-mono);
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     color: var(--tc-ink-muted);
     white-space: nowrap;
+}
+
+.pedido--aviso .pedido__hora,
+.pedido--urgente .pedido__hora {
+    color: var(--tc-brick-link);
+    font-weight: 700;
 }
 
 .pedido__items {
     margin: 0 0 14px 0;
     padding-left: 18px;
     color: var(--tc-ink);
-    font-size: 0.9rem;
-    line-height: 1.6;
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+.pedido__mod {
+    display: block;
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--tc-brick-link);
 }
 
 .pedido__accion {
     width: 100%;
-    padding: 11px;
+    padding: 13px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    font-weight: 600;
-    font-size: 0.9rem;
+    font-weight: 700;
+    font-size: 1rem;
     background: var(--tc-carbon);
     color: var(--tc-stone);
     transition: background 0.15s;
@@ -174,7 +221,7 @@ body {
     }
 
 .pedido__listo {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--tc-teal);
 }
@@ -201,12 +248,8 @@ body {
         padding: 18px;
     }
 
-    .pedido__mesa {
-        font-size: 1.1rem;
-    }
-
-    .pedido__items {
-        font-size: 0.95rem;
+    .columna__contenido--acotada {
+        max-height: min(420px, 60vh);
     }
 
     .pedido__accion {

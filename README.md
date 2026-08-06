@@ -460,7 +460,9 @@ La arquitectura del sistema está documentada en tres niveles de detalle bajo el
 | 3 — Componentes | Clases e interfaces dentro de `ProyectoJo.Web` | Equipo de desarrollo |
 
 > El historial de decisiones que sustenta esta arquitectura está documentado
-> por separado en [`/ADRs`](./ADRs).
+> por separado en [`/ADRs`](./ADRs), incluida una
+> [evaluación ATAM](./ADRs/ATAM-Joaquin-Uriona.md) con riesgos, trade-offs
+> y puntos de sensibilidad reales de la arquitectura actual.
 
 ---
 
@@ -546,7 +548,11 @@ controladores de Admin.
 | Logging | Serilog (consola + archivo rotativo diario) |
 | Tests | xUnit 2.9.2 + Moq 4.20.72 |
 | Integración Continua | GitHub Actions — build, test, chequeo de migraciones EF Core pendientes y auditoría de vulnerabilidades NuGet en cada push y Pull Request; verificación de links rotos en la documentación |
+<<<<<<< HEAD
 | Despliegue objetivo | AWS EC2 + RDS + nginx + systemd — ver [AWS-1-Cuenta.md](docs/AWS-1-Cuenta.md) (serie de 4 documentos) |
+=======
+| Despliegue | AWS EC2 + RDS + nginx (desplegado y funcionando) — ver [AWS-1-Cuenta.md](docs/AWS-1-Cuenta.md) (serie de 5 documentos, el último es la chuleta operativa) |
+>>>>>>> 5a492aa832b31ec66b23257868e7696a31835382
 
 ---
 
@@ -827,12 +833,21 @@ archivos JSON, reemplazada más tarde por PostgreSQL, como se detalla en
 | [ADR-07](./ADRs/ADR-07-Joaquin-Uriona.md) | Introducción de `ProyectoJo.Application.Tests` y la estrategia de dos niveles (unitarios + integración) |
 | [ADR-08](./ADRs/ADR-08-Joaquin-Uriona.md) | Deuda técnica de `ProyectoJo.Api`: registro de DI incompleto y rutas/candados no compartidos entre procesos |
 | [ADR-09](./ADRs/ADR-09-Joaquin-Uriona.md) | Pipeline de Integración Continua con GitHub Actions |
+| [ADR-10](./ADRs/ADR-10-Joaquin-Uriona.md) | Migración de persistencia de JSON a PostgreSQL con EF Core |
+| [ADR-11](./ADRs/ADR-11-Joaquin-Uriona.md) | Hardening de seguridad — cookies, cabeceras, autorización por área |
+| [ADR-12](./ADRs/ADR-12-Joaquin-Uriona.md) | Optimización de performance — consultas SQL, paginación e índices |
+| [ADR-13](./ADRs/ADR-13-Joaquin-Uriona.md) | Pipeline de despliegue manual a AWS (EC2 + RDS + nginx) |
+| [ATAM](./ADRs/ATAM-Joaquin-Uriona.md) | Evaluación de trade-offs, riesgos y puntos de sensibilidad de la arquitectura |
 
 ---
 
 ## Deuda técnica conocida
 
+<<<<<<< HEAD
 El sistema documenta su deuda técnica de forma explícita en vez de dejarla implícita en el código, y [ADR-08](./ADRs/ADR-08-Joaquin-Uriona.md) describe una versión anterior de esta deuda (de cuando `Web` y `Api` todavía leían los mismos archivos JSON); desde la migración de `Web` a PostgreSQL, el problema cambió de forma y está resumido acá hasta que se documente en un ADR nuevo.
+=======
+El sistema documenta su deuda técnica de forma explícita en vez de dejarla implícita en el código. [ADR-08](./ADRs/ADR-08-Joaquin-Uriona.md) describe una versión anterior de esta deuda (de cuando `Web` y `Api` todavía leían los mismos archivos JSON); [ADR-10](./ADRs/ADR-10-Joaquin-Uriona.md) documenta la migración de `Web` a PostgreSQL, pero `Api` quedó explícitamente fuera de ese alcance — el problema cambió de forma y está resumido acá.
+>>>>>>> 5a492aa832b31ec66b23257868e7696a31835382
 
 | Deuda | Tipo | Estado |
 |---|---|---|
@@ -873,10 +888,22 @@ existente en `ProyectoJo.Application` y `ProyectoJo.Infrastructure`, y generar l
 estructura inicial de los workflows de GitHub Actions (`ci.yml`, `docs.yml`), pero no
 se utilizó para tomar decisiones arquitectónicas ni para diseñar la solución.
 
+<<<<<<< HEAD
 ## Autor
 
 <div align="center">
   <img src="https://github.com/Joako601.png" width="110" style="border-radius:50%" alt="Joaquin Uriona"/>
+=======
+- Corregir redacción y ortografía de este documento
+- Generar la sintaxis Mermaid de los diagramas de arquitectura y del pipeline de CI/CD
+- Generar la estructura y el código de los tests unitarios y de integración a partir del código existente en
+  `ProyectoJo.Application` y `ProyectoJo.Infrastructure`
+- Generar la estructura inicial de los workflows de GitHub Actions (`ci.yml`, `docs.yml`)
+- Implementar la optimización de performance documentada en [ADR-12](./ADRs/ADR-12-Joaquin-Uriona.md) y diagnosticar/resolver, contra infraestructura real, los problemas del primer despliegue documentados en [ADR-13](./ADRs/ADR-13-Joaquin-Uriona.md)
+- Redactar los ADR-10 a ADR-13, la evaluación ATAM, y actualizar el Modelo C4 a partir de las decisiones ya tomadas e implementadas en el código
+
+No se utilizó para tomar decisiones arquitectónicas ni para diseñar la solución — sí se utilizó, con supervisión directa, para implementar decisiones ya tomadas, diagnosticar problemas reales, y documentar por escrito el resultado de ese trabajo.
+>>>>>>> 5a492aa832b31ec66b23257868e7696a31835382
 
   ### Joaquin Uriona
   Diseñador Backend & Cloud — arquitectura, backend, infraestructura y despliegue de este sistema

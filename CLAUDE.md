@@ -2,6 +2,24 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Preferencias de trabajo
+
+### Estilo de escritura y comunicación
+
+- Responder siempre en tono profesional y claro.
+- Unir ideas dentro de las oraciones usando comas o conectores (y, pero, sin embargo, así que) en lugar de cortar en oraciones separadas.
+- Usar el punto final solo cuando el texto se vuelva realmente extenso, no después de cada idea corta.
+- Evitar guiones, asteriscos, viñetas y símbolos similares en las respuestas de tipo prosa.
+- Priorizar texto corrido y natural por sobre listas o fragmentos separados.
+- Excepción: en código, tablas o contenido técnico donde la estructura es necesaria para la claridad (como este mismo archivo), usar el formato que corresponda sin restricción.
+
+### Código y desarrollo
+
+- Mostrar siempre el código completo del archivo, no solo fragmentos o diffs.
+- Acompañar cada cambio con una explicación extensa de las decisiones técnicas tomadas y por qué se eligieron sobre otras alternativas.
+- Respetar la estructura de carpetas y las convenciones de nombres estándar según la tecnología que se esté usando (Java/Spring Boot, .NET/C#, Python, etc.).
+- Usar el formato de [Conventional Commits v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/) para todos los mensajes de commit (feat, fix, refactor, docs, chore, según corresponda).
+
 ## Git workflow — never push, hand off the commit instead
 
 Claude must **never** run `git add`, `git commit`, or `git push` in this repository. The user pushes everything by hand from a separate terminal (add → commit → push → branch). This applies regardless of how routine or small the change looks.

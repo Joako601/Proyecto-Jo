@@ -15,7 +15,7 @@ Construido con **ASP.NET Core** bajo **Arquitectura Hexagonal (Ports & Adapters)
 ![Licencia](https://img.shields.io/badge/Licencia-Propietaria-red)
 ![Estado](https://img.shields.io/badge/Estado-En%20desarrollo%20activo-yellow)
 
-[![CI](https://github.com/Joako601/Proyecto-Jo/actions/workflows/ci.yml/badge.svg?branch=pipeline-ci)](https://github.com/Joako601/Proyecto-Jo/actions/workflows/ci.yml)
+[![CI](https://github.com/Joako601/Proyecto-Jo/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Joako601/Proyecto-Jo/actions/workflows/ci.yml)
 [![Docs](https://github.com/Joako601/Proyecto-Jo/actions/workflows/docs.yml/badge.svg)](https://github.com/Joako601/Proyecto-Jo/actions/workflows/docs.yml)
 
 </div>
@@ -112,9 +112,7 @@ administrativo y la vitrina pública (ASP.NET Core MVC), con comunicación en ti
 vía **SignalR** para las pantallas de Cocina y Recepción, y `ProyectoJo.Api`, una API
 REST documentada con Swagger que todavía no tiene uso activo en el sistema y queda
 reservada para una futura integración con clientes externos (apps móviles, WhatsApp,
-Postman).
-
-El historial completo de decisiones de diseño está documentado en
+Postman), y el historial completo de decisiones de diseño está documentado en
 [`/ADRs`](./ADRs).
 
 ---
@@ -145,7 +143,7 @@ todo esto sostenido por un CI que corre en cada push (build, tests, chequeo de
 migraciones de EF Core pendientes, auditoría de vulnerabilidades NuGet y verificación
 de links rotos en la documentación), por un despliegue documentado de punta a punta en
 cuatro guías paso a paso con un pipeline reproducible sobre EC2 + RDS y *rollback* por
-symlink, y por un historial de nueve decisiones arquitectónicas registradas en ADRs,
+symlink, y por un historial de trece decisiones arquitectónicas registradas en ADRs,
 no solo en la cabeza del autor.
 
 ---
@@ -219,9 +217,8 @@ adaptadores de entrada que invocan esos mismos puertos de `Application`, aunque
 `Web` compone su propio grafo de dependencias completo, incluida la persistencia,
 mientras que `Api` todavía no registra repositorios (ver [Deuda técnica conocida](#deuda-técnica-conocida)).
 La regla que sostiene todo el diagrama es una sola dirección de dependencia: los
-adaptadores dependen del dominio, el dominio nunca depende de los adaptadores.
-
-Más detalle en las vistas arquitectónicas de cada ADR.
+adaptadores dependen del dominio, el dominio nunca depende de los adaptadores, y hay
+más detalle en las vistas arquitectónicas de cada ADR.
 
 ---
 
@@ -320,7 +317,7 @@ la autenticación de Cocina/Recepción de la del panel admin.
 
 El proyecto sigue en desarrollo activo, y eso se nota también en lo visual: hay
 apartados de la vitrina pública (los bloques "Próximamente" en Historia y
-Nosotros) y ajustes de diseño en general todavía pendientes de pulir. Las
+Nosotros) y ajustes de diseño en general todavía pendientes de pulir, así que las
 capturas de abajo son del sistema corriendo tal cual está hoy, no un mockup.
 
 ### Vitrina pública
@@ -440,8 +437,9 @@ ProyectoJo/
 │
 ├── ADRs/                         # Historial de decisiones arquitectónicas
 │
-└── .github/workflows/            # Integración Continua y validación de documentación
+└── .github/workflows/            # Integración Continua, despliegue y validación de documentación
     ├── ci.yml                    # Restore, chequeo de migraciones, auditoría de vulnerabilidades, build y test
+    ├── deploy.yml                # Despliegue manual a AWS (workflow_dispatch) — ver Despliegue
     └── docs.yml                  # Falla si hay links rotos en los archivos Markdown del repo
 ```
 ---
@@ -449,7 +447,7 @@ ProyectoJo/
 ## Documentación de Arquitectura (Modelo C4)
 
 La arquitectura del sistema está documentada en tres niveles de detalle bajo el
-[Modelo C4](https://c4model.com/) — Contexto, Contenedores y Componentes -
+[Modelo C4](https://c4model.com/) — Contexto, Contenedores y Componentes.
 
 **[Ver documentación completa → `/docs/Arquitectura-C4.md`](./docs/Arquitectura-C4.md)**
 
@@ -463,6 +461,12 @@ La arquitectura del sistema está documentada en tres niveles de detalle bajo el
 > por separado en [`/ADRs`](./ADRs), incluida una
 > [evaluación ATAM](./ADRs/ATAM-Joaquin-Uriona.md) con riesgos, trade-offs
 > y puntos de sensibilidad reales de la arquitectura actual.
+
+Además del Modelo C4, `/ADRs` guarda el material gráfico previo que acompañó cada
+etapa de la evolución arquitectónica: [`ADRs/Vistas-Arquitectonicas`](./ADRs/Vistas-Arquitectonicas)
+tiene las vistas de desarrollo, lógica, procesos y despliegue (`.drawio` + `.svg`)
+referenciadas desde los ADRs correspondientes, y [`ADRs/Diagramas`](./ADRs/Diagramas)
+conserva las dos versiones del diagrama general del sistema.
 
 ---
 
@@ -555,7 +559,9 @@ controladores de Admin.
 ## Requisitos previos
 
 Hace falta tener instalado el [.NET SDK 10.0](https://dotnet.microsoft.com/download)
-o superior, y un editor compatible (Visual Studio, VS Code con C# Dev Kit, Rider).
+o superior, una instancia de PostgreSQL alcanzable (local o remota, ver
+[Base de datos (PostgreSQL)](#base-de-datos-postgresql)), y un editor compatible
+(Visual Studio, VS Code con C# Dev Kit, Rider).
 
 ---
 
@@ -687,8 +693,8 @@ Desde ahí se pueden explorar y probar todos los endpoints sin necesidad de Post
 
 ## Endpoints disponibles
 
-> Esta tabla se mantiene actualizada manualmente como referencia rápida. La fuente
-> de verdad siempre es Swagger, generado directamente desde el código. También
+> Esta tabla se mantiene actualizada manualmente como referencia rápida, la fuente
+> de verdad siempre es Swagger, generado directamente desde el código, y también
 > conviene tener presente que esta tabla describe solo `ProyectoJo.Api`: el flujo
 > real de negocio hoy corre íntegramente sobre `ProyectoJo.Web` vía controladores
 > MVC, no vía estos endpoints REST, y que ningún endpoint que toque persistencia
@@ -730,7 +736,7 @@ en `ProyectoJo.Api`.
 
 El destino de despliegue es una única instancia EC2 (Ubuntu) detrás de nginx, que
 hace terminación TLS y actúa de proxy reverso hacia Kestrel en loopback, con
-PostgreSQL en RDS. El pipeline de despliegue (`deploy.yml`) es **manual**, disparado
+PostgreSQL en RDS, y el pipeline de despliegue (`deploy.yml`) es **manual**, disparado
 solo por `workflow_dispatch` desde GitHub Actions — a diferencia del pipeline de CI,
 que corre en cada push:
 
@@ -848,7 +854,7 @@ El sistema documenta su deuda técnica de forma explícita en vez de dejarla imp
 | `AdministradoresController`/`OperadoresController` (`Areas/Admin`) son una versión de CRUD superada por `UsuariosController`, sin ninguna vista que enlace hacia ellos | Código muerto | Documentada — sin prioridad de limpieza asignada |
 | `Menu/Index.cshtml`'s `menu.css` tiene varias clases (`.item-module`, `.item-title`, `.menu-title`, `.btn-add-platillo`, `.btn-ver-experiencia`, etc.) sin ninguna coincidencia en el markup actual de la vista | CSS muerto | Documentada — fuera de alcance |
 
-> Causa raíz de las dos primeras: `Web` y `Api` componen su grafo de dependencias por separado y no hay una raíz de composición compartida. La prioridad actual es la migración de `Web`; retomar `Api` (ya sea dándole su propio acceso a PostgreSQL o centralizando el registro en un método compartido) queda pendiente.
+> Causa raíz de las dos primeras: `Web` y `Api` componen su grafo de dependencias por separado y no hay una raíz de composición compartida, así que la prioridad actual es la migración de `Web`, mientras que retomar `Api` (ya sea dándole su propio acceso a PostgreSQL o centralizando el registro en un método compartido) queda pendiente.
 
 ---
 
@@ -918,7 +924,8 @@ resultado de ese trabajo.
 Este software, su código fuente, arquitectura, diseño y documentación son
 propiedad exclusiva de **Joaquin Uriona**, y el acceso a este repositorio se
 otorga únicamente para los fines de la tabla anterior; cualquier otro uso
-queda expresamente prohibido.
+queda expresamente prohibido, y el texto legal completo está en
+[`LICENSE.txt`](./LICENSE.txt).
 
 > Este software se proporciona "tal cual", para fines de exhibición de
 > portafolio profesional, sin garantías de ningún tipo.

@@ -55,5 +55,118 @@ namespace ProyectoJo.Application.Tests.UseCases
 				"admin", "CierreCaja", TipoAccionAuditoria.Creacion, It.IsAny<string>(),
 				It.IsAny<string?>(), It.IsAny<string?>()), Times.Once);
 		}
+
+		[Fact]
+		public void CerrarCaja_CuandoLaCajaNoExiste_LanzaExcepcion()
+		{
+			// Arrange
+			_cierreCajaRepository.Setup(r => r.ObtenerPorId(999)).Returns((CierreCaja?)null);
+
+			// Act & Assert
+			var excepcion = Assert.Throws<InvalidOperationException>(
+				() => _useCase.CerrarCaja(999, notas: null, usuario: "admin"));
+			Assert.Contains("No se encontró la caja", excepcion.Message);
+		}
+
+		[Fact]
+		public void CerrarCaja_CuandoLaCajaYaEstaCerrada_LanzaExcepcion()
+		{
+			// Arrange
+			var cajaCerrada = new CierreCaja { Id = 1, Estado = EstadoCaja.Cerrada };
+			_cierreCajaRepository.Setup(r => r.ObtenerPorId(1)).Returns(cajaCerrada);
+
+			// Act & Assert
+			var excepcion = Assert.Throws<InvalidOperationException>(
+				() => _useCase.CerrarCaja(1, notas: null, usuario: "admin"));
+			Assert.Contains("ya fue cerrada", excepcion.Message);
+		}
+
+		[Fact]
+		public void CerrarCaja_SoloSumaIngresosDeCategoriaVentasYTodosLosEgresosDelTurno()
+		{
+			// Arrange
+			var apertura = DateTime.Today.AddDays(-1);
+			var caja = new CierreCaja { Id = 1, Estado = EstadoCaja.Abierta, FechaApertura = apertura, FondoInicial = 1000 };
+			_cierreCajaRepository.Setup(r => r.ObtenerPorId(1)).Returns(caja);
+			_finanzaRepository.Setup(r => r.ObtenerTodos()).Returns(new List<Finanza>
+			{
+				new() { Tipo = TipoMovimiento.Ingreso, Categoria = "Ventas", Monto = 500, Fecha = apertura },
+				new() { Tipo = TipoMovimiento.Ingreso, Categoria = "Propinas", Monto = 80, Fecha = apertura }, // no cuenta como venta
+				new() { Tipo = TipoMovimiento.Egreso, Categoria = "Insumos", Monto = 120, Fecha = apertura },
+				new() { Tipo = TipoMovimiento.Ingreso, Categoria = "Ventas", Monto = 300, Fecha = apertura.AddDays(-5) } // antes de la apertura, no cuenta
+			});
+
+			// Act
+			var resultado = _useCase.CerrarCaja(1, notas: null, usuario: "admin");
+
+			// Assert
+			Assert.Equal(500m, resultado.VentasDelDia);
+			Assert.Equal(120m, resultado.GastosDelDia);
+		}
+
+		[Fact]
+		public void CerrarCaja_ConCategoriaVentasSinImportarMayusculasNiEspacios_LaCuentaComoVenta()
+		{
+			// Arrange
+			var apertura = DateTime.Today;
+			var caja = new CierreCaja { Id = 1, Estado = EstadoCaja.Abierta, FechaApertura = apertura };
+			_cierreCajaRepository.Setup(r => r.ObtenerPorId(1)).Returns(caja);
+			_finanzaRepository.Setup(r => r.ObtenerTodos()).Returns(new List<Finanza>
+			{
+				new() { Tipo = TipoMovimiento.Ingreso, Categoria = " ventas ", Monto = 200, Fecha = apertura }
+			});
+
+			// Act
+			var resultado = _useCase.CerrarCaja(1, notas: null, usuario: "admin");
+
+			// Assert
+			Assert.Equal(200m, resultado.VentasDelDia);
+		}
+
+		[Fact]
+		public void CerrarCaja_ActualizaLaCajaYRegistraAuditoriaConLosTotales()
+		{
+			// Arrange
+			var apertura = DateTime.Today;
+			var caja = new CierreCaja { Id = 1, Estado = EstadoCaja.Abierta, FechaApertura = apertura, FondoInicial = 500 };
+			_cierreCajaRepository.Setup(r => r.ObtenerPorId(1)).Returns(caja);
+			_finanzaRepository.Setup(r => r.ObtenerTodos()).Returns(new List<Finanza>());
+
+			// Act
+			var resultado = _useCase.CerrarCaja(1, notas: "Turno tranquilo", usuario: "admin");
+
+			// Assert
+			Assert.Equal(EstadoCaja.Cerrada, resultado.Estado);
+			Assert.Equal("Turno tranquilo", resultado.NotasCierre);
+			Assert.NotNull(resultado.FechaCierre);
+			_cierreCajaRepository.Verify(r => r.Actualizar(caja), Times.Once);
+			_auditoriaService.Verify(a => a.RegistrarAccion(
+				"admin", "CierreCaja", TipoAccionAuditoria.Edicion, It.IsAny<string>(),
+				It.IsAny<string?>(), It.IsAny<string?>()), Times.Once);
+		}
+
+		[Fact]
+		public void ObtenerVistaPreviaCierre_CalculaLosTotalesSinPersistirCambios()
+		{
+			// Arrange
+			var apertura = DateTime.Today;
+			var caja = new CierreCaja { Id = 1, Estado = EstadoCaja.Abierta, FechaApertura = apertura, FondoInicial = 500 };
+			_cierreCajaRepository.Setup(r => r.ObtenerPorId(1)).Returns(caja);
+			_finanzaRepository.Setup(r => r.ObtenerTodos()).Returns(new List<Finanza>
+			{
+				new() { Tipo = TipoMovimiento.Ingreso, Categoria = "Ventas", Monto = 300, Fecha = apertura }
+			});
+
+			// Act
+			var vistaPrevia = _useCase.ObtenerVistaPreviaCierre(1);
+
+			// Assert: es un snapshot, no debe tocar el repositorio ni la auditoría
+			Assert.Equal(300m, vistaPrevia.VentasDelDia);
+			Assert.Equal(EstadoCaja.Abierta, vistaPrevia.Estado);
+			_cierreCajaRepository.Verify(r => r.Actualizar(It.IsAny<CierreCaja>()), Times.Never);
+			_auditoriaService.Verify(a => a.RegistrarAccion(
+				It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TipoAccionAuditoria>(), It.IsAny<string>(),
+				It.IsAny<string?>(), It.IsAny<string?>()), Times.Never);
+		}
 	}
 }

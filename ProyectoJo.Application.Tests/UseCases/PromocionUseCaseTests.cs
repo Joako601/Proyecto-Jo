@@ -172,5 +172,148 @@ namespace ProyectoJo.Application.Tests.UseCases
 			// Assert
 			Assert.False(resultado);
 		}
+
+		[Fact]
+		public void EstaVigente_ActivaSinFechas_EsVigente()
+		{
+			var promocion = new Promocion { Activa = true };
+
+			Assert.True(_useCase.EstaVigente(promocion));
+		}
+
+		[Fact]
+		public void EstaVigente_Inactiva_NoEsVigenteSinImportarLasFechas()
+		{
+			var promocion = new Promocion { Activa = false, FechaInicio = DateTime.Today.AddDays(-5), FechaFin = DateTime.Today.AddDays(5) };
+
+			Assert.False(_useCase.EstaVigente(promocion));
+		}
+
+		[Fact]
+		public void EstaVigente_ConFechaInicioEnElFuturo_NoEsVigente()
+		{
+			var promocion = new Promocion { Activa = true, FechaInicio = DateTime.Today.AddDays(1) };
+
+			Assert.False(_useCase.EstaVigente(promocion));
+		}
+
+		[Fact]
+		public void EstaVigente_ConFechaFinEnElPasado_NoEsVigente()
+		{
+			var promocion = new Promocion { Activa = true, FechaFin = DateTime.Today.AddDays(-1) };
+
+			Assert.False(_useCase.EstaVigente(promocion));
+		}
+
+		[Fact]
+		public void EstaVigente_DentroDelRangoDeFechas_EsVigente()
+		{
+			var promocion = new Promocion { Activa = true, FechaInicio = DateTime.Today.AddDays(-1), FechaFin = DateTime.Today.AddDays(1) };
+
+			Assert.True(_useCase.EstaVigente(promocion));
+		}
+
+		[Fact]
+		public void CalcularPrecioFinal_SinPromocionesQueApliquenAlItem_DevuelveElPrecioOriginal()
+		{
+			// Arrange: la promoción existe pero es para otro item
+			var item = new Item { Id = 1, Precio = 100m };
+			var promos = new List<Promocion> { new() { Id = 1, ItemIds = new List<int> { 2 }, TipoDescuento = TipoDescuento.Porcentaje, ValorDescuento = 10m } };
+
+			// Act
+			var precio = _useCase.CalcularPrecioFinal(item, promos);
+
+			// Assert
+			Assert.Equal(100m, precio);
+		}
+
+		[Fact]
+		public void CalcularPrecioFinal_ConDescuentoPorcentual_DescuentaElPorcentajeDelPrecio()
+		{
+			// Arrange
+			var item = new Item { Id = 1, Precio = 100m };
+			var promos = new List<Promocion> { new() { Id = 1, ItemIds = new List<int> { 1 }, TipoDescuento = TipoDescuento.Porcentaje, ValorDescuento = 20m } };
+
+			// Act
+			var precio = _useCase.CalcularPrecioFinal(item, promos);
+
+			// Assert
+			Assert.Equal(80m, precio);
+		}
+
+		[Fact]
+		public void CalcularPrecioFinal_ConDescuentoDeMontoFijo_RestaElMontoDirectamente()
+		{
+			// Arrange
+			var item = new Item { Id = 1, Precio = 100m };
+			var promos = new List<Promocion> { new() { Id = 1, ItemIds = new List<int> { 1 }, TipoDescuento = TipoDescuento.MontoFijo, ValorDescuento = 35m } };
+
+			// Act
+			var precio = _useCase.CalcularPrecioFinal(item, promos);
+
+			// Assert
+			Assert.Equal(65m, precio);
+		}
+
+		[Fact]
+		public void CalcularPrecioFinal_ConDescuentoMayorAlPrecio_NoDevuelveUnPrecioNegativo()
+		{
+			// Arrange
+			var item = new Item { Id = 1, Precio = 30m };
+			var promos = new List<Promocion> { new() { Id = 1, ItemIds = new List<int> { 1 }, TipoDescuento = TipoDescuento.MontoFijo, ValorDescuento = 50m } };
+
+			// Act
+			var precio = _useCase.CalcularPrecioFinal(item, promos);
+
+			// Assert
+			Assert.Equal(0m, precio);
+		}
+
+		[Fact]
+		public void CalcularPrecioFinal_ConVariasPromocionesVigentesParaElMismoItem_UsaLaDeIdMasAlto()
+		{
+			// Arrange
+			var item = new Item { Id = 1, Precio = 100m };
+			var promos = new List<Promocion>
+			{
+				new() { Id = 1, ItemIds = new List<int> { 1 }, TipoDescuento = TipoDescuento.Porcentaje, ValorDescuento = 10m },
+				new() { Id = 2, ItemIds = new List<int> { 1 }, TipoDescuento = TipoDescuento.Porcentaje, ValorDescuento = 50m }
+			};
+
+			// Act
+			var precio = _useCase.CalcularPrecioFinal(item, promos);
+
+			// Assert
+			Assert.Equal(50m, precio);
+		}
+
+		[Fact]
+		public void CalcularPrecioFinal_RedondeaElResultadoADosDecimales()
+		{
+			// Arrange: 19.99 - 10% = 17.991, debe redondear a 17.99
+			var item = new Item { Id = 1, Precio = 19.99m };
+			var promos = new List<Promocion> { new() { Id = 1, ItemIds = new List<int> { 1 }, TipoDescuento = TipoDescuento.Porcentaje, ValorDescuento = 10m } };
+
+			// Act
+			var precio = _useCase.CalcularPrecioFinal(item, promos);
+
+			// Assert
+			Assert.Equal(17.99m, precio);
+		}
+
+		[Fact]
+		public void CalcularPrecioFinal_ConUnSoloArgumento_ObtieneLasPromocionesVigentesDelRepositorio()
+		{
+			// Arrange
+			var item = new Item { Id = 1, Precio = 100m };
+			var promoVigente = new Promocion { Id = 1, Activa = true, ItemIds = new List<int> { 1 }, TipoDescuento = TipoDescuento.MontoFijo, ValorDescuento = 25m };
+			_repository.Setup(r => r.ObtenerTodas()).Returns(new List<Promocion> { promoVigente });
+
+			// Act
+			var precio = _useCase.CalcularPrecioFinal(item);
+
+			// Assert
+			Assert.Equal(75m, precio);
+		}
 	}
 }

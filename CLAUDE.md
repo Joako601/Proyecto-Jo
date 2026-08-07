@@ -20,6 +20,48 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Respetar la estructura de carpetas y las convenciones de nombres estándar según la tecnología que se esté usando (Java/Spring Boot, .NET/C#, Python, etc.).
 - Usar el formato de [Conventional Commits v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/) para todos los mensajes de commit (feat, fix, refactor, docs, chore, según corresponda).
 
+## Checklist de roles antes de cualquier cambio
+
+Antes de implementar un cambio o generar código nuevo, hay que pensarlo primero desde cada rol relevante del ciclo de software y confirmar que pasa su checklist, en vez de escribir directamente y revisar recién al final.
+
+**Backend / Desarrollo**
+- ¿Respeta la dirección única de dependencia de la Arquitectura Hexagonal (Domain no depende de nada, Application define los puertos, Infrastructure/Web/Api los implementan)?
+- ¿La carpeta y el archivo de cualquier vista o controlador nuevo replican el casing exacto de C# (crítico en Linux, donde el filesystem es case-sensitive)?
+- ¿Las reglas de negocio nuevas están expresadas como `DataAnnotations` o `IValidatableObject` sobre la entidad de Domain, en vez de como validación suelta en el controlador?
+
+**Seguridad**
+- ¿Alguna acción nueva bindea una entidad de Domain directamente desde el POST? Si es así, necesita `.DescartarId()`.
+- ¿Se agrega un script, CDN, fuente o iframe externo? Si es así, hay que actualizar la allowlist de `SecurityHeadersMiddleware`.
+- ¿Se toca un endpoint de login o autenticación? Hay que verificar que mantiene el rate limiting y el esquema de cookie correspondiente (`HttpOnly` + `Secure` + `SameSite=Strict`).
+
+**Code Reviewer**
+- ¿El cambio duplica lógica que ya existe en otro lugar, o crea una segunda fuente de verdad, como pasó con `AdministradoresController`/`OperadoresController`?
+- ¿Sigue exactamente los patrones ya establecidos en archivos vecinos, en vez de introducir uno nuevo?
+- ¿Respeta la regla de "No code comments" de este mismo archivo?
+
+**QA / Tests**
+- ¿Toda regla de negocio nueva en una entidad de Domain tiene su caso correspondiente en `EntityValidationTests`?
+- ¿Todo caso de uso nuevo o modificado tiene su test en `ProyectoJo.Application.Tests/UseCases`?
+- ¿Se corrió `dotnet test ProyectoJo.Application.Tests` antes de dar el cambio por terminado?
+
+**Arquitecto**
+- ¿El cambio amerita un ADR nuevo, o al menos actualizar uno existente?
+- ¿Mantiene la separación entre `Ports/In` y `Ports/Out`, sin filtrar detalles de infraestructura hacia `Application` ni `Domain`?
+
+**DevOps / CI**
+- Si se tocó `Program.cs`, dependencias o el modelo de EF Core, ¿sigue pasando `dotnet ef migrations has-pending-model-changes`?
+- ¿El cambio necesita actualizar `ci.yml`, `deploy.yml` o algún otro workflow?
+
+**DBA / Migraciones**
+- ¿Un cambio en una entidad de Domain (propiedad nueva, tipo, longitud) requiere una migración de EF Core?
+- ¿Las `DataAnnotations` numéricas o de longitud siguen alineadas 1:1 con la precisión real de la columna en PostgreSQL?
+
+**Refactor / Simplicidad**
+- ¿Queda código muerto, clases sin uso o duplicación después del cambio?
+- ¿El cambio se podría simplificar sin perder claridad?
+
+Solo cuando el cambio pasa razonablemente por estos checklists corresponde implementarlo.
+
 ## Git workflow — never push, hand off the commit instead
 
 Claude must **never** run `git add`, `git commit`, or `git push` in this repository. The user pushes everything by hand from a separate terminal (add → commit → push → branch). This applies regardless of how routine or small the change looks.
@@ -173,6 +215,13 @@ Rationale, alternatives considered, and consequences for the decisions below are
 - `PromocionesController.SubirImagen` validates the real file signature (magic bytes) of JPEG/PNG/GIF/WEBP, not just the extension, before saving to `wwwroot/uploads/promociones/`. The WEBP check reads its 12-byte header in a loop rather than a single `ReadAsync` call, since `Stream.ReadAsync` isn't guaranteed to fill the buffer in one call even when more data is available.
 - The five entity-creation actions that bind the full Domain entity straight from the POST body (`MenuController.Agregar`, `FinanzasController.Registrar`, `InsumosController.Crear`, `PromocionesController.Agregar`, `RecetarioController.Agregar`) call `.DescartarId()` before invoking the use case, discarding any client-supplied primary key. `DescartarId()` is an extension method on `IEntidadConId` (`ProyectoJo.Domain/Entities/IEntidadConId.cs`), implemented by `Item`, `Finanza`, `Insumo`, `Promocion`, and `Receta` — the five entities bound this way — so the reset is a single reusable operation instead of five independent `entity.Id = 0` copies.
 - Verified clean as of the last security audit: CSRF (global `AutoValidateAntiforgeryTokenAttribute` + header-based token for `[FromBody]` endpoints), SQL injection (raw SQL is either parameterized `FromSqlInterpolated` or hardcoded table names with zero user input), XSS (`Html.Raw` usages only wrap `System.Text.Json`-serialized data islands), password hashing (PBKDF2 + `CryptographicOperations.FixedTimeEquals`), authorization (`RequiereAreaAttribute` consistent across all Admin controllers; the SignalR hub requires auth and validates group/role match).
+
+## Screenshots (docs/screenshot/)
+
+Used by README.md's "Capturas de pantalla" section. Three subfolders
+(`admin/`, `operation/`, `public/`) matching the README's module grouping.
+Filenames may contain spaces — referenced in README.md via raw HTML `<img>`
+tags with `%20`-encoded `src` paths, not Markdown `![]()` syntax.
 
 ## Front-end inline-style/script cleanup (in progress)
 

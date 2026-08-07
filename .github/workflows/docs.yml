@@ -6,7 +6,7 @@ on:
     paths:
       - "**/*.md"
   pull_request:
-    branches: [ "deuda-tecnica" ]
+    branches: [ "main", "deuda-tecnica" ]
     paths:
       - "**/*.md"
   workflow_dispatch:
@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Check for broken links
         uses: lycheeverse/lychee-action@v2

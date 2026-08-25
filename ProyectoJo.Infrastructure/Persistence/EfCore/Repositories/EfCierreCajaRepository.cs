@@ -44,5 +44,31 @@ namespace ProyectoJo.Infrastructure.Persistence.EfCore.Repositories
 			transaction.Commit();
 			return true;
 		}
+
+		public (CierreCaja? Caja, string? Error) CerrarAtomico(int id, Func<CierreCaja, string?> aplicarCierre)
+		{
+			using var transaction = _context.Database.BeginTransaction();
+
+			var caja = _context.CierresCaja
+				.FromSqlInterpolated($"SELECT * FROM cierres_caja WHERE id = {id} FOR UPDATE")
+				.FirstOrDefault();
+
+			if (caja is null)
+			{
+				transaction.Rollback();
+				return (null, "No se encontró la caja indicada.");
+			}
+
+			var error = aplicarCierre(caja);
+			if (error is not null)
+			{
+				transaction.Rollback();
+				return (null, error);
+			}
+
+			_context.SaveChanges();
+			transaction.Commit();
+			return (caja, null);
+		}
 	}
 }

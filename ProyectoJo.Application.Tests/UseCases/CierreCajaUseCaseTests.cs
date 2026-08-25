@@ -56,11 +56,24 @@ namespace ProyectoJo.Application.Tests.UseCases
 				It.IsAny<string?>(), It.IsAny<string?>()), Times.Once);
 		}
 
+		private void ConfigurarCerrarAtomico(CierreCaja caja)
+		{
+			_cierreCajaRepository
+				.Setup(r => r.CerrarAtomico(caja.Id, It.IsAny<Func<CierreCaja, string?>>()))
+				.Returns<int, Func<CierreCaja, string?>>((id, aplicarCierre) =>
+				{
+					var error = aplicarCierre(caja);
+					return error is not null ? ((CierreCaja?)null, error) : (caja, (string?)null);
+				});
+		}
+
 		[Fact]
 		public void CerrarCaja_CuandoLaCajaNoExiste_LanzaExcepcion()
 		{
-			// Arrange
-			_cierreCajaRepository.Setup(r => r.ObtenerPorId(999)).Returns((CierreCaja?)null);
+			// Arrange: simula que CerrarAtomico no encontró la fila bajo lock
+			_cierreCajaRepository
+				.Setup(r => r.CerrarAtomico(999, It.IsAny<Func<CierreCaja, string?>>()))
+				.Returns(((CierreCaja?)null, "No se encontró la caja indicada."));
 
 			// Act & Assert
 			var excepcion = Assert.Throws<InvalidOperationException>(
@@ -73,7 +86,7 @@ namespace ProyectoJo.Application.Tests.UseCases
 		{
 			// Arrange
 			var cajaCerrada = new CierreCaja { Id = 1, Estado = EstadoCaja.Cerrada };
-			_cierreCajaRepository.Setup(r => r.ObtenerPorId(1)).Returns(cajaCerrada);
+			ConfigurarCerrarAtomico(cajaCerrada);
 
 			// Act & Assert
 			var excepcion = Assert.Throws<InvalidOperationException>(
@@ -87,7 +100,7 @@ namespace ProyectoJo.Application.Tests.UseCases
 			// Arrange
 			var apertura = DateTime.Today.AddDays(-1);
 			var caja = new CierreCaja { Id = 1, Estado = EstadoCaja.Abierta, FechaApertura = apertura, FondoInicial = 1000 };
-			_cierreCajaRepository.Setup(r => r.ObtenerPorId(1)).Returns(caja);
+			ConfigurarCerrarAtomico(caja);
 			_finanzaRepository.Setup(r => r.ObtenerTodos()).Returns(new List<Finanza>
 			{
 				new() { Tipo = TipoMovimiento.Ingreso, Categoria = "Ventas", Monto = 500, Fecha = apertura },
@@ -110,7 +123,7 @@ namespace ProyectoJo.Application.Tests.UseCases
 			// Arrange
 			var apertura = DateTime.Today;
 			var caja = new CierreCaja { Id = 1, Estado = EstadoCaja.Abierta, FechaApertura = apertura };
-			_cierreCajaRepository.Setup(r => r.ObtenerPorId(1)).Returns(caja);
+			ConfigurarCerrarAtomico(caja);
 			_finanzaRepository.Setup(r => r.ObtenerTodos()).Returns(new List<Finanza>
 			{
 				new() { Tipo = TipoMovimiento.Ingreso, Categoria = " ventas ", Monto = 200, Fecha = apertura }
@@ -129,7 +142,7 @@ namespace ProyectoJo.Application.Tests.UseCases
 			// Arrange
 			var apertura = DateTime.Today;
 			var caja = new CierreCaja { Id = 1, Estado = EstadoCaja.Abierta, FechaApertura = apertura, FondoInicial = 500 };
-			_cierreCajaRepository.Setup(r => r.ObtenerPorId(1)).Returns(caja);
+			ConfigurarCerrarAtomico(caja);
 			_finanzaRepository.Setup(r => r.ObtenerTodos()).Returns(new List<Finanza>());
 
 			// Act
@@ -139,7 +152,7 @@ namespace ProyectoJo.Application.Tests.UseCases
 			Assert.Equal(EstadoCaja.Cerrada, resultado.Estado);
 			Assert.Equal("Turno tranquilo", resultado.NotasCierre);
 			Assert.NotNull(resultado.FechaCierre);
-			_cierreCajaRepository.Verify(r => r.Actualizar(caja), Times.Once);
+			_cierreCajaRepository.Verify(r => r.CerrarAtomico(1, It.IsAny<Func<CierreCaja, string?>>()), Times.Once);
 			_auditoriaService.Verify(a => a.RegistrarAccion(
 				"admin", "CierreCaja", TipoAccionAuditoria.Edicion, It.IsAny<string>(),
 				It.IsAny<string?>(), It.IsAny<string?>()), Times.Once);

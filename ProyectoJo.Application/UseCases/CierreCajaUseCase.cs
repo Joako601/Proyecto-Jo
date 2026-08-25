@@ -50,17 +50,26 @@ namespace ProyectoJo.Application.UseCases
 
 		public CierreCaja CerrarCaja(int id, string? notas, string usuario)
 		{
-			var caja = ObtenerCajaParaCerrar(id);
 			var fechaCierre = DateTime.Now;
-			var (ventas, gastos) = CalcularMovimientosDelTurno(caja, fechaCierre);
+			decimal ventas = 0, gastos = 0;
 
-			caja.VentasDelDia = ventas;
-			caja.GastosDelDia = gastos;
-			caja.NotasCierre = notas;
-			caja.FechaCierre = fechaCierre;
-			caja.Estado = EstadoCaja.Cerrada;
+			var (caja, error) = _cierreCajaRepository.CerrarAtomico(id, cajaBloqueada =>
+			{
+				if (cajaBloqueada.Estado == EstadoCaja.Cerrada)
+					return "Esta caja ya fue cerrada.";
 
-			_cierreCajaRepository.Actualizar(caja);
+				(ventas, gastos) = CalcularMovimientosDelTurno(cajaBloqueada, fechaCierre);
+
+				cajaBloqueada.VentasDelDia = ventas;
+				cajaBloqueada.GastosDelDia = gastos;
+				cajaBloqueada.NotasCierre = notas;
+				cajaBloqueada.FechaCierre = fechaCierre;
+				cajaBloqueada.Estado = EstadoCaja.Cerrada;
+				return null;
+			});
+
+			if (caja is null)
+				throw new InvalidOperationException(error ?? "No se pudo cerrar la caja.");
 
 			_auditoriaService.RegistrarAccion(
 				usuario: usuario,

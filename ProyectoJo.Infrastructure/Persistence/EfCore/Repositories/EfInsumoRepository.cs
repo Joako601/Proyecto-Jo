@@ -54,45 +54,53 @@ namespace ProyectoJo.Infrastructure.Persistence.EfCore.Repositories
 		public async Task<(bool Exitoso, List<FaltanteInsumo> Faltantes)> DescontarAtomicoAsync(
 			Dictionary<int, decimal> consumoPorInsumoId)
 		{
-			await using var transaction = await _context.Database.BeginTransactionAsync();
+			var transaccionAmbiente = _context.Database.CurrentTransaction;
+			var transaction = transaccionAmbiente ?? await _context.Database.BeginTransactionAsync();
 
-			var ids = consumoPorInsumoId.Keys.ToList();
-			var insumos = await _context.Insumos
-				.FromSqlInterpolated($"SELECT * FROM insumos WHERE id = ANY({ids}) FOR UPDATE")
-				.ToListAsync();
-
-			var faltantes = new List<FaltanteInsumo>();
-
-			foreach (var (insumoId, necesario) in consumoPorInsumoId)
+			try
 			{
-				var insumo = insumos.FirstOrDefault(i => i.Id == insumoId);
-				if (insumo is null || insumo.StockActual < necesario)
+				var ids = consumoPorInsumoId.Keys.ToList();
+				var insumos = await _context.Insumos
+					.FromSqlInterpolated($"SELECT * FROM insumos WHERE id = ANY({ids}) FOR UPDATE")
+					.ToListAsync();
+
+				var faltantes = new List<FaltanteInsumo>();
+
+				foreach (var (insumoId, necesario) in consumoPorInsumoId)
 				{
-					faltantes.Add(new FaltanteInsumo
+					var insumo = insumos.FirstOrDefault(i => i.Id == insumoId);
+					if (insumo is null || insumo.StockActual < necesario)
 					{
-						InsumoId = insumoId,
-						Nombre = insumo?.Nombre ?? $"Insumo #{insumoId}",
-						Necesario = necesario,
-						Disponible = insumo?.StockActual ?? 0
-					});
+						faltantes.Add(new FaltanteInsumo
+						{
+							InsumoId = insumoId,
+							Nombre = insumo?.Nombre ?? $"Insumo #{insumoId}",
+							Necesario = necesario,
+							Disponible = insumo?.StockActual ?? 0
+						});
+					}
 				}
-			}
 
-			if (faltantes.Count > 0)
+				if (faltantes.Count > 0)
+				{
+					if (transaccionAmbiente is null) await transaction.RollbackAsync();
+					return (false, faltantes);
+				}
+
+				foreach (var (insumoId, necesario) in consumoPorInsumoId)
+				{
+					var insumo = insumos.First(i => i.Id == insumoId);
+					insumo.StockActual -= necesario;
+				}
+
+				await _context.SaveChangesAsync();
+				if (transaccionAmbiente is null) await transaction.CommitAsync();
+				return (true, new List<FaltanteInsumo>());
+			}
+			finally
 			{
-				await transaction.RollbackAsync();
-				return (false, faltantes);
+				if (transaccionAmbiente is null) await transaction.DisposeAsync();
 			}
-
-			foreach (var (insumoId, necesario) in consumoPorInsumoId)
-			{
-				var insumo = insumos.First(i => i.Id == insumoId);
-				insumo.StockActual -= necesario;
-			}
-
-			await _context.SaveChangesAsync();
-			await transaction.CommitAsync();
-			return (true, new List<FaltanteInsumo>());
 		}
 
 		public async Task<Insumo?> ReponerAtomicoAsync(int id, decimal cantidad)

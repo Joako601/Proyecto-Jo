@@ -13,7 +13,7 @@ namespace ProyectoJo.Infrastructure.Persistence.EfCore.Repositories
 			_context = context;
 		}
 
-		public IEnumerable<Promocion> ObtenerTodas() => _context.Promociones.AsNoTracking().ToList();
+		public IEnumerable<Promocion> ObtenerTodas() => _context.Promociones.AsNoTracking().OrderBy(p => p.Id).ToList();
 
 		public Promocion? ObtenerPorId(int id) => _context.Promociones.AsNoTracking().FirstOrDefault(p => p.Id == id);
 

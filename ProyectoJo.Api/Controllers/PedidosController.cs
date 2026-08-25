@@ -45,6 +45,7 @@ namespace ProyectoJo.Api.Controllers
 		public async Task<IActionResult> Create([FromBody] Pedido pedido)
 		{
 			if (!ModelState.IsValid) return BadRequest(ModelState);
+			pedido.DescartarId();
 			var resultado = await _pedidoService.CrearAsync(pedido, "API", "Recepcion");
 			return CreatedAtAction(nameof(GetById), new { id = resultado.Pedido.Id }, resultado.Pedido);
 		}

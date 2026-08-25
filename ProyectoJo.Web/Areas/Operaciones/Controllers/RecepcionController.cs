@@ -88,6 +88,7 @@ namespace ProyectoJo.Web.Areas.Operaciones.Controllers
 			if (!ModelState.IsValid) return BadRequest(ModelState);
 			try
 			{
+				pedido.DescartarId();
 				var resultado = await _pedidoService.CrearAsync(pedido, User.Identity?.Name ?? "Desconocido", "Recepcion");
 				return Json(resultado);
 			}

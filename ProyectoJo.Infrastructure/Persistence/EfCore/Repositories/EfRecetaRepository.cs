@@ -13,7 +13,7 @@ namespace ProyectoJo.Infrastructure.Persistence.EfCore.Repositories
 			_context = context;
 		}
 
-		public List<Receta> ObtenerTodas() => _context.Recetas.Include(r => r.Ingredientes).AsNoTracking().ToList();
+		public List<Receta> ObtenerTodas() => _context.Recetas.Include(r => r.Ingredientes).AsNoTracking().OrderBy(r => r.Id).ToList();
 
 		public Receta? ObtenerPorId(int id) =>
 			_context.Recetas.Include(r => r.Ingredientes).AsNoTracking().FirstOrDefault(r => r.Id == id);

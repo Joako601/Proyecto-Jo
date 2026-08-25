@@ -20,11 +20,6 @@ namespace ProyectoJo.Application.UseCases
 			return _repository.ObtenerTodos();
 		}
 
-		public IEnumerable<Item> ObtenerPorCategoria(string categoria)
-		{
-			return _repository.ObtenerPorCategoria(categoria);
-		}
-
 		public List<Item> ObtenerMenu() =>
 			_repository.ObtenerMenu().Where(i => i.Activo).ToList();
 

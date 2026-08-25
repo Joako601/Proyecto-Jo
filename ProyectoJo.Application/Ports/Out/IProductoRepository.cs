@@ -5,7 +5,6 @@ namespace ProyectoJo.Application.Ports.Out
 	public interface IProductoRepository
 	{
 		IEnumerable<Item> ObtenerTodos();
-		IEnumerable<Item> ObtenerPorCategoria(string categoria);
 		List<Item> ObtenerMenu();
 		void ActualizarItem(Item item);
 		void AgregarItem(Item item);

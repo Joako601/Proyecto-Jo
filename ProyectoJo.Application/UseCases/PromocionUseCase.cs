@@ -44,9 +44,6 @@ namespace ProyectoJo.Application.UseCases
 		public IEnumerable<Promocion> ObtenerVigentesGenerales() =>
 			ObtenerVigentes().Where(p => p.ItemIds == null || p.ItemIds.Count == 0);
 
-		public IEnumerable<Promocion> ObtenerVigentesPorItem(int itemId) =>
-			ObtenerVigentes().Where(p => p.ItemIds != null && p.ItemIds.Contains(itemId));
-
 		public decimal CalcularPrecioFinal(Item item)
 		{
 

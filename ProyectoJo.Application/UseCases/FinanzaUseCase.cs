@@ -38,11 +38,6 @@ namespace ProyectoJo.Application.UseCases
 		public (List<Finanza> Items, int Total) ObtenerPaginado(int mes, int anio, int pagina, int porPagina) =>
 			_repository.ObtenerPaginado(mes, anio, pagina, porPagina);
 
-		public List<Finanza> ObtenerPorCategoria(string categoria) =>
-			_repository.ObtenerTodos()
-				.Where(f => f.Categoria == categoria)
-				.ToList();
-
 		public ResumenFinanciero ObtenerResumenDelDia(DateTime fecha)
 		{
 			var movimientos = ObtenerPorFecha(fecha, fecha);

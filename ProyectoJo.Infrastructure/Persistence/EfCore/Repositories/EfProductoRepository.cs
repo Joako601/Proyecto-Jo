@@ -15,9 +15,6 @@ namespace ProyectoJo.Infrastructure.Persistence.EfCore.Repositories
 
 		public IEnumerable<Item> ObtenerTodos() => _context.Items.AsNoTracking().OrderBy(i => i.Id).ToList();
 
-		public IEnumerable<Item> ObtenerPorCategoria(string categoria) =>
-			_context.Items.AsNoTracking().Where(i => i.Categoria == categoria).OrderBy(i => i.Id).ToList();
-
 		public List<Item> ObtenerMenu() => _context.Items.AsNoTracking().OrderBy(i => i.Id).ToList();
 
 		public void ActualizarItem(Item item)

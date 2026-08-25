@@ -7,7 +7,6 @@ namespace ProyectoJo.Application.Ports.In
 		IEnumerable<Promocion> ObtenerTodas();
 		IEnumerable<Promocion> ObtenerVigentes();
 		IEnumerable<Promocion> ObtenerVigentesGenerales();
-		IEnumerable<Promocion> ObtenerVigentesPorItem(int itemId);
 		Promocion? ObtenerPorId(int id);
 
 		void Agregar(Promocion promocion, string usuario);

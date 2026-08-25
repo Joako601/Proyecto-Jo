@@ -86,20 +86,5 @@ namespace ProyectoJo.Application.Tests.UseCases
 			Assert.Equal(fechaOriginal, editada.Fecha);
 			Assert.Equal("recepcionista1", editada.RegistradoPor);
 		}
-
-		[Fact]
-		public void ContarPorEstado_CuentaSoloLasOpinionesDelEstadoIndicado()
-		{
-			_repository.Setup(r => r.ObtenerTodas()).Returns(new List<OpinionCliente>
-			{
-				new() { Estado = EstadoSemaforo.Rojo },
-				new() { Estado = EstadoSemaforo.Verde },
-				new() { Estado = EstadoSemaforo.Rojo }
-			});
-
-			var resultado = _useCase.ContarPorEstado(EstadoSemaforo.Rojo);
-
-			Assert.Equal(2, resultado);
-		}
 	}
 }

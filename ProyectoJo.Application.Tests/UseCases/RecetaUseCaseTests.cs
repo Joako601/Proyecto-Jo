@@ -63,38 +63,6 @@ namespace ProyectoJo.Application.Tests.UseCases
 		}
 
 		[Fact]
-		public void ObtenerRendimiento_CuandoLaRecetaNoExiste_DevuelveNull()
-		{
-			_repository.Setup(r => r.ObtenerPorId(999)).Returns((Receta?)null);
-
-			var resultado = _useCase.ObtenerRendimiento(999);
-
-			Assert.Null(resultado);
-		}
-
-		[Fact]
-		public void ObtenerRendimiento_ConDatosValidos_CalculaCostoYPrecioDeVenta()
-		{
-			var receta = new Receta
-			{
-				Id = 1,
-				ItemId = 5,
-				Rendimiento = 4,
-				Ingredientes = new List<IngredienteReceta> { new() { InsumoId = 1, Cantidad = 2, CostoUnitario = 10 } }
-			};
-			_repository.Setup(r => r.ObtenerPorId(1)).Returns(receta);
-			_productoService.Setup(p => p.ObtenerPorId(5)).Returns(new Item { Id = 5, Platillo = "Tacos", Precio = 50 });
-
-			var resultado = _useCase.ObtenerRendimiento(1);
-
-			Assert.NotNull(resultado);
-			Assert.Equal("Tacos", resultado!.Platillo);
-			Assert.Equal(20m, resultado.CostoTotal);
-			Assert.Equal(5m, resultado.CostoPorPorcion);
-			Assert.Equal(50m, resultado.PrecioVenta);
-		}
-
-		[Fact]
 		public void ObtenerRendimientoDeTodas_OmiteRecetasCuyoProductoYaNoExiste()
 		{
 			var recetaValida = new Receta { Id = 1, ItemId = 5, Rendimiento = 1 };

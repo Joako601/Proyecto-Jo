@@ -47,7 +47,7 @@ namespace ProyectoJo.Web.Controllers
 
 			ViewBag.Categorias = menu.Select(i => i.Categoria).Distinct().ToList();
 			ViewBag.CategoriaActual = categoria;
-			ViewBag.PromocionesGenerales = promosVigentes.Where(p => p.ItemIds == null || p.ItemIds.Count == 0).ToList();
+			ViewBag.PromocionesGenerales = _promocionService.ObtenerVigentesGenerales().ToList();
 			ViewBag.PaginaActual = pagina;
 			ViewBag.TotalPaginas = totalPaginas;
 

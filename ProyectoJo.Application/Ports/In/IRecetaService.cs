@@ -11,7 +11,6 @@ namespace ProyectoJo.Application.Ports.In
 		void Agregar(Receta receta, string usuario);
 		bool Editar(Receta receta, string usuario);
 		bool Eliminar(int id, string usuario);
-		RendimientoRecetaDto? ObtenerRendimiento(int recetaId);
 		List<RendimientoRecetaDto> ObtenerRendimientoDeTodas();
 	}
 }

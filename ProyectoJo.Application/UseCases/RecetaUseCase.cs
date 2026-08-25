@@ -84,15 +84,6 @@ namespace ProyectoJo.Application.UseCases
 			return true;
 		}
 
-		public RendimientoRecetaDto? ObtenerRendimiento(int recetaId)
-		{
-			var receta = _repository.ObtenerPorId(recetaId);
-			if (receta is null) return null;
-
-			var item = _productoService.ObtenerPorId(receta.ItemId);
-			return ArmarDto(receta, item);
-		}
-
 		public List<RendimientoRecetaDto> ObtenerRendimientoDeTodas()
 		{
 			var recetas = _repository.ObtenerTodas();

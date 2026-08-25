@@ -92,9 +92,6 @@ namespace ProyectoJo.Application.UseCases
 
 		public int ContarTotal() => _repository.ObtenerTodas().Count;
 
-		public int ContarPorEstado(EstadoSemaforo estado) =>
-			_repository.ObtenerTodas().Count(o => o.Estado == estado);
-
 		private string DescribirDestino(int? itemId)
 		{
 			if (itemId is null) return "Opinión general";

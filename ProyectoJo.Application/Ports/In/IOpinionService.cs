@@ -11,6 +11,5 @@ namespace ProyectoJo.Application.Ports.In
 		bool Editar(OpinionCliente opinion, string usuario);
 		bool Eliminar(int id, string usuario);
 		int ContarTotal();
-		int ContarPorEstado(EstadoSemaforo estado);
 	}
 }

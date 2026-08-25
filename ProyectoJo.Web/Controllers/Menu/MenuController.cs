@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProyectoJo.Domain.Entities;
 using ProyectoJo.Application.Ports.In;
+using ProyectoJo.Web.Helpers;
 using ProyectoJo.Web.Models;
 
 namespace ProyectoJo.Web.Controllers
@@ -27,9 +28,9 @@ namespace ProyectoJo.Web.Controllers
 				: menu.Where(i => i.Categoria == categoria).ToList();
 
 			var totalItems = resultado.Count;
-			var totalPaginas = (int)Math.Ceiling(totalItems / (double)tamanoPagina);
+			var totalPaginas = PaginacionHelper.CalcularTotalPaginas(totalItems, tamanoPagina);
 			if (totalPaginas < 1) totalPaginas = 1;
-			if (pagina < 1) pagina = 1;
+			pagina = PaginacionHelper.NormalizarPaginaMinima(pagina);
 			if (pagina > totalPaginas) pagina = totalPaginas;
 
 			var paginaActual = resultado

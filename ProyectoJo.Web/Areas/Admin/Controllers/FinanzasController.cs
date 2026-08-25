@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProyectoJo.Application.Ports.In;
 using ProyectoJo.Domain.Entities;
 using ProyectoJo.Web.Authorization;
+using ProyectoJo.Web.Helpers;
 
 namespace ProyectoJo.Web.Areas.Admin.Controllers
 {
@@ -34,7 +35,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 			var anioActual = anio ?? hoy.Year;
 			const int porPagina = 12;
 
-			if (pagina < 1) pagina = 1;
+			pagina = PaginacionHelper.NormalizarPaginaMinima(pagina);
 
 			var (movimientos, total) = _finanzaService.ObtenerPaginado(mesActual, anioActual, pagina, porPagina);
 
@@ -43,7 +44,7 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 			ViewBag.Mes = mesActual;
 			ViewBag.Anio = anioActual;
 			ViewBag.PaginaActual = pagina;
-			ViewBag.TotalPaginas = (int)Math.Ceiling(total / (double)porPagina);
+			ViewBag.TotalPaginas = PaginacionHelper.CalcularTotalPaginas(total, porPagina);
 			ViewBag.TotalMovimientos = total;
 
 			return View(movimientos);

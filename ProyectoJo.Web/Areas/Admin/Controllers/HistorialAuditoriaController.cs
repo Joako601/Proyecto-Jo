@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ProyectoJo.Application.Ports.In;
 using ProyectoJo.Web.Authorization;
+using ProyectoJo.Web.Helpers;
 
 namespace ProyectoJo.Web.Areas.Admin.Controllers
 {
@@ -20,12 +21,12 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		public IActionResult Index(string? modulo, DateTime? desde, DateTime? hasta, int pagina = 1)
 		{
 			const int porPagina = 15;
-			if (pagina < 1) pagina = 1;
+			pagina = PaginacionHelper.NormalizarPaginaMinima(pagina);
 
 			var (historial, total) = _auditoriaService.ObtenerHistorialPaginado(modulo, desde, hasta, pagina, porPagina);
 
 			ViewBag.PaginaActual = pagina;
-			ViewBag.TotalPaginas = (int)Math.Ceiling(total / (double)porPagina);
+			ViewBag.TotalPaginas = PaginacionHelper.CalcularTotalPaginas(total, porPagina);
 			ViewBag.TotalRegistros = total;
 
 			return View(historial);

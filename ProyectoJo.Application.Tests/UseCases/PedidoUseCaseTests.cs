@@ -23,6 +23,9 @@ namespace ProyectoJo.Application.Tests.UseCases
 		public PedidoUseCaseTests()
 		{
 			_promocionService.Setup(p => p.ObtenerVigentes()).Returns(new List<Promocion>());
+			_promocionService
+				.Setup(p => p.CalcularPrecioFinal(It.IsAny<Item>(), It.IsAny<List<Promocion>>()))
+				.Returns((Item item, List<Promocion> _) => item.Precio);
 			_insumoService.Setup(i => i.ObtenerIndicePorNombre()).Returns(new Dictionary<string, Insumo>());
 			_repository.Setup(r => r.GuardarAsync(It.IsAny<Pedido>())).Returns((Pedido p) => Task.FromResult(p));
 
@@ -307,6 +310,9 @@ namespace ProyectoJo.Application.Tests.UseCases
 			{
 				new() { Id = 1, ItemIds = new List<int> { 1 }, TipoDescuento = TipoDescuento.Porcentaje, ValorDescuento = 10m }
 			});
+			_promocionService
+				.Setup(p => p.CalcularPrecioFinal(item, It.IsAny<List<Promocion>>()))
+				.Returns(90m);
 			var pedido = new Pedido
 			{
 				Mesa = "5",

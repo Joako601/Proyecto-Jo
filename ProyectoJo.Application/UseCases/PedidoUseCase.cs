@@ -98,7 +98,7 @@ namespace ProyectoJo.Application.UseCases
 					}
 				}
 
-				linea.PrecioUnitario = CalcularPrecioFinalEnMemoria(item, promosVigentes);
+				linea.PrecioUnitario = _promocionService.CalcularPrecioFinal(item, promosVigentes);
 				lineasValidas.Add(linea);
 			}
 
@@ -118,26 +118,6 @@ namespace ProyectoJo.Application.UseCases
 				detalleDespues: $"Mesa {creado.Mesa}, {creado.Items.Count} ítem(s), total {creado.Total:C}");
 
 			return new ResultadoCrearPedido { Pedido = creado, LineasDescartadas = lineasDescartadas, LineasAjustadas = lineasAjustadas };
-		}
-
-		private static decimal CalcularPrecioFinalEnMemoria(Item item, List<Promocion> promosVigentes)
-		{
-			var promo = promosVigentes
-				.Where(p => (p.ItemIds != null && p.ItemIds.Contains(item.Id))
-						 && p.TipoDescuento != TipoDescuento.Ninguno && p.ValorDescuento.HasValue)
-				.OrderByDescending(p => p.Id)
-				.FirstOrDefault();
-
-			if (promo == null) return item.Precio;
-
-			decimal precioFinal = promo.TipoDescuento switch
-			{
-				TipoDescuento.Porcentaje => item.Precio - (item.Precio * (promo.ValorDescuento!.Value / 100m)),
-				TipoDescuento.MontoFijo => item.Precio - promo.ValorDescuento!.Value,
-				_ => item.Precio
-			};
-
-			return precioFinal < 0 ? 0 : Math.Round(precioFinal, 2);
 		}
 
 		public async Task<ResultadoCambiarEstado> CambiarEstadoAsync(int id, EstadoPedido nuevoEstado, string usuario, string estacion)

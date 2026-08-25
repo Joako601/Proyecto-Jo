@@ -117,7 +117,7 @@ dotnet run --project ProyectoJo.Web -- --reset
 
 The admin panel requires the `Auth__AdminUser` and `Auth__AdminPasswordHash` environment variables (or .NET User Secrets) — see `ProyectoJo.Infrastructure/Auth/EnvAuthService`. `ProyectoJo.Web` also requires `ConnectionStrings:Default` (a PostgreSQL connection string), set via User Secrets in development. Never hardcode either in `launchSettings.json` or `appsettings.json`.
 
-CI (`.github/workflows/ci.yml`) runs on every push to any branch, on PRs targeting the `deuda-tecnica` branch (not `main`), and manually via `workflow_dispatch`: restore, a check for pending EF Core migrations (`dotnet ef migrations has-pending-model-changes`), a NuGet vulnerable-package audit (`dotnet list package --vulnerable`), build, then test. A second workflow, `.github/workflows/docs.yml`, runs on any push/PR touching `**/*.md` and fails if `lychee` finds a broken link (internal or external) in the repo's Markdown files.
+CI (`.github/workflows/ci.yml`) runs on every push to any branch, on PRs targeting `main` or `deuda-tecnica`, and manually via `workflow_dispatch`: restore, a check for pending EF Core migrations (`dotnet ef migrations has-pending-model-changes`), a NuGet vulnerable-package audit (`dotnet list package --vulnerable`), build, then test. `deuda-tecnica` was the original PR-trigger target but went stale while real PRs kept landing on `main`, so `main` was added alongside it rather than replacing it. A second workflow, `.github/workflows/docs.yml`, runs on any push/PR touching `**/*.md` (same branch targets) and fails if `lychee` finds a broken link (internal or external) in the repo's Markdown files.
 
 ## Architecture
 
@@ -204,6 +204,14 @@ Domain entities carry `System.ComponentModel.DataAnnotations` attributes for bus
 Entities with attributes so far: `Item` (`Precio > 0`, `Platillo`/`Categoria` required), `Finanza` (`Monto > 0`), `Insumo` (`StockActual`/`StockMinimo >= 0`), `IngredienteReceta` (`Cantidad > 0`, `CostoUnitario >= 0`), `Receta` (`Rendimiento >= 1`), `Promocion` (discount value/type consistency + date ordering), `Pedido` (`Mesa` required, max 50 chars).
 
 `ProyectoJo.Application.Tests/Domain/EntityValidationTests.cs` covers all of the above via `Validator.TryValidateObject` (one valid case plus one case per violated rule, per entity), and `PromocionUseCaseTests` covers `ActualizarFecha`'s date-range check and `Agregar`/`Editar`'s filtering of `ItemIds` against real menu items. None of these `DataAnnotations` require an EF Core migration — confirmed via `dotnet ef migrations has-pending-model-changes` — and every numeric range/string length matches the actual Postgres column precision/length (`numeric(18,2)`/`numeric(18,4)`/`character varying(n)`) with no mismatch in either direction.
+
+## Test coverage (`ProyectoJo.Application.Tests`)
+
+Every `UseCases/` class has a matching test file, but file-level coverage didn't mean method-level coverage — several high-risk methods had zero tests despite that convention. A pass closed the highest-risk gaps: `PromocionUseCase.CalcularPrecioFinal`/`EstaVigente` (untested despite a real prior bug where a negative percentage discount raised the price instead of lowering it), `PedidoUseCase.CrearAsync` (the most branch-heavy method in the app — line discarding, stock adjustment, promo pricing), `CierreCajaUseCase.CerrarCaja`/`ObtenerVistaPreviaCierre` (only `AbrirCaja` had tests before), and `FinanzaUseCase.ObtenerDashboard`/`RegistrarMovimiento` (the heaviest date-grouping computation in the backend). 121 tests grew to 158.
+
+Known gaps left open, not oversights: several read-only pass-through methods across use cases (`ObtenerTodos`/`ObtenerPorId`/etc.) still have no test, since they're one-line repository delegations with low risk. `RecetaUseCase.Editar` only tests the "not found" branch, missing a happy-path test that every sibling use case's `Editar` has. `EmpleadoUseCase.CrearAsync`/`EditarAsync` are missing a happy-path test too, unlike `AdministradorUseCase`, its closest sibling. `OpinionUseCaseTests` asserts an auto-assigned `DateTime.Now` against a 5-second tolerance instead of an injectable clock — low flakiness risk, but the only test in the suite that depends on real wall-clock time.
+
+Integration tests against a real PostgreSQL database (e.g. via Testcontainers) still don't exist — see `ProyectoJo.Application.Tests` in Architecture above. This was deliberately deferred as a separate, larger effort (new test project, Docker dependency in CI) rather than folded into the mocked-unit-test pass described here.
 
 ## Security hardening
 

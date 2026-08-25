@@ -88,15 +88,6 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 
 		private void ValidarOpinion(OpinionCliente opinion)
 		{
-			if (string.IsNullOrWhiteSpace(opinion.Comentario))
-				ModelState.AddModelError(nameof(OpinionCliente.Comentario), "Escribí el comentario del cliente.");
-
-			if (opinion.Calificacion < 1 || opinion.Calificacion > 5)
-				ModelState.AddModelError(nameof(OpinionCliente.Calificacion), "La calificación debe estar entre 1 y 5 estrellas.");
-
-			if ((opinion.Calificacion * 2) % 1 != 0)
-				ModelState.AddModelError(nameof(OpinionCliente.Calificacion), "La calificación solo admite pasos de media estrella.");
-
 			if (opinion.ItemId is not null && _productoService.ObtenerPorId(opinion.ItemId.Value) is null)
 				ModelState.AddModelError(nameof(OpinionCliente.ItemId), "El platillo seleccionado ya no existe.");
 		}

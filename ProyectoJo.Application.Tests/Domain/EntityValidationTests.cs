@@ -425,4 +425,87 @@ namespace ProyectoJo.Application.Tests.Domain
 			Assert.Empty(resultados);
 		}
 	}
+
+	public class OpinionClienteValidationTests
+	{
+		private static OpinionCliente OpinionValida() => new()
+		{
+			Comentario = "Muy buena atención.",
+			Calificacion = 4.5m
+		};
+
+		[Fact]
+		public void Opinion_ConDatosValidos_NoTieneErrores()
+		{
+			var resultados = ValidacionHelper.Validar(OpinionValida());
+
+			Assert.Empty(resultados);
+		}
+
+		[Fact]
+		public void Opinion_SinComentario_EsInvalido()
+		{
+			var opinion = OpinionValida();
+			opinion.Comentario = "";
+
+			var resultados = ValidacionHelper.Validar(opinion);
+
+			Assert.Contains(resultados, r => r.MemberNames.Contains(nameof(OpinionCliente.Comentario)));
+		}
+
+		[Fact]
+		public void Opinion_ConComentarioDeMasDe1000Caracteres_EsInvalido()
+		{
+			var opinion = OpinionValida();
+			opinion.Comentario = new string('A', 1001);
+
+			var resultados = ValidacionHelper.Validar(opinion);
+
+			Assert.Contains(resultados, r => r.MemberNames.Contains(nameof(OpinionCliente.Comentario)));
+		}
+
+		[Fact]
+		public void Opinion_ConCalificacionMenorA1_EsInvalido()
+		{
+			var opinion = OpinionValida();
+			opinion.Calificacion = 0.5m;
+
+			var resultados = ValidacionHelper.Validar(opinion);
+
+			Assert.Contains(resultados, r => r.MemberNames.Contains(nameof(OpinionCliente.Calificacion)));
+		}
+
+		[Fact]
+		public void Opinion_ConCalificacionMayorA5_EsInvalido()
+		{
+			var opinion = OpinionValida();
+			opinion.Calificacion = 5.5m;
+
+			var resultados = ValidacionHelper.Validar(opinion);
+
+			Assert.Contains(resultados, r => r.MemberNames.Contains(nameof(OpinionCliente.Calificacion)));
+		}
+
+		[Fact]
+		public void Opinion_ConCalificacionFueraDePasoDeMediaEstrella_EsInvalido()
+		{
+			var opinion = OpinionValida();
+			opinion.Calificacion = 3.2m;
+
+			var resultados = ValidacionHelper.Validar(opinion);
+
+			Assert.Contains(resultados, r => r.MemberNames.Contains(nameof(OpinionCliente.Calificacion)));
+		}
+
+		[Fact]
+		public void Opinion_ConNombreClienteDeMasDe200Caracteres_EsInvalido()
+		{
+			var opinion = OpinionValida();
+			opinion.NombreCliente = new string('A', 201);
+
+			var resultados = ValidacionHelper.Validar(opinion);
+
+			Assert.Contains(resultados, r => r.MemberNames.Contains(nameof(OpinionCliente.NombreCliente)));
+		}
+	}
 }

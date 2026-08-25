@@ -15,6 +15,11 @@ namespace ProyectoJo.Infrastructure.Persistence.EfCore.Configurations
 			builder.Property(o => o.Calificacion).HasPrecision(3, 1);
 			builder.Property(o => o.Estado).HasConversion<string>().HasMaxLength(20);
 			builder.Property(o => o.RegistradoPor).IsRequired().HasMaxLength(200);
+
+			builder.HasOne<Item>()
+				.WithMany()
+				.HasForeignKey(o => o.ItemId)
+				.OnDelete(DeleteBehavior.SetNull);
 		}
 	}
 }

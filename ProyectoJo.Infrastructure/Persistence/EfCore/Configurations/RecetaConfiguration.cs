@@ -15,6 +15,11 @@ namespace ProyectoJo.Infrastructure.Persistence.EfCore.Configurations
 			builder.Ignore(r => r.CostoTotal);
 			builder.Ignore(r => r.CostoPorPorcion);
 
+			builder.HasOne<Item>()
+				.WithMany()
+				.HasForeignKey(r => r.ItemId)
+				.OnDelete(DeleteBehavior.Cascade);
+
 			builder.OwnsMany(r => r.Ingredientes, ingredientes =>
 			{
 				ingredientes.ToTable("receta_ingredientes");
@@ -26,6 +31,11 @@ namespace ProyectoJo.Infrastructure.Persistence.EfCore.Configurations
 				ingredientes.Property(i => i.Cantidad).HasPrecision(18, 4);
 				ingredientes.Property(i => i.CostoUnitario).HasPrecision(18, 4);
 				ingredientes.Ignore(i => i.CostoTotal);
+
+				ingredientes.HasOne<Insumo>()
+					.WithMany()
+					.HasForeignKey(i => i.InsumoId)
+					.OnDelete(DeleteBehavior.Restrict);
 			});
 		}
 	}

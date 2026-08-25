@@ -7,11 +7,19 @@ namespace ProyectoJo.Application.UseCases
 	public class InsumoUseCase : IInsumoService
 	{
 		private readonly IInsumoRepository _repository;
+		private readonly IRecetaService _recetaService;
+		private readonly IProductoService _productoService;
 		private readonly IAuditoriaService _auditoriaService;
 
-		public InsumoUseCase(IInsumoRepository repository, IAuditoriaService auditoriaService)
+		public InsumoUseCase(
+			IInsumoRepository repository,
+			IRecetaService recetaService,
+			IProductoService productoService,
+			IAuditoriaService auditoriaService)
 		{
 			_repository = repository;
+			_recetaService = recetaService;
+			_productoService = productoService;
 			_auditoriaService = auditoriaService;
 		}
 
@@ -51,13 +59,23 @@ namespace ProyectoJo.Application.UseCases
 			return true;
 		}
 
-		public bool Eliminar(int id, string usuario)
+		public (bool Exito, string? Error) Eliminar(int id, string usuario)
 		{
 			var insumo = _repository.ObtenerPorId(id);
-			if (insumo is null) return false;
+			if (insumo is null) return (false, "El insumo no existe.");
+
+			var recetaQueLoUsa = _recetaService.ObtenerTodas()
+				.FirstOrDefault(r => r.Ingredientes.Any(i => i.InsumoId == id));
+
+			if (recetaQueLoUsa is not null)
+			{
+				var item = _productoService.ObtenerPorId(recetaQueLoUsa.ItemId);
+				var nombrePlatillo = item?.Platillo ?? recetaQueLoUsa.NombreReceta;
+				return (false, $"No se puede eliminar '{insumo.Nombre}': está en uso en la receta de {nombrePlatillo}.");
+			}
 
 			var eliminado = _repository.Eliminar(id);
-			if (!eliminado) return false;
+			if (!eliminado) return (false, "No se pudo eliminar el insumo.");
 
 			_auditoriaService.RegistrarAccion(
 				usuario: usuario,
@@ -67,7 +85,7 @@ namespace ProyectoJo.Application.UseCases
 				detalleAntes: $"Stock: {insumo.StockActual} {insumo.Unidad}"
 			);
 
-			return true;
+			return (true, null);
 		}
 
 		public async Task<ResultadoReponerInsumo> ReponerAsync(int id, decimal cantidad, string usuario)

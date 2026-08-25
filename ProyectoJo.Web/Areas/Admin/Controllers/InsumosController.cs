@@ -82,7 +82,8 @@ namespace ProyectoJo.Web.Areas.Admin.Controllers
 		[HttpPost]
 		public IActionResult Eliminar(int id)
 		{
-			_insumoService.Eliminar(id, User.Identity?.Name ?? "Desconocido");
+			var (exito, error) = _insumoService.Eliminar(id, User.Identity?.Name ?? "Desconocido");
+			if (!exito) TempData["Error"] = error;
 			return RedirectToAction(nameof(Index));
 		}
 

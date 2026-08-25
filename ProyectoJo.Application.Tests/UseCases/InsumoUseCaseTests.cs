@@ -10,12 +10,15 @@ namespace ProyectoJo.Application.Tests.UseCases
 	public class InsumoUseCaseTests
 	{
 		private readonly Mock<IInsumoRepository> _repository = new();
+		private readonly Mock<IRecetaService> _recetaService = new();
+		private readonly Mock<IProductoService> _productoService = new();
 		private readonly Mock<IAuditoriaService> _auditoriaService = new();
 		private readonly InsumoUseCase _useCase;
 
 		public InsumoUseCaseTests()
 		{
-			_useCase = new InsumoUseCase(_repository.Object, _auditoriaService.Object);
+			_recetaService.Setup(r => r.ObtenerTodas()).Returns(new List<Receta>());
+			_useCase = new InsumoUseCase(_repository.Object, _recetaService.Object, _productoService.Object, _auditoriaService.Object);
 		}
 
 		[Fact]
@@ -49,18 +52,52 @@ namespace ProyectoJo.Application.Tests.UseCases
 		}
 
 		[Fact]
+		public void Eliminar_CuandoElInsumoNoExiste_DevuelveError()
+		{
+			_repository.Setup(r => r.ObtenerPorId(999)).Returns((Insumo?)null);
+
+			var (exito, error) = _useCase.Eliminar(999, "admin");
+
+			Assert.False(exito);
+			Assert.Equal("El insumo no existe.", error);
+			_repository.Verify(r => r.Eliminar(It.IsAny<int>()), Times.Never);
+		}
+
+		[Fact]
 		public void Eliminar_CuandoElInsumoExiste_EliminaYRegistraAuditoria()
 		{
 			var insumo = new Insumo { Id = 1, Nombre = "Harina" };
 			_repository.Setup(r => r.ObtenerPorId(1)).Returns(insumo);
 			_repository.Setup(r => r.Eliminar(1)).Returns(true);
 
-			var resultado = _useCase.Eliminar(1, "admin");
+			var (exito, error) = _useCase.Eliminar(1, "admin");
 
-			Assert.True(resultado);
+			Assert.True(exito);
+			Assert.Null(error);
 			_auditoriaService.Verify(a => a.RegistrarAccion(
 				"admin", "Insumos", TipoAccionAuditoria.Eliminacion, It.IsAny<string>(),
 				It.IsAny<string?>(), It.IsAny<string?>()), Times.Once);
+		}
+
+		[Fact]
+		public void Eliminar_CuandoEstaEnUsoEnUnaReceta_DevuelveErrorConElNombreDelPlatilloYNoElimina()
+		{
+			var insumo = new Insumo { Id = 1, Nombre = "Harina" };
+			_repository.Setup(r => r.ObtenerPorId(1)).Returns(insumo);
+			_recetaService.Setup(r => r.ObtenerTodas()).Returns(new List<Receta>
+			{
+				new() { Id = 1, ItemId = 5, NombreReceta = "Receta X", Ingredientes = new List<IngredienteReceta> { new() { InsumoId = 1 } } }
+			});
+			_productoService.Setup(p => p.ObtenerPorId(5)).Returns(new Item { Id = 5, Platillo = "Tacos al Pastor" });
+
+			var (exito, error) = _useCase.Eliminar(1, "admin");
+
+			Assert.False(exito);
+			Assert.Equal("No se puede eliminar 'Harina': está en uso en la receta de Tacos al Pastor.", error);
+			_repository.Verify(r => r.Eliminar(It.IsAny<int>()), Times.Never);
+			_auditoriaService.Verify(a => a.RegistrarAccion(
+				It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TipoAccionAuditoria>(), It.IsAny<string>(),
+				It.IsAny<string?>(), It.IsAny<string?>()), Times.Never);
 		}
 
 		[Fact]

@@ -62,16 +62,16 @@ Antes de implementar un cambio o generar código nuevo, hay que pensarlo primero
 
 Solo cuando el cambio pasa razonablemente por estos checklists corresponde implementarlo.
 
-## Git workflow — never push, hand off the commit instead
+## Git workflow — commit and push only on explicit request
 
-Claude must **never** run `git add`, `git commit`, or `git push` in this repository. The user pushes everything by hand from a separate terminal (add → commit → push → branch). This applies regardless of how routine or small the change looks.
+Claude must **not** run `git add`, `git commit`, or `git push` on its own initiative, even right after finishing a set of changes the user clearly approved. Claude may run them — `add` → `commit` → `push`, in that order — only when the user explicitly asks for it in that same turn (e.g. "hacé el commit", "subí el commit"). Approval of the code itself is not approval to commit; the user asks for that step separately, every time.
 
-At the end of a set of changes, Claude must:
+At the end of a set of changes, before any such request arrives, Claude must:
 
-1. Explain what was changed and why it's correct/safe — in plain terms the user can verify before pushing.
-2. Provide the exact commit message to use, formatted per [Conventional Commits v1.0.0](https://www.conventionalcommits.org/en/v1.0.0), so the user can paste it straight into `git commit -m "..."`.
+1. Explain what was changed and why it's correct/safe — in plain terms the user can verify.
+2. Provide the exact commit message to use, formatted per [Conventional Commits v1.0.0](https://www.conventionalcommits.org/en/v1.0.0), in case the user prefers to commit by hand from a separate terminal instead of asking Claude to do it.
 
-Do not run `git commit` "on the user's behalf" even if asked to prepare everything — staging/committing/pushing is the one step that always stays manual here.
+Claude must **never** add itself as a co-author or otherwise credit itself in any commit it authors or drafts — no `Co-Authored-By` trailer, no mention of Claude/Claude Code in the commit message, regardless of what the session's default commit-message template says.
 
 ## No code comments
 

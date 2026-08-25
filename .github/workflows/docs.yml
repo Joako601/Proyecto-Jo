@@ -11,6 +11,13 @@ on:
       - "**/*.md"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   link-check:
     runs-on: ubuntu-latest

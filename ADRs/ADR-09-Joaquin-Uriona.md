@@ -8,6 +8,41 @@
 
 ---
 
+## Nota de actualización (25/08/2026)
+
+Varios detalles factuales de este ADR (22/07/2026) quedaron desactualizados
+por cambios posteriores, documentados en las secciones correspondientes de
+`CLAUDE.md`:
+
+- **Versiones de acciones:** `actions/checkout@v4`/`actions/setup-dotnet@v4`
+  citadas en la Decisión y el diagrama ya no son las que corre el workflow —
+  se actualizaron a `@v7`/`@v6` (commit `97d6403`).
+- **Composición de la suite:** los "24 tests (17 unitarios + 7 de integración
+  con concurrencia real sobre `Json*Repository`)" ya no existen así — esos
+  tests de concurrencia se eliminaron junto con la capa de persistencia JSON
+  al migrar a PostgreSQL (ver [ADR-10](./ADR-10-Joaquin-Uriona.md)); la suite
+  actual (`ProyectoJo.Application.Tests`) creció a más de 160 tests, todos
+  mockeados sobre `Ports/Out`, sin tests de integración contra una base real
+  todavía (ver "Test coverage" en `CLAUDE.md`).
+- **Trigger de Pull Request:** ya no apunta solo a `deuda-tecnica` — el riesgo
+  que la propia sección "Alternativas consideradas" de este ADR anticipó
+  ("abrir el trigger a cualquier rama base") terminó pasando en la dirección
+  inversa: `deuda-tecnica` quedó stale mientras el trabajo real convergía en
+  `main`, así que `main` se agregó como target adicional sin reemplazar a
+  `deuda-tecnica`.
+- **Pasos del job:** el workflow ganó pasos que este ADR no describe —
+  chequeo de migraciones de EF Core pendientes (`dotnet ef migrations
+  has-pending-model-changes`) y auditoría de paquetes NuGet vulnerables
+  (`dotnet list package --vulnerable`) — y, más recientemente, un bloque
+  `permissions: contents: read` y un `concurrency` group para cancelar runs
+  viejos de la misma rama.
+
+La decisión de fondo (GitHub Actions, un solo job, `Release` únicamente) sigue
+vigente y no cambió; lo que quedó desactualizado es la descripción puntual del
+workflow en un momento específico de su evolución.
+
+---
+
 ## Contexto
 
 Desde ADR-07, `ProyectoJo.Application.Tests` existe como proyecto de tests dentro de la solución, con 17 tests unitarios (mocks sobre `UseCases/`) y 7 tests de integración con concurrencia real (`Infrastructure/`), pero la ejecución de `dotnet test` seguía siendo un paso manual: dependía de que el propio desarrollador se acordara de correrlo antes de cada push. El mismo ADR-07 ya había dejado esto anotado explícitamente como deuda ("no existe todavía ningún pipeline de CI/CD que ejecute `dotnet test` automáticamente en cada push"), y la revisión de arquitectura marcaba "Sin CI/CD visible" como debilidad de nivel industrial, señalando además que el objetivo de 12-Factor App de separar Build/Release/Run no estaba resuelto sin automatización documentada.

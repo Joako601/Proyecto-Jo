@@ -6,6 +6,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -72,12 +76,29 @@ jobs:
             rm -f /tmp/release.tar.gz
 
             # Apply pending migrations against RDS before this release goes live.
-            "$RELEASE_DIR/efbundle" --connection "$RDS_CONNECTION_STRING"
+            # Passed as an env var (not --connection) so it never shows up in
+            # `ps aux`/cmdline for other local users on the box.
+            ConnectionStrings__Default="$RDS_CONNECTION_STRING" "$RELEASE_DIR/efbundle"
 
             # Atomically point "current" at the new release and restart the service.
             sudo ln -sfn "$RELEASE_DIR" /opt/proyectojo/current
             sudo systemctl restart proyectojo-web
             sudo systemctl --no-pager --full status proyectojo-web
+
+            # Smoke test: fail the deploy if the app doesn't come back up healthy,
+            # instead of leaving "current" pointed at a release that crashed on boot.
+            for i in $(seq 1 10); do
+              if curl -fsS -o /dev/null http://127.0.0.1:5000/; then
+                echo "Smoke test OK."
+                break
+              fi
+              if [ "$i" -eq 10 ]; then
+                echo "::error::Smoke test failed: proyectojo-web did not respond after restart."
+                sudo journalctl -u proyectojo-web --no-pager -n 100
+                exit 1
+              fi
+              sleep 3
+            done
 
             # Keep only the last 5 releases on disk.
             cd /opt/proyectojo/releases

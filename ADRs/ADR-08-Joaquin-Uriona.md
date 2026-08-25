@@ -8,6 +8,33 @@
 
 ---
 
+## Nota de actualización (25/08/2026)
+
+El contenido original de este ADR (15/07/2026) describe `ProyectoJo.Api` en su
+estado previo a la migración de persistencia a PostgreSQL (ver
+[ADR-10](./ADR-10-Joaquin-Uriona.md)): `JsonPedidoRepository` con
+`SemaphoreSlim` estático, rutas de `pedidos.json` armadas a mano, y una Api
+parcialmente rota (solo `PedidosController` fallaba por DI incompleta,
+`ProductosController` seguía funcionando). Ese código ya no existe — la
+migración a Postgres eliminó por completo la capa de repositorios JSON — y la
+causa raíz que este ADR identificó (`ProyectoJo.Web` y `ProyectoJo.Api`
+componen su propio grafo de dependencias por separado, sin un punto de
+configuración compartido) sigue exactamente igual de sin resolver, pero el
+síntoma empeoró: `ProyectoJo.Api/Program.cs` hoy no registra **ningún**
+repositorio (ni `IProductoRepository`, ni `IPedidoRepository`, ni los demás),
+así que el 100% de sus endpoints fallan en runtime al resolver su `UseCase`
+correspondiente, no solo los de `PedidosController` como describía la versión
+original de este documento. El detalle actualizado vive en la sección "Known
+technical debt" de `CLAUDE.md`.
+
+La propuesta de solución original (centralizar el registro de dependencias en
+un método de extensión compartido, del tipo `AddProyectoJoServices`) sigue
+siendo la resolución correcta y sigue sin implementarse; este ADR permanece
+`Aceptado` como decisión de "documentar y no resolver todavía", no porque el
+contenido técnico de la sección Contexto siga describiendo el código actual.
+
+---
+
 ## Contexto
 
 `ProyectoJo.Api` nació como un proyecto vacío, reservado explícitamente para

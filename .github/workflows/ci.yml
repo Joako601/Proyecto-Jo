@@ -7,6 +7,13 @@ on:
     branches: [ "main", "deuda-tecnica" ]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -36,7 +43,8 @@ jobs:
       - name: Check for vulnerable NuGet packages
         run: |
           dotnet list package --vulnerable --include-transitive --format json > vulnerable-packages.json
-          if grep -q '"topLevelPackages"\|"transitivePackages"' vulnerable-packages.json; then
+          count=$(jq '[.projects[]?.frameworks[]? | (.topLevelPackages // []) + (.transitivePackages // [])] | add | length' vulnerable-packages.json)
+          if [ "$count" -gt 0 ]; then
             echo "::error::Vulnerable NuGet packages detected"
             cat vulnerable-packages.json
             exit 1
